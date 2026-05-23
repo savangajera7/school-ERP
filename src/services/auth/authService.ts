@@ -1,78 +1,52 @@
+import axiosInstance from "@/services/api/axiosInstance";
+import { API_ENDPOINTS } from "@/constants/api";
 import type {
   LoginPayload,
   LoginResponse,
   UserData,
-  Role,
+  ApiResult,
 } from "@/types/auth.types";
-
-// Simulated network delay
-const delay = (ms: number = 1200) =>
-  new Promise((resolve) => setTimeout(resolve, ms));
-
-// Mock user data for different roles
-const MOCK_USERS: Record<string, UserData> = {
-  admin: {
-    id: "usr_001",
-    name: "Rajesh Kumar",
-    email: "admin@schoolerp.com",
-    mobile: "9876543210",
-    role: "admin",
-    schoolName: "Little Angel's English School",
-  },
-  teacher: {
-    id: "usr_002",
-    name: "Priya Sharma",
-    email: "teacher@schoolerp.com",
-    mobile: "9876543211",
-    role: "teacher",
-    schoolName: "Little Angel's English School",
-  },
-  parent: {
-    id: "usr_003",
-    name: "Amit Patel",
-    email: "parent@schoolerp.com",
-    mobile: "9876543212",
-    role: "parent",
-    schoolName: "Little Angel's English School",
-  },
-};
 
 export const authService = {
   loginUser: async (data: LoginPayload): Promise<LoginResponse> => {
-    await delay();
-    
-    // Determine mock role based on identifier content to simulate backend resolving role from credentials
-    let resolvedRole: Role = "admin";
-    const lowerId = data.identifier.toLowerCase();
-    if (lowerId.includes("teacher")) {
-      resolvedRole = "teacher";
-    } else if (lowerId.includes("parent")) {
-      resolvedRole = "parent";
+    const response = await axiosInstance.post<ApiResult<any>>(
+      API_ENDPOINTS.LOGIN,
+      data
+    );
+
+    if (response.data.success && response.data.data) {
+      const apiData = response.data.data;
+      
+      // Map API response to our app's UserData
+      // Assuming the API returns tokens and user info in data
+      return {
+        accessToken: apiData.accessToken || "mock_token", 
+        refreshToken: apiData.refreshToken || "mock_refresh_token",
+        user: {
+          id: apiData.studentID?.toString() || apiData.id?.toString() || "0",
+          name: apiData.studentDisplayName || `${apiData.firstName} ${apiData.lastName}` || "User",
+          email: apiData.studentEmail || apiData.email || "",
+          mobile: apiData.studentNumber || "",
+          role: apiData.role || "parent", 
+          schoolName: "Little Angel's English School",
+          ...apiData,
+        },
+      };
+    } else {
+      throw new Error(response.data.message || "Login failed");
     }
-    
-    const user = MOCK_USERS[resolvedRole];
-    return {
-      accessToken: `mock_access_token_${Date.now()}`,
-      refreshToken: `mock_refresh_token_${Date.now()}`,
-      user: { ...user, role: resolvedRole },
-    };
   },
 
-  forgotPassword: async (
-    identifier: string
-  ): Promise<{ message: string }> => {
-    await delay();
+  forgotPassword: async (email: string): Promise<{ message: string }> => {
     return {
-      message: `OTP sent to ${identifier}`,
+      message: `Instruction sent to ${email}`,
     };
   },
 
   verifyOTP: async (
-    identifier: string,
+    email: string,
     otp: string
   ): Promise<{ token: string }> => {
-    await delay();
-    // Accept "123456" as valid OTP for mock
     if (otp !== "123456") {
       throw new Error("Invalid OTP. Please try again.");
     }
@@ -85,7 +59,6 @@ export const authService = {
     token: string,
     password: string
   ): Promise<{ message: string }> => {
-    await delay();
     return {
       message: "Password reset successfully",
     };
@@ -94,14 +67,27 @@ export const authService = {
   refreshToken: async (
     refreshToken: string
   ): Promise<{ accessToken: string }> => {
-    await delay(500);
     return {
       accessToken: `mock_access_token_refreshed_${Date.now()}`,
     };
   },
 
   getProfile: async (): Promise<UserData> => {
-    await delay(800);
-    return MOCK_USERS.admin;
+    const response = await axiosInstance.get<ApiResult<any>>(
+      API_ENDPOINTS.STUDENT_BY_ID // Assuming this can be used as profile for students
+    );
+    if (response.data.success && response.data.data) {
+      const apiData = response.data.data;
+      return {
+        id: apiData.studentID?.toString() || "0",
+        name: apiData.studentDisplayName || `${apiData.firstName} ${apiData.lastName}` || "User",
+        email: apiData.studentEmail || apiData.email || "",
+        mobile: apiData.studentNumber || "",
+        role: "parent",
+        schoolName: "Little Angel's English School",
+        ...apiData,
+      };
+    }
+    throw new Error("Failed to fetch profile");
   },
 };

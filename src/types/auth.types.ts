@@ -1,19 +1,31 @@
 export type Role = "admin" | "teacher" | "parent";
 
 export interface UserData {
+  studentID?: number;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  studentEmail?: string;
+  role: Role;
+  // Legacy fields for compatibility
   id: string;
   name: string;
-  email: string;
   mobile: string;
-  role: Role;
   schoolName: string;
   avatar?: string;
 }
 
+export interface ApiResult<T> {
+  success: boolean;
+  message: string | null;
+  data: T | null;
+  statusCode: number;
+  statusValueCode: number;
+}
+
 export interface LoginPayload {
-  identifier: string;
+  email: string;
   password: string;
-  role?: Role;
 }
 
 export interface LoginResponse {
@@ -36,12 +48,15 @@ export interface ResetPasswordPayload {
   password: string;
 }
 
+export type Language = "en" | "gu";
+
 export interface AuthState {
   accessToken: string | null;
   refreshToken: string | null;
   userData: UserData | null;
   role: Role | null;
   isAuthenticated: boolean;
+  language: Language;
 }
 
 export interface AuthActions {
@@ -54,4 +69,5 @@ export interface AuthActions {
   logout: () => void;
   refreshSession: (newToken: string) => void;
   setUser: (user: UserData) => void;
+  setLanguage: (lang: Language) => void;
 }

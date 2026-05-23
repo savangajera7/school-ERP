@@ -11,6 +11,7 @@ const initialState: AuthState = {
   userData: null,
   role: null,
   isAuthenticated: false,
+  language: "en",
 };
 
 export const useAuthStore = create<AuthStore>()(
@@ -39,6 +40,9 @@ export const useAuthStore = create<AuthStore>()(
 
       setUser: (user: UserData) =>
         set({ userData: user }),
+
+      setLanguage: (lang) =>
+        set({ language: lang }),
     }),
     {
       name: "school-erp-auth",
@@ -49,6 +53,7 @@ export const useAuthStore = create<AuthStore>()(
         userData: state.userData,
         role: state.role,
         isAuthenticated: state.isAuthenticated,
+        language: state.language,
       }),
     }
   )

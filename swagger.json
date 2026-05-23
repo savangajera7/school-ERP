@@ -1,0 +1,279 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "School Management API",
+    "version": "v1"
+  },
+  "paths": {
+    "/api/AcademicYear/GetAll": {
+      "get": {
+        "tags": ["AcademicYear"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultAcademicYearModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Batch/GetAll": {
+      "get": {
+        "tags": ["Batch"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultBatchModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Class/GetAll": {
+      "get": {
+        "tags": ["Class"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultClassModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Section/GetAll": {
+      "get": {
+        "tags": ["Section"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultSectionModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Login/Login": {
+      "post": {
+        "tags": ["Login"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultLoginModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Student/GetAllStudents": {
+      "get": {
+        "tags": ["Student"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultStudentModelList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Student/GetStudentByID": {
+      "post": {
+        "tags": ["Student"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudentModelByID"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResultStudentModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AcademicYearModel": {
+        "type": "object",
+        "properties": {
+          "academicYearID": { "type": "integer", "format": "int32" },
+          "academicYearName": { "type": "string", "nullable": true },
+          "startDate": { "type": "string", "format": "date-time" },
+          "endDate": { "type": "string", "format": "date-time" }
+        }
+      },
+      "BatchModel": {
+        "type": "object",
+        "properties": {
+          "batchID": { "type": "integer", "format": "int32" },
+          "batchName": { "type": "string", "nullable": true }
+        }
+      },
+      "ClassModel": {
+        "type": "object",
+        "properties": {
+          "classID": { "type": "integer", "format": "int32" },
+          "className": { "type": "string", "nullable": true }
+        }
+      },
+      "SectionModel": {
+        "type": "object",
+        "properties": {
+          "sectionID": { "type": "integer", "format": "int32" },
+          "sectionName": { "type": "string", "nullable": true }
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "properties": {
+          "email": { "type": "string", "nullable": true },
+          "password": { "type": "string", "nullable": true }
+        }
+      },
+      "LoginModel": {
+        "type": "object",
+        "properties": {
+          "userId": { "type": "integer", "format": "int32" },
+          "roleId": { "type": "integer", "format": "int32" },
+          "fullName": { "type": "string", "nullable": true },
+          "emailAddress": { "type": "string", "nullable": true },
+          "phoneNumber": { "type": "string", "nullable": true }
+        }
+      },
+      "StudentModel": {
+        "type": "object",
+        "properties": {
+          "studentID": { "type": "integer", "format": "int32" },
+          "firstName": { "type": "string", "nullable": true },
+          "lastName": { "type": "string", "nullable": true },
+          "studentDisplayName": { "type": "string", "nullable": true },
+          "rollNo": { "type": "string", "nullable": true },
+          "studentGRNo": { "type": "string", "nullable": true },
+          "studentEmail": { "type": "string", "nullable": true },
+          "studentNumber": { "type": "string", "nullable": true },
+          "classID": { "type": "integer", "format": "int32" },
+          "sectionID": { "type": "integer", "format": "int32", "nullable": true },
+          "batchID": { "type": "integer", "format": "int32", "nullable": true },
+          "admissionYear": { "type": "string", "nullable": true },
+          "dob": { "type": "string", "format": "date-time", "nullable": true },
+          "gender": { "type": "string", "nullable": true },
+          "currentAddress": { "type": "string", "nullable": true }
+        }
+      },
+      "StudentModelByID": {
+        "type": "object",
+        "properties": {
+          "studentID": { "type": "integer", "format": "int32" }
+        }
+      },
+      "ApiResultAcademicYearModel": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "message": { "type": "string", "nullable": true },
+          "data": { "type": "array", "items": { "$ref": "#/components/schemas/AcademicYearModel" } }
+        }
+      },
+      "ApiResultBatchModel": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "message": { "type": "string", "nullable": true },
+          "data": { "type": "array", "items": { "$ref": "#/components/schemas/BatchModel" } }
+        }
+      },
+      "ApiResultClassModel": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "message": { "type": "string", "nullable": true },
+          "data": { "type": "array", "items": { "$ref": "#/components/schemas/ClassModel" } }
+        }
+      },
+      "ApiResultSectionModel": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "message": { "type": "string", "nullable": true },
+          "data": { "type": "array", "items": { "$ref": "#/components/schemas/SectionModel" } }
+        }
+      },
+      "ApiResultLoginModel": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "message": { "type": "string", "nullable": true },
+          "data": { "$ref": "#/components/schemas/LoginModel" }
+        }
+      },
+      "ApiResultStudentModel": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "message": { "type": "string", "nullable": true },
+          "data": { "$ref": "#/components/schemas/StudentModel" }
+        }
+      },
+      "ApiResultStudentModelList": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "message": { "type": "string", "nullable": true },
+          "data": { "type": "array", "items": { "$ref": "#/components/schemas/StudentModel" } }
+        }
+      }
+    }
+  }
+}

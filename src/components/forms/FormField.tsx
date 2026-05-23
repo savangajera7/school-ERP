@@ -9,6 +9,8 @@ interface FormFieldProps<T extends FieldValues> extends Omit<TextInputProps, "va
   name: Path<T>;
   label?: string;
   isPassword?: boolean;
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
 }
 
 export function FormField<T extends FieldValues>({
@@ -16,6 +18,8 @@ export function FormField<T extends FieldValues>({
   name,
   label,
   isPassword = false,
+  leftIcon,
+  rightIcon,
   ...props
 }: FormFieldProps<T>) {
   const InputComponent = isPassword ? PasswordInput : Input;
@@ -31,6 +35,8 @@ export function FormField<T extends FieldValues>({
           onChangeText={onChange}
           onBlur={onBlur}
           error={error?.message}
+          leftIcon={leftIcon}
+          rightIcon={rightIcon}
           {...props}
         />
       )}

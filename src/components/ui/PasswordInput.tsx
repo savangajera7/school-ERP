@@ -10,11 +10,13 @@ import {
 interface PasswordInputProps extends Omit<TextInputProps, "secureTextEntry"> {
   label?: string;
   error?: string;
+  leftIcon?: React.ReactNode;
 }
 
 export const PasswordInput: React.FC<PasswordInputProps> = ({
   label,
   error,
+  leftIcon,
   className,
   onFocus,
   onBlur,
@@ -55,6 +57,7 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
           elevation: 2,
         } : undefined}
       >
+        {leftIcon && <View className="mr-3">{leftIcon}</View>}
         <TextInput
           className="flex-1 h-full text-[15px] text-[#111827] pr-10"
           placeholderTextColor="#9CA3AF"

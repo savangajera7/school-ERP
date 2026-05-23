@@ -196,6 +196,21 @@ const HOMEWORK_DATA: HomeworkItem[] = [
   { title: "Complete Integration Worksheet", class: "Class XII-Sci", dueDate: "May 22", subject: "Mathematics" },
 ];
 
+function SetupShortcut({ label, icon, onPress }: { label: string, icon: string, onPress: () => void }) {
+  return (
+    <TouchableOpacity 
+      onPress={onPress}
+      className="flex-row items-center justify-between p-3 bg-white/60 rounded-xl border border-indigo-50"
+    >
+      <View className="flex-row items-center gap-3">
+        <Text className="text-lg">{icon}</Text>
+        <Text className="text-sm font-bold text-gray-700">{label}</Text>
+      </View>
+      <Text className="text-indigo-400 font-bold">→</Text>
+    </TouchableOpacity>
+  );
+}
+
 interface StaffLeaveItem {
   name: string;
   role: string;
@@ -281,8 +296,58 @@ export default function DashboardScreen() {
   };
 
   const renderDetailsSection = () => {
+    const isParent = userData?.role === 'parent';
+    const isAdmin = userData?.role === 'admin';
+
     const widgetsRow1 = (
       <>
+        {/* Admin Quick Setup */}
+        {isAdmin && (
+          <View className="flex-1 min-w-[320px]">
+            <Card className="bg-white border border-indigo-100 p-5 h-full bg-indigo-50/30">
+              <View className="flex-row justify-between items-center mb-5 pb-3 border-b border-indigo-100">
+                <Text className="text-[16px] font-bold text-indigo-900">⚙️ Academic Setup</Text>
+                <TouchableOpacity onPress={() => router.push("/(app)/academic-setup")}>
+                  <Text className="text-xs text-indigo-600 font-bold">Manage</Text>
+                </TouchableOpacity>
+              </View>
+              <View className="gap-3">
+                <SetupShortcut label="Academic Years" icon="📅" onPress={() => router.push("/(app)/academic-setup")} />
+                <SetupShortcut label="Classes & Sections" icon="🏫" onPress={() => router.push("/(app)/academic-setup")} />
+                <SetupShortcut label="Batches" icon="🔢" onPress={() => router.push("/(app)/academic-setup")} />
+              </View>
+            </Card>
+          </View>
+        )}
+
+        {/* Parent-specific Results Widget */}
+        {isParent && (
+          <View className="flex-1 min-w-[320px]">
+            <Card className="bg-white border border-indigo-100 p-5 h-full bg-indigo-50/30">
+              <View className="flex-row justify-between items-center mb-5 pb-3 border-b border-indigo-100">
+                <Text className="text-[16px] font-bold text-indigo-900">🎓 Children's Results</Text>
+                <TouchableOpacity onPress={() => router.push("/(app)/parent-results")}>
+                  <Text className="text-xs text-indigo-600 font-bold">View Marksheet</Text>
+                </TouchableOpacity>
+              </View>
+              <View className="items-center justify-center py-4">
+                <View className="w-16 h-16 bg-white rounded-full items-center justify-center border border-indigo-100 mb-3 shadow-sm">
+                  <Text className="text-2xl font-bold text-indigo-600">A+</Text>
+                </View>
+                <Text className="text-sm font-bold text-gray-800">Latest: First Term Exam</Text>
+                <Text className="text-[11px] text-gray-400 font-semibold mt-1">Aggregate: 92.4%</Text>
+              </View>
+              <Button 
+                variant="primary" 
+                size="sm" 
+                className="mt-2 bg-indigo-600"
+                label="Check Detailed Marks"
+                onPress={() => router.push("/(app)/parent-results")}
+              />
+            </Card>
+          </View>
+        )}
+
         {/* Exams List Widget */}
         <View className="flex-1 min-w-[320px]">
           <Card className="bg-white border border-gray-100 p-5 h-full">
