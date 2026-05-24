@@ -157,7 +157,7 @@ export default function FeesManagementScreen() {
   const showLoader = activeTab === "collect" ? isPendingLoading : isHistoryLoading;
 
   return (
-    <SafeAreaView className="flex-1 bg-[#FDFDFD]" edges={["top", "left", "right"]}>
+    <SafeAreaView className="flex-1 bg-[#FDFDFD]" edges={["left", "right"]}>
       <StatusBar style="light" translucent backgroundColor="transparent" />
       
       <ScreenHeader 

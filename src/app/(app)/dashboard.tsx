@@ -1,285 +1,365 @@
-import React from "react";
-import { View, Text, ScrollView, TouchableOpacity, Dimensions, Image, Platform } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import React, { useState } from "react";
+import {
+  View, Text, ScrollView, TouchableOpacity,
+  TextInput, Image, Platform
+} from "react-native";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { useAuthStore } from "@/store/authStore";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Colors } from "@/constants/colors";
+import { BottomTabBar } from "@/components/ui/BottomTabBar";
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+// Quick action items
+const QUICK_ACTIONS = [
+  { title: "Students",   icon: "🎓", route: "/(app)/students",          bg: "#E0F2FE", iconBg: "#BAE6FD" },
+  { title: "Attendance", icon: "📝", route: "/(app)/attendance",         bg: "#FEF9C3", iconBg: "#FEF08A" },
+  { title: "Fees",       icon: "💰", route: "/(app)/fees",               bg: "#DCFCE7", iconBg: "#BBF7D0" },
+  { title: "Exams",      icon: "📊", route: "/(app)/exams",              bg: "#F3E8FF", iconBg: "#E9D5FF" },
+  { title: "Teachers",   icon: "👥", route: "/(app)/teachers",           bg: "#FFE4E6", iconBg: "#FECDD3" },
+  { title: "Notices",    icon: "📢", route: "/(app)/notices",            bg: "#FEF3C7", iconBg: "#FDE68A" },
+  { title: "Academic",   icon: "🏫", route: "/(app)/academic-setup",     bg: "#E0E7FF", iconBg: "#C7D2FE" },
+  { title: "Inquiries",  icon: "💬", route: "/(app)/inquiries",          bg: "#CFFAFE", iconBg: "#A5F3FC" },
+  { title: "Results",    icon: "🏆", route: "/(app)/parent-results",     bg: "#FEF9C3", iconBg: "#FEF08A" },
+  { title: "Timetable",  icon: "🗓️", route: "/(app)/timetable",          bg: "#FCE7F3", iconBg: "#FBCFE8" },
+  { title: "Reports",    icon: "📈", route: "/(app)/attendance-reports", bg: "#F0FDF4", iconBg: "#BBF7D0" },
+  { title: "Admission",  icon: "📋", route: "/(app)/admission-form",     bg: "#F5F3FF", iconBg: "#DDD6FE" },
+];
+
+// Sample class attendance status
+const CLASS_ATTENDANCE = [
+  { name: "Class I – A",   taken: true  },
+  { name: "Class I – B",   taken: true  },
+  { name: "Class II – A",  taken: false },
+  { name: "Class II – B",  taken: false },
+  { name: "Class III – A", taken: true  },
+];
 
 export default function DashboardScreen() {
   const { userData, logout } = useAuthStore();
   const { isMobile } = useBreakpoint();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [birthdayTab, setBirthdayTab] = useState<"today" | "upcoming">("today");
 
-  const QUICK_ACTIONS = [
-    { title: "Students", icon: "🎓", route: "/(app)/students", color: "#4F46E5" },
-    { title: "Attendance", icon: "📝", route: "/(app)/attendance", color: "#10B981" },
-    { title: "Fees", icon: "💰", route: "/(app)/fees", color: "#F59E0B" },
-    { title: "Exams", icon: "📊", route: "/(app)/exams", color: "#EF4444" },
-    { title: "Teachers", icon: "👥", route: "/(app)/teachers", color: "#8B5CF6" },
-    { title: "Notices", icon: "📢", route: "/(app)/notices", color: "#EC4899" },
-    { title: "Academic", icon: "🏫", route: "/(app)/academic-setup", color: "#6366F1" },
-    { title: "Reports", icon: "📈", route: "/(app)/reports", color: "#06B6D4" },
-    { title: "Settings", icon: "⚙️", route: "/(app)/settings", color: "#64748B" },
-  ];
+  const firstName = userData?.name?.split(" ")[0] || "Admin";
+  const insets = useSafeAreaInsets();
 
   return (
-    <View className="flex-1 bg-[#F8FAFC]">
-      <StatusBar style="light" />
-      
-      {/* Background Watermark for Web/Large Screens */}
-      {!isMobile && (
-        <View 
-          className="absolute right-[-100] top-[-100] opacity-[0.03]"
-          style={{ transform: [{ rotate: '15deg' }] }}
-        >
-          <Image 
-            source={require("../../../assets/school-logo.png")} 
-            style={{ width: 600, height: 600 }}
-            resizeMode="contain"
+    <SafeAreaView className="flex-1 bg-[#F4F6FA]" edges={["left", "right", "bottom"]}>
+      <StatusBar style="light" translucent backgroundColor="transparent" />
+
+      {/* ── Header Gradient ─────────────────────────────────────── */}
+      <LinearGradient
+        colors={["#0d3666", "#0a2a4e"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={{
+          paddingHorizontal: isMobile ? 16 : 32,
+          paddingTop: (insets.top || 0) + (isMobile ? 12 : 20),
+          paddingBottom: isMobile ? 60 : 72,
+          borderBottomLeftRadius: 32,
+          borderBottomRightRadius: 32,
+        }}
+      >
+        {/* Top bar: logo + school name + year + logout */}
+        <View className="flex-row justify-between items-center mb-5">
+          <View className="flex-row items-center gap-3">
+            <View
+              className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 overflow-hidden items-center justify-center"
+            >
+              <Image
+                source={require("../../../assets/school-logo.png")}
+                className="w-8 h-8"
+                resizeMode="contain"
+              />
+            </View>
+            <View>
+              <Text className="text-white font-black text-sm tracking-wide">
+                Sai Vidhya Mandir
+              </Text>
+              <Text className="text-white/50 text-[10px] font-bold uppercase tracking-widest">
+                School Management ERP
+              </Text>
+            </View>
+          </View>
+
+          <View className="flex-row items-center gap-2">
+            <View className="bg-white/10 border border-white/20 px-3 py-1.5 rounded-xl">
+              <Text className="text-white text-[11px] font-black">2026–2027</Text>
+            </View>
+            <TouchableOpacity
+              onPress={logout}
+              className="w-8 h-8 bg-rose-500/20 border border-rose-400/30 rounded-xl items-center justify-center"
+              activeOpacity={0.8}
+            >
+              <Text className="text-sm">🚪</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Greeting */}
+        <Text className="text-white/60 text-xs font-black uppercase tracking-widest">
+          Welcome back
+        </Text>
+        <Text className="text-white text-2xl font-black mt-0.5">
+          Hello, {firstName} 👋
+        </Text>
+
+        {/* Omni Search */}
+        <View className="mt-5 bg-white/10 border border-white/20 rounded-2xl h-[46px] px-4 flex-row items-center gap-2">
+          <Text className="text-white/50 text-sm">🔍</Text>
+          <TextInput
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholder="Search students, fees, notices…"
+            placeholderTextColor="rgba(255,255,255,0.35)"
+            className="flex-1 text-white text-[13px] font-semibold h-full"
+            style={{ outlineWidth: 0 } as any}
           />
         </View>
-      )}
+      </LinearGradient>
 
-      <ScrollView 
-        className="flex-1" 
+      {/* ── Scrollable body ─────────────────────────────────────── */}
+      <ScrollView
+        className="flex-1"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 60 }}
+        contentContainerStyle={{ paddingBottom: isMobile ? 100 : 40 }}
       >
-        <View className={`${!isMobile ? 'max-w-[1200px] w-full self-center' : ''}`}>
-          
-          {/* Header Section */}
-          <LinearGradient
-            colors={[Colors.primary, Colors.primaryDark]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            className={`px-6 pt-12 pb-24 ${!isMobile ? 'rounded-b-[60px] mx-4 mt-4' : 'rounded-b-[40px]'}`}
-          >
-            {/* User Profile Bar */}
-            <View className="flex-row justify-between items-center mb-10">
-              <View className="flex-row items-center gap-4">
-                <View className="w-16 h-16 bg-white/20 rounded-2xl items-center justify-center border border-white/30 backdrop-blur-xl">
-                  <Image 
-                    source={require("../../../assets/school-logo.png")} 
-                    className="w-12 h-12" 
-                    resizeMode="contain" 
-                  />
+        <View
+          className="px-4 md:px-8 max-w-[1200px] w-full self-center"
+          style={{ marginTop: -40 }}
+        >
+          {/* ── 4 Stat Cards ─────────────────────────────────────── */}
+          <View className={`flex-row flex-wrap gap-3 mb-6 ${isMobile ? "" : "gap-4"}`}>
+            <StatCard
+              isMobile={isMobile}
+              emoji="🎓"
+              label="Total Students"
+              value="169"
+              sub="New: 56  ·  Old: 113"
+              bg="#E0F2FE"
+              textColor="#0369A1"
+            />
+            <StatCard
+              isMobile={isMobile}
+              emoji="✅"
+              label="Attendance Today"
+              value="94.2%"
+              sub="Present: 159  ·  Absent: 10"
+              bg="#DCFCE7"
+              textColor="#15803D"
+            />
+            <StatCard
+              isMobile={isMobile}
+              emoji="👥"
+              label="Total Staff"
+              value="12"
+              sub="Teaching: 8  ·  Other: 4"
+              bg="#F3E8FF"
+              textColor="#7E22CE"
+            />
+            <StatCard
+              isMobile={isMobile}
+              emoji="⏱️"
+              label="Staff Attendance"
+              value="100%"
+              sub="Present: 12  ·  Absent: 0"
+              bg="#CFFAFE"
+              textColor="#0E7490"
+            />
+          </View>
+
+          {/* ── Quick Actions ─────────────────────────────────────── */}
+          <SectionCard title="Quick Actions" icon="⚡">
+            <View className="flex-row flex-wrap">
+              {QUICK_ACTIONS.map((action, i) => (
+                <TouchableOpacity
+                  key={i}
+                  onPress={() => router.push(action.route as any)}
+                  activeOpacity={0.75}
+                  style={{ width: isMobile ? "25%" : "12.5%" }}
+                  className="items-center mb-6"
+                >
+                  <View
+                    className="w-14 h-14 rounded-2xl items-center justify-center mb-2"
+                    style={{ backgroundColor: action.bg }}
+                  >
+                    <Text className="text-2xl">{action.icon}</Text>
+                  </View>
+                  <Text
+                    className="text-gray-700 font-bold text-[10px] text-center"
+                    style={{ lineHeight: 13 }}
+                    numberOfLines={2}
+                  >
+                    {action.title}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </SectionCard>
+
+          {/* ── Two side-by-side widgets ─────────────────────────── */}
+          <View className={`flex-row gap-4 ${isMobile ? "flex-col" : ""}`}>
+
+            {/* Birthday Widget */}
+            <View className="flex-1">
+              <SectionCard title="Birthdays" icon="🎂" noPaddingBody>
+                {/* Tab toggle */}
+                <View className="flex-row bg-gray-50 border border-gray-150 rounded-xl p-0.5 mx-5 mb-4">
+                  {(["today", "upcoming"] as const).map((tab) => (
+                    <TouchableOpacity
+                      key={tab}
+                      onPress={() => setBirthdayTab(tab)}
+                      activeOpacity={0.8}
+                      className={`flex-1 py-2 rounded-xl items-center ${
+                        birthdayTab === tab ? "bg-[#0d3666]" : ""
+                      }`}
+                    >
+                      <Text
+                        className={`text-[11px] font-black uppercase tracking-wide ${
+                          birthdayTab === tab ? "text-white" : "text-gray-400"
+                        }`}
+                      >
+                        {tab === "today" ? "Today" : "Upcoming"}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
                 </View>
-                <View>
-                  <Text className="text-white/60 text-xs font-black uppercase tracking-widest">Administrator</Text>
-                  <Text className="text-white text-2xl font-black mt-1">
-                    Hello, {userData?.name?.split(' ')[0] || "Admin"} 👋
+
+                {/* Empty state */}
+                <View className="items-center justify-center py-10">
+                  <Text className="text-3xl mb-2">🎁</Text>
+                  <Text className="text-gray-400 font-extrabold text-xs uppercase tracking-wider">
+                    No birthdays {birthdayTab === "today" ? "today" : "this week"}
                   </Text>
                 </View>
-              </View>
-              
-              <View className="flex-row items-center gap-3">
-                <TouchableOpacity 
-                  className="w-12 h-12 bg-white/10 rounded-2xl items-center justify-center border border-white/20 backdrop-blur-md"
-                >
-                  <Text className="text-xl">🔔</Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                  onPress={logout}
-                  className="w-12 h-12 bg-rose-500/20 rounded-2xl items-center justify-center border border-rose-500/30 backdrop-blur-md"
-                >
-                  <Text className="text-xl">🚪</Text>
-                </TouchableOpacity>
-              </View>
+              </SectionCard>
             </View>
 
-            {/* Session Info Card */}
-            <View className="bg-white/10 p-6 rounded-[32px] border border-white/20 backdrop-blur-2xl">
-              <View className="flex-row justify-between items-start">
-                <View>
-                  <Text className="text-white/70 font-bold text-xs uppercase tracking-widest mb-2">Current Academic Session</Text>
-                  <Text className="text-white text-3xl font-black">2026 - 2027</Text>
+            {/* Attendance Status Widget */}
+            <View className="flex-1">
+              <SectionCard title="Attendance Status" icon="📊" noPaddingBody>
+                {/* Legend */}
+                <View className="flex-row gap-4 px-5 mb-3">
+                  <View className="flex-row items-center gap-1.5">
+                    <View className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                    <Text className="text-[10px] font-bold text-gray-500">Taken</Text>
+                  </View>
+                  <View className="flex-row items-center gap-1.5">
+                    <View className="w-2.5 h-2.5 rounded-full bg-rose-500" />
+                    <Text className="text-[10px] font-bold text-gray-500">Not Taken</Text>
+                  </View>
                 </View>
-                <View className="bg-emerald-500/20 px-4 py-2 rounded-2xl border border-emerald-500/30">
-                  <Text className="text-emerald-400 text-xs font-black uppercase tracking-tighter">● Active</Text>
-                </View>
-              </View>
-              
-              <View className="h-[1px] bg-white/10 my-6" />
-              
-              <View className="flex-row items-center gap-6">
-                <View>
-                  <Text className="text-white/50 text-[10px] font-black uppercase tracking-widest">Term</Text>
-                  <Text className="text-white font-bold text-sm mt-1">First Semester</Text>
-                </View>
-                <View className="w-[1px] h-8 bg-white/10" />
-                <View>
-                  <Text className="text-white/50 text-[10px] font-black uppercase tracking-widest">Last Sync</Text>
-                  <Text className="text-white font-bold text-sm mt-1">Just Now</Text>
-                </View>
-              </View>
-            </View>
-          </LinearGradient>
 
-          {/* Main Content Area */}
-          <View className="px-6 -mt-10">
-            
-            {/* Stats Overview */}
-            <View className={`flex-row flex-wrap justify-between ${!isMobile ? 'gap-4' : ''}`}>
-              <StatCard 
-                title="Total Students" 
-                value="1,284" 
-                icon="👨‍🎓" 
-                trend="+12%" 
-                color="#4F46E5"
-                isMobile={isMobile}
-              />
-              <StatCard 
-                title="Attendance" 
-                value="94.2%" 
-                icon="✅" 
-                trend="+2.4%" 
-                color="#10B981"
-                isMobile={isMobile}
-              />
-            </View>
-
-            {/* Modules Section */}
-            <View className="mt-12">
-              <View className="flex-row justify-between items-center mb-8 px-2">
-                <View>
-                  <Text className="text-primary text-xl font-black uppercase tracking-widest">Management</Text>
-                  <View className="h-1 w-12 bg-accent mt-2 rounded-full" />
-                </View>
-                <TouchableOpacity>
-                  <Text className="text-accent font-black text-sm">Customize</Text>
-                </TouchableOpacity>
-              </View>
-
-              <View className="flex-row flex-wrap">
-                {QUICK_ACTIONS.map((action, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    onPress={() => router.push(action.route as any)}
-                    activeOpacity={0.7}
-                    className={`${isMobile ? 'w-1/3' : 'w-1/4'} items-center mb-10`}
+                {CLASS_ATTENDANCE.map((cls, i) => (
+                  <View
+                    key={i}
+                    className={`flex-row justify-between items-center px-5 py-3 ${
+                      i < CLASS_ATTENDANCE.length - 1 ? "border-b border-gray-50" : ""
+                    }`}
                   >
-                    <View 
-                      className="w-20 h-20 rounded-[28px] items-center justify-center mb-4 shadow-xl shadow-gray-200"
-                      style={{ 
-                        backgroundColor: 'white',
-                        borderWidth: 1, 
-                        borderColor: action.color + '20' 
-                      }}
+                    <Text className="text-[13px] font-bold text-gray-800">{cls.name}</Text>
+                    <View
+                      className={`px-3 py-0.5 rounded-full border ${
+                        cls.taken
+                          ? "bg-emerald-50 border-emerald-200"
+                          : "bg-rose-50 border-rose-200"
+                      }`}
                     >
-                      <View 
-                        className="w-14 h-14 rounded-2xl items-center justify-center"
-                        style={{ backgroundColor: action.color + '10' }}
+                      <Text
+                        className={`text-[10px] font-black uppercase ${
+                          cls.taken ? "text-emerald-700" : "text-rose-700"
+                        }`}
                       >
-                        <Text className="text-3xl">{action.icon}</Text>
-                      </View>
+                        {cls.taken ? "✓ Taken" : "✗ Pending"}
+                      </Text>
                     </View>
-                    <Text className="text-primary font-black text-xs text-center uppercase tracking-tighter">
-                      {action.title}
-                    </Text>
-                  </TouchableOpacity>
+                  </View>
                 ))}
-              </View>
-            </View>
-
-            {/* Activities & Schedule Row */}
-            <View className={`mt-4 ${!isMobile ? 'flex-row gap-6' : ''}`}>
-              {/* Recent Activity */}
-              <View className={`bg-white p-8 rounded-[40px] border border-gray-100 shadow-xl shadow-gray-200/50 ${!isMobile ? 'flex-1' : 'mb-6'}`}>
-                <View className="flex-row justify-between items-center mb-8">
-                  <Text className="text-primary text-xl font-black uppercase tracking-widest">Activity</Text>
-                  <TouchableOpacity className="bg-gray-50 px-4 py-2 rounded-xl">
-                    <Text className="text-primary/50 font-black text-[10px] uppercase">Filter</Text>
-                  </TouchableOpacity>
-                </View>
-                
-                <ActivityItem title="New Admission" desc="Yash Patel joined Std 5-B" time="10m ago" icon="✨" color="#6366F1" />
-                <ActivityItem title="Fee Payment" desc="Std 10-A Collection complete" time="1h ago" icon="💰" color="#F59E0B" />
-                <ActivityItem title="Notice Sent" desc="Holiday for Diwali Break" time="3h ago" icon="📢" color="#EC4899" />
-              </View>
-
-              {/* School Events / Calendar */}
-              <View className={`bg-[#0d3666] p-8 rounded-[40px] ${!isMobile ? 'flex-1' : ''}`}>
-                <View className="flex-row justify-between items-center mb-8">
-                  <Text className="text-white text-xl font-black uppercase tracking-widest">Events</Text>
-                  <TouchableOpacity className="bg-white/10 px-4 py-2 rounded-xl">
-                    <Text className="text-white/50 font-black text-[10px] uppercase">Calendar</Text>
-                  </TouchableOpacity>
-                </View>
-                
-                <EventItem title="Parents Meet" date="25 May" time="09:00 AM" />
-                <EventItem title="Science Fair" date="28 May" time="10:30 AM" />
-                <EventItem title="Unit Test" date="01 Jun" time="08:00 AM" />
-              </View>
+              </SectionCard>
             </View>
 
           </View>
+
         </View>
       </ScrollView>
-    </View>
+
+      {/* ── Mobile Bottom Tab Bar ─────────────────────────────── */}
+      {isMobile && <BottomTabBar />}
+    </SafeAreaView>
   );
 }
 
-function StatCard({ title, value, icon, trend, color, isMobile }: { title: string, value: string, icon: string, trend: string, color: string, isMobile: boolean }) {
+/* ── Sub-components ──────────────────────────────────────────── */
+
+function StatCard({
+  isMobile, emoji, label, value, sub, bg, textColor,
+}: {
+  isMobile: boolean; emoji: string; label: string; value: string;
+  sub: string; bg: string; textColor: string;
+}) {
   return (
-    <View 
-      className={`${isMobile ? 'w-[48%]' : 'flex-1'} bg-white p-6 rounded-[36px] border border-gray-100 mb-4 shadow-xl shadow-gray-200/50`}
+    <View
+      className="bg-white border border-gray-100 rounded-2xl p-4"
+      style={{
+        width: isMobile ? "48%" : "23.5%",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.04,
+        shadowRadius: 10,
+        elevation: 2,
+      }}
     >
-      <View className="flex-row justify-between items-start mb-6">
-        <View 
-          className="w-12 h-12 rounded-2xl items-center justify-center"
-          style={{ backgroundColor: color + '10' }}
+      <View className="flex-row justify-between items-start mb-3">
+        <View
+          className="w-11 h-11 rounded-xl items-center justify-center"
+          style={{ backgroundColor: bg }}
         >
-          <Text className="text-2xl">{icon}</Text>
-        </View>
-        <View className="bg-emerald-50 px-2 py-1 rounded-lg">
-          <Text className="text-emerald-600 text-[10px] font-black">{trend}</Text>
+          <Text className="text-xl">{emoji}</Text>
         </View>
       </View>
-      <Text className="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-1">{title}</Text>
-      <Text className="text-primary text-3xl font-black">{value}</Text>
+      <Text className="text-gray-400 text-[10px] font-black uppercase tracking-wider mb-0.5">
+        {label}
+      </Text>
+      <Text className="text-2xl font-black" style={{ color: textColor }}>
+        {value}
+      </Text>
+      <Text className="text-[11px] font-semibold text-gray-400 mt-1" numberOfLines={1}>
+        {sub}
+      </Text>
     </View>
   );
 }
 
-function ActivityItem({ title, desc, time, icon, color }: { title: string, desc: string, time: string, icon: string, color: string }) {
+function SectionCard({
+  title, icon, children, noPaddingBody = false,
+}: {
+  title: string; icon: string; children: React.ReactNode; noPaddingBody?: boolean;
+}) {
   return (
-    <View className="flex-row items-center gap-5 mb-8 last:mb-0">
-      <View 
-        className="w-14 h-14 rounded-2xl items-center justify-center"
-        style={{ backgroundColor: color + '10' }}
-      >
-        <Text className="text-2xl">{icon}</Text>
-      </View>
-      <View className="flex-1">
-        <Text className="text-primary font-black text-[15px]">{title}</Text>
-        <Text className="text-gray-400 text-xs font-bold mt-1" numberOfLines={1}>{desc}</Text>
-      </View>
-      <Text className="text-gray-300 text-[10px] font-black uppercase tracking-widest">{time}</Text>
-    </View>
-  );
-}
-
-function EventItem({ title, date, time }: { title: string, date: string, time: string }) {
-  return (
-    <View className="flex-row items-center gap-5 mb-8 last:mb-0">
-      <View className="bg-white/10 w-14 h-14 rounded-2xl items-center justify-center border border-white/10">
-        <Text className="text-white font-black text-xs text-center leading-tight">
-          {date.split(' ')[0]}
-          {"\n"}
-          <Text className="text-[10px] opacity-50 font-medium">{date.split(' ')[1]}</Text>
+    <View
+      className="bg-white border border-gray-100 rounded-2xl mb-4 overflow-hidden"
+      style={{
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.04,
+        shadowRadius: 10,
+        elevation: 2,
+      }}
+    >
+      {/* Card header */}
+      <View className="flex-row items-center gap-2 px-5 pt-5 pb-4 border-b border-gray-50">
+        <Text className="text-lg">{icon}</Text>
+        <Text className="text-gray-900 font-black text-[14px] uppercase tracking-wide flex-1">
+          {title}
         </Text>
+        <View className="w-1 h-4 bg-orange-500 rounded-full" />
       </View>
-      <View className="flex-1">
-        <Text className="text-white font-black text-[15px]">{title}</Text>
-        <Text className="text-white/40 text-xs font-bold mt-1">{time}</Text>
-      </View>
-      <View className="w-8 h-8 rounded-full bg-white/5 items-center justify-center">
-        <Text className="text-white/30 text-xs">→</Text>
-      </View>
+
+      {/* Card body */}
+      <View className={noPaddingBody ? "pt-4" : "p-5"}>{children}</View>
     </View>
   );
 }

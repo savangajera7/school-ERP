@@ -1,7 +1,8 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Platform } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Colors } from "@/constants/colors";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 
@@ -14,6 +15,8 @@ interface ScreenHeaderProps {
   flat?: boolean;
   /** Custom back action, defaults to router.back() */
   onBack?: () => void;
+  /** Hide the back button (e.g. for root screens) */
+  hideBack?: boolean;
 }
 
 export function ScreenHeader({
@@ -22,8 +25,10 @@ export function ScreenHeader({
   rightAction,
   flat = false,
   onBack,
+  hideBack = false,
 }: ScreenHeaderProps) {
   const { isMobile } = useBreakpoint();
+  const insets = useSafeAreaInsets();
 
   const handleBack = () => {
     if (onBack) {
@@ -37,16 +42,22 @@ export function ScreenHeader({
     return (
       <View
         className="bg-white border-b border-gray-100 flex-row justify-between items-center z-10"
-        style={{ paddingHorizontal: isMobile ? 16 : 24, paddingVertical: isMobile ? 14 : 18 }}
+        style={{
+          paddingHorizontal: isMobile ? 16 : 24,
+          paddingTop: (insets.top || 0) + (isMobile ? 14 : 18),
+          paddingBottom: isMobile ? 14 : 18,
+        }}
       >
         <View className="flex-row items-center gap-3 flex-1">
-          <TouchableOpacity
-            onPress={handleBack}
-            className="w-10 h-10 bg-gray-50 rounded-xl items-center justify-center"
-            activeOpacity={0.7}
-          >
-            <Text className="text-sm font-bold text-gray-700">←</Text>
-          </TouchableOpacity>
+          {!hideBack && (
+            <TouchableOpacity
+              onPress={handleBack}
+              className="w-10 h-10 bg-gray-50 rounded-xl items-center justify-center"
+              activeOpacity={0.7}
+            >
+              <Text className="text-sm font-bold text-gray-700">←</Text>
+            </TouchableOpacity>
+          )}
           <View className="flex-1">
             <Text
               className="font-black text-gray-900"
@@ -78,7 +89,7 @@ export function ScreenHeader({
       end={{ x: 1, y: 1 }}
       style={{
         paddingHorizontal: isMobile ? 16 : 24,
-        paddingTop: isMobile ? 16 : 24,
+        paddingTop: (insets.top || 0) + (isMobile ? 14 : 20),
         paddingBottom: isMobile ? 40 : 48,
         borderBottomLeftRadius: isMobile ? 24 : 32,
         borderBottomRightRadius: isMobile ? 24 : 32,
@@ -86,13 +97,15 @@ export function ScreenHeader({
     >
       <View className="flex-row justify-between items-center">
         <View className="flex-row items-center gap-3 flex-1">
-          <TouchableOpacity
-            onPress={handleBack}
-            className="w-10 h-10 bg-white/10 rounded-xl items-center justify-center border border-white/20"
-            activeOpacity={0.7}
-          >
-            <Text className="text-white font-bold text-sm">←</Text>
-          </TouchableOpacity>
+          {!hideBack && (
+            <TouchableOpacity
+              onPress={handleBack}
+              className="w-10 h-10 bg-white/10 rounded-xl items-center justify-center border border-white/20"
+              activeOpacity={0.7}
+            >
+              <Text className="text-white font-bold text-sm">←</Text>
+            </TouchableOpacity>
+          )}
           <View className="flex-1">
             <Text
               className="font-black text-white"

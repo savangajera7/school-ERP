@@ -208,7 +208,7 @@ export default function AdmissionFormScreen() {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-[#FDFDFD]" edges={["top", "left", "right"]}>
+    <SafeAreaView className="flex-1 bg-[#FDFDFD]" edges={["left", "right"]}>
       <StatusBar style="light" translucent backgroundColor="transparent" />
       <KeyboardAvoidingView
         style={{ flex: 1 }}
