@@ -70,35 +70,35 @@ export default function DashboardScreen() {
       >
         {/* ── Header Gradient ─────────────────────────────────────── */}
         <LinearGradient
-          colors={["#0d3666", "#0a2a4e"]}
+          colors={["#134A8C", "#0D3666"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={{
             paddingHorizontal: isMobile ? 16 : 32,
             paddingTop: (insets.top || 0) + (isMobile ? 12 : 20),
             paddingBottom: isMobile ? 60 : 72,
-            borderBottomLeftRadius: 32,
-            borderBottomRightRadius: 32,
+            borderBottomLeftRadius: 36,
+            borderBottomRightRadius: 36,
           }}
         >
           {/* Top bar: logo + school name + year + logout */}
           <View className="flex-row justify-between items-center mb-5">
             <View className="flex-row items-center gap-3">
               <View
-                className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 overflow-hidden items-center justify-center"
+                className="w-11 h-11 rounded-2xl bg-white border border-white/20 overflow-hidden items-center justify-center p-0.5"
               >
                 <Image
-                  source={require("../../../assets/school-logo.png")}
-                  className="w-8 h-8"
+                  source={{ uri: "https://little-angle.mahispark.com/images/logo.png" }}
+                  className="w-9 h-9"
                   resizeMode="contain"
                 />
               </View>
               <View>
-                <Text className="text-white font-black text-sm tracking-wide">
-                  Sai Vidhya Mandir
+                <Text className="text-white font-black text-[15px] tracking-wide" style={{ fontFamily: "Outfit" }}>
+                  Little Angel's
                 </Text>
-                <Text className="text-white/50 text-[10px] font-bold uppercase tracking-widest">
-                  School Management ERP
+                <Text className="text-[#F5921E] text-[10px] font-black uppercase tracking-widest">
+                  સાંઈ વિદ્યા મંદિર · ERP
                 </Text>
               </View>
             </View>
@@ -226,7 +226,7 @@ export default function DashboardScreen() {
                       onPress={() => setBirthdayTab(tab)}
                       activeOpacity={0.8}
                       className={`flex-1 py-2 rounded-xl items-center ${
-                        birthdayTab === tab ? "bg-[#0d3666]" : ""
+                        birthdayTab === tab ? "bg-[#134A8C]" : ""
                       }`}
                     >
                       <Text
@@ -253,43 +253,96 @@ export default function DashboardScreen() {
             {/* Attendance Status Widget */}
             <View className="flex-1">
               <SectionCard title="Attendance Status" icon="📊" noPaddingBody>
-                {/* Legend */}
-                <View className="flex-row gap-4 px-5 mb-3">
-                  <View className="flex-row items-center gap-1.5">
-                    <View className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-                    <Text className="text-[10px] font-bold text-gray-500">Taken</Text>
-                  </View>
-                  <View className="flex-row items-center gap-1.5">
-                    <View className="w-2.5 h-2.5 rounded-full bg-rose-500" />
-                    <Text className="text-[10px] font-bold text-gray-500">Not Taken</Text>
-                  </View>
-                </View>
-
-                {CLASS_ATTENDANCE.map((cls, i) => (
-                  <View
-                    key={i}
-                    className={`flex-row justify-between items-center px-5 py-3 ${
-                      i < CLASS_ATTENDANCE.length - 1 ? "border-b border-gray-50" : ""
-                    }`}
-                  >
-                    <Text className="text-[13px] font-bold text-gray-800">{cls.name}</Text>
-                    <View
-                      className={`px-3 py-0.5 rounded-full border ${
-                        cls.taken
-                          ? "bg-emerald-50 border-emerald-200"
-                          : "bg-rose-50 border-rose-200"
-                      }`}
-                    >
-                      <Text
-                        className={`text-[10px] font-black uppercase ${
-                          cls.taken ? "text-emerald-700" : "text-rose-700"
-                        }`}
-                      >
-                        {cls.taken ? "✓ Taken" : "✗ Pending"}
-                      </Text>
+                {!isMobile ? (
+                  /* Elegant Desktop Table */
+                  <View className="px-5 pb-5">
+                    <View className="border border-gray-100 rounded-2xl overflow-hidden shadow-sm">
+                      <View className="flex-row bg-[#F4F8FC] border-b border-gray-100 px-4 py-3">
+                        <Text className="flex-[2] font-black text-gray-400 text-[10px] uppercase tracking-wider">Class Name</Text>
+                        <Text className="flex-1 font-black text-gray-400 text-[10px] uppercase tracking-wider text-center">Status</Text>
+                        <Text className="flex-1 font-black text-gray-400 text-[10px] uppercase tracking-wider text-center">Last Marked</Text>
+                        <Text className="flex-1 font-black text-gray-400 text-[10px] uppercase tracking-wider text-right">Action</Text>
+                      </View>
+                      <View className="divide-y divide-gray-50">
+                        {CLASS_ATTENDANCE.map((cls, i) => (
+                          <View key={i} className="flex-row items-center px-4 py-3 bg-white">
+                            <Text className="flex-[2] text-xs font-bold text-gray-800">{cls.name}</Text>
+                            <View className="flex-grow flex-1 items-center justify-center">
+                              <View
+                                className={`px-2.5 py-0.5 rounded-full border flex-row items-center gap-1.5 ${
+                                  cls.taken
+                                    ? "bg-emerald-50 border-emerald-200"
+                                    : "bg-rose-50 border-rose-200"
+                                }`}
+                              >
+                                <View className={`w-1.5 h-1.5 rounded-full ${cls.taken ? "bg-emerald-500" : "bg-rose-500"}`} />
+                                <Text
+                                  className={`text-[9px] font-black uppercase tracking-wider ${
+                                    cls.taken ? "text-emerald-700" : "text-rose-700"
+                                  }`}
+                                >
+                                  {cls.taken ? "Taken" : "Pending"}
+                                </Text>
+                              </View>
+                            </View>
+                            <Text className="flex-1 text-[11px] text-gray-450 font-semibold text-center">
+                              {cls.taken ? "Today, 09:30 AM" : "—"}
+                            </Text>
+                            <View className="flex-grow flex-1 flex-row justify-end">
+                              <TouchableOpacity
+                                className={`px-3 py-1.5 rounded-xl border ${
+                                  cls.taken
+                                    ? "bg-gray-50 border-gray-150"
+                                    : "bg-[#134A8C] border-[#134A8C]"
+                                }`}
+                                activeOpacity={0.8}
+                                onPress={() => router.push("/(app)/attendance")}
+                              >
+                                <Text className={`text-[10px] font-black uppercase tracking-wide ${cls.taken ? "text-gray-400" : "text-white"}`}>
+                                  {cls.taken ? "View" : "Mark"}
+                                </Text>
+                              </TouchableOpacity>
+                            </View>
+                          </View>
+                        ))}
+                      </View>
                     </View>
                   </View>
-                ))}
+                ) : (
+                  /* Mobile Cards with Left Brand Accent Highlights */
+                  <View className="px-5 pb-5 gap-3">
+                    {CLASS_ATTENDANCE.map((cls, i) => (
+                      <View
+                        key={i}
+                        className="bg-white border border-gray-100 rounded-2xl p-4 flex-row justify-between items-center shadow-sm"
+                        style={{ borderLeftWidth: 4, borderLeftColor: cls.taken ? "#10B981" : "#F5921E" }}
+                      >
+                        <View className="gap-0.5">
+                          <Text className="text-xs font-black text-gray-800">{cls.name}</Text>
+                          <Text className="text-[10px] text-gray-400 font-bold">
+                            {cls.taken ? "✓ Last marked: 09:30 AM" : "✗ Pending attendance"}
+                          </Text>
+                        </View>
+                        <TouchableOpacity 
+                          onPress={() => router.push("/(app)/attendance")}
+                          className={`px-3 py-1 rounded-full border ${
+                            cls.taken
+                              ? "bg-emerald-50 border-emerald-200"
+                              : "bg-rose-55 border-rose-200"
+                          }`}
+                        >
+                          <Text
+                            className={`text-[9px] font-black uppercase tracking-wider ${
+                              cls.taken ? "text-emerald-700" : "text-rose-700"
+                            }`}
+                          >
+                            {cls.taken ? "✓ Taken" : "✗ Mark"}
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    ))}
+                  </View>
+                )}
               </SectionCard>
             </View>
 
@@ -359,7 +412,7 @@ function SectionCard({
         <Text className="text-gray-900 font-black text-[14px] uppercase tracking-wide flex-1">
           {title}
         </Text>
-        <View className="w-1 h-4 bg-orange-500 rounded-full" />
+        <View className="w-1 h-4 bg-[#F5921E] rounded-full" />
       </View>
 
       {/* Card body */}
