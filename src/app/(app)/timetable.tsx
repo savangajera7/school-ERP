@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import { router } from "expo-router";
 import { Card } from "@/components/ui/Card";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Colors } from "@/constants/colors";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
+import { MOBILE_TAB_BAR_HEIGHT } from "@/constants/mobileTabs";
 
 const CLASSES = ["Class I-A", "Class II-B", "Class III-A", "Class IV-B"];
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -60,11 +60,14 @@ export default function TimetableScreen() {
       <ScreenHeader 
         title="School Timetable" 
         subtitle="Weekly class schedules and lecture slots"
-        onBack={() => router.push("/(app)/dashboard")}
+        hideBack={isMobile}
       />
 
       <ScrollView className="flex-1 px-4 mt-6 md:px-8" showsVerticalScrollIndicator={false}>
-        <View className="max-w-[1200px] w-full self-center pb-10">
+        <View
+          className="max-w-[1200px] w-full self-center"
+          style={{ paddingBottom: isMobile ? MOBILE_TAB_BAR_HEIGHT + 24 : 40 }}
+        >
 
           {/* Selector Configurations */}
           <Card className="bg-white border border-gray-150 p-5 mb-6">

@@ -6,6 +6,7 @@ import { router } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Colors } from "@/constants/colors";
+import { MOBILE_TAB_BAR_HEIGHT } from "@/constants/mobileTabs";
 
 interface MenuItem {
   title: string;
@@ -66,7 +67,7 @@ export default function MenuScreen() {
         {/* ── Grid Container ─────────────────────────────────────── */}
         <View 
           className="px-4 w-full self-center max-w-[800px]"
-          style={{ marginTop: -20, paddingBottom: isMobile ? 120 : 40 }}
+          style={{ marginTop: -20, paddingBottom: isMobile ? MOBILE_TAB_BAR_HEIGHT + 40 : 40 }}
         >
           <View className="flex-row flex-wrap gap-3.5 justify-between">
             {MENU_ITEMS.map((item) => (

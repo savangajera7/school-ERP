@@ -1,11 +1,15 @@
 import React from "react";
 import { View } from "react-native";
-import { Stack } from "expo-router";
+import { Stack, usePathname } from "expo-router";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { DesktopSidebar } from "@/components/ui/DesktopSidebar";
+import { BottomTabBar } from "@/components/ui/BottomTabBar";
+import { isMobileTabRoute } from "@/constants/mobileTabs";
 
 export default function AppLayout() {
   const { isMobile } = useBreakpoint();
+  const pathname = usePathname();
+  const showMobileTabs = isMobile && isMobileTabRoute(pathname);
 
   return (
     <View style={{ flex: 1, flexDirection: "row", backgroundColor: "#F8FAFC" }}>
@@ -21,6 +25,20 @@ export default function AppLayout() {
             animation: "fade",
           }}
         />
+
+        {showMobileTabs && (
+          <View
+            style={{
+              position: "absolute",
+              left: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: 100,
+            }}
+          >
+            <BottomTabBar />
+          </View>
+        )}
       </View>
     </View>
   );

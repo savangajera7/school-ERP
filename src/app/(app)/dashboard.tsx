@@ -10,7 +10,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useAuthStore } from "@/store/authStore";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Colors } from "@/constants/colors";
-import { BottomTabBar } from "@/components/ui/BottomTabBar";
+import { MOBILE_TAB_BAR_HEIGHT } from "@/constants/mobileTabs";
 import { useDashboardAdmin } from "@/api/generated/erp-dashboard/erp-dashboard";
 
 // Quick action items
@@ -66,7 +66,7 @@ export default function DashboardScreen() {
       <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: isMobile ? 100 : 40 }}
+        contentContainerStyle={{ paddingBottom: isMobile ? MOBILE_TAB_BAR_HEIGHT + 32 : 40 }}
       >
         {/* ── Header Gradient ─────────────────────────────────────── */}
         <LinearGradient
@@ -506,9 +506,6 @@ export default function DashboardScreen() {
 
         </View>
       </ScrollView>
-
-      {/* ── Mobile Bottom Tab Bar ─────────────────────────────── */}
-      {isMobile && <BottomTabBar />}
     </SafeAreaView>
   );
 }

@@ -1,89 +1,160 @@
 import React from "react";
 import { View, Text, TouchableOpacity, Platform } from "react-native";
 import { router, usePathname } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
 import { Colors } from "@/constants/colors";
 
 interface TabItem {
   label: string;
   icon: string;
-  activeIcon: string;
   route: string;
+  isCenter?: boolean;
 }
 
 const TABS: TabItem[] = [
-  { label: "Menu",      icon: "☰", activeIcon: "☰", route: "/(app)/menu"         },
-  { label: "Search",    icon: "🔍", activeIcon: "🔍", route: "/(app)/search"       },
-  { label: "Home",      icon: "🏠", activeIcon: "🏠", route: "/(app)/dashboard"    },
-  { label: "Timetable", icon: "🗓️", activeIcon: "🗓️", route: "/(app)/timetable"    },
-  { label: "Profile",   icon: "👤", activeIcon: "👤", route: "/(app)/profile"      },
+  { label: "Menu", icon: "☰", route: "/(app)/menu" },
+  { label: "Search", icon: "🔍", route: "/(app)/search" },
+  { label: "Home", icon: "🏠", route: "/(app)/dashboard", isCenter: true },
+  { label: "Timetable", icon: "📅", route: "/(app)/timetable" },
+  { label: "Profile", icon: "👤", route: "/(app)/profile" },
 ];
+
+function isTabActive(pathname: string, route: string): boolean {
+  const path = pathname.replace(/\/$/, "") || "/";
+  const short = route.replace("/(app)", "");
+
+  if (route === "/(app)/dashboard") {
+    return path === route || path === short || path === "/" || path === "/dashboard";
+  }
+
+  return path === route || path === short || path.endsWith(short);
+}
 
 export function BottomTabBar() {
   const pathname = usePathname();
+  const insets = useSafeAreaInsets();
+  const bottomPad = Math.max(insets.bottom, Platform.OS === "ios" ? 8 : 6);
 
   return (
     <View
       style={{
-        flexDirection: "row",
         backgroundColor: "#ffffff",
         borderTopWidth: 1,
-        borderTopColor: "#F1F3F5",
-        paddingBottom: Platform.OS === "ios" ? 28 : 10,
-        paddingTop: 8,
-        paddingHorizontal: 8,
-        boxShadow: "0px -4px 20px rgba(0,0,0,0.06)",
+        borderTopColor: "#E8ECF1",
+        paddingBottom: bottomPad,
+        paddingTop: 10,
+        paddingHorizontal: 6,
+        ...(Platform.OS === "web"
+          ? { boxShadow: "0px -8px 32px rgba(13,54,102,0.08)" }
+          : {
+              shadowColor: Colors.primary,
+              shadowOffset: { width: 0, height: -4 },
+              shadowOpacity: 0.08,
+              shadowRadius: 16,
+              elevation: 12,
+            }),
       }}
     >
-      {TABS.map((tab) => {
-        const isActive =
-          pathname === tab.route ||
-          (tab.route === "/(app)/dashboard" && pathname === "/");
+      <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
+        {TABS.map((tab) => {
+          const isActive = isTabActive(pathname, tab.route);
 
-        return (
-          <TouchableOpacity
-            key={tab.route}
-            onPress={() => router.push(tab.route as any)}
-            activeOpacity={0.8}
-            style={{ flex: 1, alignItems: "center", gap: 3 }}
-          >
-            {/* Active indicator pill */}
-            <View
-              style={{
-                width: 44,
-                height: 34,
-                borderRadius: 12,
-                backgroundColor: isActive ? Colors.primary + "14" : "transparent",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
+          if (tab.isCenter) {
+            return (
+              <TouchableOpacity
+                key={tab.route}
+                onPress={() => router.push(tab.route as never)}
+                activeOpacity={0.85}
+                style={{ flex: 1, alignItems: "center", marginTop: -22 }}
+              >
+                <LinearGradient
+                  colors={[Colors.primary, Colors.primaryLight]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={{
+                    width: 56,
+                    height: 56,
+                    borderRadius: 28,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderWidth: 4,
+                    borderColor: "#ffffff",
+                    ...(Platform.OS === "web"
+                      ? { boxShadow: "0px 8px 24px rgba(13,54,102,0.35)" }
+                      : {
+                          shadowColor: Colors.primary,
+                          shadowOffset: { width: 0, height: 6 },
+                          shadowOpacity: 0.35,
+                          shadowRadius: 10,
+                          elevation: 8,
+                        }),
+                  }}
+                >
+                  <Text style={{ fontSize: 24 }}>{tab.icon}</Text>
+                </LinearGradient>
+                <Text
+                  style={{
+                    fontSize: 10,
+                    fontWeight: "900",
+                    color: isActive ? Colors.primary : "#9CA3AF",
+                    marginTop: 6,
+                    letterSpacing: 0.2,
+                  }}
+                >
+                  {tab.label}
+                </Text>
+              </TouchableOpacity>
+            );
+          }
+
+          return (
+            <TouchableOpacity
+              key={tab.route}
+              onPress={() => router.push(tab.route as never)}
+              activeOpacity={0.75}
+              style={{ flex: 1, alignItems: "center", paddingBottom: 2 }}
             >
-              <Text style={{ fontSize: isActive ? 19 : 17 }}>{tab.icon}</Text>
-            </View>
-            <Text
-              style={{
-                fontSize: 10,
-                fontWeight: isActive ? "900" : "600",
-                color: isActive ? Colors.primary : "#9CA3AF",
-                letterSpacing: 0.3,
-              }}
-            >
-              {tab.label}
-            </Text>
-            {/* Active dot indicator */}
-            {isActive && (
               <View
                 style={{
-                  width: 4,
-                  height: 4,
-                  borderRadius: 2,
-                  backgroundColor: Colors.accent,
-                  marginTop: -1,
+                  width: 42,
+                  height: 32,
+                  borderRadius: 10,
+                  backgroundColor: isActive ? `${Colors.primary}18` : "transparent",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
-              />
-            )}
-          </TouchableOpacity>
-        );
-      })}
+              >
+                <Text style={{ fontSize: isActive ? 20 : 18, opacity: isActive ? 1 : 0.65 }}>
+                  {tab.icon}
+                </Text>
+              </View>
+              <Text
+                style={{
+                  fontSize: 9,
+                  fontWeight: isActive ? "900" : "600",
+                  color: isActive ? Colors.primary : "#9CA3AF",
+                  marginTop: 2,
+                  letterSpacing: 0.2,
+                }}
+              >
+                {tab.label}
+              </Text>
+              {isActive && (
+                <View
+                  style={{
+                    width: 4,
+                    height: 4,
+                    borderRadius: 2,
+                    backgroundColor: Colors.accent,
+                    marginTop: 3,
+                  }}
+                />
+              )}
+            </TouchableOpacity>
+          );
+        })}
+      </View>
     </View>
   );
 }

@@ -11,7 +11,7 @@ import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { Card } from "@/components/ui/Card";
-import { BottomTabBar } from "@/components/ui/BottomTabBar";
+import { MOBILE_TAB_BAR_HEIGHT } from "@/constants/mobileTabs";
 
 export default function StudentSearchScreen() {
   const { isMobile } = useBreakpoint();
@@ -99,12 +99,15 @@ export default function StudentSearchScreen() {
 
       {/* Persistent Header */}
       <ScreenHeader
-        title="Advanced Student Search"
-        subtitle="Filter and locate student files instantly"
-        breadcrumb={["Little Angel's", "Directory", "Search Engine"]}
+        title="Student Search"
+        subtitle="Filter and locate student records"
+        hideBack={isMobile}
       />
 
-      <View className="flex-1 px-4 md:px-8 max-w-[1200px] w-full self-center pb-24">
+      <View
+        className="flex-1 px-4 md:px-8 max-w-[1200px] w-full self-center"
+        style={{ paddingBottom: isMobile ? MOBILE_TAB_BAR_HEIGHT + 24 : 24 }}
+      >
         {/* 🛠️ Advanced Filters Panel */}
         <Card className="bg-white border border-gray-150 p-5 mb-5 shadow-sm rounded-3xl">
           <View className="flex-row items-center justify-between mb-4 border-b border-gray-50 pb-2">
@@ -286,8 +289,6 @@ export default function StudentSearchScreen() {
         )}
       </View>
 
-      {/* Mobile Footer Tab Bar */}
-      {isMobile && <BottomTabBar />}
     </SafeAreaView>
   );
 }
