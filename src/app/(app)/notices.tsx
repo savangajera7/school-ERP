@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
@@ -8,7 +8,8 @@ import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Colors } from "@/constants/colors";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { useNoticeGet } from "@/api/generated/erp-notice/erp-notice";
-import { PremiumLoader } from "@/components/ui/PremiumLoader";
+import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
+import { MobileDataCard } from "@/components/ui/MobileDataCard";
 
 const MOCK_SCHOOL_NOTICES = [
   {
@@ -40,6 +41,7 @@ const MOCK_CLASS_NOTICES = [
 export default function StudentNoticeHistoryScreen() {
   const { isMobile } = useBreakpoint();
   const [activeTab, setActiveTab] = useState<"school" | "class">("school");
+  const [expandedNoticeId, setExpandedNoticeId] = useState<string | null>(null);
   
   const { data: noticesData, isLoading, refetch } = useNoticeGet({});
 
@@ -62,32 +64,68 @@ export default function StudentNoticeHistoryScreen() {
       }));
   }, [noticesData, activeTab]);
 
+  const toggleExpand = (id: string) => {
+    setExpandedNoticeId(prev => (prev === id ? null : id));
+  };
+
+  const renderNoticeItemMobile = ({ item }: { item: any }) => {
+    const isExpanded = expandedNoticeId === item.id;
+    return (
+      <MobileDataCard
+        key={item.id}
+        title={item.title}
+        subtitle={`${item.date} • by ${item.author}`}
+        accentColor={Colors.accent}
+        icon={
+          <View className="w-10 h-10 rounded-xl items-center justify-center bg-amber-50 border border-amber-100">
+            <Text className="text-lg">📢</Text>
+          </View>
+        }
+        actions={
+          <View className="flex-1 mt-1">
+            <Text 
+              className="text-sm text-gray-600 leading-relaxed font-semibold"
+              numberOfLines={isExpanded ? undefined : 3}
+            >
+              {item.description}
+            </Text>
+            {item.description.length > 120 && (
+              <TouchableOpacity onPress={() => toggleExpand(item.id)} className="mt-2.5 self-start">
+                <Text className="text-[11px] font-black text-[#134A8C] uppercase tracking-wide">
+                  {isExpanded ? "Read Less ▲" : "Read More ▼"}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        }
+      />
+    );
+  };
+
   return (
-    <SafeAreaView className="flex-1 bg-[#FDFDFD]" edges={["left", "right"]}>
+    <SafeAreaView className="flex-1 bg-[#F8FAFC]" edges={["left", "right"]}>
       <StatusBar style="light" translucent backgroundColor="transparent" />
       
       <ScreenHeader 
         title="Notice Board" 
         subtitle="Official school announcements & circulars"
+        breadcrumb={["Notice Board"]}
         onBack={() => router.push("/(app)/dashboard")}
       />
 
-      {/* Modern High-End Tabs */}
-      <View className="px-6 -mt-6">
+      {/* High-End Tab Bar Switcher */}
+      <View className="px-6 -mt-6 max-w-[800px] w-full self-center">
         <View 
-          className="bg-white p-1 rounded-2xl flex-row border border-gray-100"
+          className="bg-white p-1 rounded-2xl flex-row border border-gray-150"
           style={{
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 8 },
-            shadowOpacity: 0.05,
-            shadowRadius: 16,
-            elevation: 4,
+            boxShadow: "0px 8px 16px rgba(0,0,0,0.04)",
           }}
         >
           <TouchableOpacity 
             onPress={() => setActiveTab("school")}
+            activeOpacity={0.8}
             className={`flex-1 items-center py-3 rounded-xl flex-row justify-center gap-1.5 ${
-              activeTab === 'school' ? 'bg-[#0d3666]' : 'bg-transparent'
+              activeTab === 'school' ? 'bg-[#134A8C]' : 'bg-transparent'
             }`}
           >
             <Text className={`text-xs font-black uppercase tracking-wider ${
@@ -98,8 +136,9 @@ export default function StudentNoticeHistoryScreen() {
           </TouchableOpacity>
           <TouchableOpacity 
             onPress={() => setActiveTab("class")}
+            activeOpacity={0.8}
             className={`flex-1 items-center py-3 rounded-xl flex-row justify-center gap-1.5 ${
-              activeTab === 'class' ? 'bg-[#0d3666]' : 'bg-transparent'
+              activeTab === 'class' ? 'bg-[#134A8C]' : 'bg-transparent'
             }`}
           >
             <Text className={`text-xs font-black uppercase tracking-wider ${
@@ -111,56 +150,92 @@ export default function StudentNoticeHistoryScreen() {
         </View>
       </View>
 
-      <ScrollView className="flex-1 px-4 mt-6 md:px-8" showsVerticalScrollIndicator={false}>
-        <View className="max-w-[800px] w-full self-center pb-10 gap-4">
-          
-          {isLoading ? (
-            <View className="py-20 items-center justify-center">
-              <PremiumLoader color={Colors.primary} size={36} />
-            </View>
-          ) : noticeList.length === 0 ? (
-            <View className="py-20 items-center justify-center bg-white rounded-3xl border border-gray-100 p-8 mt-2">
-              <Text className="text-4xl mb-3">📭</Text>
-              <Text className="text-gray-400 font-extrabold text-sm uppercase tracking-wider">No notices posted yet</Text>
-            </View>
-          ) : (
-            noticeList.map((notice) => (
-              <Card 
-                key={notice.id} 
-                className="bg-white border border-gray-150 p-5 rounded-2xl relative overflow-hidden flex-row"
-              >
-                {/* Left Accent indicator line */}
-                <View className="w-1.5 bg-[#0d3666] absolute left-0 top-0 bottom-0" />
-                
-                <View className="flex-1 pl-2.5">
-                  {/* Meta details header */}
-                  <View className="flex-row justify-between items-center mb-3">
-                    <View className="flex-row items-center gap-1.5">
-                      <Text className="text-xs">📅</Text>
-                      <Text className="text-xs text-gray-400 font-extrabold">{notice.date}</Text>
+      <View className="flex-1 px-4 mt-6 md:px-8 max-w-[1000px] w-full self-center">
+        {isLoading ? (
+          <View className="py-6">
+            <SkeletonLoader variant={isMobile ? "card" : "table"} rows={4} />
+          </View>
+        ) : isMobile ? (
+          /* Mobile Notice Cards List */
+          <FlatList
+            data={noticeList}
+            renderItem={renderNoticeItemMobile}
+            keyExtractor={(item) => item.id}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 100 }}
+            onRefresh={refetch}
+            refreshing={isLoading}
+            ListEmptyComponent={
+              <View className="py-20 items-center justify-center bg-white rounded-3xl border border-gray-150 p-8 mt-2">
+                <Text className="text-4xl mb-3">📭</Text>
+                <Text className="text-gray-400 font-extrabold text-sm uppercase tracking-wider">No notices posted yet</Text>
+              </View>
+            }
+          />
+        ) : (
+          /* Desktop Structured List View with expandable row content */
+          <FlatList
+            data={noticeList}
+            keyExtractor={(item) => item.id}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 100 }}
+            onRefresh={refetch}
+            refreshing={isLoading}
+            ListEmptyComponent={
+              <View className="py-20 items-center justify-center bg-white rounded-3xl border border-gray-150 p-8 mt-2">
+                <Text className="text-4xl mb-3">📭</Text>
+                <Text className="text-gray-400 font-extrabold text-sm uppercase tracking-wider">No announcements posted yet</Text>
+              </View>
+            }
+            renderItem={({ item, index }) => {
+              const isExpanded = expandedNoticeId === item.id;
+              return (
+                <Card 
+                  key={item.id} 
+                  className="bg-white border border-gray-150 p-5 rounded-2xl mb-4 relative overflow-hidden flex-col shadow-sm"
+                >
+                  <View className="w-1.5 bg-[#134A8C] absolute left-0 top-0 bottom-0" />
+                  
+                  <View className="flex-1 pl-3">
+                    <View className="flex-row justify-between items-center mb-3">
+                      <View className="flex-row items-center gap-1.5">
+                        <Text className="text-xs">📅</Text>
+                        <Text className="text-xs text-gray-400 font-extrabold">{item.date}</Text>
+                      </View>
+                      <View className="flex-row items-center gap-1.5">
+                        <Text className="text-[10px] text-gray-400">👤</Text>
+                        <Text className="text-[10px] text-gray-450 font-black uppercase tracking-wider">
+                          Author: {item.author}
+                        </Text>
+                      </View>
                     </View>
-                    <View className="flex-row items-center gap-1.5">
-                      <Text className="text-[10px] text-gray-400">👤</Text>
-                      <Text className="text-[10px] text-gray-400 font-black uppercase tracking-wider">
-                        {notice.author}
+
+                    <View className="flex-row justify-between items-center">
+                      <Text className="text-[16px] font-black text-gray-900 mb-2 flex-1">{item.title}</Text>
+                      {item.description.length > 200 && (
+                        <TouchableOpacity onPress={() => toggleExpand(item.id)} className="bg-gray-50 border border-gray-150 px-3 py-1.5 rounded-xl">
+                          <Text className="text-[10px] font-black text-[#134A8C] uppercase tracking-wide">
+                            {isExpanded ? "Collapse ▲" : "Expand Description ▼"}
+                          </Text>
+                        </TouchableOpacity>
+                      )}
+                    </View>
+
+                    <View className="bg-gray-50/50 border border-gray-100 rounded-xl p-3.5 mt-2">
+                      <Text 
+                        className="text-sm text-gray-700 leading-7 font-semibold"
+                        numberOfLines={isExpanded ? undefined : 3}
+                      >
+                        {item.description}
                       </Text>
                     </View>
                   </View>
-
-                  {/* Title */}
-                  <Text className="text-[15px] font-black text-gray-900 mb-2">{notice.title}</Text>
-                  
-                  {/* Description Box */}
-                  <View className="bg-gray-50/50 border border-gray-100 rounded-xl p-3">
-                    <Text className="text-sm text-gray-700 leading-6 font-semibold">{notice.description}</Text>
-                  </View>
-                </View>
-              </Card>
-            ))
-          )}
-
-        </View>
-      </ScrollView>
+                </Card>
+              );
+            }}
+          />
+        )}
+      </View>
     </SafeAreaView>
   );
 }

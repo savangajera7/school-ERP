@@ -157,31 +157,28 @@ export default function FeesManagementScreen() {
   const showLoader = activeTab === "collect" ? isPendingLoading : isHistoryLoading;
 
   return (
-    <SafeAreaView className="flex-1 bg-[#FDFDFD]" edges={["left", "right"]}>
+    <SafeAreaView className="flex-1 bg-[#F8FAFC]" edges={["left", "right"]}>
       <StatusBar style="light" translucent backgroundColor="transparent" />
       
       <ScreenHeader 
         title="Fees Management" 
         subtitle="Collect invoices & view ledgers"
+        breadcrumb={["Fees"]}
         onBack={() => router.push("/(app)/dashboard")}
       />
 
       {/* Modern Tabs Row */}
-      <View className="px-6 -mt-6">
+      <View className="px-6 -mt-6 max-w-[1200px] w-full self-center">
         <View 
-          className="bg-white p-1 rounded-2xl flex-row border border-gray-100"
+          className="bg-white p-1 rounded-2xl flex-row border border-gray-150"
           style={{
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 8 },
-            shadowOpacity: 0.05,
-            shadowRadius: 16,
-            elevation: 4,
+            boxShadow: "0px 8px 16px rgba(0,0,0,0.04)",
           }}
         >
           <TouchableOpacity 
             onPress={() => setActiveTab("collect")}
             className={`flex-1 items-center py-3 rounded-xl flex-row justify-center gap-1.5 ${
-              activeTab === 'collect' ? 'bg-[#0d3666]' : 'bg-transparent'
+              activeTab === 'collect' ? 'bg-[#134A8C]' : 'bg-transparent'
             }`}
           >
             <Text className={`text-xs font-bold uppercase tracking-wider ${
@@ -193,7 +190,7 @@ export default function FeesManagementScreen() {
           <TouchableOpacity 
             onPress={() => setActiveTab("history")}
             className={`flex-1 items-center py-3 rounded-xl flex-row justify-center gap-1.5 ${
-              activeTab === 'history' ? 'bg-[#0d3666]' : 'bg-transparent'
+              activeTab === 'history' ? 'bg-[#134A8C]' : 'bg-transparent'
             }`}
           >
             <Text className={`text-xs font-bold uppercase tracking-wider ${
@@ -205,7 +202,7 @@ export default function FeesManagementScreen() {
           <TouchableOpacity 
             onPress={() => setActiveTab("structure")}
             className={`flex-1 items-center py-3 rounded-xl flex-row justify-center gap-1.5 ${
-              activeTab === 'structure' ? 'bg-[#0d3666]' : 'bg-transparent'
+              activeTab === 'structure' ? 'bg-[#134A8C]' : 'bg-transparent'
             }`}
           >
             <Text className={`text-xs font-bold uppercase tracking-wider ${
@@ -222,17 +219,17 @@ export default function FeesManagementScreen() {
           
           {/* Quick Stats Grid */}
           <View className={`flex-row gap-4 mb-6 ${isMobile ? "flex-col" : ""}`}>
-            <Card className="flex-1 bg-[#0d3666] p-5">
-              <Text className="text-xs font-bold text-indigo-200 uppercase tracking-wider mb-1">
+            <Card className="flex-1 bg-[#134A8C] p-5">
+              <Text className="text-xs font-bold text-indigo-150 uppercase tracking-wider mb-1">
                 Total Fee Collected
               </Text>
               <Text className="text-2xl font-black text-white">₹3,45,000</Text>
             </Card>
             <Card className="flex-1 bg-orange-50 border border-orange-100 p-5">
-              <Text className="text-xs font-bold text-[#f5921e] uppercase tracking-wider mb-1">
+              <Text className="text-xs font-bold text-[#F5921E] uppercase tracking-wider mb-1">
                 Total Outstanding
               </Text>
-              <Text className="text-2xl font-black text-[#0d3666]">₹1,20,000</Text>
+              <Text className="text-2xl font-black text-[#134A8C]">₹1,20,000</Text>
             </Card>
           </View>
 
@@ -248,13 +245,9 @@ export default function FeesManagementScreen() {
                 <View className="gap-4">
                   {/* Search outstanding */}
                   <View 
-                    className="bg-white border border-gray-100 rounded-xl h-[52px] px-4 flex-row items-center gap-3 mb-2"
+                    className="bg-white border border-gray-150 rounded-2xl h-[52px] px-4 flex-row items-center gap-3 mb-2"
                     style={{
-                      shadowColor: "#000",
-                      shadowOffset: { width: 0, height: 2 },
-                      shadowOpacity: 0.02,
-                      shadowRadius: 8,
-                      elevation: 1,
+                      boxShadow: "0px 2px 8px rgba(0,0,0,0.03)",
                     }}
                   >
                     <Text className="text-gray-400 text-base">🔍</Text>
@@ -275,6 +268,7 @@ export default function FeesManagementScreen() {
                         key={item.id}
                         title={item.name}
                         subtitle={`Roll No: ${item.rollNo}`}
+                        accentColor={Colors.accent}
                         badge={
                           <View className="bg-red-50 px-2 py-1 rounded-md border border-red-100">
                             <Text className="text-[11px] font-extrabold text-red-600">₹{item.outstanding}</Text>
@@ -287,7 +281,7 @@ export default function FeesManagementScreen() {
                         actions={
                           <TouchableOpacity 
                             onPress={() => handleOpenCollect(item)}
-                            className="flex-1 py-3 bg-[#f5921e] rounded-xl justify-center items-center"
+                            className="flex-1 py-3 bg-[#F5921E] rounded-xl justify-center items-center shadow-md shadow-amber-500/10"
                             activeOpacity={0.8}
                           >
                             <Text className="text-xs font-black text-white uppercase tracking-wider">Collect Payment</Text>
@@ -296,26 +290,26 @@ export default function FeesManagementScreen() {
                       />
                     ))
                   ) : (
-                    <Card noPadding className="bg-white border border-gray-100 overflow-hidden">
-                      <View className="flex-row items-center px-5 py-4 bg-gray-50 border-b border-gray-100">
-                        <Text className="w-16 text-xs font-black text-gray-400 uppercase">Roll</Text>
-                        <Text className="flex-1 text-xs font-black text-gray-400 uppercase">Student Name</Text>
-                        <Text className="w-[120px] text-xs font-black text-gray-400 uppercase text-center">Class</Text>
-                        <Text className="w-[120px] text-xs font-black text-gray-400 uppercase text-right">Outstanding</Text>
-                        <Text className="w-[140px] text-xs font-black text-gray-400 uppercase text-right"></Text>
+                    <Card noPadding className="bg-white border border-gray-150 overflow-hidden shadow-sm">
+                      <View className="flex-row items-center px-6 py-4 bg-gray-50 border-b border-gray-150">
+                        <Text className="w-16 text-xs font-black text-gray-455 uppercase">Roll</Text>
+                        <Text className="flex-1 text-xs font-black text-gray-455 uppercase">Student Name</Text>
+                        <Text className="w-[120px] text-xs font-black text-gray-455 uppercase text-center">Class</Text>
+                        <Text className="w-[120px] text-xs font-black text-gray-455 uppercase text-right">Outstanding</Text>
+                        <Text className="w-[140px] text-xs font-black text-gray-455 uppercase text-right"></Text>
                       </View>
 
-                      {filteredPendingList.map((item) => (
-                        <View key={item.id} className="flex-row items-center px-5 py-4 border-b border-gray-50">
+                      {filteredPendingList.map((item, index) => (
+                        <View key={item.id} className={`flex-row items-center px-6 py-4 border-b border-gray-100 ${index % 2 === 0 ? "bg-white" : "bg-gray-50/20"}`}>
                           <Text className="w-16 text-sm font-bold text-gray-400">{item.rollNo}</Text>
-                          <Text className="flex-1 text-sm font-black text-gray-800">{item.name}</Text>
+                          <Text className="flex-1 text-sm font-black text-gray-900">{item.name}</Text>
                           <Text className="w-[120px] text-sm text-gray-500 font-bold text-center">{item.class}</Text>
                           <Text className="w-[120px] text-sm text-red-600 font-black text-right">₹{item.outstanding}</Text>
                           
                           <View className="w-[140px] items-end">
                             <TouchableOpacity 
                               onPress={() => handleOpenCollect(item)}
-                              className="px-4 py-2 bg-[#f5921e] rounded-xl"
+                              className="px-4 py-2 bg-[#F5921E] rounded-xl"
                               activeOpacity={0.8}
                             >
                               <Text className="text-xs font-black text-white">Collect</Text>
@@ -331,7 +325,7 @@ export default function FeesManagementScreen() {
                     <Card className="bg-white border-2 border-orange-100 p-6 mt-4 shadow-xl">
                       <View className="flex-row justify-between items-center mb-4 pb-3 border-b border-gray-100">
                         <View>
-                          <Text className="text-[16px] font-black text-[#0d3666]">
+                          <Text className="text-[16px] font-black text-[#134A8C]">
                             Collect Fee Payment
                           </Text>
                           <Text className="text-[12px] text-gray-400 font-bold mt-0.5">
@@ -356,7 +350,7 @@ export default function FeesManagementScreen() {
                               value={collectAmount}
                               onChangeText={setCollectAmount}
                               keyboardType="numeric"
-                              className="h-[52px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-base font-extrabold text-gray-800"
+                              className="h-[52px] bg-gray-55 border border-gray-200 rounded-xl px-4 text-base font-extrabold text-gray-800"
                               style={{ outlineWidth: 0 } as any}
                             />
                           </View>
@@ -371,7 +365,7 @@ export default function FeesManagementScreen() {
                                   key={method}
                                   onPress={() => setPaymentMethod(method)}
                                   className={`flex-1 h-[52px] border justify-center items-center rounded-xl ${
-                                    paymentMethod === method ? "bg-[#0d3666] border-[#0d3666]" : "bg-white border-gray-200"
+                                    paymentMethod === method ? "bg-[#134A8C] border-[#134A8C]" : "bg-white border-gray-200"
                                   }`}
                                   activeOpacity={0.8}
                                 >
@@ -389,7 +383,7 @@ export default function FeesManagementScreen() {
                         <TouchableOpacity 
                           onPress={handleProcessPayment}
                           disabled={isProcessing}
-                          className="h-[52px] bg-[#0d3666] rounded-xl items-center justify-center mt-2 shadow-lg shadow-indigo-100 flex-row gap-2"
+                          className="h-[52px] bg-[#134A8C] rounded-xl items-center justify-center mt-2 shadow-lg shadow-indigo-100 flex-row gap-2"
                           activeOpacity={0.8}
                         >
                           <Text className="text-sm font-black text-white uppercase tracking-wider">
@@ -412,6 +406,7 @@ export default function FeesManagementScreen() {
                       key={tx.id}
                       title={tx.studentName}
                       subtitle={`Date: ${tx.date}`}
+                      accentColor={Colors.accent}
                       badge={
                         <View className="bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">
                           <Text className="text-[10px] font-extrabold text-emerald-600 uppercase">{tx.status}</Text>
@@ -425,22 +420,22 @@ export default function FeesManagementScreen() {
                     />
                   ))
                 ) : (
-                  <Card noPadding className="bg-white border border-gray-100 overflow-hidden">
-                    <View className="flex-row items-center px-5 py-4 bg-gray-50 border-b border-gray-100">
-                      <Text className="w-[140px] text-xs font-black text-gray-400 uppercase">Receipt No</Text>
-                      <Text className="flex-1 text-xs font-black text-gray-400 uppercase">Student Name</Text>
-                      <Text className="w-[120px] text-xs font-black text-gray-400 uppercase text-center">Method</Text>
-                      <Text className="w-[120px] text-xs font-black text-gray-400 uppercase text-center">Date</Text>
-                      <Text className="w-[120px] text-xs font-black text-gray-400 uppercase text-right">Amount</Text>
-                      <Text className="w-[100px] text-xs font-black text-gray-400 uppercase text-right">Status</Text>
+                  <Card noPadding className="bg-white border border-gray-150 overflow-hidden shadow-sm">
+                    <View className="flex-row items-center px-6 py-4 bg-gray-50 border-b border-gray-150">
+                      <Text className="w-[140px] text-xs font-black text-gray-450 uppercase">Receipt No</Text>
+                      <Text className="flex-1 text-xs font-black text-gray-455 uppercase">Student Name</Text>
+                      <Text className="w-[120px] text-xs font-black text-gray-455 uppercase text-center">Method</Text>
+                      <Text className="w-[120px] text-xs font-black text-gray-455 uppercase text-center">Date</Text>
+                      <Text className="w-[120px] text-xs font-black text-gray-455 uppercase text-right">Amount</Text>
+                      <Text className="w-[100px] text-xs font-black text-gray-455 uppercase text-right">Status</Text>
                     </View>
 
-                    {transactionList.map((tx) => (
-                      <View key={tx.id} className="flex-row items-center px-5 py-4 border-b border-gray-50">
+                    {transactionList.map((tx, index) => (
+                      <View key={tx.id} className={`flex-row items-center px-6 py-4 border-b border-gray-100 ${index % 2 === 0 ? "bg-white" : "bg-gray-50/20"}`}>
                         <Text className="w-[140px] text-sm font-bold text-gray-400" numberOfLines={1}>
                           {tx.id}
                         </Text>
-                        <Text className="flex-1 text-sm font-black text-gray-800">{tx.studentName}</Text>
+                        <Text className="flex-1 text-sm font-black text-gray-900">{tx.studentName}</Text>
                         <Text className="w-[120px] text-sm text-gray-500 font-bold text-center">{tx.method}</Text>
                         <Text className="w-[120px] text-sm text-gray-500 font-bold text-center">{tx.date}</Text>
                         <Text className="w-[120px] text-sm text-gray-900 font-extrabold text-right">₹{tx.amount}</Text>
@@ -458,7 +453,7 @@ export default function FeesManagementScreen() {
 
               {/* Tab Content: Fee Structure */}
               {activeTab === "structure" && (
-                <Card className="bg-white border border-gray-100 p-5">
+                <Card className="bg-white border border-gray-150 shadow-sm p-5">
                   <Text className="text-[15px] font-black text-gray-850 border-b border-gray-100 pb-3 mb-4">
                     🎒 Class I - IV Academic Fee Structure
                   </Text>
@@ -473,7 +468,7 @@ export default function FeesManagementScreen() {
 
                     <View className="flex-row justify-between items-center py-4 bg-gray-50/50 px-4 rounded-xl mt-2 border border-gray-100">
                       <Text className="text-sm font-black text-gray-900">Total Yearly Academic Fee</Text>
-                      <Text className="text-base font-black text-[#0d3666]">₹18,000</Text>
+                      <Text className="text-base font-black text-[#134A8C]">₹18,000</Text>
                     </View>
                   </View>
                 </Card>

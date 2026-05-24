@@ -111,12 +111,13 @@ export default function TeacherManagementScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#FDFDFD]" edges={["left", "right"]}>
+    <SafeAreaView className="flex-1 bg-[#F8FAFC]" edges={["left", "right"]}>
       <StatusBar style="light" translucent backgroundColor="transparent" />
       
       <ScreenHeader 
         title="Teacher Directory" 
         subtitle="Manage faculty and administrative profiles"
+        breadcrumb={["Teachers"]}
         onBack={() => router.push("/(app)/dashboard")}
         rightAction={
           viewMode === "list" ? (
@@ -253,12 +254,12 @@ export default function TeacherManagementScreen() {
             <View>
               {/* Form Navigation Tabs */}
               <View 
-                className="bg-white p-1 rounded-2xl flex-row border border-gray-100 mb-6 shadow-sm"
+                className="bg-white p-1 rounded-2xl flex-row border border-gray-150 mb-6 shadow-sm max-w-[800px] w-full self-center"
               >
                 <TouchableOpacity
                   onPress={() => setActiveTab("basic")}
                   className={`flex-1 py-3 rounded-xl flex-row justify-center items-center gap-1.5 ${
-                    activeTab === "basic" ? "bg-[#0d3666]" : "bg-transparent"
+                    activeTab === "basic" ? "bg-[#134A8C]" : "bg-transparent"
                   }`}
                   activeOpacity={0.8}
                 >
@@ -272,7 +273,7 @@ export default function TeacherManagementScreen() {
                 <TouchableOpacity
                   onPress={() => setActiveTab("education")}
                   className={`flex-1 py-3 rounded-xl flex-row justify-center items-center gap-1.5 ${
-                    activeTab === "education" ? "bg-[#0d3666]" : "bg-transparent"
+                    activeTab === "education" ? "bg-[#134A8C]" : "bg-transparent"
                   }`}
                   activeOpacity={0.8}
                 >
@@ -286,7 +287,7 @@ export default function TeacherManagementScreen() {
                 <TouchableOpacity
                   onPress={() => setActiveTab("role")}
                   className={`flex-1 py-3 rounded-xl flex-row justify-center items-center gap-1.5 ${
-                    activeTab === "role" ? "bg-[#0d3666]" : "bg-transparent"
+                    activeTab === "role" ? "bg-[#134A8C]" : "bg-transparent"
                   }`}
                   activeOpacity={0.8}
                 >
@@ -298,10 +299,9 @@ export default function TeacherManagementScreen() {
                 </TouchableOpacity>
               </View>
 
-              {/* Tab 1: Basic Details */}
-              {activeTab === "basic" && (
-                <Card className="bg-white border border-gray-150 p-6 gap-5">
-                  <Text className="text-[15px] font-black text-[#0d3666] border-b border-gray-100 pb-3">Basic & Personal Details</Text>
+                     {activeTab === "basic" && (
+                <Card className="bg-white border border-gray-150 p-6 gap-5 max-w-[800px] w-full self-center shadow-sm">
+                  <Text className="text-[15px] font-black text-[#134A8C] border-b border-gray-100 pb-3">Basic & Personal Details</Text>
                   
                   <View className={`flex-row gap-4 ${isMobile ? "flex-col" : ""}`}>
                     <View className="flex-1">
@@ -311,7 +311,7 @@ export default function TeacherManagementScreen() {
                         onChangeText={setFirstName}
                         placeholder="Enter first name"
                         placeholderTextColor="#9CA3AF"
-                        className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
+                        className="h-[48px] bg-gray-55 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
                         style={{ outlineWidth: 0 } as any}
                       />
                     </View>
@@ -322,7 +322,7 @@ export default function TeacherManagementScreen() {
                         onChangeText={setLastName}
                         placeholder="Enter last name"
                         placeholderTextColor="#9CA3AF"
-                        className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
+                        className="h-[48px] bg-gray-55 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
                         style={{ outlineWidth: 0 } as any}
                       />
                     </View>
@@ -337,7 +337,7 @@ export default function TeacherManagementScreen() {
                         placeholder="Enter mobile number"
                         placeholderTextColor="#9CA3AF"
                         keyboardType="numeric"
-                        className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
+                        className="h-[48px] bg-gray-55 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
                         style={{ outlineWidth: 0 } as any}
                       />
                     </View>
@@ -348,7 +348,7 @@ export default function TeacherManagementScreen() {
                         onChangeText={setDesignation}
                         placeholder="e.g. Faculty, Admin Staff"
                         placeholderTextColor="#9CA3AF"
-                        className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
+                        className="h-[48px] bg-gray-55 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
                         style={{ outlineWidth: 0 } as any}
                       />
                     </View>
@@ -358,8 +358,8 @@ export default function TeacherManagementScreen() {
 
               {/* Tab 2: Education Details */}
               {activeTab === "education" && (
-                <Card className="bg-white border border-gray-150 p-6 gap-5">
-                  <Text className="text-[15px] font-black text-[#0d3666] border-b border-gray-100 pb-3">Academic & Qualification History</Text>
+                <Card className="bg-white border border-gray-150 p-6 gap-5 max-w-[800px] w-full self-center shadow-sm">
+                  <Text className="text-[15px] font-black text-[#134A8C] border-b border-gray-100 pb-3">Academic & Qualification History</Text>
                   
                   <View className={`flex-row gap-4 ${isMobile ? "flex-col" : ""}`}>
                     <View className="flex-1">
@@ -369,7 +369,7 @@ export default function TeacherManagementScreen() {
                         onChangeText={setQualification}
                         placeholder="e.g. B.Ed, M.Sc"
                         placeholderTextColor="#9CA3AF"
-                        className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
+                        className="h-[48px] bg-gray-55 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
                         style={{ outlineWidth: 0 } as any}
                       />
                     </View>
@@ -381,7 +381,7 @@ export default function TeacherManagementScreen() {
                         placeholder="e.g. 2018"
                         placeholderTextColor="#9CA3AF"
                         keyboardType="numeric"
-                        className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
+                        className="h-[48px] bg-gray-55 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
                         style={{ outlineWidth: 0 } as any}
                       />
                     </View>
@@ -391,8 +391,8 @@ export default function TeacherManagementScreen() {
 
               {/* Tab 3: Role & Permission Allocations */}
               {activeTab === "role" && (
-                <Card className="bg-white border border-gray-150 p-6 gap-5">
-                  <Text className="text-[15px] font-black text-[#0d3666] border-b border-gray-100 pb-3">App Permission & Assignments</Text>
+                <Card className="bg-white border border-gray-150 p-6 gap-5 max-w-[800px] w-full self-center shadow-sm">
+                  <Text className="text-[15px] font-black text-[#134A8C] border-b border-gray-100 pb-3">App Permission & Assignments</Text>
                   
                   <View className="flex-1">
                     <Text className="text-[12px] font-black text-gray-450 mb-2 uppercase">Assigned Subject / Class Expertise</Text>
@@ -401,7 +401,7 @@ export default function TeacherManagementScreen() {
                       onChangeText={setAssignedClass}
                       placeholder="e.g. Mathematics Class I-A"
                       placeholderTextColor="#9CA3AF"
-                      className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
+                      className="h-[48px] bg-gray-55 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
                       style={{ outlineWidth: 0 } as any}
                     />
                   </View>
@@ -409,7 +409,7 @@ export default function TeacherManagementScreen() {
                   <TouchableOpacity 
                     onPress={handleAddTeacher}
                     disabled={addTeacherMutation.isPending}
-                    className="h-[52px] bg-[#f5921e] rounded-xl justify-center items-center mt-4 shadow-lg shadow-orange-100 flex-row gap-2"
+                    className="h-[52px] bg-[#F5921E] rounded-xl justify-center items-center mt-4 shadow-lg shadow-amber-500/20 flex-row gap-2"
                     activeOpacity={0.8}
                   >
                     {addTeacherMutation.isPending ? (

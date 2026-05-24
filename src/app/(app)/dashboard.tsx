@@ -74,48 +74,51 @@ export default function DashboardScreen() {
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={{
-            paddingHorizontal: isMobile ? 16 : 32,
+            paddingLeft: isMobile ? 16 : 48,
+            paddingRight: isMobile ? 16 : 32,
             paddingTop: (insets.top || 0) + (isMobile ? 12 : 20),
             paddingBottom: isMobile ? 60 : 72,
             borderBottomLeftRadius: 36,
             borderBottomRightRadius: 36,
           }}
         >
-          {/* Top bar: logo + school name + year + logout */}
-          <View className="flex-row justify-between items-center mb-5">
-            <View className="flex-row items-center gap-3">
-              <View
-                className="w-11 h-11 rounded-2xl bg-white border border-white/20 overflow-hidden items-center justify-center p-0.5"
-              >
-                <Image
-                  source={{ uri: "https://little-angle.mahispark.com/images/logo.png" }}
-                  className="w-9 h-9"
-                  resizeMode="contain"
-                />
+          {/* Top bar: logo + school name + year + logout (Mobile only) */}
+          {isMobile && (
+            <View className="flex-row justify-between items-center mb-5">
+              <View className="flex-row items-center gap-3">
+                <View
+                  className="w-11 h-11 rounded-2xl bg-white border border-white/20 overflow-hidden items-center justify-center p-0.5"
+                >
+                  <Image
+                    source={{ uri: "https://little-angle.mahispark.com/images/logo.png" }}
+                    className="w-9 h-9"
+                    resizeMode="contain"
+                  />
+                </View>
+                <View>
+                  <Text className="text-white font-black text-[15px] tracking-wide" style={{ fontFamily: "Outfit" }}>
+                    Little Angel's
+                  </Text>
+                  <Text className="text-[#F5921E] text-[10px] font-black uppercase tracking-widest">
+                    સાંઈ વિદ્યા મંદિર · ERP
+                  </Text>
+                </View>
               </View>
-              <View>
-                <Text className="text-white font-black text-[15px] tracking-wide" style={{ fontFamily: "Outfit" }}>
-                  Little Angel's
-                </Text>
-                <Text className="text-[#F5921E] text-[10px] font-black uppercase tracking-widest">
-                  સાંઈ વિદ્યા મંદિર · ERP
-                </Text>
-              </View>
-            </View>
 
-            <View className="flex-row items-center gap-2">
-              <View className="bg-white/10 border border-white/20 px-3 py-1.5 rounded-xl">
-                <Text className="text-white text-[11px] font-black">2026–2027</Text>
+              <View className="flex-row items-center gap-2">
+                <View className="bg-white/10 border border-white/20 px-3 py-1.5 rounded-xl">
+                  <Text className="text-white text-[11px] font-black">2026–2027</Text>
+                </View>
+                <TouchableOpacity
+                  onPress={logout}
+                  className="w-8 h-8 bg-rose-500/20 border border-rose-400/30 rounded-xl items-center justify-center"
+                  activeOpacity={0.8}
+                >
+                  <Text className="text-sm">🚪</Text>
+                </TouchableOpacity>
               </View>
-              <TouchableOpacity
-                onPress={logout}
-                className="w-8 h-8 bg-rose-500/20 border border-rose-400/30 rounded-xl items-center justify-center"
-                activeOpacity={0.8}
-              >
-                <Text className="text-sm">🚪</Text>
-              </TouchableOpacity>
             </View>
-          </View>
+          )}
 
           {/* Greeting */}
           <Text className="text-white/60 text-xs font-black uppercase tracking-widest">
@@ -140,48 +143,201 @@ export default function DashboardScreen() {
         </LinearGradient>
 
         <View
-          className="px-4 md:px-8 max-w-[1200px] w-full self-center"
+          className="px-4 md:pl-12 md:pr-8 max-w-[1200px] w-full self-center"
           style={{ marginTop: -40, position: "relative", zIndex: 10 }}
         >
-          {/* ── 4 Stat Cards ─────────────────────────────────────── */}
-          <View className={`flex-row flex-wrap gap-3 mb-6 ${isMobile ? "" : "gap-4"}`}>
-            <StatCard
-              isMobile={isMobile}
-              emoji="🎓"
-              label="Total Students"
-              value={isLoading ? "..." : totalStudentsVal.toString()}
-              sub={isLoading ? "Loading..." : "Total active students enrolled"}
-              bg="#E0F2FE"
-              textColor="#0369A1"
-            />
-            <StatCard
-              isMobile={isMobile}
-              emoji="✅"
-              label="Attendance Today"
-              value={isLoading ? "..." : attendanceTodayVal.toString()}
-              sub={isLoading ? "Loading..." : "Average student daily attendance"}
-              bg="#DCFCE7"
-              textColor="#15803D"
-            />
-            <StatCard
-              isMobile={isMobile}
-              emoji="👥"
-              label="Total Staff"
-              value={isLoading ? "..." : totalStaffVal.toString()}
-              sub={isLoading ? "Loading..." : "Total registered school faculty"}
-              bg="#F3E8FF"
-              textColor="#7E22CE"
-            />
-            <StatCard
-              isMobile={isMobile}
-              emoji="⏱️"
-              label="Staff Attendance"
-              value={isLoading ? "..." : staffAttendanceVal.toString()}
-              sub={isLoading ? "Loading..." : "Faculty attendance record"}
-              bg="#CFFAFE"
-              textColor="#0E7490"
-            />
-          </View>
+          {/* ── Web Table vs Mobile Cards Operational Layout ─────────────────── */}
+          {isMobile ? (
+            <View className="flex-row flex-wrap gap-3 mb-6">
+              <StatCard
+                isMobile={isMobile}
+                emoji="🎓"
+                label="Total Students"
+                value={isLoading ? "..." : totalStudentsVal.toString()}
+                sub={isLoading ? "Loading..." : "Total active students enrolled"}
+                bg="#E0F2FE"
+                textColor="#0369A1"
+              />
+              <StatCard
+                isMobile={isMobile}
+                emoji="✅"
+                label="Attendance Today"
+                value={isLoading ? "..." : attendanceTodayVal.toString()}
+                sub={isLoading ? "Loading..." : "Average student daily attendance"}
+                bg="#DCFCE7"
+                textColor="#15803D"
+              />
+              <StatCard
+                isMobile={isMobile}
+                emoji="👥"
+                label="Total Staff"
+                value={isLoading ? "..." : totalStaffVal.toString()}
+                sub={isLoading ? "Loading..." : "Total registered school faculty"}
+                bg="#F3E8FF"
+                textColor="#7E22CE"
+              />
+              <StatCard
+                isMobile={isMobile}
+                emoji="⏱️"
+                label="Staff Attendance"
+                value={isLoading ? "..." : staffAttendanceVal.toString()}
+                sub={isLoading ? "Loading..." : "Faculty attendance record"}
+                bg="#CFFAFE"
+                textColor="#0E7490"
+              />
+            </View>
+          ) : (
+            <View
+              className="bg-white border border-gray-150 rounded-3xl p-6 mb-6 shadow-sm"
+              style={{
+                boxShadow: "0px 4px 20px rgba(0,0,0,0.03)",
+              }}
+            >
+              <View className="flex-row justify-between items-center mb-5 border-b border-gray-100 pb-3">
+                <View className="flex-row items-center gap-2">
+                  <Text className="text-xl">📊</Text>
+                  <Text className="text-gray-900 font-black text-sm uppercase tracking-wide">
+                    Live Operational Performance Indicators
+                  </Text>
+                </View>
+                <View className="px-2.5 py-1 bg-emerald-50 rounded-full border border-emerald-100">
+                  <Text className="text-[10px] font-black text-emerald-700 uppercase tracking-widest">
+                    Real-time Database Sync
+                  </Text>
+                </View>
+              </View>
+
+              <View className="border border-gray-100 rounded-2xl overflow-hidden shadow-sm">
+                <View className="flex-row bg-[#F4F8FC] border-b border-gray-100 px-5 py-3">
+                  <View style={{ flex: 3.5 }}>
+                    <Text className="font-black text-gray-400 text-[10px] uppercase tracking-wider">Indicator</Text>
+                  </View>
+                  <View style={{ flex: 3, alignItems: "center" }}>
+                    <Text className="font-black text-gray-400 text-[10px] uppercase tracking-wider">Description</Text>
+                  </View>
+                  <View style={{ flex: 1.5, alignItems: "center" }}>
+                    <Text className="font-black text-gray-400 text-[10px] uppercase tracking-wider">Current Value</Text>
+                  </View>
+                  <View style={{ flex: 2, alignItems: "center" }}>
+                    <Text className="font-black text-gray-400 text-[10px] uppercase tracking-wider">Target Cap</Text>
+                  </View>
+                  <View style={{ flex: 2, alignItems: "flex-end" }}>
+                    <Text className="font-black text-gray-400 text-[10px] uppercase tracking-wider">System Action</Text>
+                  </View>
+                </View>
+                
+                <View className="divide-y divide-gray-50">
+                  <View className="flex-row items-center px-5 py-4 bg-white">
+                    <View style={{ flex: 3.5, flexDirection: "row", alignItems: "center" }} className="gap-3">
+                      <View className="w-9 h-9 rounded-xl bg-sky-50 border border-sky-100 items-center justify-center">
+                        <Text className="text-base">🎓</Text>
+                      </View>
+                      <Text className="text-sm font-extrabold text-gray-800">Total Enrolled Students</Text>
+                    </View>
+                    <View style={{ flex: 3, alignItems: "center", justifyContent: "center" }}>
+                      <Text className="text-xs text-gray-500 font-semibold text-center">Active student admissions</Text>
+                    </View>
+                    <View style={{ flex: 1.5, alignItems: "center", justifyContent: "center" }}>
+                      <Text className="text-lg font-black text-sky-600 text-center">{isLoading ? "..." : totalStudentsVal}</Text>
+                    </View>
+                    <View style={{ flex: 2, alignItems: "center", justifyContent: "center" }}>
+                      <Text className="text-xs text-gray-400 font-bold text-center">1,500 Max Cap</Text>
+                    </View>
+                    <View style={{ flex: 2, alignItems: "flex-end", justifyContent: "center" }}>
+                      <TouchableOpacity 
+                        onPress={() => router.push("/(app)/students")}
+                        className="px-3.5 py-1.5 bg-[#134A8C] rounded-xl"
+                        activeOpacity={0.8}
+                      >
+                        <Text className="text-[10px] font-black text-white uppercase">Manage</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+
+                  <View className="flex-row items-center px-5 py-4 bg-gray-50/10">
+                    <View style={{ flex: 3.5, flexDirection: "row", alignItems: "center" }} className="gap-3">
+                      <View className="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-100 items-center justify-center">
+                        <Text className="text-base">✅</Text>
+                      </View>
+                      <Text className="text-sm font-extrabold text-gray-800">Student Attendance Today</Text>
+                    </View>
+                    <View style={{ flex: 3, alignItems: "center", justifyContent: "center" }}>
+                      <Text className="text-xs text-gray-500 font-semibold text-center">Daily present percentage</Text>
+                    </View>
+                    <View style={{ flex: 1.5, alignItems: "center", justifyContent: "center" }}>
+                      <Text className="text-lg font-black text-emerald-600 text-center">{isLoading ? "..." : attendanceTodayVal}</Text>
+                    </View>
+                    <View style={{ flex: 2, alignItems: "center", justifyContent: "center" }}>
+                      <Text className="text-xs text-gray-400 font-bold text-center">100% Target</Text>
+                    </View>
+                    <View style={{ flex: 2, alignItems: "flex-end", justifyContent: "center" }}>
+                      <TouchableOpacity 
+                        onPress={() => router.push("/(app)/attendance")}
+                        className="px-3.5 py-1.5 bg-[#134A8C] rounded-xl"
+                        activeOpacity={0.8}
+                      >
+                        <Text className="text-[10px] font-black text-white uppercase">Registry</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+
+                  <View className="flex-row items-center px-5 py-4 bg-white">
+                    <View style={{ flex: 3.5, flexDirection: "row", alignItems: "center" }} className="gap-3">
+                      <View className="w-9 h-9 rounded-xl bg-purple-50 border border-purple-100 items-center justify-center">
+                        <Text className="text-base">👥</Text>
+                      </View>
+                      <Text className="text-sm font-extrabold text-gray-800">Total Faculty & Staff</Text>
+                    </View>
+                    <View style={{ flex: 3, alignItems: "center", justifyContent: "center" }}>
+                      <Text className="text-xs text-gray-500 font-semibold text-center">Registered teachers & staff</Text>
+                    </View>
+                    <View style={{ flex: 1.5, alignItems: "center", justifyContent: "center" }}>
+                      <Text className="text-lg font-black text-purple-600 text-center">{isLoading ? "..." : totalStaffVal}</Text>
+                    </View>
+                    <View style={{ flex: 2, alignItems: "center", justifyContent: "center" }}>
+                      <Text className="text-xs text-gray-400 font-bold text-center">50 Optimal</Text>
+                    </View>
+                    <View style={{ flex: 2, alignItems: "flex-end", justifyContent: "center" }}>
+                      <TouchableOpacity 
+                        onPress={() => router.push("/(app)/teachers")}
+                        className="px-3.5 py-1.5 bg-[#134A8C] rounded-xl"
+                        activeOpacity={0.8}
+                      >
+                        <Text className="text-[10px] font-black text-white uppercase">Directory</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+
+                  <View className="flex-row items-center px-5 py-4 bg-gray-50/10">
+                    <View style={{ flex: 3.5, flexDirection: "row", alignItems: "center" }} className="gap-3">
+                      <View className="w-9 h-9 rounded-xl bg-cyan-50 border border-cyan-100 items-center justify-center">
+                        <Text className="text-base">⏱️</Text>
+                      </View>
+                      <Text className="text-sm font-extrabold text-gray-800">Staff Attendance</Text>
+                    </View>
+                    <View style={{ flex: 3, alignItems: "center", justifyContent: "center" }}>
+                      <Text className="text-xs text-gray-500 font-semibold text-center">Faculty daily register</Text>
+                    </View>
+                    <View style={{ flex: 1.5, alignItems: "center", justifyContent: "center" }}>
+                      <Text className="text-lg font-black text-cyan-600 text-center">{isLoading ? "..." : staffAttendanceVal}</Text>
+                    </View>
+                    <View style={{ flex: 2, alignItems: "center", justifyContent: "center" }}>
+                      <Text className="text-xs text-gray-400 font-bold text-center">100% Target</Text>
+                    </View>
+                    <View style={{ flex: 2, alignItems: "flex-end", justifyContent: "center" }}>
+                      <TouchableOpacity 
+                        onPress={() => router.push("/(app)/attendance-reports")}
+                        className="px-3.5 py-1.5 bg-[#134A8C] rounded-xl"
+                        activeOpacity={0.8}
+                      >
+                        <Text className="text-[10px] font-black text-white uppercase">Reports</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </View>
+          )}
 
           {/* ── Quick Actions ─────────────────────────────────────── */}
           <SectionCard title="Quick Actions" icon="⚡">

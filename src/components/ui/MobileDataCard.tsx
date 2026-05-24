@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
+import { Colors } from "@/constants/colors";
 
 interface DataField {
   label: string;
@@ -23,11 +24,15 @@ interface MobileDataCardProps {
   actions?: React.ReactNode;
   /** On card press */
   onPress?: () => void;
+  /** Left accent stripe color (defaults to brand primary) */
+  accentColor?: string;
+  /** Hide the left accent stripe */
+  noAccent?: boolean;
 }
 
 const highlightColors = {
-  primary: "text-[#0d3666]",
-  accent: "text-[#f5921e]",
+  primary: `text-[#134A8C]`,
+  accent: `text-[#F5921E]`,
   success: "text-emerald-600",
   error: "text-red-600",
   muted: "text-gray-500",
@@ -41,6 +46,8 @@ export function MobileDataCard({
   fields,
   actions,
   onPress,
+  accentColor,
+  noAccent = false,
 }: MobileDataCardProps) {
   const Wrapper = onPress ? TouchableOpacity : View;
 
@@ -51,6 +58,8 @@ export function MobileDataCard({
       className="bg-white rounded-2xl border border-gray-100 p-4 mb-3"
       style={{
         boxShadow: "0px 2px 8px rgba(0,0,0,0.03)",
+        borderLeftWidth: noAccent ? 1 : 4,
+        borderLeftColor: noAccent ? "#F3F4F6" : (accentColor || Colors.primary),
       }}
     >
       {/* Header */}
