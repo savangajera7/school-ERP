@@ -7,7 +7,8 @@ import { Card } from "@/components/ui/Card";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { resultService, StudentResult } from "@/services/api/resultService";
 import { useAuthStore } from "@/store/authStore";
-
+import { Colors } from "@/constants/colors";
+import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
 
 export default function ParentResultsScreen() {
@@ -24,8 +25,6 @@ export default function ParentResultsScreen() {
   const fetchResults = async () => {
     try {
       setLoading(true);
-      // For parent, we might need to fetch results for their children.
-      // For now, using the logged-in user ID (assuming it's the student ID for mock purposes)
       const data = await resultService.getResultsByStudentId(Number(userData?.id) || 1);
       setResults(data);
       if (data.length > 0) {
@@ -41,59 +40,61 @@ export default function ParentResultsScreen() {
   if (loading) {
     return (
       <View className="flex-1 items-center justify-center bg-white">
-        <PremiumLoader />
-        <Text className="mt-4 text-gray-500 font-bold tracking-tight">Loading Records...</Text>
+        <PremiumLoader color={Colors.primary} size={40} />
       </View>
     );
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
-      <StatusBar style="dark" translucent backgroundColor="transparent" />
+    <SafeAreaView className="flex-1 bg-[#FDFDFD]" edges={["top", "left", "right"]}>
+      <StatusBar style="light" translucent backgroundColor="transparent" />
       
-      {/* Header */}
-      <View className="bg-white border-b border-gray-100 px-6 py-4 flex-row justify-between items-center z-10">
-        <View className="flex-row items-center gap-3">
-          <TouchableOpacity
-            onPress={() => router.back()}
-            className="w-10 h-10 bg-gray-50 rounded-xl items-center justify-center"
-          >
-            <Text className="text-sm font-bold text-gray-700">🔙</Text>
-          </TouchableOpacity>
-          <View>
-            <Text className="text-xl font-bold text-gray-900">Academic Results</Text>
-            <Text className="text-xs text-gray-400 font-semibold">Track your child's progress</Text>
-          </View>
-        </View>
-      </View>
+      <ScreenHeader 
+        title="Academic Results" 
+        subtitle="Track your child's learning progress"
+        onBack={() => router.back()}
+      />
 
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        <View className={`p-6 ${!isMobile ? 'flex-row gap-6' : ''}`}>
+      <ScrollView className="flex-1 mt-6" showsVerticalScrollIndicator={false}>
+        <View className={`px-4 pb-10 max-w-[1200px] w-full self-center ${!isMobile ? 'flex-row gap-6 px-8' : 'gap-4'}`}>
           
           {/* Left Panel: Result List */}
-          <View className={`${!isMobile ? 'w-1/3' : 'mb-6'}`}>
-            <Text className="text-sm font-bold text-gray-400 mb-4 uppercase tracking-wider">Available Exams</Text>
+          <View className={`${!isMobile ? 'w-1/3' : ''}`}>
+            <Text className="text-[12px] font-black text-gray-400 mb-4 uppercase tracking-wider px-1">Available Report Cards</Text>
             <View className="gap-3">
               {results.map((res: StudentResult, idx: number) => (
                 <TouchableOpacity 
                   key={idx}
                   onPress={() => setSelectedResult(res)}
-                  className={`p-4 rounded-2xl border ${selectedResult?.examName === res.examName ? 'bg-indigo-50 border-indigo-200' : 'bg-white border-gray-100'}`}
+                  className={`p-4 rounded-2xl border-2 transition-all ${
+                    selectedResult?.examName === res.examName 
+                      ? 'bg-blue-50/20 border-[#0d3666]' 
+                      : 'bg-white border-gray-100'
+                  }`}
+                  activeOpacity={0.8}
                 >
                   <View className="flex-row justify-between items-start mb-2">
-                    <Text className={`text-sm font-bold ${selectedResult?.examName === res.examName ? 'text-indigo-900' : 'text-gray-800'}`}>
+                    <Text className={`text-sm font-black ${
+                      selectedResult?.examName === res.examName ? 'text-[#0d3666]' : 'text-gray-805'
+                    }`}>
                       {res.examName}
                     </Text>
-                    <View className={`px-2 py-0.5 rounded-full ${res.status === 'Pass' ? 'bg-emerald-50' : 'bg-red-50'}`}>
-                      <Text className={`text-[10px] font-bold ${res.status === 'Pass' ? 'text-emerald-600' : 'text-red-600'}`}>
+                    <View className={`px-2.5 py-0.5 rounded-full border ${
+                      res.status === 'Pass' 
+                        ? 'bg-emerald-50 border-emerald-100' 
+                        : 'bg-rose-50 border-rose-100'
+                    }`}>
+                      <Text className={`text-[10px] font-black uppercase ${
+                        res.status === 'Pass' ? 'text-emerald-600' : 'text-rose-600'
+                      }`}>
                         {res.status}
                       </Text>
                     </View>
                   </View>
-                  <Text className="text-xs text-gray-400 font-semibold">{res.examDate}</Text>
-                  <View className="flex-row justify-between items-center mt-3">
-                    <Text className="text-xs font-bold text-gray-500">Percentage: {res.percentage}%</Text>
-                    <Text className="text-xs font-bold text-indigo-600">Grade: {res.grade}</Text>
+                  <Text className="text-[11px] text-gray-400 font-bold">{res.examDate}</Text>
+                  <View className="flex-row justify-between items-center mt-4 pt-3 border-t border-gray-50">
+                    <Text className="text-xs font-black text-gray-500">Aggregate: {res.percentage}%</Text>
+                    <Text className="text-xs font-black text-[#0d3666]">Grade: {res.grade}</Text>
                   </View>
                 </TouchableOpacity>
               ))}
@@ -103,45 +104,49 @@ export default function ParentResultsScreen() {
           {/* Right Panel: Detail View */}
           {selectedResult && (
             <View className={`${!isMobile ? 'flex-1' : ''}`}>
-              <Card className="bg-white border border-gray-100 p-6 overflow-hidden">
-                <View className="flex-row justify-between items-center mb-6 pb-4 border-b border-gray-50">
+              <Card className="bg-white border border-gray-150 p-6 overflow-hidden shadow-sm">
+                <View className="flex-row justify-between items-center mb-6 pb-4 border-b border-gray-100">
                   <View>
-                    <Text className="text-lg font-bold text-gray-800">{selectedResult.examName}</Text>
-                    <Text className="text-xs text-gray-400 font-semibold mt-1">Detailed Marksheet • Session 2025-26</Text>
+                    <Text className="text-[16px] font-black text-gray-900">{selectedResult.examName}</Text>
+                    <Text className="text-[12px] text-gray-450 font-bold mt-1">Detailed Transcript • Term Evaluation</Text>
                   </View>
                   <View className="items-end">
-                    <Text className="text-2xl font-bold text-indigo-600">{selectedResult.percentage}%</Text>
-                    <Text className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Aggregate</Text>
+                    <Text className="text-2xl font-black text-[#0d3666]">{selectedResult.percentage}%</Text>
+                    <Text className="text-[10px] text-gray-400 font-black uppercase tracking-widest mt-0.5">Aggregate score</Text>
                   </View>
                 </View>
 
                 {/* Mark Table */}
-                <View className="bg-gray-50 rounded-2xl overflow-hidden border border-gray-100">
-                  <View className="flex-row bg-gray-100 px-4 py-3">
-                    <Text className="flex-[2] text-[11px] font-bold text-gray-500 uppercase">Subject</Text>
-                    <Text className="flex-1 text-[11px] font-bold text-gray-500 uppercase text-center">Marks</Text>
-                    <Text className="flex-1 text-[11px] font-bold text-gray-500 uppercase text-center">Total</Text>
-                    <Text className="flex-1 text-[11px] font-bold text-gray-500 uppercase text-right">Grade</Text>
+                <View className="bg-gray-50/50 rounded-2xl overflow-hidden border border-gray-100">
+                  <View className="flex-row bg-gray-50 px-4 py-3.5 border-b border-gray-100">
+                    <Text className="flex-[2] text-[10px] font-black text-gray-400 uppercase">Subject Name</Text>
+                    <Text className="flex-1 text-[10px] font-black text-gray-400 uppercase text-center">Marks Obtained</Text>
+                    <Text className="flex-1 text-[10px] font-black text-gray-400 uppercase text-center">Max Marks</Text>
+                    <Text className="flex-1 text-[10px] font-black text-gray-400 uppercase text-right">Grade</Text>
                   </View>
                   {selectedResult.subjects.map((sub: any, idx: number) => (
-                    <View key={idx} className={`flex-row px-4 py-4 ${idx !== selectedResult.subjects.length - 1 ? 'border-b border-gray-100' : ''}`}>
-                      <Text className="flex-[2] text-sm font-bold text-gray-700">{sub.subjectName}</Text>
-                      <Text className="flex-1 text-sm font-bold text-gray-900 text-center">{sub.marksObtained}</Text>
-                      <Text className="flex-1 text-sm font-semibold text-gray-400 text-center">{sub.totalMarks}</Text>
-                      <Text className={`flex-1 text-sm font-bold text-right ${sub.grade.includes('A') ? 'text-emerald-600' : 'text-amber-600'}`}>
+                    <View key={idx} className={`flex-row px-4 py-4 ${
+                      idx !== selectedResult.subjects.length - 1 ? 'border-b border-gray-100' : ''
+                    }`}>
+                      <Text className="flex-[2] text-sm font-black text-gray-800">{sub.subjectName}</Text>
+                      <Text className="flex-1 text-sm font-extrabold text-gray-900 text-center">{sub.marksObtained}</Text>
+                      <Text className="flex-1 text-sm font-bold text-gray-400 text-center">{sub.totalMarks}</Text>
+                      <Text className={`flex-1 text-sm font-black text-right ${
+                        sub.grade.includes('A') ? 'text-emerald-600' : 'text-amber-600'
+                      }`}>
                         {sub.grade}
                       </Text>
                     </View>
                   ))}
                 </View>
 
-                <View className="mt-6 p-4 bg-indigo-50 rounded-2xl flex-row items-center justify-between border border-indigo-100">
+                <View className="mt-6 p-4 bg-blue-50/20 rounded-2xl flex-row items-center justify-between border border-blue-50">
                   <View>
-                    <Text className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-1">Final Result</Text>
-                    <Text className="text-base font-bold text-indigo-900">Promoted to next standard</Text>
+                    <Text className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-1">Final Result Status</Text>
+                    <Text className="text-sm font-black text-gray-800">Promoted to next grade level</Text>
                   </View>
-                  <View className="w-12 h-12 bg-white rounded-xl items-center justify-center border border-indigo-100 shadow-sm">
-                    <Text className="text-xl font-bold text-indigo-600">{selectedResult.grade}</Text>
+                  <View className="w-12 h-12 bg-white rounded-xl items-center justify-center border border-gray-200 shadow-sm">
+                    <Text className="text-base font-black text-[#0d3666]">{selectedResult.grade}</Text>
                   </View>
                 </View>
               </Card>

@@ -3,6 +3,7 @@ import {
   View,
   Text,
   TextInput,
+  Platform,
   type TextInputProps,
 } from "react-native";
 
@@ -45,19 +46,29 @@ export const Input: React.FC<InputProps> = ({
       )}
       <View
         className={`
-          h-[52px] rounded-xl border-[1.5px] flex-row items-center px-4
-          ${error ? "border-red-500 bg-[#FFF5F5]" : isFocused ? "border-gray-300 bg-white" : "border-gray-200 bg-[#F9FAFB]"}
+          rounded-xl border-[1.5px] flex-row items-center px-4
+          ${error ? "border-red-500 bg-[#FFF5F5]" : isFocused ? "border-[#0d3666] bg-white" : "border-gray-200 bg-[#F9FAFB]"}
           ${className || ""}
         `}
+        style={{ minHeight: 52 }}
       >
         {leftIcon && <View className="mr-3">{leftIcon}</View>}
         <TextInput
-          className="flex-1 h-full text-[15px] text-[#111827]"
+          className="flex-1 text-[#111827]"
           placeholderTextColor="#9CA3AF"
           autoCorrect={false}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          style={[{ outlineWidth: 0 } as any, style]}
+          style={[
+            {
+              // 16px minimum prevents iOS zoom on focus
+              fontSize: 16,
+              paddingVertical: Platform.OS === 'ios' ? 14 : 12,
+              minHeight: 48,
+              ...(Platform.OS === 'web' ? { outlineWidth: 0 } : {}),
+            } as any,
+            style,
+          ]}
           {...props}
         />
         {rightIcon && <View className="ml-3">{rightIcon}</View>}

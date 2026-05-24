@@ -1,0 +1,119 @@
+import React from "react";
+import { View, Text, TouchableOpacity, Platform } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { router } from "expo-router";
+import { Colors } from "@/constants/colors";
+import { useBreakpoint } from "@/hooks/useBreakpoint";
+
+interface ScreenHeaderProps {
+  title: string;
+  subtitle?: string;
+  /** Right-side action button */
+  rightAction?: React.ReactNode;
+  /** Use flat white header instead of gradient */
+  flat?: boolean;
+  /** Custom back action, defaults to router.back() */
+  onBack?: () => void;
+}
+
+export function ScreenHeader({
+  title,
+  subtitle,
+  rightAction,
+  flat = false,
+  onBack,
+}: ScreenHeaderProps) {
+  const { isMobile } = useBreakpoint();
+
+  const handleBack = () => {
+    if (onBack) {
+      onBack();
+    } else {
+      router.back();
+    }
+  };
+
+  if (flat) {
+    return (
+      <View
+        className="bg-white border-b border-gray-100 flex-row justify-between items-center z-10"
+        style={{ paddingHorizontal: isMobile ? 16 : 24, paddingVertical: isMobile ? 14 : 18 }}
+      >
+        <View className="flex-row items-center gap-3 flex-1">
+          <TouchableOpacity
+            onPress={handleBack}
+            className="w-10 h-10 bg-gray-50 rounded-xl items-center justify-center"
+            activeOpacity={0.7}
+          >
+            <Text className="text-sm font-bold text-gray-700">←</Text>
+          </TouchableOpacity>
+          <View className="flex-1">
+            <Text
+              className="font-black text-gray-900"
+              style={{ fontSize: isMobile ? 16 : 18 }}
+              numberOfLines={1}
+            >
+              {title}
+            </Text>
+            {subtitle && (
+              <Text
+                className="text-gray-400 font-semibold mt-0.5"
+                style={{ fontSize: isMobile ? 11 : 12 }}
+                numberOfLines={1}
+              >
+                {subtitle}
+              </Text>
+            )}
+          </View>
+        </View>
+        {rightAction && <View className="ml-3">{rightAction}</View>}
+      </View>
+    );
+  }
+
+  return (
+    <LinearGradient
+      colors={[Colors.primary, Colors.primaryDark]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={{
+        paddingHorizontal: isMobile ? 16 : 24,
+        paddingTop: isMobile ? 16 : 24,
+        paddingBottom: isMobile ? 40 : 48,
+        borderBottomLeftRadius: isMobile ? 24 : 32,
+        borderBottomRightRadius: isMobile ? 24 : 32,
+      }}
+    >
+      <View className="flex-row justify-between items-center">
+        <View className="flex-row items-center gap-3 flex-1">
+          <TouchableOpacity
+            onPress={handleBack}
+            className="w-10 h-10 bg-white/10 rounded-xl items-center justify-center border border-white/20"
+            activeOpacity={0.7}
+          >
+            <Text className="text-white font-bold text-sm">←</Text>
+          </TouchableOpacity>
+          <View className="flex-1">
+            <Text
+              className="font-black text-white"
+              style={{ fontSize: isMobile ? 17 : 20 }}
+              numberOfLines={1}
+            >
+              {title}
+            </Text>
+            {subtitle && (
+              <Text
+                className="text-white/60 font-bold uppercase tracking-wider mt-0.5"
+                style={{ fontSize: isMobile ? 10 : 12 }}
+                numberOfLines={1}
+              >
+                {subtitle}
+              </Text>
+            )}
+          </View>
+        </View>
+        {rightAction && <View className="ml-3">{rightAction}</View>}
+      </View>
+    </LinearGradient>
+  );
+}

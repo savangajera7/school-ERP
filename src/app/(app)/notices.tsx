@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 import { Card } from "@/components/ui/Card";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
+import { Colors } from "@/constants/colors";
+import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { useNoticeGet } from "@/api/generated/erp-notice/erp-notice";
+import { PremiumLoader } from "@/components/ui/PremiumLoader";
 
 const MOCK_SCHOOL_NOTICES = [
   {
@@ -33,57 +37,76 @@ const MOCK_CLASS_NOTICES = [
   }
 ];
 
-import { Colors } from "@/constants/colors";
-import { LinearGradient } from "expo-linear-gradient";
-import { useNoticeGet } from "@/api/generated/erp-notice/erp-notice";
-
 export default function StudentNoticeHistoryScreen() {
   const { isMobile } = useBreakpoint();
   const [activeTab, setActiveTab] = useState<"school" | "class">("school");
   
-  const { data: noticesData, isLoading } = useNoticeGet({});
+  const { data: noticesData, isLoading, refetch } = useNoticeGet({});
 
-  const currentNotices = activeTab === "school" ? MOCK_SCHOOL_NOTICES : MOCK_CLASS_NOTICES;
+  // Resolve API notices data, falling back to mock lists
+  const noticeList = useMemo(() => {
+    const list = (noticesData?.data as any)?.data || (noticesData?.data as any) || [];
+    if (!Array.isArray(list) || list.length === 0) {
+      return activeTab === "school" ? MOCK_SCHOOL_NOTICES : MOCK_CLASS_NOTICES;
+    }
+    return list
+      .filter((item: any) => 
+        activeTab === "school" ? item.type === "School" || !item.type : item.type === "Class"
+      )
+      .map((item: any, idx: number) => ({
+        id: item.id?.toString() || `not_${idx}`,
+        date: item.publishDate || item.date || "N/A",
+        author: item.createdBy || item.author || "Administrator",
+        title: item.title || "Announcement",
+        description: item.description || item.content || "",
+      }));
+  }, [noticesData, activeTab]);
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
+    <SafeAreaView className="flex-1 bg-[#FDFDFD]" edges={["top", "left", "right"]}>
       <StatusBar style="light" translucent backgroundColor="transparent" />
       
-      {/* Top Navbar */}
-      <LinearGradient
-        colors={[Colors.primary, Colors.primaryDark]}
-        className="px-6 pt-6 pb-12 rounded-b-[32px]"
-      >
-        <View className="flex-row items-center gap-4">
-          <TouchableOpacity
-            onPress={() => router.push("/(app)/dashboard")}
-            className="w-10 h-10 bg-white/10 rounded-xl items-center justify-center border border-white/20"
-          >
-            <Text className="text-white font-bold">🔙</Text>
-          </TouchableOpacity>
-          <View>
-            <Text className="text-xl font-black text-white">Notice Board</Text>
-            <Text className="text-white/60 text-xs font-bold uppercase tracking-wider mt-0.5">
-              School Announcements & Logs
-            </Text>
-          </View>
-        </View>
-      </LinearGradient>
+      <ScreenHeader 
+        title="Notice Board" 
+        subtitle="Official school announcements & circulars"
+        onBack={() => router.push("/(app)/dashboard")}
+      />
 
-      {/* Tabs */}
+      {/* Modern High-End Tabs */}
       <View className="px-6 -mt-6">
-        <View className="bg-white p-2 rounded-2xl flex-row shadow-lg shadow-gray-200/50 border border-gray-50">
+        <View 
+          className="bg-white p-1 rounded-2xl flex-row border border-gray-100"
+          style={{
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 8 },
+            shadowOpacity: 0.05,
+            shadowRadius: 16,
+            elevation: 4,
+          }}
+        >
           <TouchableOpacity 
             onPress={() => setActiveTab("school")}
-            className={`flex-1 items-center py-2.5 rounded-xl ${activeTab === 'school' ? 'bg-primary/5' : ''}`}
+            className={`flex-1 items-center py-3 rounded-xl flex-row justify-center gap-1.5 ${
+              activeTab === 'school' ? 'bg-[#0d3666]' : 'bg-transparent'
+            }`}
           >
-            <Text className={`text-xs font-black uppercase tracking-tighter ${activeTab === 'school' ? 'text-primary' : 'text-gray-400'}`}>School Notice</Text>
+            <Text className={`text-xs font-black uppercase tracking-wider ${
+              activeTab === 'school' ? 'text-white' : 'text-gray-400'
+            }`}>
+              🏢 School Notices
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity 
             onPress={() => setActiveTab("class")}
-            className={`flex-1 items-center py-2.5 rounded-xl ${activeTab === 'class' ? 'bg-primary/5' : ''}`}
+            className={`flex-1 items-center py-3 rounded-xl flex-row justify-center gap-1.5 ${
+              activeTab === 'class' ? 'bg-[#0d3666]' : 'bg-transparent'
+            }`}
           >
-            <Text className={`text-xs font-black uppercase tracking-tighter ${activeTab === 'class' ? 'text-primary' : 'text-gray-400'}`}>Class Notice</Text>
+            <Text className={`text-xs font-black uppercase tracking-wider ${
+              activeTab === 'class' ? 'text-white' : 'text-gray-400'
+            }`}>
+              🏫 Class Notices
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -91,34 +114,50 @@ export default function StudentNoticeHistoryScreen() {
       <ScrollView className="flex-1 px-4 mt-6 md:px-8" showsVerticalScrollIndicator={false}>
         <View className="max-w-[800px] w-full self-center pb-10 gap-4">
           
-          {currentNotices.map((notice) => (
-            <Card key={notice.id} className="bg-white border border-gray-150 p-5 rounded-2xl relative overflow-hidden flex-row">
-              {/* Left Accent indicator line */}
-              <View className="w-1 bg-[#0d3666] absolute left-0 top-0 bottom-0" />
-              
-              <View className="flex-1 pl-2">
-                {/* Meta details header */}
-                <View className="flex-row justify-between items-center mb-3">
-                  <View className="flex-row items-center gap-1.5">
-                    <Text className="text-xs">📅</Text>
-                    <Text className="text-xs text-gray-400 font-bold">{notice.date}</Text>
-                  </View>
-                  <View className="flex-row items-center gap-1">
-                    <Text className="text-[10px] text-gray-400">👤</Text>
-                    <Text className="text-[10px] text-gray-400 font-bold uppercase">{notice.author}</Text>
-                  </View>
-                </View>
-
-                {/* Title */}
-                <Text className="text-[15px] font-bold text-gray-900 mb-2">{notice.title}</Text>
+          {isLoading ? (
+            <View className="py-20 items-center justify-center">
+              <PremiumLoader color={Colors.primary} size={36} />
+            </View>
+          ) : noticeList.length === 0 ? (
+            <View className="py-20 items-center justify-center bg-white rounded-3xl border border-gray-100 p-8 mt-2">
+              <Text className="text-4xl mb-3">📭</Text>
+              <Text className="text-gray-400 font-extrabold text-sm uppercase tracking-wider">No notices posted yet</Text>
+            </View>
+          ) : (
+            noticeList.map((notice) => (
+              <Card 
+                key={notice.id} 
+                className="bg-white border border-gray-150 p-5 rounded-2xl relative overflow-hidden flex-row"
+              >
+                {/* Left Accent indicator line */}
+                <View className="w-1.5 bg-[#0d3666] absolute left-0 top-0 bottom-0" />
                 
-                {/* Description Box */}
-                <View className="bg-gray-50/50 border border-gray-100 rounded-xl p-3">
-                  <Text className="text-sm text-gray-700 leading-6 font-medium">{notice.description}</Text>
+                <View className="flex-1 pl-2.5">
+                  {/* Meta details header */}
+                  <View className="flex-row justify-between items-center mb-3">
+                    <View className="flex-row items-center gap-1.5">
+                      <Text className="text-xs">📅</Text>
+                      <Text className="text-xs text-gray-400 font-extrabold">{notice.date}</Text>
+                    </View>
+                    <View className="flex-row items-center gap-1.5">
+                      <Text className="text-[10px] text-gray-400">👤</Text>
+                      <Text className="text-[10px] text-gray-400 font-black uppercase tracking-wider">
+                        {notice.author}
+                      </Text>
+                    </View>
+                  </View>
+
+                  {/* Title */}
+                  <Text className="text-[15px] font-black text-gray-900 mb-2">{notice.title}</Text>
+                  
+                  {/* Description Box */}
+                  <View className="bg-gray-50/50 border border-gray-100 rounded-xl p-3">
+                    <Text className="text-sm text-gray-700 leading-6 font-semibold">{notice.description}</Text>
+                  </View>
                 </View>
-              </View>
-            </Card>
-          ))}
+              </Card>
+            ))
+          )}
 
         </View>
       </ScrollView>

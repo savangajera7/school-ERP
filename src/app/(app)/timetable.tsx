@@ -1,10 +1,13 @@
 import React, { useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 import { Card } from "@/components/ui/Card";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
+import { Colors } from "@/constants/colors";
+import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { MobileDataCard } from "@/components/ui/MobileDataCard";
 
 const CLASSES = ["Class I-A", "Class II-B", "Class III-A", "Class IV-B"];
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -51,45 +54,38 @@ export default function TimetableScreen() {
   const [selectedDay, setSelectedDay] = useState("Monday");
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
-      <StatusBar style="dark" translucent backgroundColor="transparent" />
+    <SafeAreaView className="flex-1 bg-[#FDFDFD]" edges={["top", "left", "right"]}>
+      <StatusBar style="light" translucent backgroundColor="transparent" />
       
-      {/* Top Navbar */}
-      <View className="bg-white border-b border-gray-100 px-6 py-4 flex-row justify-between items-center z-10">
-        <View className="flex-row items-center gap-3">
-          <TouchableOpacity
-            onPress={() => router.push("/(app)/dashboard")}
-            className="w-10 h-10 bg-gray-50 rounded-xl items-center justify-center"
-          >
-            <Text className="text-sm font-bold text-gray-700">🔙</Text>
-          </TouchableOpacity>
-          <View>
-            <Text className="text-[18px] font-bold text-gray-900">School Timetable</Text>
-            <Text className="text-[12px] text-gray-400 font-semibold mt-0.5">
-              Weekly class schedules and lecture slots
-            </Text>
-          </View>
-        </View>
-      </View>
+      <ScreenHeader 
+        title="School Timetable" 
+        subtitle="Weekly class schedules and lecture slots"
+        onBack={() => router.push("/(app)/dashboard")}
+      />
 
-      <ScrollView className="flex-1 px-4 pt-6 md:px-8" showsVerticalScrollIndicator={false}>
+      <ScrollView className="flex-1 px-4 mt-6 md:px-8" showsVerticalScrollIndicator={false}>
         <View className="max-w-[1200px] w-full self-center pb-10">
 
           {/* Selector Configurations */}
-          <Card className="bg-white border border-gray-100 p-5 mb-6">
+          <Card className="bg-white border border-gray-150 p-5 mb-6">
             <View className={`flex-row gap-6 ${isMobile ? "flex-col" : "items-center justify-between"}`}>
               <View className="flex-1">
-                <Text className="text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Select Class</Text>
+                <Text className="text-[12px] font-black text-gray-400 mb-3.5 uppercase tracking-wider">Select Standard</Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
                   {CLASSES.map((cls) => (
                     <TouchableOpacity
                       key={cls}
                       onPress={() => setSelectedClass(cls)}
-                      className={`px-4 py-2 rounded-lg border ${
-                        selectedClass === cls ? "bg-[#0d3666] border-[#0d3666]" : "bg-white border-gray-200"
+                      className={`px-5 py-2.5 rounded-xl border-[1.5px] ${
+                        selectedClass === cls 
+                          ? "bg-[#0d3666] border-[#0d3666]" 
+                          : "bg-gray-50/50 border-gray-200"
                       }`}
+                      activeOpacity={0.8}
                     >
-                      <Text className={`text-sm font-bold ${selectedClass === cls ? "text-white" : "text-gray-700"}`}>
+                      <Text className={`text-xs font-black uppercase tracking-wider ${
+                        selectedClass === cls ? "text-white" : "text-gray-500"
+                      }`}>
                         {cls}
                       </Text>
                     </TouchableOpacity>
@@ -98,17 +94,22 @@ export default function TimetableScreen() {
               </View>
 
               <View className="flex-1">
-                <Text className="text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Select Day</Text>
+                <Text className="text-[12px] font-black text-gray-400 mb-3.5 uppercase tracking-wider">Select Weekday</Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
                   {DAYS.map((day) => (
                     <TouchableOpacity
                       key={day}
                       onPress={() => setSelectedDay(day)}
-                      className={`px-4 py-2 rounded-lg border ${
-                        selectedDay === day ? "bg-[#f5921e] border-orange-500" : "bg-white border-gray-200"
+                      className={`px-5 py-2.5 rounded-xl border-[1.5px] ${
+                        selectedDay === day 
+                          ? "bg-[#f5921e] border-[#f5921e]" 
+                          : "bg-gray-50/50 border-gray-200"
                       }`}
+                      activeOpacity={0.8}
                     >
-                      <Text className={`text-sm font-bold ${selectedDay === day ? "text-white" : "text-gray-700"}`}>
+                      <Text className={`text-xs font-black uppercase tracking-wider ${
+                        selectedDay === day ? "text-white" : "text-gray-500"
+                      }`}>
                         {day}
                       </Text>
                     </TouchableOpacity>
@@ -119,42 +120,74 @@ export default function TimetableScreen() {
           </Card>
 
           {/* Lecture Timeline List */}
-          <View className="mb-4">
-            <Text className="text-base font-bold text-gray-800 px-1 mb-1">{selectedDay}'s Lecture Schedule</Text>
-            <Text className="text-xs text-gray-400 font-semibold px-1">Showing timetable for {selectedClass}</Text>
+          <View className="mb-4 px-1">
+            <Text className="text-[16px] font-black text-gray-900">{selectedDay}'s Lecture Schedule</Text>
+            <Text className="text-[12px] text-gray-400 font-bold mt-0.5">Showing timetable for {selectedClass}</Text>
           </View>
 
-          <Card className="bg-white border border-gray-100 overflow-hidden">
-            {/* Header Row */}
-            <View className="flex-row items-center px-5 py-3 bg-gray-50 border-b border-gray-100">
-              <Text className="w-[180px] text-xs font-bold text-gray-400 uppercase">Time Slot</Text>
-              <Text className="flex-1 text-xs font-bold text-gray-400 uppercase">Subject</Text>
-              <Text className="w-[150px] text-xs font-bold text-gray-400 uppercase text-center">Teacher</Text>
-              <Text className="w-[120px] text-xs font-bold text-gray-400 uppercase text-right">Classroom</Text>
+          {/* Lecture Slot List */}
+          {isMobile ? (
+            <View className="gap-2">
+              {(MOCK_TIMETABLE[selectedDay] || []).map((slot, index) => (
+                <MobileDataCard
+                  key={index}
+                  title={slot.subject}
+                  subtitle={slot.time}
+                  icon={
+                    <View className={`w-10 h-10 rounded-xl items-center justify-center ${
+                      slot.subject === "Lunch Break" ? "bg-amber-50" : "bg-blue-50"
+                    }`}>
+                      <Text className="text-base">{slot.subject === "Lunch Break" ? "🥪" : "📚"}</Text>
+                    </View>
+                  }
+                  badge={
+                    <View className="bg-gray-50 px-2 py-1 rounded border border-gray-100">
+                      <Text className="text-[10px] font-black text-gray-500 uppercase">{slot.room}</Text>
+                    </View>
+                  }
+                  fields={
+                    slot.subject !== "Lunch Break" 
+                      ? [{ label: "Instructor", value: slot.teacher }]
+                      : []
+                  }
+                />
+              ))}
             </View>
-
-            {/* Timetable Slots */}
-            {(MOCK_TIMETABLE[selectedDay] || []).map((slot, index) => (
-              <View 
-                key={index} 
-                className={`flex-row items-center px-5 py-4 border-b border-gray-50 ${index % 2 === 0 ? "bg-white" : "bg-gray-50/30"}`}
-              >
-                <Text className="w-[180px] text-sm font-bold text-[#0d3666]">{slot.time}</Text>
-                
-                <View className="flex-1 flex-row items-center gap-3">
-                  <View className={`w-8 h-8 rounded-full items-center justify-center ${
-                    slot.subject === 'Lunch Break' ? 'bg-orange-50' : 'bg-indigo-50'
-                  }`}>
-                    <Text className="text-sm">{slot.subject === 'Lunch Break' ? '🥪' : '📚'}</Text>
-                  </View>
-                  <Text className="text-sm font-bold text-gray-800">{slot.subject}</Text>
-                </View>
-
-                <Text className="w-[150px] text-sm text-gray-500 font-semibold text-center">{slot.teacher}</Text>
-                <Text className="w-[120px] text-sm text-gray-700 font-bold text-right">{slot.room}</Text>
+          ) : (
+            <Card noPadding className="bg-white border border-gray-100 overflow-hidden">
+              {/* Header Row */}
+              <View className="flex-row items-center px-5 py-4 bg-gray-50 border-b border-gray-150">
+                <Text className="w-[200px] text-xs font-black text-gray-400 uppercase">Time Slot</Text>
+                <Text className="flex-1 text-xs font-black text-gray-400 uppercase">Subject</Text>
+                <Text className="w-[180px] text-xs font-black text-gray-400 uppercase text-center">Teacher</Text>
+                <Text className="w-[120px] text-xs font-black text-gray-400 uppercase text-right">Classroom</Text>
               </View>
-            ))}
-          </Card>
+
+              {/* Timetable Slots */}
+              {(MOCK_TIMETABLE[selectedDay] || []).map((slot, index) => (
+                <View 
+                  key={index} 
+                  className={`flex-row items-center px-5 py-4 border-b border-gray-100 ${
+                    slot.subject === 'Lunch Break' ? 'bg-amber-50/20' : index % 2 === 0 ? "bg-white" : "bg-gray-50/20"
+                  }`}
+                >
+                  <Text className="w-[200px] text-sm font-black text-[#0d3666]">{slot.time}</Text>
+                  
+                  <View className="flex-1 flex-row items-center gap-3.5">
+                    <View className={`w-9 h-9 rounded-xl items-center justify-center ${
+                      slot.subject === 'Lunch Break' ? 'bg-amber-100' : 'bg-blue-100'
+                    }`}>
+                      <Text className="text-sm">{slot.subject === 'Lunch Break' ? '🥪' : '📚'}</Text>
+                    </View>
+                    <Text className="text-sm font-extrabold text-gray-850">{slot.subject}</Text>
+                  </View>
+
+                  <Text className="w-[180px] text-sm text-gray-500 font-bold text-center">{slot.teacher}</Text>
+                  <Text className="w-[120px] text-sm text-gray-700 font-extrabold text-right">{slot.room}</Text>
+                </View>
+              ))}
+            </Card>
+          )}
 
         </View>
       </ScrollView>

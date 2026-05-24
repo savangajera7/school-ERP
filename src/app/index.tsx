@@ -4,22 +4,30 @@ import { View, StyleSheet, Text, Image, Dimensions, TouchableOpacity } from "rea
 import { LinearGradient } from "expo-linear-gradient";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
 import { Colors } from "@/constants/colors";
+import { useAuthStore } from "@/store/authStore";
 
 const { width } = Dimensions.get('window');
 
 export default function EntryPoint() {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
   useEffect(() => {
-    console.log("EntryPoint mounted");
+    console.log("EntryPoint mounted, isAuthenticated:", isAuthenticated);
     const timer = setTimeout(() => {
-      console.log("Navigating to login...");
       try {
-        router.replace("/(auth)/login");
+        if (isAuthenticated) {
+          console.log("Navigating to dashboard...");
+          router.replace("/(app)/dashboard");
+        } else {
+          console.log("Navigating to login...");
+          router.replace("/(auth)/login");
+        }
       } catch (error) {
         console.error("Navigation error:", error);
       }
     }, 2000); 
     return () => clearTimeout(timer);
-  }, []);
+  }, [isAuthenticated]);
 
   return (
     <LinearGradient 

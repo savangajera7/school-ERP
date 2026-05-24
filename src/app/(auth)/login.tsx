@@ -28,12 +28,20 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginScreen() {
   const login = useAuthStore((state) => state.login);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const language = useAuthStore((state) => state.language);
   const setLanguage = useAuthStore((state) => state.setLanguage);
   const t = translations[language];
   
   const loginMutation = useLoginLogin();
   const { isMobile } = useBreakpoint();
+
+  // Redirect if already authenticated
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      router.replace("/(app)/dashboard");
+    }
+  }, [isAuthenticated]);
 
   const {
     control,

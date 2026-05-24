@@ -44,7 +44,13 @@ export const customInstance = <T>(
     url,
     ...options,
     data: options.body ? JSON.parse(options.body) : undefined,
-  }).then((response: AxiosResponse<T>) => response.data);
+  }).then((response: AxiosResponse<T>) => {
+    return {
+      data: response.data,
+      status: response.status,
+      headers: response.headers,
+    } as any;
+  });
 };
 
 export default axiosInstance;

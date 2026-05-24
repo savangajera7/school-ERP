@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { View, Text, ScrollView, TouchableOpacity, Switch, Alert, Platform, ActivityIndicator } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Alert, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
@@ -11,13 +11,14 @@ import { useGetApiStudentGetAllStudents } from "@/api/generated/student/student"
 import { useAttendanceMarkStudent } from "@/api/generated/erp-attendance/erp-attendance";
 import { StudentModel } from "@/api/model/studentModel";
 import { Colors } from "@/constants/colors";
-import { LinearGradient } from "expo-linear-gradient";
+import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { PremiumLoader } from "@/components/ui/PremiumLoader";
 
 export default function AttendanceScreen() {
   const { isMobile } = useBreakpoint();
   const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
   const [selectedSectionId, setSelectedSectionId] = useState<number | null>(null);
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [date] = useState(new Date().toISOString().split('T')[0]);
   
   // API Hooks
   const { data: classesData, isLoading: loadingClasses } = useGetApiClassGetAll();
@@ -53,7 +54,7 @@ export default function AttendanceScreen() {
 
   const handleSave = async () => {
     if (!selectedClassId) {
-      Alert.alert("Error", "Please select a class first.");
+      Alert.alert("Selection Required", "Please select a class first.");
       return;
     }
 
@@ -75,26 +76,23 @@ export default function AttendanceScreen() {
       await Promise.all(promises);
       
       const absentCount = filteredStudents.filter(s => attendanceMap[s.studentID!] === 'Absent').length;
+      const successMsg = `${filteredStudents.length} records synchronized successfully. ${absentCount} marked absent.`;
       
       if (Platform.OS !== 'web') {
-        Alert.alert(
-          "Attendance Saved", 
-          `${filteredStudents.length} records saved. ${absentCount} students are marked absent.`,
-          [{ text: "OK" }]
-        );
+        Alert.alert("Attendance Synced", successMsg);
       } else {
-        window.alert(`Attendance Saved!\n${absentCount} students marked absent.`);
+        window.alert(`Attendance Synced!\n${successMsg}`);
       }
     } catch (error) {
       console.error("Failed to save attendance:", error);
-      Alert.alert("Error", "Failed to save attendance records.");
+      Alert.alert("Synchronization Error", "Failed to upload daily logs.");
     }
   };
 
   if (loadingClasses || loadingSections) {
     return (
       <View className="flex-1 items-center justify-center bg-white">
-        <ActivityIndicator size="large" color="#0d3666" />
+        <PremiumLoader color={Colors.primary} size={40} />
       </View>
     );
   }
@@ -103,64 +101,56 @@ export default function AttendanceScreen() {
   const selectedSectionName = sections.find((s: any) => s.sectionID === selectedSectionId)?.sectionName || "Select Section";
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
+    <SafeAreaView className="flex-1 bg-[#FDFDFD]" edges={["top", "left", "right"]}>
       <StatusBar style="light" translucent backgroundColor="transparent" />
       
-      {/* Top Navbar */}
-      <LinearGradient
-        colors={[Colors.primary, Colors.primaryDark]}
-        className="px-6 pt-6 pb-12 rounded-b-[32px]"
-      >
-        <View className="flex-row justify-between items-center">
-          <View className="flex-row items-center gap-4">
-            <TouchableOpacity
-              onPress={() => router.push("/(app)/dashboard")}
-              className="w-10 h-10 bg-white/10 rounded-xl items-center justify-center border border-white/20"
-            >
-              <Text className="text-white font-bold">🔙</Text>
-            </TouchableOpacity>
-            <View>
-              <Text className="text-xl font-black text-white">Daily Attendance</Text>
-              <Text className="text-white/60 text-xs font-bold uppercase tracking-wider mt-0.5">
-                Log presence and sync
-              </Text>
-            </View>
-          </View>
-
+      <ScreenHeader 
+        title="Daily Attendance" 
+        subtitle="Log student presence & sync logs"
+        onBack={() => router.push("/(app)/dashboard")}
+        rightAction={
           <TouchableOpacity 
             onPress={handleSave}
             disabled={markAttendance.isPending}
-            className={`px-5 py-3 rounded-2xl flex-row items-center gap-2 shadow-lg ${markAttendance.isPending ? 'bg-gray-400' : 'bg-accent shadow-accent/20'}`}
+            className={`px-4 py-2.5 rounded-xl flex-row items-center gap-1.5 border border-white/20 ${
+              markAttendance.isPending ? 'bg-white/10' : 'bg-orange-500'
+            }`}
+            activeOpacity={0.8}
           >
             {markAttendance.isPending ? (
               <ActivityIndicator size="small" color="white" />
             ) : (
-              <Text className="text-white font-bold uppercase text-xs tracking-widest">Sync</Text>
+              <Text className="text-white font-black text-xs uppercase tracking-widest">✓ Sync Logs</Text>
             )}
           </TouchableOpacity>
-        </View>
-      </LinearGradient>
+        }
+      />
 
-      <ScrollView className="flex-1 px-4 -mt-6 md:px-8" showsVerticalScrollIndicator={false}>
+      <ScrollView className="flex-1 px-4 mt-6 md:px-8" showsVerticalScrollIndicator={false}>
         <View className="max-w-[1200px] w-full self-center pb-10">
 
           {/* Configuration Card */}
-          <Card className="bg-white border border-gray-100 p-5 mb-6">
+          <Card className="bg-white border border-gray-150 p-5 mb-6">
             <View className={`flex-row gap-6 ${isMobile ? "flex-col" : "items-center justify-between"}`}>
               
               <View className="flex-row gap-4 flex-1">
                 <View className="flex-1">
-                  <Text className="text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Select Class</Text>
+                  <Text className="text-[12px] font-black text-gray-405 mb-3 uppercase tracking-wider">Select Standard</Text>
                   <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
                     {classes.map((cls: any) => (
                       <TouchableOpacity
                         key={cls.classID}
                         onPress={() => setSelectedClassId(cls.classID!)}
-                        className={`px-4 py-2 rounded-lg border ${
-                          selectedClassId === cls.classID ? "bg-[#0d3666] border-[#0d3666]" : "bg-white border-gray-200"
+                        className={`px-4 py-2.5 rounded-xl border-[1.5px] ${
+                          selectedClassId === cls.classID 
+                            ? "bg-[#0d3666] border-[#0d3666]" 
+                            : "bg-gray-50/50 border-gray-200"
                         }`}
+                        activeOpacity={0.8}
                       >
-                        <Text className={`text-sm font-bold ${selectedClassId === cls.classID ? "text-white" : "text-gray-700"}`}>
+                        <Text className={`text-xs font-black uppercase tracking-wider ${
+                          selectedClassId === cls.classID ? "text-white" : "text-gray-500"
+                        }`}>
                           {cls.className}
                         </Text>
                       </TouchableOpacity>
@@ -169,17 +159,22 @@ export default function AttendanceScreen() {
                 </View>
 
                 <View className="flex-1">
-                  <Text className="text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Section</Text>
+                  <Text className="text-[12px] font-black text-gray-405 mb-3 uppercase tracking-wider">Select Section</Text>
                   <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
                     {sections.map((sec: any) => (
                       <TouchableOpacity
                         key={sec.sectionID}
                         onPress={() => setSelectedSectionId(sec.sectionID!)}
-                        className={`px-4 py-2 rounded-lg border ${
-                          selectedSectionId === sec.sectionID ? "bg-[#0d3666] border-[#0d3666]" : "bg-white border-gray-200"
+                        className={`px-4 py-2.5 rounded-xl border-[1.5px] ${
+                          selectedSectionId === sec.sectionID 
+                            ? "bg-[#0d3666] border-[#0d3666]" 
+                            : "bg-gray-50/50 border-gray-200"
                         }`}
+                        activeOpacity={0.8}
                       >
-                        <Text className={`text-sm font-bold ${selectedSectionId === sec.sectionID ? "text-white" : "text-gray-700"}`}>
+                        <Text className={`text-xs font-black uppercase tracking-wider ${
+                          selectedSectionId === sec.sectionID ? "text-white" : "text-gray-500"
+                        }`}>
                           {sec.sectionName}
                         </Text>
                       </TouchableOpacity>
@@ -188,10 +183,10 @@ export default function AttendanceScreen() {
                 </View>
               </View>
 
-              <View className={`${isMobile ? "w-full border-t border-gray-100 pt-4" : "w-[200px] border-l border-gray-100 pl-6"}`}>
-                <Text className="text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Date</Text>
-                <View className="h-[38px] bg-gray-50 border border-gray-100 rounded-lg justify-center px-4">
-                  <Text className="text-sm font-bold text-gray-800">📅 {date}</Text>
+              <View className={`${isMobile ? "w-full border-t border-gray-100 pt-4" : "w-[200px] border-l border-gray-150 pl-6"}`}>
+                <Text className="text-[12px] font-black text-gray-405 mb-3 uppercase tracking-wider">Effective Date</Text>
+                <View className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl justify-center px-4">
+                  <Text className="text-sm font-black text-gray-800">📅 {date}</Text>
                 </View>
               </View>
 
@@ -201,63 +196,70 @@ export default function AttendanceScreen() {
           {/* List Header */}
           <View className="flex-row justify-between items-end mb-4 px-1">
             <View>
-              <Text className="text-lg font-bold text-gray-800">
+              <Text className="text-[16px] font-black text-gray-900">
                 {selectedClassName} - {selectedSectionName}
               </Text>
-              <Text className="text-xs text-gray-500 font-semibold mt-1">
+              <Text className="text-[12px] text-gray-400 font-bold mt-1">
                 {filteredStudents.filter(s => attendanceMap[s.studentID!] === 'Present').length} Present • {filteredStudents.filter(s => attendanceMap[s.studentID!] === 'Absent').length} Absent
               </Text>
             </View>
-            <TouchableOpacity onPress={markAllPresent} className="flex-row items-center gap-1.5 px-3 py-1.5 bg-green-50 rounded-lg">
-              <Text className="text-xs font-bold text-green-700">✓ Mark All Present</Text>
+            <TouchableOpacity 
+              onPress={markAllPresent} 
+              className="flex-row items-center gap-1.5 px-4 py-2.5 bg-emerald-50 rounded-xl border border-emerald-100"
+              activeOpacity={0.8}
+            >
+              <Text className="text-xs font-black text-emerald-700 uppercase tracking-wider">✓ Mark All Present</Text>
             </TouchableOpacity>
           </View>
 
           {/* Student List Matrix */}
-          <Card className="bg-white border border-gray-100 overflow-hidden">
+          <Card noPadding className="bg-white border border-gray-100 overflow-hidden shadow-md">
             {/* Header Row */}
-            <View className="flex-row items-center px-5 py-3 bg-gray-50 border-b border-gray-100">
-              <Text className="w-12 text-xs font-bold text-gray-400 uppercase">Roll</Text>
-              <Text className="flex-1 text-xs font-bold text-gray-400 uppercase">Student Name</Text>
-              {!isMobile && <Text className="w-[120px] text-xs font-bold text-gray-400 uppercase text-center">Status</Text>}
-              <Text className="w-[180px] text-xs font-bold text-gray-400 uppercase text-center">Actions</Text>
+            <View className="flex-row items-center px-5 py-4 bg-gray-50 border-b border-gray-150">
+              <Text className="w-12 text-xs font-black text-gray-400 uppercase">Roll</Text>
+              <Text className="flex-1 text-xs font-black text-gray-400 uppercase">Student Name</Text>
+              {!isMobile && <Text className="w-[120px] text-xs font-black text-gray-400 uppercase text-center">Status</Text>}
+              <Text className="w-[160px] text-xs font-black text-gray-400 uppercase text-right">Actions</Text>
             </View>
 
             {/* Rows */}
             {loadingStudents ? (
-              <View className="py-10">
-                <ActivityIndicator color="#0d3666" />
+              <View className="py-20">
+                <PremiumLoader color={Colors.primary} size={30} />
               </View>
             ) : filteredStudents.length === 0 ? (
-              <View className="py-10 items-center">
-                <Text className="text-gray-400 font-bold">No students found for this selection.</Text>
+              <View className="py-20 items-center justify-center">
+                <Text className="text-3xl mb-3">👧🏻👦🏻</Text>
+                <Text className="text-gray-400 font-black text-sm uppercase tracking-wider">No students matching criteria</Text>
               </View>
             ) : (
               filteredStudents.map((student, index) => (
                 <View 
                   key={student.studentID} 
-                  className={`flex-row items-center px-5 py-4 border-b border-gray-50 ${index % 2 === 0 ? "bg-white" : "bg-gray-50/30"}`}
+                  className={`flex-row items-center px-5 py-4 border-b border-gray-100 ${
+                    index % 2 === 0 ? "bg-white" : "bg-gray-50/20"
+                  }`}
                 >
-                  <Text className="w-12 text-sm font-bold text-gray-400">{student.rollNo || '-'}</Text>
+                  <Text className="w-12 text-sm font-extrabold text-gray-400">{student.rollNo || '-'}</Text>
                   
-                  <View className="flex-1 flex-row items-center gap-3">
-                    <View className="w-8 h-8 rounded-full bg-indigo-50 items-center justify-center">
+                  <View className="flex-1 flex-row items-center gap-3.5">
+                    <View className="w-9 h-9 rounded-xl bg-indigo-50 items-center justify-center">
                       <Text className="text-sm">{student.gender === 'Female' ? '👧🏻' : '👦🏻'}</Text>
                     </View>
-                    <Text className="text-sm font-bold text-gray-800">
+                    <Text className="text-sm font-extrabold text-gray-850">
                       {student.studentDisplayName || `${student.firstName} ${student.lastName}`}
                     </Text>
                   </View>
 
                   {!isMobile && (
                     <View className="w-[120px] items-center">
-                      <View className={`px-2.5 py-1 rounded-full ${
-                        attendanceMap[student.studentID!] === 'Present' ? 'bg-green-50' : 
-                        attendanceMap[student.studentID!] === 'Absent' ? 'bg-red-50' : 'bg-orange-50'
+                      <View className={`px-3 py-1 rounded-full ${
+                        attendanceMap[student.studentID!] === 'Present' ? 'bg-emerald-50 border border-emerald-100' : 
+                        attendanceMap[student.studentID!] === 'Absent' ? 'bg-rose-50 border border-rose-100' : 'bg-orange-50 border border-orange-100'
                       }`}>
-                        <Text className={`text-[10px] font-bold uppercase tracking-wider ${
-                          attendanceMap[student.studentID!] === 'Present' ? 'text-green-700' : 
-                          attendanceMap[student.studentID!] === 'Absent' ? 'text-red-700' : 'text-orange-700'
+                        <Text className={`text-[10px] font-black uppercase tracking-widest ${
+                          attendanceMap[student.studentID!] === 'Present' ? 'text-emerald-600' : 
+                          attendanceMap[student.studentID!] === 'Absent' ? 'text-rose-600' : 'text-orange-600'
                         }`}>
                           {attendanceMap[student.studentID!] || 'Pending'}
                         </Text>
@@ -265,39 +267,48 @@ export default function AttendanceScreen() {
                     </View>
                   )}
 
-                  {/* Toggles */}
-                  <View className="w-[180px] flex-row justify-end gap-2">
+                  {/* Actions (P, A, L buttons) */}
+                  <View className="w-[160px] flex-row justify-end gap-2">
                     <TouchableOpacity 
                       onPress={() => toggleStatus(student.studentID!, 'Present')}
-                      className={`w-[36px] h-[36px] rounded-lg items-center justify-center border ${
+                      className={`w-[36px] h-[36px] rounded-xl items-center justify-center border ${
                         attendanceMap[student.studentID!] === 'Present' 
-                          ? 'bg-green-500 border-green-600 shadow-sm shadow-green-200' 
+                          ? 'bg-[#10B981] border-[#10B981] shadow-sm shadow-emerald-100' 
                           : 'bg-white border-gray-200'
                       }`}
+                      activeOpacity={0.8}
                     >
-                      <Text className={`text-sm font-bold ${attendanceMap[student.studentID!] === 'Present' ? 'text-white' : 'text-gray-400'}`}>P</Text>
+                      <Text className={`text-xs font-black ${
+                        attendanceMap[student.studentID!] === 'Present' ? 'text-white' : 'text-gray-400'
+                      }`}>P</Text>
                     </TouchableOpacity>
                     
                     <TouchableOpacity 
                       onPress={() => toggleStatus(student.studentID!, 'Absent')}
-                      className={`w-[36px] h-[36px] rounded-lg items-center justify-center border ${
+                      className={`w-[36px] h-[36px] rounded-xl items-center justify-center border ${
                         attendanceMap[student.studentID!] === 'Absent' 
-                          ? 'bg-red-500 border-red-600 shadow-sm shadow-red-200' 
+                          ? 'bg-rose-500 border-rose-500 shadow-sm shadow-rose-150' 
                           : 'bg-white border-gray-200'
                       }`}
+                      activeOpacity={0.8}
                     >
-                      <Text className={`text-sm font-bold ${attendanceMap[student.studentID!] === 'Absent' ? 'text-white' : 'text-gray-400'}`}>A</Text>
+                      <Text className={`text-xs font-black ${
+                        attendanceMap[student.studentID!] === 'Absent' ? 'text-white' : 'text-gray-400'
+                      }`}>A</Text>
                     </TouchableOpacity>
                     
                     <TouchableOpacity 
                       onPress={() => toggleStatus(student.studentID!, 'Late')}
-                      className={`w-[36px] h-[36px] rounded-lg items-center justify-center border ${
+                      className={`w-[36px] h-[36px] rounded-xl items-center justify-center border ${
                         attendanceMap[student.studentID!] === 'Late' 
-                          ? 'bg-[#f5921e] border-orange-500 shadow-sm shadow-orange-200' 
+                          ? 'bg-[#f5921e] border-[#f5921e] shadow-sm shadow-orange-150' 
                           : 'bg-white border-gray-200'
                       }`}
+                      activeOpacity={0.8}
                     >
-                      <Text className={`text-sm font-bold ${attendanceMap[student.studentID!] === 'Late' ? 'text-white' : 'text-gray-400'}`}>L</Text>
+                      <Text className={`text-xs font-black ${
+                        attendanceMap[student.studentID!] === 'Late' ? 'text-white' : 'text-gray-400'
+                      }`}>L</Text>
                     </TouchableOpacity>
                   </View>
                 </View>

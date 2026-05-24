@@ -4,6 +4,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  Platform,
   type TextInputProps,
 } from "react-native";
 
@@ -45,21 +46,30 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
       )}
       <View
         className={`
-          h-[52px] rounded-xl border-[1.5px] flex-row items-center px-4
-          ${error ? "border-red-500 bg-[#FFF5F5]" : isFocused ? "border-gray-300 bg-white" : "border-gray-200 bg-[#F9FAFB]"}
+          rounded-xl border-[1.5px] flex-row items-center px-4
+          ${error ? "border-red-500 bg-[#FFF5F5]" : isFocused ? "border-[#0d3666] bg-white" : "border-gray-200 bg-[#F9FAFB]"}
           ${className || ""}
         `}
+        style={{ minHeight: 52 }}
       >
         {leftIcon && <View className="mr-3">{leftIcon}</View>}
         <TextInput
-          className="flex-1 h-full text-[15px] text-[#111827] pr-10"
+          className="flex-1 text-[#111827] pr-10"
           placeholderTextColor="#9CA3AF"
           secureTextEntry={!visible}
           autoCorrect={false}
           autoCapitalize="none"
           onFocus={handleFocus}
           onBlur={handleBlur}
-          style={style}
+          style={[
+            {
+              fontSize: 16,
+              paddingVertical: Platform.OS === 'ios' ? 14 : 12,
+              minHeight: 48,
+              ...(Platform.OS === 'web' ? { outlineWidth: 0 } : {}),
+            } as any,
+            style,
+          ]}
           {...props}
         />
         <TouchableOpacity
@@ -67,7 +77,7 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
           className="absolute right-4 top-0 bottom-0 justify-center"
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <Text className="text-sm text-text-secondary font-semibold">
+          <Text className="text-sm text-[#0d3666] font-bold">
             {visible ? "Hide" : "Show"}
           </Text>
         </TouchableOpacity>

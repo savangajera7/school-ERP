@@ -3,9 +3,21 @@
 @tailwind utilities;
 
 @layer base {
+  /* Prevent iOS zoom on input focus (requires font-size >= 16px) */
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
   input, textarea, select, button {
     outline: none !important;
     box-shadow: none !important;
+    font-size: 16px; /* Prevents iOS zoom */
+  }
+
+  /* Smooth scrolling */
+  * {
+    -webkit-overflow-scrolling: touch;
   }
 }
 
@@ -16,4 +28,28 @@ div[role="textbox"] {
 
 input {
   outline-width: 0 !important;
+}
+
+/* Prevent pull-to-refresh interference on mobile web */
+body {
+  overscroll-behavior-y: contain;
+}
+
+/* Custom scrollbar for web */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
 }
