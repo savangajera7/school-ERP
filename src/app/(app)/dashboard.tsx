@@ -50,85 +50,83 @@ export default function DashboardScreen() {
     <SafeAreaView className="flex-1 bg-[#F4F6FA]" edges={["left", "right", "bottom"]}>
       <StatusBar style="light" translucent backgroundColor="transparent" />
 
-      {/* ── Header Gradient ─────────────────────────────────────── */}
-      <LinearGradient
-        colors={["#0d3666", "#0a2a4e"]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={{
-          paddingHorizontal: isMobile ? 16 : 32,
-          paddingTop: (insets.top || 0) + (isMobile ? 12 : 20),
-          paddingBottom: isMobile ? 60 : 72,
-          borderBottomLeftRadius: 32,
-          borderBottomRightRadius: 32,
-          zIndex: 1,
-        }}
-      >
-        {/* Top bar: logo + school name + year + logout */}
-        <View className="flex-row justify-between items-center mb-5">
-          <View className="flex-row items-center gap-3">
-            <View
-              className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 overflow-hidden items-center justify-center"
-            >
-              <Image
-                source={require("../../../assets/school-logo.png")}
-                className="w-8 h-8"
-                resizeMode="contain"
-              />
-            </View>
-            <View>
-              <Text className="text-white font-black text-sm tracking-wide">
-                Sai Vidhya Mandir
-              </Text>
-              <Text className="text-white/50 text-[10px] font-bold uppercase tracking-widest">
-                School Management ERP
-              </Text>
-            </View>
-          </View>
-
-          <View className="flex-row items-center gap-2">
-            <View className="bg-white/10 border border-white/20 px-3 py-1.5 rounded-xl">
-              <Text className="text-white text-[11px] font-black">2026–2027</Text>
-            </View>
-            <TouchableOpacity
-              onPress={logout}
-              className="w-8 h-8 bg-rose-500/20 border border-rose-400/30 rounded-xl items-center justify-center"
-              activeOpacity={0.8}
-            >
-              <Text className="text-sm">🚪</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Greeting */}
-        <Text className="text-white/60 text-xs font-black uppercase tracking-widest">
-          Welcome back
-        </Text>
-        <Text className="text-white text-2xl font-black mt-0.5">
-          Hello, {firstName} 👋
-        </Text>
-
-        {/* Omni Search */}
-        <View className="mt-5 bg-white/10 border border-white/20 rounded-2xl h-[46px] px-4 flex-row items-center gap-2">
-          <Text className="text-white/50 text-sm">🔍</Text>
-          <TextInput
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            placeholder="Search students, fees, notices…"
-            placeholderTextColor="rgba(255,255,255,0.35)"
-            className="flex-1 text-white text-[13px] font-semibold h-full"
-            style={{ outlineWidth: 0 } as any}
-          />
-        </View>
-      </LinearGradient>
-
-      {/* ── Scrollable body ─────────────────────────────────────── */}
+      {/* ── Scrollable body wrapping everything ─────────────────── */}
       <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: isMobile ? 100 : 40 }}
-        style={{ zIndex: 10, elevation: 10, position: "relative" }}
       >
+        {/* ── Header Gradient ─────────────────────────────────────── */}
+        <LinearGradient
+          colors={["#0d3666", "#0a2a4e"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={{
+            paddingHorizontal: isMobile ? 16 : 32,
+            paddingTop: (insets.top || 0) + (isMobile ? 12 : 20),
+            paddingBottom: isMobile ? 60 : 72,
+            borderBottomLeftRadius: 32,
+            borderBottomRightRadius: 32,
+          }}
+        >
+          {/* Top bar: logo + school name + year + logout */}
+          <View className="flex-row justify-between items-center mb-5">
+            <View className="flex-row items-center gap-3">
+              <View
+                className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 overflow-hidden items-center justify-center"
+              >
+                <Image
+                  source={require("../../../assets/school-logo.png")}
+                  className="w-8 h-8"
+                  resizeMode="contain"
+                />
+              </View>
+              <View>
+                <Text className="text-white font-black text-sm tracking-wide">
+                  Sai Vidhya Mandir
+                </Text>
+                <Text className="text-white/50 text-[10px] font-bold uppercase tracking-widest">
+                  School Management ERP
+                </Text>
+              </View>
+            </View>
+
+            <View className="flex-row items-center gap-2">
+              <View className="bg-white/10 border border-white/20 px-3 py-1.5 rounded-xl">
+                <Text className="text-white text-[11px] font-black">2026–2027</Text>
+              </View>
+              <TouchableOpacity
+                onPress={logout}
+                className="w-8 h-8 bg-rose-500/20 border border-rose-400/30 rounded-xl items-center justify-center"
+                activeOpacity={0.8}
+              >
+                <Text className="text-sm">🚪</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Greeting */}
+          <Text className="text-white/60 text-xs font-black uppercase tracking-widest">
+            Welcome back
+          </Text>
+          <Text className="text-white text-2xl font-black mt-0.5">
+            Hello, {firstName} 👋
+          </Text>
+
+          {/* Omni Search */}
+          <View className="mt-5 bg-white/10 border border-white/20 rounded-2xl h-[46px] px-4 flex-row items-center gap-2">
+            <Text className="text-white/50 text-sm">🔍</Text>
+            <TextInput
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              placeholder="Search students, fees, notices…"
+              placeholderTextColor="rgba(255,255,255,0.35)"
+              className="flex-1 text-white text-[13px] font-semibold h-full"
+              style={{ outlineWidth: 0 } as any}
+            />
+          </View>
+        </LinearGradient>
+
         <View
           className="px-4 md:px-8 max-w-[1200px] w-full self-center"
           style={{ marginTop: -40, position: "relative", zIndex: 10 }}
