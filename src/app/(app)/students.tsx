@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, ScrollView, TouchableOpacity, TextInput, FlatList, ActivityIndicator } from "react-native";
+import React, { useState, useMemo } from "react";
+import { View, Text, ScrollView, TouchableOpacity, TextInput, FlatList, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
-import { Card } from "@/components/ui/Card";
+import { Colors } from "@/constants/colors";
 import { StudentModel } from "@/api/model/studentModel";
 import { useGetApiStudentGetAllStudents } from "@/api/generated/student/student";
-
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
 
 export default function StudentManagementScreen() {
@@ -15,18 +14,23 @@ export default function StudentManagementScreen() {
   const [searchQuery, setSearchQuery] = useState("");
   
   const { data, isLoading, refetch } = useGetApiStudentGetAllStudents();
-  const students = (data?.data?.data || []) as StudentModel[];
+  
+  const students = useMemo(() => {
+    return (data?.data?.data || []) as StudentModel[];
+  }, [data]);
 
-  const filteredStudents = students.filter((student: StudentModel) => {
-    const name = student.studentDisplayName || `${student.firstName} ${student.lastName}`;
-    const matchesSearch = name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          student.rollNo?.includes(searchQuery) ||
-                          student.studentGRNo?.includes(searchQuery);
-    return matchesSearch;
-  });
+  const filteredStudents = useMemo(() => {
+    return students.filter((student) => {
+      const name = student.studentDisplayName || `${student.firstName} ${student.lastName}`;
+      const search = searchQuery.toLowerCase();
+      return name.toLowerCase().includes(search) || 
+             student.rollNo?.toLowerCase().includes(search) ||
+             student.studentGRNo?.toLowerCase().includes(search);
+    });
+  }, [students, searchQuery]);
 
   const renderStudentItem = ({ item }: { item: StudentModel }) => {
-    const name = item.studentDisplayName || `${item.firstName} ${item.lastName}`;
+    const fullName = item.studentDisplayName || `${item.firstName} ${item.lastName}`;
     
     return (
       <TouchableOpacity
@@ -34,40 +38,36 @@ export default function StudentManagementScreen() {
           pathname: "/(app)/student-profile",
           params: { id: item.studentID }
         })}
-        className="bg-white border border-gray-150 rounded-2xl p-5 mb-4 shadow-sm shadow-gray-100/50"
+        activeOpacity={0.7}
+        className="bg-white border border-gray-100 rounded-2xl p-4 mb-4 flex-row items-center"
+        style={{
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.03,
+          shadowRadius: 10,
+          elevation: 3,
+        }}
       >
-        <View className="flex-row items-center gap-4">
-          <View className="w-14 h-14 bg-indigo-50 rounded-full items-center justify-center border-2 border-indigo-100 overflow-hidden">
-            <Text className="text-2xl">👦🏻</Text>
-          </View>
-          
-          <View className="flex-1">
-            <View className="flex-row items-center gap-2 mb-1.5 flex-wrap">
-              <Text className="text-[16px] font-bold text-gray-900">
-                ({item.rollNo || 'N/A'}) {name}
-              </Text>
+        <View 
+          className="w-14 h-14 rounded-full items-center justify-center border-2 border-primary/10 bg-primary/5"
+        >
+          <Text className="text-2xl">{item.gender === "Female" ? "👧🏻" : "👦🏻"}</Text>
+        </View>
+        
+        <View className="flex-1 ml-4">
+          <Text className="text-[16px] font-bold text-primary mb-1">
+            {fullName}
+          </Text>
+          <View className="flex-row items-center gap-3">
+            <View className="bg-accent/10 px-2 py-0.5 rounded-md">
+              <Text className="text-[11px] font-bold text-accent">ROLL: {item.rollNo || 'N/A'}</Text>
             </View>
-
-            <View className="flex-row items-center gap-1.5 mb-1">
-              <Text className="text-xs text-gray-400">🆔 GR No:</Text>
-              <Text className="text-xs text-indigo-700 font-bold">
-                {item.studentGRNo || 'N/A'}
-              </Text>
-            </View>
-
-            <View className="flex-row items-center gap-1.5">
-              <Text className="text-xs text-gray-400">🏫 Class ID:</Text>
-              <Text className="text-xs text-gray-500 font-semibold">
-                {item.classID}
-              </Text>
-            </View>
+            <Text className="text-[12px] text-gray-400 font-medium">GR: {item.studentGRNo || 'N/A'}</Text>
           </View>
         </View>
 
-        <View className="flex-row justify-between items-center mt-4 pt-3 border-t border-gray-50">
-          <Text className="text-[12px] text-gray-450 font-bold">
-            View Full Profile →
-          </Text>
+        <View className="w-8 h-8 bg-gray-50 rounded-full items-center justify-center">
+          <Text className="text-gray-400 text-xs">➡️</Text>
         </View>
       </TouchableOpacity>
     );
@@ -76,64 +76,75 @@ export default function StudentManagementScreen() {
   if (isLoading) {
     return (
       <View className="flex-1 items-center justify-center bg-white">
-        <PremiumLoader />
+        <PremiumLoader color={Colors.primary} size={40} />
       </View>
     );
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
-      <StatusBar style="dark" translucent backgroundColor="transparent" />
+    <SafeAreaView className="flex-1 bg-background">
+      <StatusBar style="dark" />
       
       {/* Header */}
-      <View className="bg-white border-b border-gray-100 px-6 py-4 flex-row justify-between items-center z-10">
-        <View className="flex-row items-center gap-3">
-          <TouchableOpacity
-            onPress={() => router.push("/(app)/dashboard")}
-            className="w-10 h-10 bg-gray-50 rounded-xl items-center justify-center"
-          >
-            <Text className="text-sm font-bold text-gray-700">🔙</Text>
-          </TouchableOpacity>
-          <View>
-            <Text className="text-[18px] font-bold text-gray-900">Students</Text>
-            <Text className="text-[12px] text-gray-400 font-semibold mt-0.5">
-              {filteredStudents.length} Records Found
-            </Text>
-          </View>
+      <View className="bg-white px-6 py-6 flex-row justify-between items-center border-b border-gray-50">
+        <View>
+          <Text className="text-2xl font-black text-primary">Students</Text>
+          <Text className="text-[13px] text-gray-400 font-bold mt-1">
+            {filteredStudents.length} {filteredStudents.length === 1 ? 'Record' : 'Records'} Found
+          </Text>
         </View>
         
-        <TouchableOpacity 
-          onPress={() => refetch()}
-          className="w-10 h-10 bg-indigo-50 rounded-xl items-center justify-center"
+        <TouchableOpacity
+          onPress={() => router.push("/(app)/admission-form")}
+          activeOpacity={0.8}
+          className="bg-accent px-5 py-3 rounded-2xl shadow-lg shadow-accent/20"
         >
-          <Text className="text-sm">🔄</Text>
+          <Text className="text-white font-bold">+ Add Student</Text>
         </TouchableOpacity>
       </View>
 
-      <View className="px-5 pt-4">
-        <View className="bg-white border border-gray-100 rounded-2xl px-4 py-3 flex-row items-center gap-3 shadow-sm shadow-gray-100">
-          <Text className="text-lg">🔍</Text>
-          <TextInput
-            placeholder="Search by name, roll no or GR no..."
-            className="flex-1 text-sm text-gray-700 font-medium"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
-        </View>
-      </View>
-
-      <FlatList
-        data={filteredStudents}
-        renderItem={renderStudentItem}
-        keyExtractor={(item) => item.studentID?.toString() || Math.random().toString()}
-        contentContainerStyle={{ padding: 20 }}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={
-          <View className="items-center justify-center py-20">
-            <Text className="text-gray-400 font-bold">No students found matching search.</Text>
+      <View className="flex-1 px-6">
+        {/* Search Bar */}
+        <View className="my-6">
+          <View 
+            className="bg-white flex-row items-center px-4 h-14 rounded-2xl border border-gray-100 shadow-sm shadow-gray-200/50"
+          >
+            <Text className="text-lg mr-3">🔍</Text>
+            <TextInput
+              className="flex-1 h-full text-[15px] font-medium text-primary"
+              placeholder="Search by name, roll no or GR..."
+              placeholderTextColor="#9CA3AF"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              style={{ outlineWidth: 0 } as any}
+            />
+            {searchQuery.length > 0 && (
+              <TouchableOpacity onPress={() => setSearchQuery("")}>
+                <Text className="text-gray-300 font-bold text-lg">✕</Text>
+              </TouchableOpacity>
+            )}
           </View>
-        }
-      />
+        </View>
+
+        {/* Student List */}
+        <FlatList
+          data={filteredStudents}
+          renderItem={renderStudentItem}
+          keyExtractor={(item) => item.studentID?.toString() || Math.random().toString()}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 100 }}
+          ListEmptyComponent={
+            <View className="items-center justify-center py-20">
+              <Text className="text-4xl mb-4">📭</Text>
+              <Text className="text-gray-400 font-bold text-center">
+                No students found matching your search.
+              </Text>
+            </View>
+          }
+          onRefresh={refetch}
+          refreshing={isLoading}
+        />
+      </View>
     </SafeAreaView>
   );
 }

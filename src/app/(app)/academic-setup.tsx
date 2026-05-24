@@ -1,56 +1,38 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Card } from "@/components/ui/Card";
-import { setupService, AcademicYear, ClassDetail, SectionDetail, BatchDetail } from "@/services/api/setupService";
+import { LinearGradient } from "expo-linear-gradient";
+import { Colors } from "@/constants/colors";
+import { useGetApiClassGetAll } from "@/api/generated/class/class";
+import { useGetApiSectionGetAll } from "@/api/generated/section/section";
+import { useGetApiAcademicYearGetAll } from "@/api/generated/academic-year/academic-year";
+import { useGetApiBatchGetAll } from "@/api/generated/batch/batch";
 
 export default function AcademicSetupScreen() {
   const { isMobile } = useBreakpoint();
-  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"years" | "classes" | "sections" | "batches">("years");
   
-  const [years, setYears] = useState<AcademicYear[]>([]);
-  const [classes, setClasses] = useState<ClassDetail[]>([]);
-  const [sections, setSections] = useState<SectionDetail[]>([]);
-  const [batches, setBatches] = useState<BatchDetail[]>([]);
+  const { data: yearsData, isLoading: loadingYears } = useGetApiAcademicYearGetAll();
+  const { data: classesData, isLoading: loadingClasses } = useGetApiClassGetAll();
+  const { data: sectionsData, isLoading: loadingSections } = useGetApiSectionGetAll();
+  const { data: batchesData, isLoading: loadingBatches } = useGetApiBatchGetAll();
 
-  useEffect(() => {
-    fetchAllData();
-  }, []);
-
-  const fetchAllData = async () => {
-    try {
-      setLoading(true);
-      const [y, c, s, b] = await Promise.all([
-        setupService.getAcademicYears(),
-        setupService.getClasses(),
-        setupService.getSections(),
-        setupService.getBatches()
-      ]);
-      setYears(y);
-      setClasses(c);
-      setSections(s);
-      setBatches(b);
-    } catch (error) {
-      console.error("Failed to fetch setup data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const loading = loadingYears || loadingClasses || loadingSections || loadingBatches;
 
   const renderContent = () => {
     switch (activeTab) {
       case "years":
-        return <SetupList data={years} idKey="academicYearID" nameKey="academicYearName" />;
+        return <SetupList data={yearsData?.data?.data || []} idKey="academicYearID" nameKey="academicYearName" />;
       case "classes":
-        return <SetupList data={classes} idKey="classID" nameKey="className" />;
+        return <SetupList data={classesData?.data?.data || []} idKey="classID" nameKey="className" />;
       case "sections":
-        return <SetupList data={sections} idKey="sectionID" nameKey="sectionName" />;
+        return <SetupList data={sectionsData?.data?.data || []} idKey="sectionID" nameKey="sectionName" />;
       case "batches":
-        return <SetupList data={batches} idKey="batchID" nameKey="batchName" />;
+        return <SetupList data={batchesData?.data?.data || []} idKey="batchID" nameKey="batchName" />;
     }
   };
 
@@ -67,27 +49,32 @@ export default function AcademicSetupScreen() {
       <StatusBar style="dark" translucent backgroundColor="transparent" />
       
       {/* Header */}
-      <View className="bg-white border-b border-gray-100 px-6 py-4 flex-row justify-between items-center z-10">
-        <View className="flex-row items-center gap-3">
+      <LinearGradient
+        colors={[Colors.primary, Colors.primaryDark]}
+        className="px-6 pt-6 pb-12 rounded-b-[32px]"
+      >
+        <View className="flex-row items-center gap-4">
           <TouchableOpacity
             onPress={() => router.back()}
-            className="w-10 h-10 bg-gray-50 rounded-xl items-center justify-center"
+            className="w-10 h-10 bg-white/10 rounded-xl items-center justify-center border border-white/20"
           >
-            <Text className="text-sm font-bold text-gray-700">🔙</Text>
+            <Text className="text-white font-bold">🔙</Text>
           </TouchableOpacity>
           <View>
-            <Text className="text-[18px] font-bold text-gray-900">Academic Setup</Text>
-            <Text className="text-[12px] text-gray-400 font-semibold mt-0.5">Manage school structure</Text>
+            <Text className="text-xl font-black text-white">Academic Setup</Text>
+            <Text className="text-white/60 text-xs font-bold uppercase tracking-wider mt-0.5">School Infrastructure</Text>
           </View>
         </View>
-      </View>
+      </LinearGradient>
 
       {/* Tabs */}
-      <View className="bg-white px-4 py-2 border-b border-gray-100 flex-row justify-around">
-        <TabButton label="Years" active={activeTab === "years"} onPress={() => setActiveTab("years")} />
-        <TabButton label="Classes" active={activeTab === "classes"} onPress={() => setActiveTab("classes")} />
-        <TabButton label="Sections" active={activeTab === "sections"} onPress={() => setActiveTab("sections")} />
-        <TabButton label="Batches" active={activeTab === "batches"} onPress={() => setActiveTab("batches")} />
+      <View className="px-6 -mt-6">
+        <View className="bg-white p-2 rounded-2xl flex-row shadow-lg shadow-gray-200/50 border border-gray-50">
+          <TabButton label="Years" active={activeTab === "years"} onPress={() => setActiveTab("years")} />
+          <TabButton label="Classes" active={activeTab === "classes"} onPress={() => setActiveTab("classes")} />
+          <TabButton label="Sections" active={activeTab === "sections"} onPress={() => setActiveTab("sections")} />
+          <TabButton label="Batches" active={activeTab === "batches"} onPress={() => setActiveTab("batches")} />
+        </View>
       </View>
 
       <ScrollView className="flex-1 p-6" showsVerticalScrollIndicator={false}>
@@ -101,9 +88,9 @@ function TabButton({ label, active, onPress }: { label: string, active: boolean,
   return (
     <TouchableOpacity 
       onPress={onPress}
-      className={`px-4 py-2 rounded-lg ${active ? 'bg-indigo-50' : ''}`}
+      className={`flex-1 items-center py-2.5 rounded-xl ${active ? 'bg-primary/5' : ''}`}
     >
-      <Text className={`text-xs font-bold ${active ? 'text-indigo-600' : 'text-gray-400'}`}>{label}</Text>
+      <Text className={`text-xs font-black uppercase tracking-tighter ${active ? 'text-primary' : 'text-gray-400'}`}>{label}</Text>
     </TouchableOpacity>
   );
 }

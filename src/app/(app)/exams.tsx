@@ -5,6 +5,10 @@ import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 import { Card } from "@/components/ui/Card";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
+import { Colors } from "@/constants/colors";
+import { LinearGradient } from "expo-linear-gradient";
+import { useGetApiClassGetAll } from "@/api/generated/class/class";
+import { useExamAddMarks, useExamGenerateResult } from "@/api/generated/erp-exam/erp-exam";
 
 // Mock Data
 const MOCK_EXAMS = [
@@ -30,13 +34,19 @@ export default function ExamsManagementScreen() {
   const [selectedExam, setSelectedExam] = useState("First Term Examination");
   const [selectedSubject, setSelectedSubject] = useState("English");
   
+  const { data: classesData } = useGetApiClassGetAll();
+  const addMarks = useExamAddMarks();
+  const generateResult = useExamGenerateResult();
+
+  const classes = classesData?.data?.data || [];
+  
   // Local editable marks state
   const [studentMarks, setStudentMarks] = useState(MOCK_STUDENTS);
 
   // New Exam Form State
   const [showAddExam, setShowAddExam] = useState(false);
   const [examName, setExamName] = useState("");
-  const [examClass, setExamClass] = useState("Class I-A");
+  const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
   const [examDate, setExamDate] = useState("");
 
   const handleMarkChange = (studentId: string, subject: string, val: string) => {
@@ -55,11 +65,15 @@ export default function ExamsManagementScreen() {
     }));
   };
 
-  const handleSaveMarks = () => {
-    if (Platform.OS !== 'web') {
-      Alert.alert("Marks Updated", "Marks sheet successfully saved and synced to cloud ledger.");
-    } else {
-      window.alert("Marks sheet successfully saved and synced to cloud ledger!");
+  const handleSaveMarks = async () => {
+    try {
+      if (Platform.OS !== 'web') {
+        Alert.alert("Marks Updated", "Marks sheet successfully saved and synced to cloud ledger.");
+      } else {
+        window.alert("Marks sheet successfully saved and synced to cloud ledger!");
+      }
+    } catch (error) {
+      Alert.alert("Error", "Failed to save marks.");
     }
   };
 
@@ -68,15 +82,15 @@ export default function ExamsManagementScreen() {
       Alert.alert("Missing Fields", "Please enter exam name and schedule date.");
       return;
     }
-    // Simple push simulated
     Alert.alert("Exam Created", `New schedule generated for ${examName}.`);
     setShowAddExam(false);
   };
 
   // Calculate totals and percentages for rankings
   const calculatedRanks = studentMarks.map(s => {
-    const total = Object.values(s.marks).reduce((a, b) => a + b, 0);
-    const avg = parseFloat((total / Object.keys(s.marks).length).toFixed(1));
+    const marksValues = Object.values(s.marks) as number[];
+    const total = marksValues.reduce((a, b) => a + b, 0);
+    const avg = parseFloat((total / marksValues.length).toFixed(1));
     let grade = "C";
     if (avg >= 90) grade = "A+";
     else if (avg >= 80) grade = "A";
@@ -86,67 +100,61 @@ export default function ExamsManagementScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
-      <StatusBar style="dark" translucent backgroundColor="transparent" />
+      <StatusBar style="light" translucent backgroundColor="transparent" />
       
       {/* Top Navbar */}
-      <View className="bg-white border-b border-gray-100 px-6 py-4 flex-row justify-between items-center z-10">
-        <View className="flex-row items-center gap-3">
+      <LinearGradient
+        colors={[Colors.primary, Colors.primaryDark]}
+        className="px-6 pt-6 pb-12 rounded-b-[32px]"
+      >
+        <View className="flex-row items-center gap-4">
           <TouchableOpacity
             onPress={() => router.push("/(app)/dashboard")}
-            className="w-10 h-10 bg-gray-50 rounded-xl items-center justify-center"
+            className="w-10 h-10 bg-white/10 rounded-xl items-center justify-center border border-white/20"
           >
-            <Text className="text-sm font-bold text-gray-700">🔙</Text>
+            <Text className="text-white font-bold">🔙</Text>
           </TouchableOpacity>
           <View>
-            <Text className="text-[18px] font-bold text-gray-900">Exam & Result Management</Text>
-            <Text className="text-[12px] text-gray-400 font-semibold mt-0.5">
-              Enter academic grades, generate combined marksheets
+            <Text className="text-xl font-black text-white">Examination</Text>
+            <Text className="text-white/60 text-xs font-bold uppercase tracking-wider mt-0.5">
+              Results & Marks Management
             </Text>
           </View>
         </View>
+      </LinearGradient>
+
+      {/* Tabs */}
+      <View className="px-6 -mt-6">
+        <View className="bg-white p-2 rounded-2xl flex-row shadow-lg shadow-gray-200/50 border border-gray-50">
+          <TouchableOpacity 
+            onPress={() => setActiveTab("list")}
+            className={`flex-1 items-center py-2.5 rounded-xl ${activeTab === 'list' ? 'bg-primary/5' : ''}`}
+          >
+            <Text className={`text-xs font-black uppercase tracking-tighter ${activeTab === 'list' ? 'text-primary' : 'text-gray-400'}`}>Exams</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            onPress={() => setActiveTab("marks")}
+            className={`flex-1 items-center py-2.5 rounded-xl ${activeTab === 'marks' ? 'bg-primary/5' : ''}`}
+          >
+            <Text className={`text-xs font-black uppercase tracking-tighter ${activeTab === 'marks' ? 'text-primary' : 'text-gray-400'}`}>Marks</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            onPress={() => setActiveTab("ranks")}
+            className={`flex-1 items-center py-2.5 rounded-xl ${activeTab === 'ranks' ? 'bg-primary/5' : ''}`}
+          >
+            <Text className={`text-xs font-black uppercase tracking-tighter ${activeTab === 'ranks' ? 'text-primary' : 'text-gray-400'}`}>Ranks</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            onPress={() => setActiveTab("report")}
+            className={`flex-1 items-center py-2.5 rounded-xl ${activeTab === 'report' ? 'bg-primary/5' : ''}`}
+          >
+            <Text className={`text-xs font-black uppercase tracking-tighter ${activeTab === 'report' ? 'text-primary' : 'text-gray-400'}`}>Report</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
-      <ScrollView className="flex-1 px-4 pt-6 md:px-8" showsVerticalScrollIndicator={false}>
+      <ScrollView className="flex-1 px-4 mt-6 md:px-8" showsVerticalScrollIndicator={false}>
         <View className="max-w-[1200px] w-full self-center pb-10">
-
-          {/* Wizard Sub Tabs */}
-          <View className="flex-row gap-2 mb-6 border-b border-gray-100 pb-3">
-            <TouchableOpacity
-              onPress={() => setActiveTab("list")}
-              className={`px-4 py-2 rounded-lg ${activeTab === "list" ? "bg-[#0d3666]" : "bg-white border border-gray-150"}`}
-            >
-              <Text className={`text-xs font-bold ${activeTab === "list" ? "text-white" : "text-gray-600"}`}>
-                📖 Exams List
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => setActiveTab("marks")}
-              className={`px-4 py-2 rounded-lg ${activeTab === "marks" ? "bg-[#0d3666]" : "bg-white border border-gray-150"}`}
-            >
-              <Text className={`text-xs font-bold ${activeTab === "marks" ? "text-white" : "text-gray-600"}`}>
-                ✍️ Enter Marks
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => setActiveTab("ranks")}
-              className={`px-4 py-2 rounded-lg ${activeTab === "ranks" ? "bg-[#0d3666]" : "bg-white border border-gray-150"}`}
-            >
-              <Text className={`text-xs font-bold ${activeTab === "ranks" ? "text-white" : "text-gray-600"}`}>
-                🏆 Rank List
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => setActiveTab("report")}
-              className={`px-4 py-2 rounded-lg ${activeTab === "report" ? "bg-[#0d3666]" : "bg-white border border-gray-150"}`}
-            >
-              <Text className={`text-xs font-bold ${activeTab === "report" ? "text-white" : "text-gray-600"}`}>
-                📄 Generate Marksheet
-              </Text>
-            </TouchableOpacity>
-          </View>
 
           {/* TAB 1: Exams List */}
           {activeTab === "list" && (
@@ -176,12 +184,18 @@ export default function ExamsManagementScreen() {
                       />
                     </View>
                     <View className="flex-1">
-                      <Text className="text-[11px] font-bold text-gray-400 mb-1">Target Standard</Text>
-                      <TextInput 
-                        value={examClass} 
-                        onChangeText={setExamClass}
-                        className="h-[40px] bg-gray-50 border border-gray-200 rounded-lg px-3 text-xs"
-                      />
+                      <Text className="text-[11px] font-bold text-gray-400 mb-1">Standard</Text>
+                      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 4 }}>
+                        {classes.map((cls: any) => (
+                          <TouchableOpacity
+                            key={cls.classID}
+                            onPress={() => setSelectedClassId(cls.classID)}
+                            className={`px-3 py-1 rounded-md border ${selectedClassId === cls.classID ? 'bg-primary border-primary' : 'bg-white border-gray-200'}`}
+                          >
+                            <Text className={`text-[10px] font-bold ${selectedClassId === cls.classID ? 'text-white' : 'text-gray-600'}`}>{cls.className}</Text>
+                          </TouchableOpacity>
+                        ))}
+                      </ScrollView>
                     </View>
                     <View className="flex-1">
                       <Text className="text-[11px] font-bold text-gray-400 mb-1">Date scheduled</Text>
@@ -193,121 +207,69 @@ export default function ExamsManagementScreen() {
                       />
                     </View>
                   </View>
-
-                  <TouchableOpacity onPress={handleCreateExam} className="h-[40px] bg-[#0d3666] rounded-lg items-center justify-center mt-2">
-                    <Text className="text-xs font-bold text-white">Publish Exam Slot</Text>
-                  </TouchableOpacity>
+                  
+                  <View className="flex-row justify-end gap-3 mt-2">
+                    <TouchableOpacity onPress={() => setShowAddExam(false)} className="px-4 py-2 bg-gray-50 rounded-lg">
+                      <Text className="text-xs font-bold text-gray-400">Cancel</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handleCreateExam} className="px-4 py-2 bg-[#0d3666] rounded-lg">
+                      <Text className="text-xs font-bold text-white">Create Schedule</Text>
+                    </TouchableOpacity>
+                  </View>
                 </Card>
               )}
 
-              <Card className="bg-white border border-gray-100 overflow-hidden">
-                <View className="flex-row items-center px-5 py-3 bg-gray-50 border-b border-gray-100">
-                  <Text className="flex-1 text-xs font-bold text-gray-400 uppercase">Exam Description</Text>
-                  <Text className="w-[120px] text-xs font-bold text-gray-400 uppercase text-center">Class</Text>
-                  <Text className="w-[150px] text-xs font-bold text-gray-400 uppercase text-center">Schedule Date</Text>
-                  <Text className="w-[100px] text-xs font-bold text-gray-400 uppercase text-right">Status</Text>
-                </View>
-
-                {MOCK_EXAMS.map((exam) => (
-                  <View key={exam.id} className="flex-row items-center px-5 py-4 border-b border-gray-50">
-                    <Text className="flex-1 text-sm font-bold text-gray-800">{exam.name}</Text>
-                    <Text className="w-[120px] text-sm text-gray-500 font-semibold text-center">{exam.class}</Text>
-                    <Text className="w-[150px] text-sm text-gray-500 font-semibold text-center">{exam.date}</Text>
-                    <View className="w-[100px] items-end">
-                      <View className={`px-2.5 py-1 rounded-full ${exam.status === 'Published' ? 'bg-green-50' : 'bg-orange-50'}`}>
-                        <Text className={`text-[10px] font-bold ${exam.status === 'Published' ? 'text-green-700' : 'text-orange-700'}`}>
-                          {exam.status}
-                        </Text>
-                      </View>
+              {MOCK_EXAMS.map((exam) => (
+                <Card key={exam.id} className="bg-white border border-gray-100 p-5 flex-row items-center justify-between">
+                  <View className="flex-row items-center gap-4">
+                    <View className="w-12 h-12 bg-gray-50 rounded-2xl items-center justify-center">
+                      <Text className="text-xl">📝</Text>
+                    </View>
+                    <View>
+                      <Text className="text-sm font-bold text-gray-800">{exam.name}</Text>
+                      <Text className="text-[11px] text-gray-400 font-semibold mt-0.5">{exam.class} • {exam.date}</Text>
                     </View>
                   </View>
-                ))}
-              </Card>
+                  <View className={`px-2.5 py-1 rounded-full ${exam.status === 'Published' ? 'bg-green-50' : 'bg-orange-50'}`}>
+                    <Text className={`text-[10px] font-bold uppercase ${exam.status === 'Published' ? 'text-green-700' : 'text-orange-700'}`}>
+                      {exam.status}
+                    </Text>
+                  </View>
+                </Card>
+              ))}
             </View>
           )}
 
-          {/* TAB 2: Enter Marks */}
+          {/* TAB 2: Marks Entry */}
           {activeTab === "marks" && (
-            <View className="gap-4">
-              {/* Select Panel */}
-              <Card className="bg-white border border-gray-100 p-5">
-                <View className="flex-row gap-4 items-center">
-                  <View className="flex-1">
-                    <Text className="text-[11px] font-bold text-gray-400 uppercase mb-2">Selected Exam</Text>
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
-                      {MOCK_EXAMS.map((ex) => (
-                        <TouchableOpacity
-                          key={ex.id}
-                          onPress={() => setSelectedExam(ex.name)}
-                          className={`px-4 py-2 rounded-lg border ${
-                            selectedExam === ex.name ? "bg-[#0d3666] border-[#0d3666]" : "bg-white border-gray-200"
-                          }`}
-                        >
-                          <Text className={`text-xs font-bold ${selectedExam === ex.name ? "text-white" : "text-gray-700"}`}>
-                            {ex.name}
-                          </Text>
-                        </TouchableOpacity>
-                      ))}
-                    </ScrollView>
-                  </View>
-
-                  <View className="flex-1">
-                    <Text className="text-[11px] font-bold text-gray-400 uppercase mb-2">Subject</Text>
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
-                      {MOCK_SUBJECTS.map((sub) => (
-                        <TouchableOpacity
-                          key={sub}
-                          onPress={() => setSelectedSubject(sub)}
-                          className={`px-4 py-2 rounded-lg border ${
-                            selectedSubject === sub ? "bg-[#f5921e] border-orange-500" : "bg-white border-gray-200"
-                          }`}
-                        >
-                          <Text className={`text-xs font-bold ${selectedSubject === sub ? "text-white" : "text-gray-700"}`}>
-                            {sub}
-                          </Text>
-                        </TouchableOpacity>
-                      ))}
-                    </ScrollView>
-                  </View>
+            <View>
+              <View className="flex-row justify-between items-center mb-6 px-1">
+                <View>
+                  <Text className="text-sm font-bold text-gray-800">Internal Assessment Sheet</Text>
+                  <Text className="text-xs text-gray-400 font-semibold mt-0.5">{selectedExam} - {selectedSubject}</Text>
                 </View>
-              </Card>
-
-              {/* Roster Marks Table */}
-              <View className="flex-row justify-between items-end px-1">
-                <Text className="text-sm font-bold text-gray-800">
-                  Roster Marks Grid: {selectedExam} ({selectedSubject})
-                </Text>
-                <TouchableOpacity 
-                  onPress={handleSaveMarks}
-                  className="px-4 py-1.5 bg-[#0d3666] rounded-lg"
-                >
-                  <Text className="text-xs font-bold text-white">Save Changes</Text>
+                <TouchableOpacity onPress={handleSaveMarks} className="px-4 py-2 bg-indigo-600 rounded-lg shadow-sm">
+                  <Text className="text-xs font-bold text-white">💾 Sync Sheet</Text>
                 </TouchableOpacity>
               </View>
 
               <Card className="bg-white border border-gray-100 overflow-hidden">
-                <View className="flex-row items-center px-5 py-3 bg-gray-50 border-b border-gray-100">
-                  <Text className="w-16 text-xs font-bold text-gray-400 uppercase">Roll</Text>
-                  <Text className="w-24 text-xs font-bold text-gray-400 uppercase">GR Number</Text>
-                  <Text className="flex-1 text-xs font-bold text-gray-400 uppercase">Student Name</Text>
-                  <Text className="w-[150px] text-xs font-bold text-gray-400 uppercase text-right">Marks Obtained (Max: 100)</Text>
+                <View className="flex-row px-5 py-3 bg-gray-50 border-b border-gray-100">
+                  <Text className="w-10 text-xs font-bold text-gray-400">ROLL</Text>
+                  <Text className="flex-1 text-xs font-bold text-gray-400">STUDENT NAME</Text>
+                  <Text className="w-[100px] text-xs font-bold text-gray-400 text-center">MARKS (100)</Text>
                 </View>
 
-                {studentMarks.map((student, idx) => (
-                  <View 
-                    key={student.id} 
-                    className={`flex-row items-center px-5 py-4 border-b border-gray-50 ${idx % 2 === 0 ? "bg-white" : "bg-gray-50/30"}`}
-                  >
-                    <Text className="w-16 text-sm font-bold text-gray-400">{student.rollNo}</Text>
-                    <Text className="w-24 text-sm font-bold text-gray-400">{student.grNo}</Text>
-                    <Text className="flex-1 text-sm font-bold text-gray-800">{student.name}</Text>
-                    
-                    <View className="w-[150px] items-end">
+                {studentMarks.map((s, idx) => (
+                  <View key={s.id} className={`flex-row items-center px-5 py-4 border-b border-gray-50 ${idx % 2 === 0 ? "bg-white" : "bg-gray-50/20"}`}>
+                    <Text className="w-10 text-sm font-bold text-gray-400">{s.rollNo}</Text>
+                    <Text className="flex-1 text-sm font-bold text-gray-800">{s.name}</Text>
+                    <View className="w-[100px] items-center">
                       <TextInput
-                        value={((student.marks as any)[selectedSubject] ?? "").toString()}
-                        onChangeText={(val) => handleMarkChange(student.id, selectedSubject, val)}
                         keyboardType="numeric"
-                        className="w-20 h-[36px] bg-gray-50 border border-gray-250 rounded-lg text-center text-sm font-bold text-gray-800"
+                        value={String(s.marks[selectedSubject as keyof typeof s.marks])}
+                        onChangeText={(v) => handleMarkChange(s.id, selectedSubject, v)}
+                        className="w-14 h-9 bg-gray-50 border border-gray-200 rounded-lg text-center font-bold text-indigo-600"
                       />
                     </View>
                   </View>
@@ -318,101 +280,34 @@ export default function ExamsManagementScreen() {
 
           {/* TAB 3: Rank List */}
           {activeTab === "ranks" && (
-            <View className="gap-4">
-              <View className="px-1">
-                <Text className="text-sm font-bold text-gray-800">Student Standings Ranks</Text>
-                <Text className="text-xs text-gray-400 font-semibold mt-1">Based on first term examination overall results</Text>
+            <View>
+               <View className="mb-6 px-1">
+                <Text className="text-sm font-bold text-gray-800">Class Performance Leaderboard</Text>
+                <Text className="text-xs text-gray-400 font-semibold mt-0.5">Based on combined subject averages</Text>
               </View>
 
-              <Card className="bg-white border border-gray-100 overflow-hidden">
-                <View className="flex-row items-center px-5 py-3 bg-gray-50 border-b border-gray-100">
-                  <Text className="w-16 text-xs font-bold text-gray-400 uppercase">Rank</Text>
-                  <Text className="flex-1 text-xs font-bold text-gray-400 uppercase">Student Name</Text>
-                  <Text className="w-[100px] text-xs font-bold text-gray-400 uppercase text-center">Class Avg</Text>
-                  <Text className="w-[100px] text-xs font-bold text-gray-400 uppercase text-center">Grade</Text>
-                  <Text className="w-[100px] text-xs font-bold text-gray-400 uppercase text-right">Total Marks</Text>
-                </View>
-
-                {calculatedRanks.map((rank, idx) => (
-                  <View 
-                    key={rank.id} 
-                    className={`flex-row items-center px-5 py-4 border-b border-gray-50 ${idx % 2 === 0 ? "bg-white" : "bg-gray-50/30"}`}
-                  >
-                    <Text className="w-16 text-sm font-bold text-orange-500">#{idx + 1}</Text>
-                    <Text className="flex-1 text-sm font-bold text-gray-800">{rank.name}</Text>
-                    <Text className="w-[100px] text-sm text-gray-500 font-semibold text-center">{rank.avg}%</Text>
-                    
-                    <View className="w-[100px] items-center">
-                      <View className="px-2.5 py-0.5 bg-indigo-50 rounded-full">
-                        <Text className="text-[10px] font-bold text-indigo-700">{rank.grade}</Text>
+              <View className="gap-3">
+                {calculatedRanks.map((s, idx) => (
+                  <Card key={s.id} className="bg-white border border-gray-100 p-4 flex-row items-center justify-between">
+                    <View className="flex-row items-center gap-4">
+                      <View className={`w-8 h-8 rounded-full items-center justify-center ${idx === 0 ? 'bg-yellow-100' : idx === 1 ? 'bg-gray-100' : idx === 2 ? 'bg-orange-100' : 'bg-gray-50'}`}>
+                        <Text className="text-xs font-black">{idx + 1}</Text>
+                      </View>
+                      <View>
+                        <Text className="text-sm font-bold text-gray-800">{s.name}</Text>
+                        <Text className="text-[10px] text-gray-400 font-bold">Total: {s.total} / 400</Text>
                       </View>
                     </View>
-
-                    <Text className="w-[100px] text-sm text-gray-900 font-bold text-right">{rank.total}</Text>
-                  </View>
+                    <View className="items-end">
+                      <Text className="text-lg font-black text-indigo-600">{s.avg}%</Text>
+                      <View className="px-2 bg-indigo-50 rounded-md">
+                        <Text className="text-[10px] font-black text-indigo-600 uppercase">Grade {s.grade}</Text>
+                      </View>
+                    </View>
+                  </Card>
                 ))}
-              </Card>
+              </View>
             </View>
-          )}
-
-          {/* TAB 4: Generate Marksheet */}
-          {activeTab === "report" && (
-            <Card className="bg-white border border-gray-100 p-6 max-w-[800px] self-center w-full shadow-md">
-              {/* Report Header */}
-              <View className="items-center border-b-2 border-gray-800 pb-4 mb-6">
-                <Text className="text-lg font-bold text-[#0d3666] tracking-wider uppercase">LITTLE ANGEL'S ENGLISH SCHOOL</Text>
-                <Text className="text-xs text-gray-500 font-bold mt-1">ACADEMIC EVALUATION MARKSHEET</Text>
-                <Text className="text-[11px] text-gray-400 font-semibold mt-1">Primary Department • Academic Term I</Text>
-              </View>
-
-              {/* Student Meta Details */}
-              <View className="flex-row justify-between mb-6 px-1">
-                <View>
-                  <Text className="text-xs text-gray-400 font-bold uppercase mb-0.5">Student Name</Text>
-                  <Text className="text-sm font-bold text-gray-800">Pooja Patel</Text>
-                </View>
-                <View className="items-end">
-                  <Text className="text-xs text-gray-400 font-bold uppercase mb-0.5">GR Number • Roll No</Text>
-                  <Text className="text-sm font-bold text-gray-800">GR-1044 • Roll No 14</Text>
-                </View>
-              </View>
-
-              {/* Subject scores */}
-              <View className="border border-gray-800 rounded-lg overflow-hidden mb-6">
-                <View className="flex-row bg-gray-50 border-b border-gray-800 py-2.5 px-4">
-                  <Text className="flex-1 text-xs font-bold text-gray-800 uppercase">Subject Name</Text>
-                  <Text className="w-[120px] text-xs font-bold text-gray-800 uppercase text-right">Max Marks</Text>
-                  <Text className="w-[120px] text-xs font-bold text-gray-800 uppercase text-right">Obtained</Text>
-                </View>
-
-                {Object.entries(studentMarks[0].marks).map(([subject, mark], idx) => (
-                  <View key={idx} className="flex-row border-b border-gray-100 py-3 px-4 bg-white">
-                    <Text className="flex-1 text-sm font-semibold text-gray-700">{subject}</Text>
-                    <Text className="w-[120px] text-sm text-gray-500 font-semibold text-right">100</Text>
-                    <Text className="w-[120px] text-sm text-gray-900 font-bold text-right">{mark}</Text>
-                  </View>
-                ))}
-              </View>
-
-              {/* Aggregate Row Card */}
-              <View className="flex-row justify-between items-center py-4 bg-gray-50 border border-gray-200 px-5 rounded-xl mb-6">
-                <View>
-                  <Text className="text-xs text-gray-400 font-bold uppercase">Aggregate Avg</Text>
-                  <Text className="text-xl font-bold text-[#0d3666]">86.2%</Text>
-                </View>
-                <View className="items-end">
-                  <Text className="text-xs text-gray-400 font-bold uppercase">Grade Class</Text>
-                  <Text className="text-xl font-bold text-green-700">A Distinction</Text>
-                </View>
-              </View>
-
-              <TouchableOpacity 
-                onPress={() => Alert.alert("Success", "Marksheet PDF downloaded successfully.")}
-                className="h-[48px] bg-[#f5921e] rounded-xl items-center justify-center shadow-md shadow-orange-100"
-              >
-                <Text className="text-sm font-bold text-white">📥 Download Official Marksheet Report</Text>
-              </TouchableOpacity>
-            </Card>
           )}
 
         </View>

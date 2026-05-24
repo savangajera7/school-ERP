@@ -33,60 +33,62 @@ const MOCK_CLASS_NOTICES = [
   }
 ];
 
+import { Colors } from "@/constants/colors";
+import { LinearGradient } from "expo-linear-gradient";
+import { useNoticeGet } from "@/api/generated/erp-notice/erp-notice";
+
 export default function StudentNoticeHistoryScreen() {
   const { isMobile } = useBreakpoint();
   const [activeTab, setActiveTab] = useState<"school" | "class">("school");
+  
+  const { data: noticesData, isLoading } = useNoticeGet({});
 
   const currentNotices = activeTab === "school" ? MOCK_SCHOOL_NOTICES : MOCK_CLASS_NOTICES;
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
-      <StatusBar style="dark" translucent backgroundColor="transparent" />
+      <StatusBar style="light" translucent backgroundColor="transparent" />
       
       {/* Top Navbar */}
-      <View className="bg-white border-b border-gray-100 px-6 py-4 flex-row justify-between items-center z-10">
-        <View className="flex-row items-center gap-3">
+      <LinearGradient
+        colors={[Colors.primary, Colors.primaryDark]}
+        className="px-6 pt-6 pb-12 rounded-b-[32px]"
+      >
+        <View className="flex-row items-center gap-4">
           <TouchableOpacity
             onPress={() => router.push("/(app)/dashboard")}
-            className="w-10 h-10 bg-gray-50 rounded-xl items-center justify-center"
+            className="w-10 h-10 bg-white/10 rounded-xl items-center justify-center border border-white/20"
           >
-            <Text className="text-sm font-bold text-gray-700">🔙</Text>
+            <Text className="text-white font-bold">🔙</Text>
           </TouchableOpacity>
           <View>
-            <Text className="text-[18px] font-bold text-gray-900">Student Notice History</Text>
-            <Text className="text-[12px] text-gray-400 font-semibold mt-0.5">
-              Read formal school announcements & notice logs
+            <Text className="text-xl font-black text-white">Notice Board</Text>
+            <Text className="text-white/60 text-xs font-bold uppercase tracking-wider mt-0.5">
+              School Announcements & Logs
             </Text>
           </View>
         </View>
+      </LinearGradient>
+
+      {/* Tabs */}
+      <View className="px-6 -mt-6">
+        <View className="bg-white p-2 rounded-2xl flex-row shadow-lg shadow-gray-200/50 border border-gray-50">
+          <TouchableOpacity 
+            onPress={() => setActiveTab("school")}
+            className={`flex-1 items-center py-2.5 rounded-xl ${activeTab === 'school' ? 'bg-primary/5' : ''}`}
+          >
+            <Text className={`text-xs font-black uppercase tracking-tighter ${activeTab === 'school' ? 'text-primary' : 'text-gray-400'}`}>School Notice</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            onPress={() => setActiveTab("class")}
+            className={`flex-1 items-center py-2.5 rounded-xl ${activeTab === 'class' ? 'bg-primary/5' : ''}`}
+          >
+            <Text className={`text-xs font-black uppercase tracking-tighter ${activeTab === 'class' ? 'text-primary' : 'text-gray-400'}`}>Class Notice</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
-      {/* Tab Selectors */}
-      <View className="bg-white border-b border-gray-100 flex-row px-6">
-        <TouchableOpacity
-          onPress={() => setActiveTab("school")}
-          className={`flex-1 items-center py-3.5 border-b-2 ${
-            activeTab === "school" ? "border-[#0d3666]" : "border-transparent"
-          }`}
-        >
-          <Text className={`text-sm font-bold ${activeTab === "school" ? "text-[#0d3666]" : "text-gray-400"}`}>
-            School Notice
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => setActiveTab("class")}
-          className={`flex-1 items-center py-3.5 border-b-2 ${
-            activeTab === "class" ? "border-[#0d3666]" : "border-transparent"
-          }`}
-        >
-          <Text className={`text-sm font-bold ${activeTab === "class" ? "text-[#0d3666]" : "text-gray-400"}`}>
-            Class Notice
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      <ScrollView className="flex-1 px-4 pt-6 md:px-8" showsVerticalScrollIndicator={false}>
+      <ScrollView className="flex-1 px-4 mt-6 md:px-8" showsVerticalScrollIndicator={false}>
         <View className="max-w-[800px] w-full self-center pb-10 gap-4">
           
           {currentNotices.map((notice) => (

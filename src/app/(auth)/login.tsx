@@ -14,6 +14,7 @@ import { FormField } from "@/components/forms/FormField";
 import { useAuthStore } from "@/store/authStore";
 import { translations } from "@/constants/translations";
 import { useLoginLogin } from "@/api/generated/1-login-no-token/1-login-no-token";
+import type { LoginRequest } from "@/api/model";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Colors } from "@/constants/colors";
 import type { Role } from "@/types/auth.types";
@@ -52,11 +53,18 @@ export default function LoginScreen() {
   };
 
   const onSubmit = (data: LoginFormData) => {
-    loginMutation.mutate({ data }, {
+    // Map email to both email and emailOrUserName to support different backend expectations
+    const payload: LoginRequest = {
+      email: data.email,
+      emailOrUserName: data.email,
+      password: data.password,
+    };
+
+    loginMutation.mutate({ data: payload }, {
       onSuccess: (response) => {
-        const apiResult = response.data;
-        if (apiResult.success && apiResult.data) {
-          const user = apiResult.data;
+        const apiResponse = response.data;
+        if (apiResponse.success && apiResponse.data) {
+          const user = apiResponse.data;
           const userRole = mapRoleIdToRole(user.roleID);
           
           login(
@@ -127,7 +135,11 @@ export default function LoginScreen() {
 
       {loginMutation.isError && (
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{(loginMutation.error as any)?.message || t.loginFailed}</Text>
+          <Text style={styles.errorText}>
+            {(loginMutation.error as any)?.response?.data?.message || 
+             (loginMutation.error as any)?.message || 
+             t.loginFailed}
+          </Text>
         </View>
       )}
     </View>

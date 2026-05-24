@@ -26,11 +26,19 @@ const FEE_STRUCTURE = [
   { term: "Lab & Library", amount: 1000 },
 ];
 
+import { Colors } from "@/constants/colors";
+import { LinearGradient } from "expo-linear-gradient";
+import { useFeesCollect, useFeesPending, useFeesPaymentHistory } from "@/api/generated/erp-fees/erp-fees";
+
 export default function FeesManagementScreen() {
   const { isMobile } = useBreakpoint();
   const [activeTab, setActiveTab] = useState<"collect" | "history" | "structure">("collect");
   const [searchQuery, setSearchQuery] = useState("");
   
+  const collectFees = useFeesCollect();
+  const { data: pendingData } = useFeesPending();
+  const { data: historyData } = useFeesPaymentHistory();
+
   // Collect modal state
   const [selectedStudent, setSelectedStudent] = useState<typeof MOCK_OUTSTANDING[0] | null>(null);
   const [collectAmount, setCollectAmount] = useState("");
@@ -42,7 +50,7 @@ export default function FeesManagementScreen() {
     setCollectAmount(student.outstanding.toString());
   };
 
-  const handleProcessPayment = () => {
+  const handleProcessPayment = async () => {
     if (!collectAmount || parseFloat(collectAmount) <= 0) {
       Alert.alert("Invalid Amount", "Please enter a valid payment amount.");
       return;
@@ -50,45 +58,80 @@ export default function FeesManagementScreen() {
 
     setIsProcessing(true);
     
-    // Process payment (Razorpay emulator simulation)
-    setTimeout(() => {
+    try {
+      // Simulate API call or use collectFees mutation if ready
+      // await collectFees.mutateAsync({ data: { ... } });
+
+      // Process payment (Razorpay emulator simulation)
+      setTimeout(() => {
+        setIsProcessing(false);
+        if (Platform.OS !== "web") {
+          Alert.alert(
+            "Payment Successful",
+            `Receipt generated for ₹${collectAmount} via ${paymentMethod} for ${selectedStudent?.name}.`,
+            [{ text: "OK", onPress: () => setSelectedStudent(null) }]
+          );
+        } else {
+          window.alert(`Payment Successful!\nReceipt generated for ₹${collectAmount} for ${selectedStudent?.name}.`);
+          setSelectedStudent(null);
+        }
+      }, 2000);
+    } catch (error) {
       setIsProcessing(false);
-      if (Platform.OS !== "web") {
-        Alert.alert(
-          "Payment Successful",
-          `Receipt generated for ₹${collectAmount} via ${paymentMethod} for ${selectedStudent?.name}.`,
-          [{ text: "OK", onPress: () => setSelectedStudent(null) }]
-        );
-      } else {
-        window.alert(`Payment Successful!\nReceipt generated for ₹${collectAmount} for ${selectedStudent?.name}.`);
-        setSelectedStudent(null);
-      }
-    }, 2000);
+      Alert.alert("Error", "Payment processing failed.");
+    }
   };
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
-      <StatusBar style="dark" translucent backgroundColor="transparent" />
+      <StatusBar style="light" translucent backgroundColor="transparent" />
       
       {/* Top Navbar */}
-      <View className="bg-white border-b border-gray-100 px-6 py-4 flex-row justify-between items-center z-10">
-        <View className="flex-row items-center gap-3">
+      <LinearGradient
+        colors={[Colors.primary, Colors.primaryDark]}
+        className="px-6 pt-6 pb-12 rounded-b-[32px]"
+      >
+        <View className="flex-row items-center gap-4">
           <TouchableOpacity
             onPress={() => router.push("/(app)/dashboard")}
-            className="w-10 h-10 bg-gray-50 rounded-xl items-center justify-center"
+            className="w-10 h-10 bg-white/10 rounded-xl items-center justify-center border border-white/20"
           >
-            <Text className="text-sm font-bold text-gray-700">🔙</Text>
+            <Text className="text-white font-bold">🔙</Text>
           </TouchableOpacity>
           <View>
-            <Text className="text-[18px] font-bold text-gray-900">Fees Management</Text>
-            <Text className="text-[12px] text-gray-400 font-semibold mt-0.5">
+            <Text className="text-xl font-black text-white">Fees Management</Text>
+            <Text className="text-white/60 text-xs font-bold uppercase tracking-wider mt-0.5">
               Collect invoices and view ledgers
             </Text>
           </View>
         </View>
+      </LinearGradient>
+
+      {/* Tabs */}
+      <View className="px-6 -mt-6">
+        <View className="bg-white p-2 rounded-2xl flex-row shadow-lg shadow-gray-200/50 border border-gray-50">
+          <TouchableOpacity 
+            onPress={() => setActiveTab("collect")}
+            className={`flex-1 items-center py-2.5 rounded-xl ${activeTab === 'collect' ? 'bg-primary/5' : ''}`}
+          >
+            <Text className={`text-xs font-black uppercase tracking-tighter ${activeTab === 'collect' ? 'text-primary' : 'text-gray-400'}`}>Collect</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            onPress={() => setActiveTab("history")}
+            className={`flex-1 items-center py-2.5 rounded-xl ${activeTab === 'history' ? 'bg-primary/5' : ''}`}
+          >
+            <Text className={`text-xs font-black uppercase tracking-tighter ${activeTab === 'history' ? 'text-primary' : 'text-gray-400'}`}>History</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            onPress={() => setActiveTab("structure")}
+            className={`flex-1 items-center py-2.5 rounded-xl ${activeTab === 'structure' ? 'bg-primary/5' : ''}`}
+          >
+            <Text className={`text-xs font-black uppercase tracking-tighter ${activeTab === 'structure' ? 'text-primary' : 'text-gray-400'}`}>Structure</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
-      <ScrollView className="flex-1 px-4 pt-6 md:px-8" showsVerticalScrollIndicator={false}>
+      <ScrollView className="flex-1 px-4 mt-6 md:px-8" showsVerticalScrollIndicator={false}>
         <View className="max-w-[1200px] w-full self-center pb-10">
           
           {/* Quick Stats Grid */}

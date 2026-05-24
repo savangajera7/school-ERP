@@ -1,5 +1,5 @@
 export const API_BASE_URL =
-  process.env.EXPO_PUBLIC_API_URL || "https://schoolmanagement.mahispark.com/api";
+  process.env.EXPO_PUBLIC_API_URL || "https://schoolmanagement.mahispark.com";
 
 export const API_ENDPOINTS = {
   LOGIN: "/Login/Login",
