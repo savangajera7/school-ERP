@@ -14,7 +14,8 @@
     "build:android:preview": "eas build --platform android --profile preview --non-interactive",
     "build:android:prod": "eas build --platform android --profile production-apk --non-interactive",
     "build:ios:prod": "eas build --platform ios --profile production --non-interactive",
-    "build:all:prod": "eas build --platform all --profile production --non-interactive"
+    "build:all:prod": "eas build --platform all --profile production --non-interactive",
+    "deploy:apk": "bash scripts/deploy-apk-to-server.sh"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

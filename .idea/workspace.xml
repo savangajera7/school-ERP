@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="973b64d6-6094-46c3-ae9b-d54eff11ffd3" name="Changes" comment="" />
+    <list default="true" id="973b64d6-6094-46c3-ae9b-d54eff11ffd3" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -19,12 +21,12 @@
     &quot;assignee&quot;: &quot;savangajera7&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/savangajera7/school-ERP.git&quot;,
-    &quot;accountId&quot;: &quot;5aaf5d24-66cf-4af0-acf4-2a6dc478472f&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/savangajera7/school-ERP.git",
+    "accountId": "8f6d5127-5185-47fb-b7ed-0c3ec966e0c9"
   }
-}</component>
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 5,
   &quot;fromUser&quot;: false
@@ -46,7 +48,7 @@
     "git-widget-placeholder": "main",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/savan/IdeaProjects/school-ERP",
+    "last_opened_file_path": "/home/savan/IdeaProjects",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -74,12 +76,12 @@
       </method>
     </configuration>
     <list>
-      <item itemvalue="npm.Expo LAN" />
-      <item itemvalue="npm.Expo Start" />
-      <item itemvalue="npm.Expo Start (Clear Cache)" />
-      <item itemvalue="npm.Expo Tunnel (For Mobile)" />
-      <item itemvalue="npm.Run Android" />
       <item itemvalue="React Native.Unnamed" />
+      <item itemvalue="npm.Run Android" />
+      <item itemvalue="npm.Expo Start" />
+      <item itemvalue="npm.Expo Tunnel (For Mobile)" />
+      <item itemvalue="npm.Expo Start (Clear Cache)" />
+      <item itemvalue="npm.Expo LAN" />
     </list>
   </component>
   <component name="SharedIndexes">
@@ -97,6 +99,7 @@
       <option name="presentableId" value="Default" />
       <updated>1779255036387</updated>
       <workItem from="1779614870873" duration="12594000" />
+      <workItem from="1779650362413" duration="48000" />
     </task>
     <servers />
   </component>

@@ -30,15 +30,24 @@ jobs:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
-      - name: Download latest Android artifacts from EAS
+      - name: Download latest Android APK from EAS
         run: |
           mkdir -p artifacts/downloads
-          eas build:download --platform android --latest --output artifacts/downloads/ || true
-          ls -la artifacts/downloads/ || true
+          BUILD_JSON=$(eas build:list --platform android --status finished --limit 1 --json --non-interactive)
+          echo "$BUILD_JSON" | head -c 500
+          BUILD_ID=$(echo "$BUILD_JSON" | jq -r '.[0].id')
+          APK_URL=$(echo "$BUILD_JSON" | jq -r '.[0].artifacts.applicationArchiveUrl // .[0].artifacts.buildUrl')
+          if [ -z "$BUILD_ID" ] || [ "$BUILD_ID" = "null" ]; then
+            echo "No finished Android build found"
+            exit 1
+          fi
+          (cd artifacts/downloads && eas build:download --build-id "$BUILD_ID" --non-interactive) || \
+            curl -fsSL "$APK_URL" -o artifacts/downloads/school-erp-latest.apk
           APK=$(find artifacts/downloads -name '*.apk' | head -1)
-          AAB=$(find artifacts/downloads -name '*.aab' | head -1)
-          if [ -n "$APK" ]; then cp "$APK" artifacts/downloads/school-erp-latest.apk; fi
-          if [ -n "$AAB" ]; then cp "$AAB" artifacts/downloads/school-erp-latest.aab; fi
+          if [ -n "$APK" ] && [ "$APK" != "artifacts/downloads/school-erp-latest.apk" ]; then
+            cp "$APK" artifacts/downloads/school-erp-latest.apk
+          fi
+          ls -la artifacts/downloads/
 
       - name: Generate manifest.json
         env:

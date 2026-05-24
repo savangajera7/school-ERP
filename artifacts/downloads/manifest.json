@@ -1,0 +1,15 @@
+{
+  "appName": "School ERP",
+  "version": "1.0.0",
+  "updatedAt": "2026-05-24T19:41:37.994Z",
+  "webAppUrl": "https://app.schoolmanagement.mahispark.com",
+  "android": {
+    "apk": "https://schoolmanagement.mahispark.com/downloads/school-erp-latest.apk",
+    "aab": null
+  },
+  "ios": {
+    "appStoreUrl": null,
+    "note": "iOS builds are distributed via App Store when published."
+  },
+  "apiManifestUrl": "https://schoolmanagement.mahispark.com/api/Downloads/manifest"
+}
