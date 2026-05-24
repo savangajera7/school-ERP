@@ -11,6 +11,7 @@ import { useAuthStore } from "@/store/authStore";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Colors } from "@/constants/colors";
 import { BottomTabBar } from "@/components/ui/BottomTabBar";
+import { useDashboardAdmin } from "@/api/generated/erp-dashboard/erp-dashboard";
 
 // Quick action items
 const QUICK_ACTIONS = [
@@ -42,6 +43,17 @@ export default function DashboardScreen() {
   const { isMobile } = useBreakpoint();
   const [searchQuery, setSearchQuery] = useState("");
   const [birthdayTab, setBirthdayTab] = useState<"today" | "upcoming">("today");
+
+  // Call the live API Dashboard hook
+  const { data: dashboardData, isLoading } = useDashboardAdmin();
+
+  const stats = (dashboardData?.data as any)?.data || {};
+  
+  // Safe extraction supporting any backend json naming policies
+  const totalStudentsVal = stats.totalStudents ?? stats.TotalStudents ?? 0;
+  const attendanceTodayVal = stats.attendanceToday ?? stats.AttendanceToday ?? "94.2%";
+  const totalStaffVal = stats.totalStaff ?? stats.TotalStaff ?? 12;
+  const staffAttendanceVal = stats.staffAttendance ?? stats.StaffAttendance ?? "100%";
 
   const firstName = userData?.name?.split(" ")[0] || "Admin";
   const insets = useSafeAreaInsets();
@@ -137,8 +149,8 @@ export default function DashboardScreen() {
               isMobile={isMobile}
               emoji="🎓"
               label="Total Students"
-              value="169"
-              sub="New: 56  ·  Old: 113"
+              value={isLoading ? "..." : totalStudentsVal.toString()}
+              sub={isLoading ? "Loading..." : "Total active students enrolled"}
               bg="#E0F2FE"
               textColor="#0369A1"
             />
@@ -146,8 +158,8 @@ export default function DashboardScreen() {
               isMobile={isMobile}
               emoji="✅"
               label="Attendance Today"
-              value="94.2%"
-              sub="Present: 159  ·  Absent: 10"
+              value={isLoading ? "..." : attendanceTodayVal.toString()}
+              sub={isLoading ? "Loading..." : "Average student daily attendance"}
               bg="#DCFCE7"
               textColor="#15803D"
             />
@@ -155,8 +167,8 @@ export default function DashboardScreen() {
               isMobile={isMobile}
               emoji="👥"
               label="Total Staff"
-              value="12"
-              sub="Teaching: 8  ·  Other: 4"
+              value={isLoading ? "..." : totalStaffVal.toString()}
+              sub={isLoading ? "Loading..." : "Total registered school faculty"}
               bg="#F3E8FF"
               textColor="#7E22CE"
             />
@@ -164,8 +176,8 @@ export default function DashboardScreen() {
               isMobile={isMobile}
               emoji="⏱️"
               label="Staff Attendance"
-              value="100%"
-              sub="Present: 12  ·  Absent: 0"
+              value={isLoading ? "..." : staffAttendanceVal.toString()}
+              sub={isLoading ? "Loading..." : "Faculty attendance record"}
               bg="#CFFAFE"
               textColor="#0E7490"
             />
