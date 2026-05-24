@@ -26,11 +26,7 @@ export const Card: React.FC<CardProps> = ({
         maxWidth: "100%",
         borderWidth: 1,
         borderColor: "#F3F4F6",
-        shadowColor: "#000000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.04,
-        shadowRadius: 12,
-        elevation: 2,
+        boxShadow: "0px 2px 12px rgba(0,0,0,0.04)",
       }
     : isTablet
     ? {
@@ -41,11 +37,7 @@ export const Card: React.FC<CardProps> = ({
         maxWidth: "100%",
         borderWidth: 1,
         borderColor: "#F3F4F6",
-        shadowColor: "#000000",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.06,
-        shadowRadius: 24,
-        elevation: 4,
+        boxShadow: "0px 4px 24px rgba(0,0,0,0.06)",
       }
     : {
         // Desktop
@@ -56,11 +48,7 @@ export const Card: React.FC<CardProps> = ({
         maxWidth: "100%",
         borderWidth: 1,
         borderColor: "#F3F4F6",
-        shadowColor: "#000000",
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.08,
-        shadowRadius: 40,
-        elevation: 6,
+        boxShadow: "0px 6px 40px rgba(0,0,0,0.08)",
       };
 
   return (

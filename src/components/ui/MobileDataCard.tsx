@@ -50,11 +50,7 @@ export function MobileDataCard({
       activeOpacity={onPress ? 0.7 : 1}
       className="bg-white rounded-2xl border border-gray-100 p-4 mb-3"
       style={{
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.03,
-        shadowRadius: 8,
-        elevation: 2,
+        boxShadow: "0px 2px 8px rgba(0,0,0,0.03)",
       }}
     >
       {/* Header */}

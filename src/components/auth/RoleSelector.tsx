@@ -8,6 +8,7 @@ interface RoleSelectorProps {
 }
 
 const ROLES: { value: Role; label: string; icon: string }[] = [
+  { value: "superadmin", label: "Super Admin", icon: "👑" },
   { value: "admin", label: "Admin", icon: "🛡️" },
   { value: "teacher", label: "Teacher", icon: "📖" },
   { value: "parent", label: "Parent", icon: "👥" },

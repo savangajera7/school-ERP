@@ -61,6 +61,7 @@ export default function DashboardScreen() {
           paddingBottom: isMobile ? 60 : 72,
           borderBottomLeftRadius: 32,
           borderBottomRightRadius: 32,
+          zIndex: 1,
         }}
       >
         {/* Top bar: logo + school name + year + logout */}
@@ -126,10 +127,11 @@ export default function DashboardScreen() {
         className="flex-1"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: isMobile ? 100 : 40 }}
+        style={{ zIndex: 10, elevation: 10, position: "relative" }}
       >
         <View
           className="px-4 md:px-8 max-w-[1200px] w-full self-center"
-          style={{ marginTop: -40 }}
+          style={{ marginTop: -40, position: "relative", zIndex: 10 }}
         >
           {/* ── 4 Stat Cards ─────────────────────────────────────── */}
           <View className={`flex-row flex-wrap gap-3 mb-6 ${isMobile ? "" : "gap-4"}`}>
@@ -305,11 +307,7 @@ function StatCard({
       className="bg-white border border-gray-100 rounded-2xl p-4"
       style={{
         width: isMobile ? "48%" : "23.5%",
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.04,
-        shadowRadius: 10,
-        elevation: 2,
+        boxShadow: "0px 2px 10px rgba(0,0,0,0.04)",
       }}
     >
       <View className="flex-row justify-between items-start mb-3">
@@ -342,11 +340,7 @@ function SectionCard({
     <View
       className="bg-white border border-gray-100 rounded-2xl mb-4 overflow-hidden"
       style={{
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.04,
-        shadowRadius: 10,
-        elevation: 2,
+        boxShadow: "0px 2px 10px rgba(0,0,0,0.04)",
       }}
     >
       {/* Card header */}

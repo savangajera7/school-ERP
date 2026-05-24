@@ -1,4 +1,4 @@
-export type Role = "admin" | "teacher" | "parent";
+export type Role = "superadmin" | "admin" | "teacher" | "parent";
 
 export interface UserData {
   studentID?: number;

@@ -53,17 +53,16 @@ export default function LoginScreen() {
 
   const mapRoleIdToRole = (roleId?: number): Role => {
     switch (roleId) {
-      case 1: return "admin";
-      case 2: return "teacher";
-      case 3: return "parent";
+      case 1: return "superadmin";
+      case 2: return "admin";
+      case 3: return "teacher";
+      case 4: return "parent";
       default: return "parent";
     }
   };
 
   const onSubmit = (data: LoginFormData) => {
-    // Map email to both email and emailOrUserName to support different backend expectations
     const payload: LoginRequest = {
-      email: data.email,
       emailOrUserName: data.email,
       password: data.password,
     };
@@ -103,6 +102,10 @@ export default function LoginScreen() {
         placeholder="Enter your email"
         keyboardType="email-address"
         autoCapitalize="none"
+        returnKeyType="next"
+        onSubmitEditing={() => {
+          // You could optionally focus the password field here using a ref
+        }}
         leftIcon={
           <View style={styles.iconCircle}>
             <Text style={styles.iconText}>📧</Text>
@@ -116,6 +119,8 @@ export default function LoginScreen() {
         label={t.password}
         placeholder="Enter your password"
         isPassword
+        returnKeyType="done"
+        onSubmitEditing={handleSubmit(onSubmit)}
         leftIcon={
           <View style={styles.iconCircle}>
             <Text style={styles.iconText}>🔒</Text>

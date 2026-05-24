@@ -30,11 +30,7 @@ export function BottomTabBar() {
         paddingBottom: Platform.OS === "ios" ? 28 : 10,
         paddingTop: 10,
         paddingHorizontal: 8,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: -4 },
-        shadowOpacity: 0.06,
-        shadowRadius: 16,
-        elevation: 12,
+        boxShadow: "0px -4px 16px rgba(0,0,0,0.06)",
       }}
     >
       {TABS.map((tab) => {
