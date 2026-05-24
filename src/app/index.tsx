@@ -1,41 +1,55 @@
 import React, { useEffect } from "react";
 import { router } from "expo-router";
-import { View, StyleSheet, Text, Image, Dimensions } from "react-native";
+import { View, StyleSheet, Text, Image, Dimensions, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
+import { Colors } from "@/constants/colors";
 
 const { width } = Dimensions.get('window');
 
 export default function EntryPoint() {
   useEffect(() => {
+    console.log("EntryPoint mounted");
     const timer = setTimeout(() => {
-      router.replace("/(auth)/login");
-    }, 2000); // Give it some time to show the nice splash
+      console.log("Navigating to login...");
+      try {
+        router.replace("/(auth)/login");
+      } catch (error) {
+        console.error("Navigation error:", error);
+      }
+    }, 2000); 
     return () => clearTimeout(timer);
   }, []);
 
   return (
     <LinearGradient 
-      colors={["#0d3666", "#1e40af"]} 
+      colors={[Colors.gradientStart, Colors.gradientEnd]} 
       style={styles.container}
     >
       <View style={styles.content}>
         <View style={styles.logoContainer}>
           <Image 
-            source={require("../../assets/icon.png")} 
+            source={require("../../assets/school-logo.png")} 
             style={styles.logo} 
             resizeMode="contain" 
           />
         </View>
-        <Text style={styles.title}>School ERP</Text>
-        <Text style={styles.subtitle}>Smart Management System</Text>
+        <Text style={styles.title}>Little Angel's</Text>
+        <Text style={styles.schoolName}>English School</Text>
         
+        <TouchableOpacity 
+          style={{ marginTop: 40, padding: 15, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 10 }}
+          onPress={() => router.replace("/(auth)/login")}
+        >
+          <Text style={{ color: '#fff', fontWeight: 'bold' }}>Continue to Login</Text>
+        </TouchableOpacity>
+
         <View style={styles.loaderContainer}>
-          <PremiumLoader color="#ffffff" size={50} />
+          <PremiumLoader color="#ffffff" size={40} />
         </View>
       </View>
       
-      <Text style={styles.footer}>Loading your experience...</Text>
+      <Text style={styles.footer}>SCHOOL ERP • SMART MANAGEMENT</Text>
     </LinearGradient>
   );
 }
@@ -52,16 +66,16 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   logoContainer: {
-    width: 120,
-    height: 120,
+    width: 150,
+    height: 150,
     backgroundColor: '#fff',
-    borderRadius: 60,
-    padding: 20,
-    marginBottom: 24,
+    borderRadius: 75,
+    padding: 10,
+    marginBottom: 32,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 },
+    shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 0.3,
-    shadowRadius: 20,
+    shadowRadius: 24,
     elevation: 20,
   },
   logo: {
@@ -69,26 +83,34 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   title: {
-    fontSize: 32,
+    fontSize: 36,
     fontWeight: '900',
     color: '#fff',
     letterSpacing: 1,
   },
+  schoolName: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: Colors.accent,
+    marginTop: -4,
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+  },
   subtitle: {
     fontSize: 16,
-    color: 'rgba(255,255,255,0.7)',
-    marginTop: 8,
+    color: 'rgba(255,255,255,0.8)',
+    marginTop: 16,
     fontWeight: '600',
   },
   loaderContainer: {
-    marginTop: 60,
+    marginTop: 80,
   },
   footer: {
     position: 'absolute',
-    bottom: 40,
-    color: 'rgba(255,255,255,0.5)',
-    fontSize: 12,
-    fontWeight: '700',
-    letterSpacing: 1,
+    bottom: 50,
+    color: 'rgba(255,255,255,0.4)',
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 3,
   }
 });

@@ -45,8 +45,8 @@ export const RoleSelector: React.FC<RoleSelectorProps> = ({
             <Text className="text-[16px] mr-1.5">{role.icon}</Text>
             <Text
               className={`
-                text-[14px] font-medium
-                ${isActive ? "text-[#0d3666]" : "text-[#6B7280]"}
+                text-[14px] font-bold
+                ${isActive ? "text-[#0d3666]" : "text-[#9CA3AF]"}
               `}
             >
               {role.label}

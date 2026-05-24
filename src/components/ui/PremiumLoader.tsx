@@ -10,8 +10,8 @@ export const PremiumLoader: React.FC<PremiumLoaderProps> = ({
   size = 60, 
   color = "#0d3666" 
 }) => {
-  const rotateAnim = new Animated.Value(0);
-  const scaleAnim = new Animated.Value(0.8);
+  const rotateAnim = React.useRef(new Animated.Value(0)).current;
+  const scaleAnim = React.useRef(new Animated.Value(0.8)).current;
 
   useEffect(() => {
     // Rotation animation

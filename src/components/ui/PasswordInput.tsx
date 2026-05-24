@@ -46,16 +46,9 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
       <View
         className={`
           h-[52px] rounded-xl border-[1.5px] flex-row items-center px-4
-          ${error ? "border-red-500 bg-[#FFF5F5]" : isFocused ? "border-blue-500 bg-white" : "border-gray-200 bg-[#F9FAFB]"}
+          ${error ? "border-red-500 bg-[#FFF5F5]" : isFocused ? "border-gray-300 bg-white" : "border-gray-200 bg-[#F9FAFB]"}
           ${className || ""}
         `}
-        style={isFocused && !error ? {
-          shadowColor: "#3B82F6",
-          shadowOffset: { width: 0, height: 0 },
-          shadowOpacity: 0.15,
-          shadowRadius: 3,
-          elevation: 2,
-        } : undefined}
       >
         {leftIcon && <View className="mr-3">{leftIcon}</View>}
         <TextInput

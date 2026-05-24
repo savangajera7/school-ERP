@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  input, textarea, select, button {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+}
+
+/* For React Native Web */
+div[role="textbox"] {
+  outline: none !important;
+}
+
+input {
+  outline-width: 0 !important;
+}

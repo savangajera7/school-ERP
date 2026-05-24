@@ -7,7 +7,7 @@ import { View } from "react-native";
 import "../../global.css";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
-// SplashScreen.preventAutoHideAsync();
+SplashScreen.preventAutoHideAsync();
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,12 +28,19 @@ export default function RootLayout() {
     // Simulate some loading time for assets/fonts if needed
     const prepare = async () => {
       try {
+        console.log("Preparing root layout...");
         // Here you would load fonts or other assets
         await new Promise(resolve => setTimeout(resolve, 500));
       } catch (e) {
-        console.warn(e);
+        console.warn("Layout preparation error:", e);
       } finally {
+        console.log("Root layout ready, hiding splash...");
         setIsReady(true);
+        try {
+          await SplashScreen.hideAsync();
+        } catch (splashError) {
+          console.warn("SplashScreen hide error:", splashError);
+        }
       }
     };
 
@@ -41,7 +48,9 @@ export default function RootLayout() {
   }, []);
 
   if (!isReady) {
-    return null;
+    return (
+      <View style={{ flex: 1, backgroundColor: "#0d3666" }} />
+    );
   }
 
   return (
