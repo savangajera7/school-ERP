@@ -185,7 +185,7 @@ Staff (teacher/admin) use the **web app URL**, not the APK.
 If `Gradle build failed` on **Run gradlew**:
 
 1. Open the build on [expo.dev](https://expo.dev) → failed build → **Run gradlew** log.
-2. Common fix for this project: avoid unused `react-native-reanimated` / `react-native-worklets` (native C++); the app uses RN `Animated` only.
+2. If the log says `Reanimated requires new architecture`: set `"newArchEnabled": true` in `app.json` and run `npx expo install react-native-reanimated react-native-worklets` (required by NativeWind).
 3. Retry with cache cleared: `eas build --platform android --profile production-apk --clear-cache`
 4. Ensure `package-lock.json` is committed and in sync: `npm ci` locally before push.
 
