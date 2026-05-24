@@ -31,6 +31,13 @@
     },
     "plugins": [
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "9ca804c0-0888-4be4-a31f-9845aaae4a99"
+      }
+    },
+    "owner": "savangajera"
   }
 }

@@ -1,0 +1,66 @@
+name: Deploy Web (Teacher & Admin)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "app.json"
+      - "package.json"
+      - "package-lock.json"
+      - "global.css"
+      - "babel.config.js"
+      - "metro.config.js"
+      - "tailwind.config.js"
+      - ".github/workflows/deploy-web.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-web-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy-web:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build static web export
+        env:
+          EXPO_PUBLIC_API_URL: ${{ secrets.EXPO_PUBLIC_API_URL }}
+        run: |
+          export EXPO_PUBLIC_API_URL="${EXPO_PUBLIC_API_URL:-https://schoolmanagement.mahispark.com}"
+          npx expo export --platform web
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SERVER_SSH_KEY }}" | base64 -d > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts 2>/dev/null || true
+
+      - name: Deploy to server
+        env:
+          WEB_PATH: ${{ secrets.SERVER_WEB_PATH || '/var/www/school-erp-web' }}
+        run: |
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} \
+            "mkdir -p ${WEB_PATH}"
+          scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -r \
+            dist/* \
+            ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }}:${WEB_PATH}/
+
+      - name: Summary
+        run: |
+          echo "### Web deployed" >> $GITHUB_STEP_SUMMARY
+          echo "Teacher/Admin SPA updated on server path \`${{ secrets.SERVER_WEB_PATH || '/var/www/school-erp-web' }}\`" >> $GITHUB_STEP_SUMMARY

@@ -1,0 +1,10 @@
+# Reduce EAS upload size; cloud prebuild generates android/ios
+android/
+ios/
+dist/
+web-build/
+.expo/
+.idea/
+screen-shot-mobile-app/
+*.md
+!README.md

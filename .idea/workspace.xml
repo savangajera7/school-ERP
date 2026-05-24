@@ -4,31 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="973b64d6-6094-46c3-ae9b-d54eff11ffd3" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/academic-setup.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/academic-setup.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/admission-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/admission-form.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/attendance-reports.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/attendance-reports.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/attendance.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/attendance.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/dashboard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/exams.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/exams.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/fees.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/fees.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/inquiries.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/inquiries.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/menu.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/menu.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/notices.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/notices.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/parent-results.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/parent-results.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/profile.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/search.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/search.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/student-profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/student-profile.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/students.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/students.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/teachers.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/teachers.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/timetable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/timetable.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(auth)/forgot-password.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(auth)/forgot-password.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(auth)/login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(auth)/login.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(auth)/otp.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(auth)/otp.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(auth)/reset-password.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(auth)/reset-password.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/ui/ScreenHeader.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/ScreenHeader.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/constants/mobileTabs.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/constants/mobileTabs.ts" afterDir="false" />
-    </list>
+    <list default="true" id="973b64d6-6094-46c3-ae9b-d54eff11ffd3" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -120,7 +96,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1779255036387</updated>
-      <workItem from="1779614870873" duration="12135000" />
+      <workItem from="1779614870873" duration="12594000" />
     </task>
     <servers />
   </component>

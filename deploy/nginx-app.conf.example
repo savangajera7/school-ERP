@@ -1,0 +1,27 @@
+# Copy to /etc/nginx/sites-available/school-erp-web and symlink sites-enabled.
+# DNS: app.schoolmanagement.mahispark.com -> server IP
+
+server {
+    listen 80;
+    server_name app.schoolmanagement.mahispark.com;
+
+    root /var/www/school-erp-web;
+    index index.html;
+
+    gzip on;
+    gzip_types text/css application/javascript application/json;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    location /_expo/ {
+        expires 7d;
+        add_header Cache-Control "public";
+    }
+
+    location /assets/ {
+        expires 30d;
+        add_header Cache-Control "public";
+    }
+}

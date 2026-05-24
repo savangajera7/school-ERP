@@ -1,0 +1,72 @@
+name: Deploy Mobile SDK to Server
+
+# Publishes APK/AAB + manifest.json for school websites to link.
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: [Build Mobile (Android & iOS)]
+    types: [completed]
+
+jobs:
+  deploy-downloads:
+    runs-on: ubuntu-latest
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event != 'schedule')
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Download latest Android artifacts from EAS
+        run: |
+          mkdir -p artifacts/downloads
+          eas build:download --platform android --latest --output artifacts/downloads/ || true
+          ls -la artifacts/downloads/ || true
+          APK=$(find artifacts/downloads -name '*.apk' | head -1)
+          AAB=$(find artifacts/downloads -name '*.aab' | head -1)
+          if [ -n "$APK" ]; then cp "$APK" artifacts/downloads/school-erp-latest.apk; fi
+          if [ -n "$AAB" ]; then cp "$AAB" artifacts/downloads/school-erp-latest.aab; fi
+
+      - name: Generate manifest.json
+        env:
+          EXPO_PUBLIC_API_URL: ${{ secrets.EXPO_PUBLIC_API_URL }}
+          PUBLIC_DOWNLOAD_BASE_URL: https://schoolmanagement.mahispark.com/downloads
+          PUBLIC_WEB_APP_URL: https://app.schoolmanagement.mahispark.com
+        run: node scripts/generate-download-manifest.js artifacts/downloads
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SERVER_SSH_KEY }}" | base64 -d > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts 2>/dev/null || true
+
+      - name: Upload to API wwwroot/downloads
+        env:
+          DL_PATH: ${{ secrets.SERVER_DOWNLOADS_PATH || '/var/www/schoolmanagementapi/wwwroot/downloads' }}
+        run: |
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} \
+            "mkdir -p ${DL_PATH}"
+          scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            artifacts/downloads/* \
+            ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }}:${DL_PATH}/
+
+      - name: Summary
+        run: |
+          echo "### Mobile SDK published" >> $GITHUB_STEP_SUMMARY
+          echo "Files copied to server downloads folder." >> $GITHUB_STEP_SUMMARY
+          echo "Manifest: \`https://schoolmanagement.mahispark.com/api/Downloads/manifest\`" >> $GITHUB_STEP_SUMMARY
