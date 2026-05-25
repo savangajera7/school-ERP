@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { View, Text, ScrollView, TouchableOpacity, Platform, Linking } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { router, useLocalSearchParams } from "expo-router";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Card } from "@/components/ui/Card";
-import { studentService } from "@/services/api/studentService";
+import { useGetApiStudentGetByIDId } from "@/api/generated/3-student-crud/3-student-crud";
 import { StudentModel } from "@/api/model/studentModel";
+import { parseApiData } from "@/utils/apiResponse";
 import { Colors } from "@/constants/colors";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
@@ -14,26 +15,11 @@ import { PremiumLoader } from "@/components/ui/PremiumLoader";
 export default function StudentProfileScreen() {
   const { isMobile } = useBreakpoint();
   const { id } = useLocalSearchParams();
-  const [loading, setLoading] = useState(true);
-  const [student, setStudent] = useState<StudentModel | null>(null);
-
-  useEffect(() => {
-    if (id) {
-      fetchStudentDetails();
-    }
-  }, [id]);
-
-  const fetchStudentDetails = async () => {
-    try {
-      setLoading(true);
-      const data = await studentService.getStudentById(Number(id));
-      setStudent(data);
-    } catch (error) {
-      console.error("Failed to fetch student details:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const studentId = Number(id) || 0;
+  const { data, isLoading: loading } = useGetApiStudentGetByIDId(studentId, {
+    query: { enabled: studentId > 0 },
+  });
+  const student = parseApiData<StudentModel>(data?.data);
 
   const handleCall = () => {
     if (Platform.OS !== 'web' && student?.studentNumber) {

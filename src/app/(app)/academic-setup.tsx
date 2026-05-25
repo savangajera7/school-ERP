@@ -8,10 +8,11 @@ import { Card } from "@/components/ui/Card";
 import { Colors } from "@/constants/colors";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
-import { useGetApiClassGetAll } from "@/api/generated/class/class";
-import { useGetApiSectionGetAll } from "@/api/generated/section/section";
-import { useGetApiAcademicYearGetAll } from "@/api/generated/academic-year/academic-year";
-import { useGetApiBatchGetAll } from "@/api/generated/batch/batch";
+import { useGetApiClassGetClassList } from "@/api/generated/master-class/master-class";
+import { useGetApiSectionGetSectionList } from "@/api/generated/master-section/master-section";
+import { useGetApiAcademicYearGet } from "@/api/generated/2-master-academicyear/2-master-academicyear";
+import { useGetApiBatchGet } from "@/api/generated/2-master-batch/2-master-batch";
+import { parseApiList } from "@/utils/apiResponse";
 
 type TabKey = "years" | "classes" | "sections" | "batches";
 
@@ -34,10 +35,10 @@ export default function AcademicSetupScreen() {
   const [activeTab, setActiveTab] = useState<TabKey>("years");
   const [search, setSearch] = useState("");
 
-  const { data: yearsData,    isLoading: loadingYears    } = useGetApiAcademicYearGetAll();
-  const { data: classesData,  isLoading: loadingClasses  } = useGetApiClassGetAll();
-  const { data: sectionsData, isLoading: loadingSections } = useGetApiSectionGetAll();
-  const { data: batchesData,  isLoading: loadingBatches  } = useGetApiBatchGetAll();
+  const { data: yearsData, isLoading: loadingYears } = useGetApiAcademicYearGet();
+  const { data: classesData, isLoading: loadingClasses } = useGetApiClassGetClassList();
+  const { data: sectionsData, isLoading: loadingSections } = useGetApiSectionGetSectionList();
+  const { data: batchesData, isLoading: loadingBatches } = useGetApiBatchGet();
 
   const isLoading = loadingYears || loadingClasses || loadingSections || loadingBatches;
 
@@ -48,23 +49,23 @@ export default function AcademicSetupScreen() {
 
     switch (activeTab) {
       case "years":
-        raw     = yearsData?.data?.data    || (yearsData?.data    as any) || [];
-        idKey   = "academicYearID";
+        raw = parseApiList(yearsData?.data);
+        idKey = "academicYearID";
         nameKey = "academicYearName";
         break;
       case "classes":
-        raw     = classesData?.data?.data  || (classesData?.data  as any) || [];
-        idKey   = "classID";
+        raw = parseApiList(classesData?.data);
+        idKey = "classID";
         nameKey = "className";
         break;
       case "sections":
-        raw     = sectionsData?.data?.data || (sectionsData?.data as any) || [];
-        idKey   = "sectionID";
+        raw = parseApiList(sectionsData?.data);
+        idKey = "sectionID";
         nameKey = "sectionName";
         break;
       case "batches":
-        raw     = batchesData?.data?.data  || (batchesData?.data  as any) || [];
-        idKey   = "batchID";
+        raw = parseApiList(batchesData?.data);
+        idKey = "batchID";
         nameKey = "batchName";
         break;
     }

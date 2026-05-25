@@ -7,9 +7,17 @@ import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Card } from "@/components/ui/Card";
 import { Colors } from "@/constants/colors";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
-import { useStudentAdd } from "@/api/generated/erp-student-panel/erp-student-panel";
+import { usePostApiStudentAdd } from "@/api/generated/3-student-crud/3-student-crud";
+import { useToast } from "@/components/ui/Toast";
+import { usePermissions } from "@/hooks/usePermissions";
+import { AccessDenied } from "@/components/auth/AccessDenied";
 
 export default function AdmissionFormScreen() {
+  const { canManageStudents } = usePermissions();
+  if (!canManageStudents) {
+    return <AccessDenied message="New admissions are handled by school administrators." />;
+  }
+
   const { isMobile } = useBreakpoint();
   const [loading, setLoading] = useState(false);
 
@@ -26,7 +34,8 @@ export default function AdmissionFormScreen() {
   const [batchId, setBatchId] = useState("");
   const [admissionDate, setAdmissionDate] = useState(new Date().toISOString().split("T")[0]);
 
-  const studentAddMutation = useStudentAdd();
+  const { showToast } = useToast();
+  const studentAddMutation = usePostApiStudentAdd();
 
   const handleSubmit = async () => {
     if (!studentName || !parentName || !mobile) {

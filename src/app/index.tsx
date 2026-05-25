@@ -1,62 +1,48 @@
 import React, { useEffect } from "react";
 import { router } from "expo-router";
-import { View, StyleSheet, Text, Image, Dimensions, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Text, Image } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
 import { Colors } from "@/constants/colors";
 import { useAuthStore } from "@/store/authStore";
+import { getHomeRoute } from "@/utils/roleRouting";
 
-const { width } = Dimensions.get('window');
+const SPLASH_MS = 1400;
 
 export default function EntryPoint() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   useEffect(() => {
-    console.log("EntryPoint mounted, isAuthenticated:", isAuthenticated);
     const timer = setTimeout(() => {
-      try {
-        if (isAuthenticated) {
-          console.log("Navigating to dashboard...");
-          router.replace("/(app)/dashboard");
-        } else {
-          console.log("Navigating to login...");
-          router.replace("/(auth)/login");
-        }
-      } catch (error) {
-        console.error("Navigation error:", error);
+      if (isAuthenticated) {
+        const role = useAuthStore.getState().role;
+        router.replace(getHomeRoute(role) as never);
+      } else {
+        router.replace("/(auth)/login");
       }
-    }, 2000); 
+    }, SPLASH_MS);
     return () => clearTimeout(timer);
   }, [isAuthenticated]);
 
   return (
-    <LinearGradient 
-      colors={[Colors.gradientStart, Colors.gradientEnd]} 
+    <LinearGradient
+      colors={[Colors.gradientStart, Colors.gradientEnd]}
       style={styles.container}
     >
       <View style={styles.content}>
         <View style={styles.logoContainer}>
-          <Image 
-            source={require("../../assets/school-logo.png")} 
-            style={styles.logo} 
-            resizeMode="contain" 
+          <Image
+            source={require("../../assets/school-logo.png")}
+            style={styles.logo}
+            resizeMode="contain"
           />
         </View>
-        <Text style={styles.title}>Little Angel's</Text>
+        <Text style={styles.title}>Little Angel&apos;s</Text>
         <Text style={styles.schoolName}>English School</Text>
-        
-        <TouchableOpacity 
-          style={{ marginTop: 40, padding: 15, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 10 }}
-          onPress={() => router.replace("/(auth)/login")}
-        >
-          <Text style={{ color: '#fff', fontWeight: 'bold' }}>Continue to Login</Text>
-        </TouchableOpacity>
-
         <View style={styles.loaderContainer}>
           <PremiumLoader color="#ffffff" size={40} />
         </View>
       </View>
-      
       <Text style={styles.footer}>SCHOOL ERP • SMART MANAGEMENT</Text>
     </LinearGradient>
   );
@@ -111,7 +97,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   loaderContainer: {
-    marginTop: 80,
+    marginTop: 48,
   },
   footer: {
     position: 'absolute',

@@ -13,11 +13,11 @@ import { Button } from "@/components/ui/Button";
 import { FormField } from "@/components/forms/FormField";
 import { useAuthStore } from "@/store/authStore";
 import { translations } from "@/constants/translations";
-import { useLoginLogin } from "@/api/generated/1-login-no-token/1-login-no-token";
-import type { LoginRequest } from "@/api/model";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Colors } from "@/constants/colors";
-import type { Role } from "@/types/auth.types";
+import { LoginIntentSelector } from "@/components/auth/LoginIntentSelector";
+import { useAuth } from "@/hooks/useAuth";
+import { getHomeRoute, type LoginIntent } from "@/utils/roleRouting";
 
 const loginSchema = z.object({
   email: z.string().min(1, "Email is required"),
@@ -27,21 +27,20 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginScreen() {
-  const login = useAuthStore((state) => state.login);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const role = useAuthStore((state) => state.role);
   const language = useAuthStore((state) => state.language);
-  const setLanguage = useAuthStore((state) => state.setLanguage);
   const t = translations[language];
-  
-  const loginMutation = useLoginLogin();
+  const { signInWithApi, apiLoginMutation } = useAuth();
+  const [loginIntent, setLoginIntent] = React.useState<LoginIntent>("parent");
+  const [loginError, setLoginError] = React.useState<string | null>(null);
   const { isMobile } = useBreakpoint();
 
-  // Redirect if already authenticated
   React.useEffect(() => {
     if (isAuthenticated) {
-      router.replace("/(app)/dashboard");
+      router.replace(getHomeRoute(role) as never);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, role]);
 
   const {
     control,
@@ -51,50 +50,15 @@ export default function LoginScreen() {
     defaultValues: { email: "", password: "" },
   });
 
-  const mapRoleIdToRole = (roleId?: number): Role => {
-    switch (roleId) {
-      case 1: return "superadmin";
-      case 2: return "admin";
-      case 3: return "teacher";
-      case 4: return "parent";
-      default: return "parent";
-    }
-  };
-
-  const onSubmit = (data: LoginFormData) => {
-    const payload: LoginRequest = {
-      emailOrUserName: data.email,
-      password: data.password,
-    };
-
-    loginMutation.mutate({ data: payload }, {
-      onSuccess: (response) => {
-        const apiResponse = response.data;
-        if (apiResponse.success && apiResponse.data) {
-          const user = apiResponse.data;
-          const userRole = mapRoleIdToRole(user.roleID);
-          
-          login(
-            user.token || "", 
-            user.refreshToken || "", 
-            {
-              id: user.userID?.toString() || "0",
-              name: user.fullName || user.userName || "User",
-              email: user.email || "",
-              mobile: user.mobileNo || "",
-              role: userRole,
-              schoolName: "Little Angel's English School",
-              avatar: user.profileImage || undefined,
-            },
-            userRole
-          );
-        }
-      }
-    });
+  const onSubmit = async (data: LoginFormData) => {
+    setLoginError(null);
+    const result = await signInWithApi(data.email, data.password, loginIntent);
+    if (!result.ok) setLoginError(result.error ?? t.loginFailed);
   };
 
   const renderForm = () => (
     <View style={styles.formContainer}>
+      <LoginIntentSelector selected={loginIntent} onChange={setLoginIntent} />
       <FormField
         control={control}
         name="email"
@@ -141,17 +105,17 @@ export default function LoginScreen() {
       <Button
         label={t.signIn}
         onPress={handleSubmit(onSubmit)}
-        loading={loginMutation.isPending}
+        loading={apiLoginMutation.isPending}
         style={styles.signInButton}
         className="shadow-lg shadow-primary/30"
       />
 
-      {loginMutation.isError && (
+      {(loginError || apiLoginMutation.isError) && (
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>
-            {(loginMutation.error as any)?.response?.data?.message || 
-             (loginMutation.error as any)?.message || 
-             t.loginFailed}
+            {loginError ||
+              (apiLoginMutation.error as Error)?.message ||
+              t.loginFailed}
           </Text>
         </View>
       )}

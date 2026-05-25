@@ -11,7 +11,7 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#1E40AF"
+      "backgroundColor": "#0d3666"
     },
     "ios": {
       "supportsTablet": true,
@@ -20,17 +20,37 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#1E40AF"
+        "backgroundColor": "#0d3666"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.schoolerp.app"
+      "package": "com.schoolerp.app",
+      "googleServicesFile": "./google-services.json",
+      "permissions": [
+        "REQUEST_INSTALL_PACKAGES"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#0d3666"
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#0d3666"
+        }
+      ]
     ],
     "extra": {
       "router": {},

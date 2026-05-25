@@ -9,6 +9,8 @@ import { useBreakpoint } from "@/hooks/useBreakpoint";
 interface ScreenHeaderProps {
   title: string;
   subtitle?: string;
+  /** Optional breadcrumb segments shown above title */
+  breadcrumb?: string[];
   /** Right-side action button */
   rightAction?: React.ReactNode;
   /** Use flat white header instead of gradient */

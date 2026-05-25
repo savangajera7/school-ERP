@@ -39,3 +39,6 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# firebase
+school-erp-f8a04-firebase-adminsdk-fbsvc-d4df612c62.json

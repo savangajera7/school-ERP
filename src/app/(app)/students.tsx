@@ -6,7 +6,8 @@ import { router } from "expo-router";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Colors } from "@/constants/colors";
 import { StudentModel } from "@/api/model/studentModel";
-import { useGetApiStudentGetAllStudents } from "@/api/generated/student/student";
+import { useGetApiStudentGet } from "@/api/generated/3-student-crud/3-student-crud";
+import { parseApiList } from "@/utils/apiResponse";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
@@ -16,10 +17,10 @@ export default function StudentManagementScreen() {
   const { isMobile } = useBreakpoint();
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { data, isLoading, refetch } = useGetApiStudentGetAllStudents();
+  const { data, isLoading, refetch } = useGetApiStudentGet();
 
   const students = useMemo(() => {
-    return (data?.data?.data || []) as StudentModel[];
+    return parseApiList<StudentModel>(data?.data);
   }, [data]);
 
   const filteredStudents = useMemo(() => {

@@ -1,15 +1,26 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View } from "react-native";
-import { Stack, usePathname } from "expo-router";
+import { Stack, usePathname, router } from "expo-router";
+import { getHomeRoute } from "@/utils/roleRouting";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { DesktopSidebar } from "@/components/ui/DesktopSidebar";
 import { BottomTabBar } from "@/components/ui/BottomTabBar";
 import { isMobileTabRoute } from "@/constants/mobileTabs";
+import { RouteGuard } from "@/components/auth/RouteGuard";
+import { useAuthStore } from "@/store/authStore";
 
 export default function AppLayout() {
   const { isMobile } = useBreakpoint();
   const pathname = usePathname();
-  const showMobileTabs = isMobile && isMobileTabRoute(pathname);
+  const role = useAuthStore((s) => s.role);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const showMobileTabs = isMobile && isMobileTabRoute(pathname, role);
+
+  useEffect(() => {
+    if (isAuthenticated && role) {
+      router.replace(getHomeRoute(role) as never);
+    }
+  }, [isAuthenticated, role]);
 
   return (
     <View style={{ flex: 1, flexDirection: "row", backgroundColor: "#F8FAFC" }}>
@@ -18,13 +29,15 @@ export default function AppLayout() {
 
       {/* Main Content Area */}
       <View style={{ flex: 1 }}>
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            contentStyle: { backgroundColor: "#F8FAFC" },
-            animation: "fade",
-          }}
-        />
+        <RouteGuard>
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              contentStyle: { backgroundColor: "#F8FAFC" },
+              animation: "fade",
+            }}
+          />
+        </RouteGuard>
 
         {showMobileTabs && (
           <View

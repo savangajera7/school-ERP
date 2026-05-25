@@ -8,16 +8,16 @@ import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Colors } from "@/constants/colors";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
-import { useTeacherGet, useTeacherAdd } from "@/api/generated/erp-teacher-panel/erp-teacher-panel";
+import {
+  useGetApiTeacherGetTeacherList,
+  usePostApiTeacherInsertTeacher,
+} from "@/api/generated/teacher/teacher";
+import { parseApiList } from "@/utils/apiResponse";
+import { useToast } from "@/components/ui/Toast";
+import { useAuthStore } from "@/store/authStore";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
 
-// Fallback Mock Data in case API returns empty
-const MOCK_TEACHERS = [
-  { id: "tc_1", name: "Priya Sharma", role: "Faculty", subject: "Mathematics", email: "priya@laes.com", phone: "9876543210", status: "Active" },
-  { id: "tc_2", name: "Ananya Verma", role: "Faculty", subject: "Science (EVS)", email: "ananya@laes.com", phone: "9876543211", status: "Active" },
-  { id: "tc_3", name: "Ramesh Kumar", role: "Faculty", subject: "English Literature", email: "ramesh@laes.com", phone: "9876543212", status: "Active" },
-  { id: "tc_4", name: "Seema Deshmukh", role: "Admin Staff", subject: "Librarian", email: "seema@laes.com", phone: "9876543213", status: "Active" },
-];
+import { EmptyState } from "@/components/ui/EmptyState";
 
 export default function TeacherManagementScreen() {
   const { isMobile } = useBreakpoint();
@@ -35,15 +35,15 @@ export default function TeacherManagementScreen() {
   const [assignedClass, setAssignedClass] = useState("");
 
   // API Hooks
-  const { data: teachersData, isLoading: isGetLoading, refetch } = useTeacherGet({});
-  const addTeacherMutation = useTeacherAdd();
+  const { showToast } = useToast();
+  const userData = useAuthStore((s) => s.userData);
+  const { data: teachersData, isLoading: isGetLoading, refetch } =
+    useGetApiTeacherGetTeacherList();
+  const addTeacherMutation = usePostApiTeacherInsertTeacher();
 
-  // Resolve Teacher List
   const facultyList = useMemo(() => {
-    const list = (teachersData?.data as any)?.data || (teachersData?.data as any) || [];
-    if (!Array.isArray(list) || list.length === 0) {
-      return MOCK_TEACHERS;
-    }
+    const list = parseApiList(teachersData?.data);
+    if (!Array.isArray(list)) return [];
     return list.map((item: any, index: number) => ({
       id: item.teacherID?.toString() || item.id?.toString() || `tc_${index + 1}`,
       name: item.teacherDisplayName || `${item.firstName} ${item.lastName}` || "Unknown Faculty",
@@ -71,14 +71,15 @@ export default function TeacherManagementScreen() {
     try {
       await addTeacherMutation.mutateAsync({
         data: {
-          name: `${firstName} ${lastName}`,
-          fullName: `${firstName} ${lastName}`,
-          mobileNumber: mobile,
+          teacherCode: `T${Math.floor(100 + Math.random() * 900)}`,
+          firstName,
+          lastName,
+          mobileNo: mobile,
           email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@laes.com`,
-          isActive: true,
-          code: `T${Math.floor(100 + Math.random() * 900)}`,
-          description: qualification,
-        }
+          qualification,
+          subjectName: assignedClass || designation,
+          createdBy: parseInt(userData?.id ?? "0", 10) || 0,
+        },
       });
 
       const msg = "New employee successfully registered and synced.";

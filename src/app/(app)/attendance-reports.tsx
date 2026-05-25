@@ -9,44 +9,70 @@ import { Colors } from "@/constants/colors";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
-import { useAttendanceMonthlyReport } from "@/api/generated/erp-attendance/erp-attendance";
-import { useGetApiClassGetAll } from "@/api/generated/class/class";
+import { useGetApiStudentAttendanceGetStudentAttendanceList } from "@/api/generated/student-attendance/student-attendance";
+import { useGetApiClassGetClassList } from "@/api/generated/master-class/master-class";
+import { parseApiList } from "@/utils/apiResponse";
 
 const CLASSES = ["Class I", "Class II", "Class III", "Class IV"];
 const MONTHS = ["May 2026", "April 2026", "March 2026"];
-
-const MOCK_REPORTS = [
-  { id: "stu_1", name: "Pooja Patel",  rollNo: "1", totalDays: 24, present: 23, absent: 1,  percentage: 95.8 },
-  { id: "stu_2", name: "Rahul Sharma", rollNo: "2", totalDays: 24, present: 22, absent: 2,  percentage: 91.6 },
-  { id: "stu_3", name: "Aarav Desai",  rollNo: "3", totalDays: 24, present: 16, absent: 8,  percentage: 66.6 },
-  { id: "stu_4", name: "Riya Singh",   rollNo: "4", totalDays: 24, present: 24, absent: 0,  percentage: 100  },
-  { id: "stu_5", name: "Kavya Verma",  rollNo: "5", totalDays: 24, present: 18, absent: 6,  percentage: 75.0 },
-];
 
 export default function AttendanceReportsScreen() {
   const { isMobile } = useBreakpoint();
   const [selectedClass, setSelectedClass] = useState("Class I");
   const [selectedMonth, setSelectedMonth] = useState("May 2026");
 
-  const { data: classesData } = useGetApiClassGetAll();
-  const { data: reportData, isLoading } = useAttendanceMonthlyReport({
-    Search: selectedClass,
-  });
+  const { data: classesData } = useGetApiClassGetClassList();
+  const { data: attendanceData, isLoading } =
+    useGetApiStudentAttendanceGetStudentAttendanceList();
 
-  // Resolve to API data if available, else use mock
+  const classes = parseApiList(classesData?.data);
+
   const reports = useMemo(() => {
-    const list = (reportData?.data as any)?.data || (reportData?.data as any) || [];
-    if (!Array.isArray(list) || list.length === 0) return MOCK_REPORTS;
-    return list.map((item: any, idx: number) => ({
-      id: item.studentID?.toString() || `stu_${idx + 1}`,
-      name: item.studentName || "Unknown Student",
-      rollNo: item.rollNo?.toString() || String(idx + 1),
-      totalDays: item.totalDays ?? 24,
-      present: item.presentDays ?? 0,
-      absent: item.absentDays ?? 0,
-      percentage: item.attendancePercentage ?? 0,
-    }));
-  }, [reportData]);
+    const list = parseApiList<{
+      studentID?: number;
+      studentName?: string;
+      rollNo?: string;
+      attendanceStatus?: string;
+    }>(attendanceData?.data);
+
+    if (list.length === 0) return [];
+
+    const byStudent = new Map<
+      number,
+      { present: number; absent: number; name: string; rollNo: string }
+    >();
+
+    list.forEach((row) => {
+      const sid = row.studentID ?? 0;
+      if (!byStudent.has(sid)) {
+        byStudent.set(sid, {
+          present: 0,
+          absent: 0,
+          name: row.studentName ?? `Student ${sid}`,
+          rollNo: String(row.rollNo ?? sid),
+        });
+      }
+      const entry = byStudent.get(sid)!;
+      if ((row.attendanceStatus || "").toLowerCase() === "present") {
+        entry.present += 1;
+      } else if ((row.attendanceStatus || "").toLowerCase() === "absent") {
+        entry.absent += 1;
+      }
+    });
+
+    return Array.from(byStudent.entries()).map(([id, v], idx) => {
+      const totalDays = v.present + v.absent || 1;
+      return {
+        id: String(id || `stu_${idx + 1}`),
+        name: v.name,
+        rollNo: v.rollNo,
+        totalDays,
+        present: v.present,
+        absent: v.absent,
+        percentage: Math.round((v.present / totalDays) * 1000) / 10,
+      };
+    });
+  }, [attendanceData]);
 
   // Summary stats
   const avgPct = useMemo(() => {

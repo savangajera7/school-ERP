@@ -6,7 +6,8 @@ import { router } from "expo-router";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Colors } from "@/constants/colors";
 import { StudentModel } from "@/api/model/studentModel";
-import { useGetApiStudentGetAllStudents } from "@/api/generated/student/student";
+import { useGetApiStudentGet } from "@/api/generated/3-student-crud/3-student-crud";
+import { parseApiList } from "@/utils/apiResponse";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
@@ -24,10 +25,10 @@ export default function StudentSearchScreen() {
   const [filterClass, setFilterClass] = useState<string>("All");
 
   // Call the live API
-  const { data, isLoading, refetch } = useGetApiStudentGetAllStudents();
+  const { data, isLoading, refetch } = useGetApiStudentGet();
 
   const students = useMemo(() => {
-    return (data?.data?.data || []) as StudentModel[];
+    return parseApiList<StudentModel>(data?.data);
   }, [data]);
 
   // Extract unique classes dynamically
@@ -222,7 +223,7 @@ export default function StudentSearchScreen() {
 
         {/* ── Grid/Table Results Flow ──────────────────────────────── */}
         {isLoading ? (
-          <SkeletonLoader type={isMobile ? "card" : "table"} count={5} />
+          <SkeletonLoader variant={isMobile ? "card" : "table"} rows={5} />
         ) : filteredStudents.length === 0 ? (
           <Card className="bg-white border border-gray-150 p-10 items-center rounded-3xl">
             <Text className="text-3xl mb-2">🔍</Text>

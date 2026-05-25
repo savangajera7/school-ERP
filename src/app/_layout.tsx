@@ -1,9 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Slot, SplashScreen } from "expo-router";
+import { SplashScreen } from "expo-router";
+import { AuthGate } from "@/components/auth/AuthGate";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import { View } from "react-native";
+import { View, Platform } from "react-native";
+import { ToastProvider } from "@/components/ui/Toast";
+import { NotificationProvider } from "@/contexts/NotificationContext";
+import {
+  registerPushToken,
+  setupNotificationListeners,
+} from "@/services/notifications/pushService";
+import { AppUpdateModal } from "@/components/updates/AppUpdateModal";
+import { useAppUpdate } from "@/hooks/useAppUpdate";
 import "../../global.css";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -23,6 +32,7 @@ const queryClient = new QueryClient({
 
 export default function RootLayout() {
   const [isReady, setIsReady] = useState(false);
+  const appUpdate = useAppUpdate();
 
   useEffect(() => {
     // Simulate some loading time for assets/fonts if needed
@@ -47,6 +57,12 @@ export default function RootLayout() {
     prepare();
   }, []);
 
+  useEffect(() => {
+    if (Platform.OS === "web") return;
+    const cleanup = setupNotificationListeners();
+    return cleanup;
+  }, []);
+
   if (!isReady) {
     return (
       <View style={{ flex: 1, backgroundColor: "#0d3666" }} />
@@ -56,8 +72,19 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
-        <StatusBar style="dark" />
-        <Slot />
+        <ToastProvider>
+          <NotificationProvider>
+            <StatusBar style="dark" />
+            <AuthGate />
+            <AppUpdateModal
+              visible={appUpdate.visible}
+              manifest={appUpdate.manifest}
+              apkUrl={appUpdate.apkUrl}
+              installedVersion={appUpdate.installedVersion}
+              onDismiss={appUpdate.dismiss}
+            />
+          </NotificationProvider>
+        </ToastProvider>
       </SafeAreaProvider>
     </QueryClientProvider>
   );

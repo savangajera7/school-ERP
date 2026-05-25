@@ -1,89 +1,66 @@
 import axiosInstance from "@/services/api/axiosInstance";
 import { API_ENDPOINTS } from "@/constants/api";
-import type {
-  LoginPayload,
-  LoginResponse,
-  UserData,
-  ApiResult,
-} from "@/types/auth.types";
+import { postApiLoginForgotPassword } from "@/api/generated/1-login-no-token/1-login-no-token";
+import type { LoginPayload, LoginResponse, UserData, ApiResult } from "@/types/auth.types";
+import { getApiErrorMessage } from "@/utils/recordHelpers";
 
 export const authService = {
   loginUser: async (data: LoginPayload): Promise<LoginResponse> => {
-    const response = await axiosInstance.post<ApiResult<any>>(
+    const response = await axiosInstance.post<ApiResult<Record<string, unknown>>>(
       API_ENDPOINTS.LOGIN,
       data
     );
 
     if (response.data.success && response.data.data) {
       const apiData = response.data.data;
-      
-      // Map API response to our app's UserData
-      // Assuming the API returns tokens and user info in data
       return {
-        accessToken: apiData.accessToken || "mock_token", 
-        refreshToken: apiData.refreshToken || "mock_refresh_token",
+        accessToken: String(apiData.accessToken ?? apiData.token ?? ""),
+        refreshToken: String(apiData.refreshToken ?? ""),
         user: {
-          id: apiData.studentID?.toString() || apiData.id?.toString() || "0",
-          name: apiData.studentDisplayName || `${apiData.firstName} ${apiData.lastName}` || "User",
-          email: apiData.studentEmail || apiData.email || "",
-          mobile: apiData.studentNumber || "",
-          role: apiData.role || "parent", 
+          id: apiData.studentID?.toString() ?? apiData.userID?.toString() ?? apiData.id?.toString() ?? "0",
+          name:
+            String(apiData.studentDisplayName ?? "") ||
+            `${apiData.firstName ?? ""} ${apiData.lastName ?? ""}`.trim() ||
+            "User",
+          email: String(apiData.studentEmail ?? apiData.email ?? ""),
+          mobile: String(apiData.studentNumber ?? apiData.mobile ?? ""),
+          role: (apiData.role as UserData["role"]) ?? "parent",
+          roleID: apiData.roleID as number | undefined,
           schoolName: "Little Angel's English School",
           ...apiData,
         },
       };
-    } else {
-      throw new Error(response.data.message || "Login failed");
     }
+    throw new Error(response.data.message || "Login failed");
   },
 
-  forgotPassword: async (email: string): Promise<{ message: string }> => {
-    return {
-      message: `Instruction sent to ${email}`,
-    };
-  },
-
-  verifyOTP: async (
-    email: string,
-    otp: string
-  ): Promise<{ token: string }> => {
-    if (otp !== "123456") {
-      throw new Error("Invalid OTP. Please try again.");
+  forgotPassword: async (identifier: string): Promise<{ message: string }> => {
+    const email = identifier.includes("@") ? identifier : `${identifier}@placeholder.local`;
+    try {
+      await postApiLoginForgotPassword({ email });
+      return {
+        message: "If this email is registered, password reset instructions have been sent.",
+      };
+    } catch (e) {
+      throw new Error(getApiErrorMessage(e, "Failed to send reset request"));
     }
-    return {
-      token: `reset_token_${Date.now()}`,
-    };
-  },
-
-  resetPassword: async (
-    token: string,
-    password: string
-  ): Promise<{ message: string }> => {
-    return {
-      message: "Password reset successfully",
-    };
-  },
-
-  refreshToken: async (
-    refreshToken: string
-  ): Promise<{ accessToken: string }> => {
-    return {
-      accessToken: `mock_access_token_refreshed_${Date.now()}`,
-    };
   },
 
   getProfile: async (): Promise<UserData> => {
-    const response = await axiosInstance.get<ApiResult<any>>(
-      API_ENDPOINTS.STUDENT_BY_ID // Assuming this can be used as profile for students
+    const response = await axiosInstance.get<ApiResult<Record<string, unknown>>>(
+      "/api/Login/Profile"
     );
     if (response.data.success && response.data.data) {
       const apiData = response.data.data;
       return {
-        id: apiData.studentID?.toString() || "0",
-        name: apiData.studentDisplayName || `${apiData.firstName} ${apiData.lastName}` || "User",
-        email: apiData.studentEmail || apiData.email || "",
-        mobile: apiData.studentNumber || "",
-        role: "parent",
+        id: apiData.studentID?.toString() ?? apiData.userID?.toString() ?? "0",
+        name:
+          String(apiData.studentDisplayName ?? "") ||
+          `${apiData.firstName ?? ""} ${apiData.lastName ?? ""}`.trim() ||
+          "User",
+        email: String(apiData.email ?? ""),
+        mobile: String(apiData.mobile ?? ""),
+        role: (apiData.role as UserData["role"]) ?? "parent",
         schoolName: "Little Angel's English School",
         ...apiData,
       };

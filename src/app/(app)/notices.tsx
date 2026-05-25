@@ -7,60 +7,33 @@ import { Card } from "@/components/ui/Card";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Colors } from "@/constants/colors";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
-import { useNoticeGet } from "@/api/generated/erp-notice/erp-notice";
+import { useGetApiNoticeGetNoticeList } from "@/api/generated/notice/notice";
+import { parseApiList } from "@/utils/apiResponse";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
-
-const MOCK_SCHOOL_NOTICES = [
-  {
-    id: "not_1",
-    date: "29/04/2026 (01:33 PM)",
-    author: "BARIYA URVASHI",
-    title: "Result Notice",
-    description: "સુપ્રભાત વાલી ગણ સવિનય સાથે જણાવવાનું કે આપણી શાળામાં આવતીકાલે પરીક્ષાનું પરિણામ પત્ર આપવામાં આવી રહ્યું છે જેનો સમય સવારે 11:00 વાગ્યા થી 2:00 વાગ્યા સુધીનો રહેશે. જે પણ વાલી એ પોતાના બાળકની અપડેશન ફી ના ભરી હોય એમણે આવતીકાલે ભરી દેવાની રહેશે.",
-  },
-  {
-    id: "not_2",
-    date: "28/04/2026 (10:21 AM)",
-    author: "BARIYA URVASHI",
-    title: "Updation Notice",
-    description: "Hello parents, the results of the second unit test examination are ready. Parents are requested to visit school tomorrow to collect the report progress cards and consult the class teachers.",
-  }
-];
-
-const MOCK_CLASS_NOTICES = [
-  {
-    id: "not_3",
-    date: "12/05/2026 (02:15 PM)",
-    author: "PRIYA SHARMA",
-    title: "Mathematics Home Assignment",
-    description: "Dear students of Class I-A, please complete the worksheets of Chapter 4 (Subtraction) and submit it by Friday morning.",
-  }
-];
+import { EmptyState } from "@/components/ui/EmptyState";
 
 export default function StudentNoticeHistoryScreen() {
   const { isMobile } = useBreakpoint();
   const [activeTab, setActiveTab] = useState<"school" | "class">("school");
   const [expandedNoticeId, setExpandedNoticeId] = useState<string | null>(null);
   
-  const { data: noticesData, isLoading, refetch } = useNoticeGet({});
+  const { data: noticesData, isLoading, refetch } = useGetApiNoticeGetNoticeList();
 
-  // Resolve API notices data, falling back to mock lists
   const noticeList = useMemo(() => {
-    const list = (noticesData?.data as any)?.data || (noticesData?.data as any) || [];
-    if (!Array.isArray(list) || list.length === 0) {
-      return activeTab === "school" ? MOCK_SCHOOL_NOTICES : MOCK_CLASS_NOTICES;
-    }
+    const list = parseApiList(noticesData?.data);
     return list
-      .filter((item: any) => 
-        activeTab === "school" ? item.type === "School" || !item.type : item.type === "Class"
+      .filter((item: Record<string, unknown>) =>
+        activeTab === "school"
+          ? item.noticeFor === "School" || !item.noticeFor
+          : item.noticeFor === "Class"
       )
-      .map((item: any, idx: number) => ({
-        id: item.id?.toString() || `not_${idx}`,
-        date: item.publishDate || item.date || "N/A",
-        author: item.createdBy || item.author || "Administrator",
-        title: item.title || "Announcement",
-        description: item.description || item.content || "",
+      .map((item: Record<string, unknown>, idx: number) => ({
+        id: String(item.noticeID ?? item.id ?? `not_${idx}`),
+        date: String(item.publishDate ?? item.date ?? "N/A"),
+        author: String(item.addedBy ?? item.author ?? "Administrator"),
+        title: String(item.noticeTitle ?? item.title ?? "Announcement"),
+        description: String(item.noticeDescription ?? item.description ?? item.content ?? ""),
       }));
   }, [noticesData, activeTab]);
 

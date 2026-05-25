@@ -8,8 +8,10 @@ import { Card } from "@/components/ui/Card";
 import { Colors } from "@/constants/colors";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
-import { useAdmissionInquiries, useAdmissionInquiry } from "@/api/generated/erp-admission/erp-admission";
+// Admission Inquiry API not in current Swagger — using local data until backend adds it.
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
+import { usePermissions } from "@/hooks/usePermissions";
+import { AccessDenied } from "@/components/auth/AccessDenied";
 
 const INITIAL_INQUIRIES = [
   {
@@ -45,6 +47,10 @@ const INITIAL_INQUIRIES = [
 ];
 
 export default function InquiriesScreen() {
+  const { can } = usePermissions();
+  if (!can("manageInquiries")) {
+    return <AccessDenied message="Admission inquiries are managed by school administrators." />;
+  }
   const { isMobile } = useBreakpoint();
   const [search, setSearch] = useState("");
   const [selectedClass, setSelectedClass] = useState("All");
@@ -58,45 +64,28 @@ export default function InquiriesScreen() {
   const [newEmail, setNewEmail] = useState("");
   const [newClass, setNewClass] = useState("Class I");
 
-  // API Hooks
-  const { data: inquiriesData, isLoading, refetch } = useAdmissionInquiries({});
-  const addInquiryMutation = useAdmissionInquiry();
+  const [inquiries, setInquiries] = useState(INITIAL_INQUIRIES);
+  const isLoading = false;
+  const apiPending = true;
 
-  // Resolve Inquiry List
-  const inquiryList = useMemo(() => {
-    const list = (inquiriesData?.data as any)?.data || (inquiriesData?.data as any) || [];
-    if (!Array.isArray(list) || list.length === 0) {
-      return INITIAL_INQUIRIES;
-    }
-    return list.map((item: any, idx: number) => ({
-      id: item.inquiryID?.toString() || item.id?.toString() || `inq_${idx + 1}`,
-      studentName: item.studentName || `${item.firstName} ${item.lastName}` || "Unknown Applicant",
-      parentName: item.fatherName || item.parentName || "Guardian",
-      contact: item.mobileNo || item.contact || "N/A",
-      email: item.email || "N/A",
-      requestedClass: item.className || item.requestedClass || "N/A",
-      status: item.status || "Pending",
-      date: item.inquiryDate || item.date || "N/A",
-    }));
-  }, [inquiriesData]);
+  const inquiryList = inquiries;
 
   const handleAddInquiry = async () => {
     if (!newStudent || !newParent || !newContact) return;
 
     try {
-      await addInquiryMutation.mutateAsync({
-        data: {
-          studentName: newStudent,
-          parentName: newParent,
-          mobile: newContact,
-          email: newEmail,
-          classId: parseInt(newClass) || 1,
-          message: "Online inquiry submitted",
-        }
-      });
+      const newEntry = {
+        id: `inq_${Date.now()}`,
+        studentName: newStudent,
+        parentName: newParent,
+        contact: newContact,
+        email: newEmail || "N/A",
+        requestedClass: newClass,
+        status: "Pending",
+        date: new Date().toISOString().split("T")[0],
+      };
+      setInquiries((prev) => [newEntry, ...prev]);
       setIsModalVisible(false);
-      refetch();
-      // Reset Form
       setNewStudent("");
       setNewParent("");
       setNewContact("");
@@ -147,6 +136,14 @@ export default function InquiriesScreen() {
     <SafeAreaView className="flex-1 bg-[#FDFDFD]" edges={["left", "right"]}>
       <StatusBar style="light" translucent backgroundColor="transparent" />
       
+      {apiPending && (
+        <View className="mx-4 mt-2 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+          <Text className="text-amber-800 text-sm font-semibold text-center">
+            Admission Inquiry API is not in the current backend spec. Data is stored locally until the endpoint is available.
+          </Text>
+        </View>
+      )}
+
       <ScreenHeader 
         title="Online Inquiries" 
         subtitle="Manage admission inquiry leads"

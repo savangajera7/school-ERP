@@ -32,12 +32,12 @@ export default function ForgotPasswordScreen() {
   });
 
   const onSubmit = (data: ForgotPasswordFormData) => {
-    forgotPasswordMutation.mutate(data.identifier, {
+    const email = data.identifier.includes("@")
+      ? data.identifier
+      : data.identifier;
+    forgotPasswordMutation.mutate(email, {
       onSuccess: () => {
-        router.push({
-          pathname: "/(auth)/otp",
-          params: { identifier: data.identifier },
-        });
+        router.replace("/(auth)/login");
       },
     });
   };
@@ -50,15 +50,15 @@ export default function ForgotPasswordScreen() {
         </View>
         <Text className="text-[22px] font-bold text-gray-900 text-center">Forgot Password?</Text>
         <Text className="text-[14px] text-gray-500 text-center font-medium mt-2 px-4 leading-normal">
-          Enter your email or mobile. We'll send an OTP.
+          Enter your registered email. Reset instructions will be sent if the account exists.
         </Text>
       </View>
 
       <FormField
         control={control}
         name="identifier"
-        label="Email or Mobile Number"
-        placeholder="Enter your email or mobile"
+        label="Email"
+        placeholder="Enter your registered email"
         keyboardType="email-address"
         autoCapitalize="none"
       />
@@ -66,7 +66,7 @@ export default function ForgotPasswordScreen() {
       <View className="h-4" />
 
       <Button
-        label="Send OTP"
+        label="Send reset link"
         onPress={handleSubmit(onSubmit)}
         loading={forgotPasswordMutation.isPending}
       />

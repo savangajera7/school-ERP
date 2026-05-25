@@ -14,7 +14,7 @@ module.exports = {
       },
     },
     input: {
-      target: 'https://schoolmanagement.mahispark.com/swagger/v1/swagger.json',
+      target: './swagger.json',
     },
   },
 };

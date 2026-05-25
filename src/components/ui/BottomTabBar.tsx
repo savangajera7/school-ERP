@@ -4,21 +4,9 @@ import { router, usePathname } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Colors } from "@/constants/colors";
-
-interface TabItem {
-  label: string;
-  icon: string;
-  route: string;
-  isCenter?: boolean;
-}
-
-const TABS: TabItem[] = [
-  { label: "Menu", icon: "☰", route: "/(app)/menu" },
-  { label: "Search", icon: "🔍", route: "/(app)/search" },
-  { label: "Home", icon: "🏠", route: "/(app)/dashboard", isCenter: true },
-  { label: "Timetable", icon: "📅", route: "/(app)/timetable" },
-  { label: "Profile", icon: "👤", route: "/(app)/profile" },
-];
+import { usePermissions } from "@/hooks/usePermissions";
+import { useNotifications } from "@/contexts/NotificationContext";
+import { AppIcon } from "@/components/icons/AppIcon";
 
 function isTabActive(pathname: string, route: string): boolean {
   const path = pathname.replace(/\/$/, "") || "/";
@@ -34,7 +22,19 @@ function isTabActive(pathname: string, route: string): boolean {
 export function BottomTabBar() {
   const pathname = usePathname();
   const insets = useSafeAreaInsets();
+  const { mobileTabs, role } = usePermissions();
+  const { unreadCount } = useNotifications();
   const bottomPad = Math.max(insets.bottom, Platform.OS === "ios" ? 8 : 6);
+
+  const tabs = mobileTabs.map((tab) =>
+    tab.route === "/(app)/notifications" && unreadCount > 0
+      ? { ...tab, badge: unreadCount }
+      : tab
+  );
+
+  const centerIndex = Math.floor(tabs.length / 2);
+
+  if (!role || tabs.length === 0) return null;
 
   return (
     <View
@@ -57,10 +57,11 @@ export function BottomTabBar() {
       }}
     >
       <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
-        {TABS.map((tab) => {
+        {tabs.map((tab, index) => {
           const isActive = isTabActive(pathname, tab.route);
+          const isCenter = index === centerIndex && tabs.length >= 3;
 
-          if (tab.isCenter) {
+          if (isCenter) {
             return (
               <TouchableOpacity
                 key={tab.route}
@@ -80,18 +81,9 @@ export function BottomTabBar() {
                     justifyContent: "center",
                     borderWidth: 4,
                     borderColor: "#ffffff",
-                    ...(Platform.OS === "web"
-                      ? { boxShadow: "0px 8px 24px rgba(13,54,102,0.35)" }
-                      : {
-                          shadowColor: Colors.primary,
-                          shadowOffset: { width: 0, height: 6 },
-                          shadowOpacity: 0.35,
-                          shadowRadius: 10,
-                          elevation: 8,
-                        }),
                   }}
                 >
-                  <Text style={{ fontSize: 24 }}>{tab.icon}</Text>
+                  <AppIcon name={tab.icon} size={26} color="#fff" active />
                 </LinearGradient>
                 <Text
                   style={{
@@ -99,7 +91,6 @@ export function BottomTabBar() {
                     fontWeight: "900",
                     color: isActive ? Colors.primary : "#9CA3AF",
                     marginTop: 6,
-                    letterSpacing: 0.2,
                   }}
                 >
                   {tab.label}
@@ -125,9 +116,31 @@ export function BottomTabBar() {
                   justifyContent: "center",
                 }}
               >
-                <Text style={{ fontSize: isActive ? 20 : 18, opacity: isActive ? 1 : 0.65 }}>
-                  {tab.icon}
-                </Text>
+                <AppIcon
+                  name={tab.icon}
+                  size={22}
+                  color={isActive ? Colors.primary : "#9CA3AF"}
+                  active={isActive}
+                />
+                {"badge" in tab && typeof tab.badge === "number" && tab.badge > 0 ? (
+                  <View
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      right: 4,
+                      minWidth: 16,
+                      height: 16,
+                      borderRadius: 8,
+                      backgroundColor: Colors.error,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Text style={{ color: "#fff", fontSize: 9, fontWeight: "800" }}>
+                      {tab.badge > 9 ? "9+" : tab.badge}
+                    </Text>
+                  </View>
+                ) : null}
               </View>
               <Text
                 style={{
@@ -135,22 +148,10 @@ export function BottomTabBar() {
                   fontWeight: isActive ? "900" : "600",
                   color: isActive ? Colors.primary : "#9CA3AF",
                   marginTop: 2,
-                  letterSpacing: 0.2,
                 }}
               >
                 {tab.label}
               </Text>
-              {isActive && (
-                <View
-                  style={{
-                    width: 4,
-                    height: 4,
-                    borderRadius: 2,
-                    backgroundColor: Colors.accent,
-                    marginTop: 3,
-                  }}
-                />
-              )}
             </TouchableOpacity>
           );
         })}

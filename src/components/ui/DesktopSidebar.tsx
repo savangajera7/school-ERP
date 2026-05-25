@@ -3,34 +3,25 @@ import { View, Text, TouchableOpacity, Image, ScrollView, Platform } from "react
 import { router, usePathname } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Colors } from "@/constants/colors";
+import { AppIcon } from "@/components/icons/AppIcon";
 import { useAuthStore } from "@/store/authStore";
-
-interface NavItem {
-  label: string;
-  icon: string;
-  route: string;
-}
-
-const NAV_ITEMS: NavItem[] = [
-  { label: "Dashboard",    icon: "🏠", route: "/(app)/dashboard" },
-  { label: "Students",     icon: "🎓", route: "/(app)/students" },
-  { label: "Attendance",   icon: "📝", route: "/(app)/attendance" },
-  { label: "Fees",         icon: "💰", route: "/(app)/fees" },
-  { label: "Exams",        icon: "📊", route: "/(app)/exams" },
-  { label: "Teachers",     icon: "👥", route: "/(app)/teachers" },
-  { label: "Notices",      icon: "📢", route: "/(app)/notices" },
-  { label: "Timetable",    icon: "🗓️", route: "/(app)/timetable" },
-  { label: "Inquiries",    icon: "💬", route: "/(app)/inquiries" },
-  { label: "Reports",      icon: "📈", route: "/(app)/attendance-reports" },
-  { label: "Academic",     icon: "🏫", route: "/(app)/academic-setup" },
-  { label: "Admission",    icon: "📋", route: "/(app)/admission-form" },
-];
+import { usePermissions } from "@/hooks/usePermissions";
+import { useNotifications } from "@/contexts/NotificationContext";
+import { ROLE_LABELS } from "@/constants/rolePermissions";
 
 export function DesktopSidebar() {
   const pathname = usePathname();
   const insets = useSafeAreaInsets();
-  const { userData, logout } = useAuthStore();
-  const firstName = userData?.name?.split(" ")[0] || "Admin";
+  const { userData, role, roleLabel, navItems } = usePermissions();
+  const logout = useAuthStore((s) => s.logout);
+  const { unreadCount } = useNotifications();
+  const firstName = userData?.name?.split(" ")[0] || "User";
+
+  const visibleNav = navItems.map((item) =>
+    item.route === "/(app)/notifications"
+      ? { ...item, badge: unreadCount }
+      : item
+  );
 
   const [isCollapsed, setIsCollapsed] = useState(() => {
     if (Platform.OS === 'web' && typeof window !== 'undefined') {
@@ -69,7 +60,7 @@ export function DesktopSidebar() {
               boxShadow: "0px 1px 3px rgba(0,0,0,0.05)",
             }}
           >
-            <Text className="text-gray-600 text-xs font-black">▶</Text>
+            <AppIcon name="expand" size={14} color="#6B7280" />
           </TouchableOpacity>
           
           <View className="w-10 h-10 rounded-xl bg-white border border-gray-100 overflow-hidden items-center justify-center p-0.5 shadow-sm">
@@ -108,7 +99,7 @@ export function DesktopSidebar() {
               boxShadow: "0px 1px 3px rgba(0,0,0,0.05)",
             }}
           >
-            <Text className="text-gray-500 text-[10px] font-black">◀</Text>
+            <AppIcon name="collapse" size={14} color="#6B7280" />
           </TouchableOpacity>
         </View>
       )}
@@ -119,7 +110,7 @@ export function DesktopSidebar() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ gap: isCollapsed ? 6 : 3, paddingBottom: 20 }}
       >
-        {NAV_ITEMS.map((item) => {
+        {visibleNav.map((item) => {
           const isActive =
             pathname === item.route ||
             (item.route === "/(app)/dashboard" && pathname === "/");
@@ -134,7 +125,12 @@ export function DesktopSidebar() {
               } ${isActive ? "bg-[#134A8C]/10" : ""}`}
               style={{ minHeight: 44 }}
             >
-              <Text style={{ fontSize: isActive ? 18 : 16 }}>{item.icon}</Text>
+              <AppIcon
+                name={item.icon}
+                size={isActive ? 20 : 18}
+                color={isActive ? "#134A8C" : "#6B7280"}
+                active={isActive}
+              />
               {!isCollapsed && (
                 <Text
                   className={`text-[13px] font-bold flex-1 ${
@@ -144,6 +140,13 @@ export function DesktopSidebar() {
                   {item.label}
                 </Text>
               )}
+              {!isCollapsed && item.badge ? (
+                <View className="bg-rose-500 min-w-[18px] h-[18px] rounded-full items-center justify-center px-1">
+                  <Text className="text-white text-[9px] font-black">
+                    {item.badge > 9 ? "9+" : item.badge}
+                  </Text>
+                </View>
+              ) : null}
               {isActive && !isCollapsed && (
                 <View className="w-1.5 h-5 bg-[#F5921E] rounded-full" />
               )}
@@ -167,7 +170,7 @@ export function DesktopSidebar() {
             <View className="flex-1">
               <Text className="text-xs font-black text-gray-800">{firstName}</Text>
               <Text className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">
-                Administrator
+                {roleLabel || (role ? ROLE_LABELS[role] : "")}
               </Text>
             </View>
           )}
@@ -179,7 +182,7 @@ export function DesktopSidebar() {
           }`}
           activeOpacity={0.8}
         >
-          <Text className="text-xs">🚪</Text>
+          <AppIcon name="logout" size={16} color="#E11D48" />
           {!isCollapsed && (
             <Text className="text-[11px] font-black text-rose-600 uppercase tracking-wide">
               Sign Out

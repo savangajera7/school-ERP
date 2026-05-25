@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   View, Text, ScrollView, TouchableOpacity,
   TextInput, Image, Platform
@@ -11,49 +11,88 @@ import { useAuthStore } from "@/store/authStore";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Colors } from "@/constants/colors";
 import { MOBILE_TAB_BAR_HEIGHT } from "@/constants/mobileTabs";
-import { useDashboardAdmin } from "@/api/generated/erp-dashboard/erp-dashboard";
+import { useGetApiStudentGet } from "@/api/generated/3-student-crud/3-student-crud";
+import { useGetApiFeesGetFeesList } from "@/api/generated/fees/fees";
+import { useGetApiStudentAttendanceGetStudentAttendanceList } from "@/api/generated/student-attendance/student-attendance";
+import { useGetApiTeacherGetTeacherList } from "@/api/generated/teacher/teacher";
+import { useGetApiClassGetClassList } from "@/api/generated/master-class/master-class";
+import { parseApiList } from "@/utils/apiResponse";
+import { usePermissions } from "@/hooks/usePermissions";
+import type { AppRoute } from "@/constants/rolePermissions";
 
-// Quick action items
-const QUICK_ACTIONS = [
-  { title: "Students",   icon: "🎓", route: "/(app)/students",          bg: "#E0F2FE", iconBg: "#BAE6FD" },
-  { title: "Attendance", icon: "📝", route: "/(app)/attendance",         bg: "#FEF9C3", iconBg: "#FEF08A" },
-  { title: "Fees",       icon: "💰", route: "/(app)/fees",               bg: "#DCFCE7", iconBg: "#BBF7D0" },
-  { title: "Exams",      icon: "📊", route: "/(app)/exams",              bg: "#F3E8FF", iconBg: "#E9D5FF" },
-  { title: "Teachers",   icon: "👥", route: "/(app)/teachers",           bg: "#FFE4E6", iconBg: "#FECDD3" },
-  { title: "Notices",    icon: "📢", route: "/(app)/notices",            bg: "#FEF3C7", iconBg: "#FDE68A" },
-  { title: "Academic",   icon: "🏫", route: "/(app)/academic-setup",     bg: "#E0E7FF", iconBg: "#C7D2FE" },
-  { title: "Inquiries",  icon: "💬", route: "/(app)/inquiries",          bg: "#CFFAFE", iconBg: "#A5F3FC" },
-  { title: "Results",    icon: "🏆", route: "/(app)/parent-results",     bg: "#FEF9C3", iconBg: "#FEF08A" },
-  { title: "Timetable",  icon: "🗓️", route: "/(app)/timetable",          bg: "#FCE7F3", iconBg: "#FBCFE8" },
-  { title: "Reports",    icon: "📈", route: "/(app)/attendance-reports", bg: "#F0FDF4", iconBg: "#BBF7D0" },
-  { title: "Admission",  icon: "📋", route: "/(app)/admission-form",     bg: "#F5F3FF", iconBg: "#DDD6FE" },
-];
-
-// Sample class attendance status
-const CLASS_ATTENDANCE = [
-  { name: "Class I – A",   taken: true  },
-  { name: "Class I – B",   taken: true  },
-  { name: "Class II – A",  taken: false },
-  { name: "Class II – B",  taken: false },
-  { name: "Class III – A", taken: true  },
+const QUICK_ACTIONS: {
+  title: string;
+  icon: string;
+  route: AppRoute;
+  bg: string;
+  iconBg: string;
+}[] = [
+  { title: "Students", icon: "🎓", route: "/(app)/students", bg: "#E0F2FE", iconBg: "#BAE6FD" },
+  { title: "Attendance", icon: "📝", route: "/(app)/attendance", bg: "#FEF9C3", iconBg: "#FEF08A" },
+  { title: "Fees", icon: "💰", route: "/(app)/fees", bg: "#DCFCE7", iconBg: "#BBF7D0" },
+  { title: "Exams", icon: "📊", route: "/(app)/exams", bg: "#F3E8FF", iconBg: "#E9D5FF" },
+  { title: "Teachers", icon: "👥", route: "/(app)/teachers", bg: "#FFE4E6", iconBg: "#FECDD3" },
+  { title: "Notices", icon: "📢", route: "/(app)/notices", bg: "#FEF3C7", iconBg: "#FDE68A" },
+  { title: "Academic", icon: "🏫", route: "/(app)/academic-setup", bg: "#E0E7FF", iconBg: "#C7D2FE" },
+  { title: "Inquiries", icon: "💬", route: "/(app)/inquiries", bg: "#CFFAFE", iconBg: "#A5F3FC" },
+  { title: "Results", icon: "🏆", route: "/(app)/parent-results", bg: "#FEF9C3", iconBg: "#FEF08A" },
+  { title: "Timetable", icon: "🗓️", route: "/(app)/timetable", bg: "#FCE7F3", iconBg: "#FBCFE8" },
+  { title: "Reports", icon: "📈", route: "/(app)/attendance-reports", bg: "#F0FDF4", iconBg: "#BBF7D0" },
+  { title: "Admission", icon: "📋", route: "/(app)/admission-form", bg: "#F5F3FF", iconBg: "#DDD6FE" },
+  { title: "Leave", icon: "📅", route: "/(app)/leave", bg: "#E0E7FF", iconBg: "#C7D2FE" },
+  { title: "Alerts", icon: "🔔", route: "/(app)/notifications", bg: "#FEE2E2", iconBg: "#FECACA" },
 ];
 
 export default function DashboardScreen() {
   const { userData, logout } = useAuthStore();
   const { isMobile } = useBreakpoint();
+  const { canAccessRoute, roleLabel, isParent, isTeacher } = usePermissions();
+  const quickActions = QUICK_ACTIONS.filter((a) => canAccessRoute(a.route));
   const [searchQuery, setSearchQuery] = useState("");
   const [birthdayTab, setBirthdayTab] = useState<"today" | "upcoming">("today");
 
-  // Call the live API Dashboard hook
-  const { data: dashboardData, isLoading } = useDashboardAdmin();
+  const { data: studentsData, isLoading: loadingStudents } = useGetApiStudentGet();
+  const { data: feesData, isLoading: loadingFees } = useGetApiFeesGetFeesList();
+  const { data: attendanceData, isLoading: loadingAttendance } =
+    useGetApiStudentAttendanceGetStudentAttendanceList();
+  const { data: teachersData, isLoading: loadingTeachers } = useGetApiTeacherGetTeacherList();
+  const { data: classesData } = useGetApiClassGetClassList();
 
-  const stats = (dashboardData?.data as any)?.data || {};
-  
-  // Safe extraction supporting any backend json naming policies
-  const totalStudentsVal = stats.totalStudents ?? stats.TotalStudents ?? 0;
-  const attendanceTodayVal = stats.attendanceToday ?? stats.AttendanceToday ?? "94.2%";
-  const totalStaffVal = stats.totalStaff ?? stats.TotalStaff ?? 12;
-  const staffAttendanceVal = stats.staffAttendance ?? stats.StaffAttendance ?? "100%";
+  const isLoading = loadingStudents || loadingFees || loadingAttendance || loadingTeachers;
+
+  const students = parseApiList(studentsData?.data);
+  const fees = parseApiList(feesData?.data);
+  const attendance = parseApiList(attendanceData?.data);
+  const teachers = parseApiList(teachersData?.data);
+  const classes = parseApiList<{ classID?: number; className?: string }>(classesData?.data);
+
+  const classAttendance = useMemo(() => {
+    const today = new Date().toISOString().slice(0, 10);
+    return classes.slice(0, 8).map((c) => {
+      const classId = c.classID;
+      const taken = attendance.some(
+        (a: { classID?: number; attendanceDate?: string }) =>
+          a.classID === classId &&
+          String(a.attendanceDate ?? "").slice(0, 10) === today
+      );
+      return { name: c.className ?? `Class ${classId}`, taken };
+    });
+  }, [classes, attendance]);
+
+  const totalStudentsVal = students.length;
+  const presentToday = attendance.filter(
+    (a: { attendanceStatus?: string }) =>
+      (a.attendanceStatus || "").toLowerCase() === "present"
+  ).length;
+  const attendanceTodayVal =
+    attendance.length > 0
+      ? `${Math.round((presentToday / attendance.length) * 100)}%`
+      : "—";
+  const totalStaffVal = teachers.length;
+  const pendingFees = fees.filter(
+    (f: { pendingAmount?: number }) => (f.pendingAmount ?? 0) > 0
+  ).length;
+  const staffAttendanceVal = `${pendingFees} pending fees`;
 
   const firstName = userData?.name?.split(" ")[0] || "Admin";
   const insets = useSafeAreaInsets();
@@ -342,7 +381,7 @@ export default function DashboardScreen() {
           {/* ── Quick Actions ─────────────────────────────────────── */}
           <SectionCard title="Quick Actions" icon="⚡">
             <View className="flex-row flex-wrap">
-              {QUICK_ACTIONS.map((action, i) => (
+              {quickActions.map((action, i) => (
                 <TouchableOpacity
                   key={i}
                   onPress={() => router.push(action.route as any)}
@@ -420,7 +459,7 @@ export default function DashboardScreen() {
                         <Text className="flex-1 font-black text-gray-400 text-[10px] uppercase tracking-wider text-right">Action</Text>
                       </View>
                       <View className="divide-y divide-gray-50">
-                        {CLASS_ATTENDANCE.map((cls, i) => (
+                        {(classAttendance.length ? classAttendance : [{ name: "No classes configured", taken: false }]).map((cls, i) => (
                           <View key={i} className="flex-row items-center px-4 py-3 bg-white">
                             <Text className="flex-[2] text-xs font-bold text-gray-800">{cls.name}</Text>
                             <View className="flex-grow flex-1 items-center justify-center">
@@ -467,7 +506,7 @@ export default function DashboardScreen() {
                 ) : (
                   /* Mobile Cards with Left Brand Accent Highlights */
                   <View className="px-5 pb-5 gap-3">
-                    {CLASS_ATTENDANCE.map((cls, i) => (
+                    {(classAttendance.length ? classAttendance : [{ name: "No classes configured", taken: false }]).map((cls, i) => (
                       <View
                         key={i}
                         className="bg-white border border-gray-100 rounded-2xl p-4 flex-row justify-between items-center shadow-sm"

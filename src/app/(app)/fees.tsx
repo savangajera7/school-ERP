@@ -8,21 +8,16 @@ import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Colors } from "@/constants/colors";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
-import { useFeesCollect, useFeesPending, useFeesPaymentHistory } from "@/api/generated/erp-fees/erp-fees";
+import {
+  useGetApiFeesGetFeesList,
+  usePostApiFeesInsertFees,
+  usePutApiFeesUpdateFees,
+} from "@/api/generated/fees/fees";
+import { parseApiList } from "@/utils/apiResponse";
+import { useToast } from "@/components/ui/Toast";
+import { useAuthStore } from "@/store/authStore";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
-
-// Fallback Mock Data in case API returns empty
-const MOCK_OUTSTANDING = [
-  { id: 1, name: "Pooja Patel", class: "Class I-A", totalDue: 15000, outstanding: 10000, rollNo: "14" },
-  { id: 2, name: "Rahul Sharma", class: "Class I-A", totalDue: 15000, outstanding: 15000, rollNo: "21" },
-  { id: 3, name: "Aarav Desai", class: "Class II-B", totalDue: 18000, outstanding: 5000, rollNo: "03" },
-];
-
-const MOCK_TRANSACTIONS = [
-  { id: "tx_101", studentName: "Pooja Patel", amount: 5000, method: "Razorpay", date: "18 May, 2026", status: "Success" },
-  { id: "tx_102", studentName: "Aarav Desai", amount: 13000, method: "Cash", date: "16 May, 2026", status: "Success" },
-  { id: "tx_103", studentName: "Kavya Verma", amount: 15000, method: "Bank Transfer", date: "12 May, 2026", status: "Success" },
-];
+import { usePermissions } from "@/hooks/usePermissions";
 
 const FEE_STRUCTURE = [
   { term: "Term 1 (Tuition)", amount: 8000 },
@@ -33,12 +28,18 @@ const FEE_STRUCTURE = [
 
 export default function FeesManagementScreen() {
   const { isMobile } = useBreakpoint();
-  const [activeTab, setActiveTab] = useState<"collect" | "history" | "structure">("collect");
+  const { canManageFees, isParent } = usePermissions();
+  const [activeTab, setActiveTab] = useState<"collect" | "history" | "structure">(
+    canManageFees ? "collect" : "history"
+  );
   const [searchQuery, setSearchQuery] = useState("");
   
-  const collectFeesMutation = useFeesCollect();
-  const { data: pendingData, isLoading: isPendingLoading, refetch: refetchPending } = useFeesPending();
-  const { data: historyData, isLoading: isHistoryLoading, refetch: refetchHistory } = useFeesPaymentHistory();
+  const { showToast } = useToast();
+  const userData = useAuthStore((s) => s.userData);
+  const insertFeesMutation = usePostApiFeesInsertFees();
+  const updateFeesMutation = usePutApiFeesUpdateFees();
+  const { data: feesData, isLoading: isFeesLoading, refetch: refetchFees } =
+    useGetApiFeesGetFeesList();
 
   // Selected student for fee collection
   const [selectedStudent, setSelectedStudent] = useState<any | null>(null);
@@ -47,36 +48,44 @@ export default function FeesManagementScreen() {
   const [isProcessing, setIsProcessing] = useState(false);
 
   // Extract pending list
-  const pendingList = useMemo(() => {
-    const list = (pendingData?.data as any)?.data || (pendingData?.data as any) || [];
-    if (!Array.isArray(list) || list.length === 0) {
-      return MOCK_OUTSTANDING;
-    }
-    return list.map((item: any) => ({
-      id: item.studentId || item.id,
-      name: item.studentName || item.name || "Unknown Student",
-      class: item.className || item.class || "N/A",
-      totalDue: item.totalAmount || item.totalDue || 0,
-      outstanding: item.outstandingAmount || item.outstanding || 0,
-      rollNo: item.rollNo || "N/A",
-    }));
-  }, [pendingData]);
+  const allFees = useMemo(() => parseApiList(feesData?.data), [feesData]);
 
-  // Extract transactions list
-  const transactionList = useMemo(() => {
-    const list = (historyData?.data as any)?.data || (historyData?.data as any) || [];
-    if (!Array.isArray(list) || list.length === 0) {
-      return MOCK_TRANSACTIONS;
-    }
-    return list.map((item: any) => ({
-      id: item.transactionRef || item.id?.toString() || "tx_N/A",
-      studentName: item.studentName || "N/A",
-      amount: item.amount || 0,
-      method: item.paymentMode || item.method || "Cash",
-      date: item.paymentDate || item.date || "N/A",
-      status: item.status || "Success",
+  const pendingList = useMemo(() => {
+    const pending = allFees.filter((item: { pendingAmount?: number }) => (item.pendingAmount ?? 0) > 0);
+    return pending.map((item: Record<string, unknown>, idx: number) => ({
+      id: item.feesID ?? item.studentID ?? idx,
+      feesID: item.feesID,
+      studentID: item.studentID,
+      name: String(item.studentName ?? `Student ${item.studentID ?? idx}`),
+      class: String(item.className ?? "N/A"),
+      totalDue: Number(item.totalFees ?? 0),
+      outstanding: Number(item.pendingAmount ?? 0),
+      rollNo: String(item.rollNo ?? "N/A"),
+      paidAmount: Number(item.paidAmount ?? 0),
     }));
-  }, [historyData]);
+  }, [allFees]);
+
+  const transactionList = useMemo(() => {
+    const paid = allFees.filter((item: { paidAmount?: number }) => (item.paidAmount ?? 0) > 0);
+    return paid.map((item: Record<string, unknown>, idx: number) => ({
+      id: String(item.transactionNo ?? item.feesID ?? `tx_${idx}`),
+      feesID: item.feesID,
+      studentID: item.studentID,
+      studentName: String(item.studentName ?? `Student ${item.studentID}`),
+      amount: Number(item.paidAmount ?? 0),
+      method: String(item.paymentMode ?? "Cash"),
+      date: String(item.paymentDate ?? "N/A"),
+      status: String(item.paymentStatus ?? "Success"),
+      paidAmount: Number(item.paidAmount ?? 0),
+      pendingAmount: Number(item.pendingAmount ?? 0),
+      totalFees: Number(item.totalFees ?? 0),
+    }));
+  }, [allFees]);
+
+  const isPendingLoading = isFeesLoading;
+  const isHistoryLoading = isFeesLoading;
+  const refetchPending = refetchFees;
+  const refetchHistory = refetchFees;
 
   const filteredPendingList = useMemo(() => {
     return pendingList.filter((item) =>
@@ -91,27 +100,52 @@ export default function FeesManagementScreen() {
 
   const handleProcessPayment = async () => {
     if (!collectAmount || parseFloat(collectAmount) <= 0) {
-      Alert.alert("Invalid Amount", "Please enter a valid payment amount.");
+      showToast("Please enter a valid payment amount.", "error");
       return;
     }
 
     setIsProcessing(true);
-    
+    const amount = parseFloat(collectAmount);
+    const addedBy = parseInt(userData?.id ?? "0", 10) || 0;
+
     try {
-      // Use the actual Orval collect mutation
-      await collectFeesMutation.mutateAsync({
-        data: {
-          studentId: selectedStudent.id,
-          amount: parseFloat(collectAmount),
-          paymentMode: paymentMethod,
-          transactionRef: paymentMethod === "Razorpay" ? `rzp_${Date.now()}` : `ref_${Date.now()}`,
-          collectedBy: 1, // Default user
-        }
-      });
+      if (selectedStudent?.feesID) {
+        const newPaid = (selectedStudent.paidAmount ?? 0) + amount;
+        const newPending = Math.max(0, (selectedStudent.outstanding ?? 0) - amount);
+        await updateFeesMutation.mutateAsync({
+          data: {
+            feesID: selectedStudent.feesID,
+            studentID: selectedStudent.studentID ?? selectedStudent.id,
+            totalFees: selectedStudent.totalDue ?? newPaid + newPending,
+            paidAmount: newPaid,
+            pendingAmount: newPending,
+            paymentMode: paymentMethod,
+            transactionNo: `ref_${Date.now()}`,
+            paymentStatus: "Paid",
+            updatedBy: addedBy,
+          },
+        });
+      } else {
+        await insertFeesMutation.mutateAsync({
+          data: {
+            studentID: selectedStudent?.studentID ?? selectedStudent?.id,
+            totalFees: amount,
+            paidAmount: amount,
+            pendingAmount: 0,
+            paymentMode: paymentMethod,
+            transactionNo: `ref_${Date.now()}`,
+            paymentStatus: "Paid",
+            addedBy,
+          },
+        });
+      }
 
       setIsProcessing(false);
-      const successMsg = `Receipt generated for ₹${collectAmount} via ${paymentMethod} for ${selectedStudent?.name}.`;
-      
+      const successMsg = `Receipt for ₹${collectAmount} via ${paymentMethod} — ${selectedStudent?.name}.`;
+      showToast(successMsg, "success");
+      refetchFees();
+      setSelectedStudent(null);
+
       if (Platform.OS !== "web") {
         Alert.alert("Payment Successful", successMsg, [
           {
@@ -161,8 +195,14 @@ export default function FeesManagementScreen() {
       <StatusBar style="light" translucent backgroundColor="transparent" />
       
       <ScreenHeader 
-        title="Fees Management" 
-        subtitle="Collect invoices & view ledgers"
+        title={canManageFees ? "Fees Management" : "Fee statements"} 
+        subtitle={
+          canManageFees
+            ? "Add class-wise fees, collect payments (admin only)"
+            : isParent
+              ? "View fee balance and payment history for your children"
+              : "View fee records"
+        }
         breadcrumb={["Fees"]}
         onBack={() => router.push("/(app)/dashboard")}
       />
@@ -175,6 +215,7 @@ export default function FeesManagementScreen() {
             boxShadow: "0px 8px 16px rgba(0,0,0,0.04)",
           }}
         >
+          {canManageFees && (
           <TouchableOpacity 
             onPress={() => setActiveTab("collect")}
             className={`flex-1 items-center py-3 rounded-xl flex-row justify-center gap-1.5 ${
@@ -187,6 +228,7 @@ export default function FeesManagementScreen() {
               💳 Collect
             </Text>
           </TouchableOpacity>
+          )}
           <TouchableOpacity 
             onPress={() => setActiveTab("history")}
             className={`flex-1 items-center py-3 rounded-xl flex-row justify-center gap-1.5 ${
@@ -199,6 +241,7 @@ export default function FeesManagementScreen() {
               🧾 History
             </Text>
           </TouchableOpacity>
+          {canManageFees && (
           <TouchableOpacity 
             onPress={() => setActiveTab("structure")}
             className={`flex-1 items-center py-3 rounded-xl flex-row justify-center gap-1.5 ${
@@ -211,6 +254,7 @@ export default function FeesManagementScreen() {
               ⚙️ Structure
             </Text>
           </TouchableOpacity>
+          )}
         </View>
       </View>
 
@@ -265,7 +309,7 @@ export default function FeesManagementScreen() {
                   {isMobile ? (
                     filteredPendingList.map((item) => (
                       <MobileDataCard
-                        key={item.id}
+                        key={String(item.id)}
                         title={item.name}
                         subtitle={`Roll No: ${item.rollNo}`}
                         accentColor={Colors.accent}
@@ -300,7 +344,7 @@ export default function FeesManagementScreen() {
                       </View>
 
                       {filteredPendingList.map((item, index) => (
-                        <View key={item.id} className={`flex-row items-center px-6 py-4 border-b border-gray-100 ${index % 2 === 0 ? "bg-white" : "bg-gray-50/20"}`}>
+                        <View key={String(item.id)} className={`flex-row items-center px-6 py-4 border-b border-gray-100 ${index % 2 === 0 ? "bg-white" : "bg-gray-50/20"}`}>
                           <Text className="w-16 text-sm font-bold text-gray-400">{item.rollNo}</Text>
                           <Text className="flex-1 text-sm font-black text-gray-900">{item.name}</Text>
                           <Text className="w-[120px] text-sm text-gray-500 font-bold text-center">{item.class}</Text>

@@ -5,41 +5,53 @@ import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 import { Card } from "@/components/ui/Card";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
-import { useGetApiClassGetAll } from "@/api/generated/class/class";
-import { useGetApiSectionGetAll } from "@/api/generated/section/section";
-import { useGetApiStudentGetAllStudents } from "@/api/generated/student/student";
-import { useAttendanceMarkStudent } from "@/api/generated/erp-attendance/erp-attendance";
+import { useGetApiClassGetClassList } from "@/api/generated/master-class/master-class";
+import { useGetApiSectionGetSectionList } from "@/api/generated/master-section/master-section";
+import { useGetApiStudentGet } from "@/api/generated/3-student-crud/3-student-crud";
+import { usePostApiStudentAttendanceInsertStudentAttendance } from "@/api/generated/student-attendance/student-attendance";
+import { parseApiList } from "@/utils/apiResponse";
+import { useToast } from "@/components/ui/Toast";
+import { useAuthStore } from "@/store/authStore";
 import { StudentModel } from "@/api/model/studentModel";
 import { Colors } from "@/constants/colors";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
+import { usePermissions } from "@/hooks/usePermissions";
 
 export default function AttendanceScreen() {
   const { isMobile } = useBreakpoint();
+  const { isTeacher, isSchoolAdmin } = usePermissions();
   const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
   const [selectedSectionId, setSelectedSectionId] = useState<number | null>(null);
   const [date] = useState(new Date().toISOString().split('T')[0]);
   
   // API Hooks
-  const { data: classesData, isLoading: loadingClasses } = useGetApiClassGetAll();
-  const { data: sectionsData, isLoading: loadingSections } = useGetApiSectionGetAll();
-  const { data: studentsData, isLoading: loadingStudents } = useGetApiStudentGetAllStudents();
-  const markAttendance = useAttendanceMarkStudent();
+  const { showToast } = useToast();
+  const userData = useAuthStore((s) => s.userData);
+  const { data: classesData, isLoading: loadingClasses } = useGetApiClassGetClassList();
+  const { data: sectionsData, isLoading: loadingSections } = useGetApiSectionGetSectionList();
+  const { data: studentsData, isLoading: loadingStudents } = useGetApiStudentGet();
+  const markAttendance = usePostApiStudentAttendanceInsertStudentAttendance();
 
-  const classes = useMemo(() => classesData?.data?.data || [], [classesData]);
-  const sections = useMemo(() => sectionsData?.data?.data || [], [sectionsData]);
+  const classes = useMemo(() => parseApiList(classesData?.data), [classesData]);
+  const sections = useMemo(() => parseApiList(sectionsData?.data), [sectionsData]);
   
   // Local state for attendance statuses (studentID -> status)
   const [attendanceMap, setAttendanceMap] = useState<Record<number, string>>({});
 
+  const allStudents = useMemo(
+    () => parseApiList<StudentModel>(studentsData?.data),
+    [studentsData]
+  );
+
   const filteredStudents = useMemo(() => {
-    if (!studentsData?.data?.data) return [];
-    return (studentsData.data.data as StudentModel[]).filter(s => 
-      (!selectedClassId || s.classID === selectedClassId) &&
-      (!selectedSectionId || s.sectionID === selectedSectionId)
+    return allStudents.filter(
+      (s) =>
+        (!selectedClassId || s.classID === selectedClassId) &&
+        (!selectedSectionId || s.sectionID === selectedSectionId)
     );
-  }, [studentsData, selectedClassId, selectedSectionId]);
+  }, [allStudents, selectedClassId, selectedSectionId]);
 
   const toggleStatus = (studentId: number, newStatus: string) => {
     setAttendanceMap(prev => ({ ...prev, [studentId]: newStatus }));
@@ -60,38 +72,39 @@ export default function AttendanceScreen() {
     }
 
     try {
-      const promises = filteredStudents.map(student => {
+      const addedBy = parseInt(userData?.id ?? "0", 10) || 0;
+      const promises = filteredStudents.map((student) => {
         if (!student.studentID) return Promise.resolve();
         return markAttendance.mutateAsync({
           data: {
+            studentID: student.studentID,
             attendanceDate: date,
-            classId: selectedClassId,
-            sectionId: selectedSectionId,
-            personId: student.studentID,
-            status: attendanceMap[student.studentID] || "Present",
-            remarks: "",
-          }
+            attendanceStatus: attendanceMap[student.studentID] || "Present",
+            remark: "",
+            addedBy,
+          },
         });
       });
 
       await Promise.all(promises);
-      
-      const absentCount = filteredStudents.filter(s => attendanceMap[s.studentID!] === 'Absent').length;
-      const successMsg = `${filteredStudents.length} records synchronized successfully. ${absentCount} marked absent.`;
-      
-      if (Platform.OS !== 'web') {
-        Alert.alert("Attendance Synced", successMsg);
-      } else {
-        window.alert(`Attendance Synced!\n${successMsg}`);
-      }
+
+      const absentCount = filteredStudents.filter(
+        (s) => attendanceMap[s.studentID!] === "Absent"
+      ).length;
+      showToast(
+        `${filteredStudents.length} records saved. ${absentCount} absent.`,
+        "success"
+      );
     } catch (error) {
       console.error("Failed to save attendance:", error);
-      Alert.alert("Synchronization Error", "Failed to upload daily logs.");
+      showToast("Failed to upload daily attendance.", "error");
     }
   };
 
-  const selectedClassName = classes.find((c: any) => c.classID === selectedClassId)?.className || "Select Class";
-  const selectedSectionName = sections.find((s: any) => s.sectionID === selectedSectionId)?.sectionName || "Select Section";
+  const selectedClassName =
+    String(classes.find((c: { classID?: number; className?: string }) => c.classID === selectedClassId)?.className ?? "Select Class");
+  const selectedSectionName =
+    String(sections.find((s: { sectionID?: number; sectionName?: string }) => s.sectionID === selectedSectionId)?.sectionName ?? "Select Section");
 
   const renderStudentItemMobile = ({ item }: { item: StudentModel }) => {
     const fullName = item.studentDisplayName || `${item.firstName} ${item.lastName}`;
@@ -173,8 +186,12 @@ export default function AttendanceScreen() {
       <StatusBar style="light" translucent backgroundColor="transparent" />
       
       <ScreenHeader 
-        title="Daily Attendance" 
-        subtitle="Log student presence & sync logs"
+        title="Class Attendance" 
+        subtitle={
+          isTeacher
+            ? "Mark daily presence for your class (teacher & admin)"
+            : "Mark student attendance class-wise and section-wise"
+        }
         breadcrumb={["Attendance"]}
         onBack={() => router.push("/(app)/dashboard")}
         rightAction={

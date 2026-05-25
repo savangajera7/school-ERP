@@ -1,0 +1,91 @@
+import React, { useState } from "react";
+import { View, Text, ScrollView, TextInput, TouchableOpacity } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
+import { router } from "expo-router";
+import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { Button } from "@/components/ui/Button";
+import { usePostApiNotificationInsertNotification } from "@/api/generated/notification/notification";
+import { useToast } from "@/components/ui/Toast";
+import { useAuthStore } from "@/store/authStore";
+import { useNotifications } from "@/contexts/NotificationContext";
+import { usePermissions } from "@/hooks/usePermissions";
+import { AccessDenied } from "@/components/auth/AccessDenied";
+
+export default function NotificationComposeScreen() {
+  const { canSendBroadcast } = usePermissions();
+  if (!canSendBroadcast) {
+    return (
+      <AccessDenied message="Only school administrators can send broadcast alerts." />
+    );
+  }
+
+  const { showToast } = useToast();
+  const { userData } = useAuthStore();
+  const { refetch } = useNotifications();
+  const insertMutation = usePostApiNotificationInsertNotification();
+
+  const [title, setTitle] = useState("");
+  const [message, setMessage] = useState("");
+  const [screenName, setScreenName] = useState("/(app)/dashboard");
+  const [notificationType, setNotificationType] = useState("General");
+
+  const handleSend = async () => {
+    if (!title.trim() || !message.trim()) {
+      showToast("Title and message are required.", "error");
+      return;
+    }
+    const createdBy = parseInt(userData?.id ?? "0", 10) || 0;
+    try {
+      await insertMutation.mutateAsync({
+        data: {
+          title,
+          message,
+          screenName,
+          notificationType,
+          deviceType: "All",
+          isSent: false,
+          createdBy,
+        },
+      });
+      showToast("Notification queued. Backend will deliver push to devices.", "success");
+      refetch();
+      router.back();
+    } catch {
+      showToast("Failed to send notification.", "error");
+    }
+  };
+
+  return (
+    <SafeAreaView className="flex-1 bg-white" edges={["left", "right"]}>
+      <StatusBar style="light" />
+      <ScreenHeader title="Send Notification" subtitle="Push + in-app alert" onBack={() => router.back()} />
+      <ScrollView className="p-6 gap-4">
+        <Text className="text-sm font-semibold text-gray-600">Title</Text>
+        <TextInput
+          value={title}
+          onChangeText={setTitle}
+          className="border border-gray-200 rounded-xl px-4 py-3"
+          placeholder="Notification title"
+        />
+        <Text className="text-sm font-semibold text-gray-600 mt-4">Message</Text>
+        <TextInput
+          value={message}
+          onChangeText={setMessage}
+          multiline
+          numberOfLines={4}
+          className="border border-gray-200 rounded-xl px-4 py-3 min-h-[100px]"
+          placeholder="Message body"
+        />
+        <Text className="text-sm font-semibold text-gray-600 mt-4">Deep link route</Text>
+        <TextInput
+          value={screenName}
+          onChangeText={setScreenName}
+          className="border border-gray-200 rounded-xl px-4 py-3"
+          placeholder="/(app)/fees"
+        />
+        <Button label="Send" onPress={handleSend} loading={insertMutation.isPending} />
+      </ScrollView>
+    </SafeAreaView>
+  );
+}

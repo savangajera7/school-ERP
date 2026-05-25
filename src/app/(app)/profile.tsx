@@ -15,16 +15,11 @@ import { useAuthStore } from "@/store/authStore";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Colors } from "@/constants/colors";
 import { MOBILE_TAB_BAR_HEIGHT } from "@/constants/mobileTabs";
-import { useParentChildren } from "@/api/generated/erp-parent-panel/erp-parent-panel";
-import type { Role } from "@/types/auth.types";
+import { useGetApiStudentGet } from "@/api/generated/3-student-crud/3-student-crud";
+import { useNotifications } from "@/contexts/NotificationContext";
 import type { StudentModel } from "@/api/model/studentModel";
-
-const ROLE_LABELS: Record<Role, string> = {
-  superadmin: "Super Administrator",
-  admin: "Administrator",
-  teacher: "Teacher",
-  parent: "Parent / Guardian",
-};
+import { ROLE_LABELS } from "@/constants/rolePermissions";
+import { usePermissions } from "@/hooks/usePermissions";
 
 function extractList<T>(payload: unknown): T[] {
   if (!payload) return [];
@@ -59,20 +54,21 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 
 export default function ProfileScreen() {
   const { userData, role, logout, language } = useAuthStore();
+  const { roleLabel } = usePermissions();
   const { isMobile } = useBreakpoint();
   const insets = useSafeAreaInsets();
 
   const parentId = Number(userData?.id) || 0;
   const isParent = role === "parent";
 
-  const { data: childrenResponse, isLoading: childrenLoading } = useParentChildren(parentId, {
-    query: { enabled: isParent && parentId > 0 },
+  const { unreadCount } = useNotifications();
+  const { data: studentsResponse, isLoading: childrenLoading } = useGetApiStudentGet({
+    query: { enabled: isParent },
   });
 
   const children = useMemo(() => {
-    const raw = (childrenResponse as { data?: unknown })?.data;
-    return extractList<StudentModel>(raw);
-  }, [childrenResponse]);
+    return extractList<StudentModel>((studentsResponse as { data?: unknown })?.data);
+  }, [studentsResponse]);
 
   const initials = (userData?.name || "U")
     .split(" ")
@@ -81,7 +77,7 @@ export default function ProfileScreen() {
     .slice(0, 2)
     .toUpperCase();
 
-  const roleLabel = role ? ROLE_LABELS[role] : "User";
+  const displayRole = roleLabel || (role ? ROLE_LABELS[role] : "User");
 
   const bottomPad = isMobile ? MOBILE_TAB_BAR_HEIGHT + (insets.bottom || 0) + 16 : 40;
 
@@ -128,7 +124,7 @@ export default function ProfileScreen() {
               <Text className="text-white text-lg font-black">{userData?.name || "User"}</Text>
               <View className="self-start mt-1.5 px-2.5 py-1 rounded-lg bg-[#F5921E]/25 border border-[#F5921E]/40">
                 <Text className="text-[#FDE68A] text-[10px] font-black uppercase tracking-wider">
-                  {roleLabel}
+                  {displayRole}
                 </Text>
               </View>
             </View>
@@ -150,6 +146,19 @@ export default function ProfileScreen() {
             <InfoRow label="School" value={userData?.schoolName || "Little Angel's English School"} />
             <InfoRow label="User ID" value={userData?.id || "—"} />
             <InfoRow label="Language" value={language === "gu" ? "ગુજરાતી" : "English"} />
+            <TouchableOpacity
+              onPress={() => router.push("/(app)/notifications")}
+              className="mt-4 flex-row items-center justify-between bg-blue-50 border border-blue-100 rounded-2xl px-4 py-3"
+            >
+              <Text className="font-bold text-primary">Notifications</Text>
+              {unreadCount > 0 ? (
+                <View className="bg-rose-500 min-w-[22px] h-[22px] rounded-full items-center justify-center px-1">
+                  <Text className="text-white text-xs font-black">{unreadCount}</Text>
+                </View>
+              ) : (
+                <Text className="text-gray-400 text-sm">None</Text>
+              )}
+            </TouchableOpacity>
           </View>
 
           {/* Parent: linked children */}
@@ -255,6 +264,19 @@ export default function ProfileScreen() {
                 ))}
               </View>
             </View>
+          )}
+
+          {(role === "parent" || role === "teacher" || role === "student") && (
+            <TouchableOpacity
+              onPress={() => router.push("/(app)/change-password")}
+              activeOpacity={0.85}
+              className="flex-row items-center justify-center gap-2.5 py-4 rounded-2xl bg-[#134A8C]/8 border border-[#134A8C]/15 mb-3"
+            >
+              <Text className="text-base">🔒</Text>
+              <Text className="text-sm font-black text-[#134A8C] uppercase tracking-wide">
+                Change password
+              </Text>
+            </TouchableOpacity>
           )}
 
           {/* Sign out */}

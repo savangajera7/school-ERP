@@ -1,4 +1,4 @@
-export type Role = "superadmin" | "admin" | "teacher" | "parent";
+export type Role = "superadmin" | "admin" | "teacher" | "parent" | "student";
 
 export interface UserData {
   studentID?: number;
@@ -13,6 +13,9 @@ export interface UserData {
   mobile: string;
   schoolName: string;
   avatar?: string;
+  /** From login API — used for device token registration */
+  roleID?: number;
+  referenceID?: number;
 }
 
 export interface ApiResult<T> {
