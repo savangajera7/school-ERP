@@ -11,7 +11,7 @@ const initialState: AuthState = {
   userData: null,
   role: null,
   isAuthenticated: false,
-  language: "gu",
+  language: "en",
 };
 
 export const useAuthStore = create<AuthStore>()(
