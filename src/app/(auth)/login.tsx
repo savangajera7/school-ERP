@@ -128,13 +128,14 @@ export default function LoginScreen() {
       <StatusBar style="dark" />
       <KeyboardAvoidingView
         style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
         <ScrollView
           style={{ flex: 1 }}
           contentContainerStyle={{ flexGrow: 1 }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
+          bounces={false}
         >
           {isMobile ? (
             <View style={{ flex: 1 }}>
@@ -228,8 +229,8 @@ function FeatureItem({ icon, text, desc }: { icon: string, text: string, desc: s
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff" },
   mobileHeader: {
-    paddingTop: 48,
-    paddingBottom: 72,
+    paddingTop: 32,
+    paddingBottom: 48,
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 20,
@@ -238,7 +239,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 8,
     alignSelf: "flex-end",
-    marginBottom: 20,
+    marginBottom: 12,
   },
   langChip: {
     paddingHorizontal: 12,
@@ -288,10 +289,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff", 
     borderTopLeftRadius: 36, 
     borderTopRightRadius: 36, 
-    paddingTop: 40, 
+    paddingTop: 32, 
     flex: 1,
-    marginTop: -40,
-    minHeight: Dimensions.get('window').height * 0.75,
+    marginTop: -24,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: -10 },
     shadowOpacity: 0.1,
@@ -327,7 +327,7 @@ const styles = StyleSheet.create({
     padding: 40,
     position: "relative",
   },
-  mobileFormWrap: { width: "100%", paddingBottom: 20, flex: 1 },
+  mobileFormWrap: { width: "100%", paddingBottom: 20 },
   centerText: { textAlign: "center", marginBottom: 8 },
   logoContainer: { 
     width: 160, 
@@ -364,7 +364,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(0,0,0,0.03)'
   },
   loginTitle: { fontSize: 36, fontWeight: "900", color: "#0d3666", letterSpacing: -1 },
-  loginSubtitle: { fontSize: 16, color: "#6b7280", marginTop: 4, marginBottom: 48, fontWeight: "500" },
+  loginSubtitle: { fontSize: 16, color: "#6b7280", marginTop: 4, marginBottom: 32, fontWeight: "500" },
   formContainer: { width: "100%" },
   roleHint: {
     fontSize: 13,

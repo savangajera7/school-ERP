@@ -16,14 +16,14 @@ function ShimmerBlock({ width, height, borderRadius = 8 }: { width: number | str
       Animated.sequence([
         Animated.timing(shimmerAnim, {
           toValue: 1,
-          duration: 1200,
-          easing: Easing.inOut(Easing.ease),
+          duration: 1000,
+          easing: Easing.bezier(0.4, 0, 0.2, 1),
           useNativeDriver: Platform.OS !== "web",
         }),
         Animated.timing(shimmerAnim, {
           toValue: 0,
-          duration: 1200,
-          easing: Easing.inOut(Easing.ease),
+          duration: 1000,
+          easing: Easing.bezier(0.4, 0, 0.2, 1),
           useNativeDriver: Platform.OS !== "web",
         }),
       ])
@@ -32,19 +32,33 @@ function ShimmerBlock({ width, height, borderRadius = 8 }: { width: number | str
 
   const opacity = shimmerAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [0.15, 0.35],
+    outputRange: [0.1, 0.25],
+  });
+
+  const translateX = shimmerAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [-20, 20],
   });
 
   return (
-    <Animated.View
+    <View
       style={{
         width: width as any,
         height,
         borderRadius,
-        backgroundColor: "#134A8C",
-        opacity,
+        backgroundColor: "#E5E7EB",
+        overflow: "hidden",
       }}
-    />
+    >
+      <Animated.View
+        style={{
+          ...StyleSheet.absoluteFillObject,
+          backgroundColor: "#F3F4F6",
+          opacity,
+          transform: [{ translateX }],
+        }}
+      />
+    </View>
   );
 }
 
