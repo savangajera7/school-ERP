@@ -5,6 +5,7 @@ import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { 
   useGetApiReligionGet, 
   usePostApiReligionAdd,
+  usePutApiReligionUpdate,
   useDeleteApiReligionDeleteId 
 } from "@/api/generated/2-master-religion/2-master-religion";
 import { parseApiList } from "@/utils/apiResponse";
@@ -17,8 +18,11 @@ import { MobileDataCard } from "@/components/ui/MobileDataCard";
 
 export default function ReligionScreen() {
   const [newName, setNewName] = useState("");
+  const [editingItem, setEditingItem] = useState<any>(null);
+
   const { data, isLoading, refetch } = useGetApiReligionGet();
   const addMutation = usePostApiReligionAdd();
+  const updateMutation = usePutApiReligionUpdate();
   const deleteMutation = useDeleteApiReligionDeleteId();
 
   const items = parseApiList(data?.data);
@@ -34,6 +38,33 @@ export default function ReligionScreen() {
     } catch (error: any) {
       Alert.alert("Error", error.message || "Failed to add religion");
     }
+  };
+
+  const handleUpdate = async () => {
+    if (!newName.trim() || !editingItem) return;
+    try {
+      await updateMutation.mutateAsync({
+        data: { 
+          ...editingItem,
+          religionName: newName 
+        }
+      });
+      setNewName("");
+      setEditingItem(null);
+      refetch();
+    } catch (error: any) {
+      Alert.alert("Error", error.message || "Failed to update religion");
+    }
+  };
+
+  const startEdit = (item: any) => {
+    setEditingItem(item);
+    setNewName(item.religionName);
+  };
+
+  const cancelEdit = () => {
+    setEditingItem(null);
+    setNewName("");
   };
 
   const handleDelete = (id: number) => {
@@ -69,12 +100,29 @@ export default function ReligionScreen() {
             placeholder="e.g. Hindu"
             className="flex-1 h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
           />
-          <Button
-            label="Add"
-            onPress={handleAdd}
-            loading={addMutation.isPending}
-            style={{ width: 80 }}
-          />
+          {editingItem ? (
+            <View className="flex-row gap-2">
+              <Button
+                label="Save"
+                onPress={handleUpdate}
+                loading={updateMutation.isPending}
+                style={{ width: 70 }}
+              />
+              <TouchableOpacity 
+                onPress={cancelEdit}
+                className="bg-gray-100 h-[48px] w-[48px] items-center justify-center rounded-xl"
+              >
+                <AppIcon name="close" size={20} color="#6B7280" />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <Button
+              label="Add"
+              onPress={handleAdd}
+              loading={addMutation.isPending}
+              style={{ width: 80 }}
+            />
+          )}
         </View>
       </Card>
 
@@ -90,12 +138,20 @@ export default function ReligionScreen() {
               subtitle={item.isActive ? "Active" : "Inactive"}
               icon={<IconCircle name="language" size={40} iconSize={20} />}
               actions={
-                <TouchableOpacity 
-                  onPress={() => handleDelete(item.religionID)}
-                  className="bg-red-50 p-2 rounded-lg ml-auto"
-                >
-                  <AppIcon name="delete" size={18} color="#EF4444" />
-                </TouchableOpacity>
+                <View className="flex-row gap-2 ml-auto">
+                  <TouchableOpacity 
+                    onPress={() => startEdit(item)}
+                    className="bg-blue-50 p-2 rounded-lg"
+                  >
+                    <AppIcon name="edit" size={18} color="#3B82F6" />
+                  </TouchableOpacity>
+                  <TouchableOpacity 
+                    onPress={() => handleDelete(item.religionID)}
+                    className="bg-red-50 p-2 rounded-lg"
+                  >
+                    <AppIcon name="delete" size={18} color="#EF4444" />
+                  </TouchableOpacity>
+                </View>
               }
             />
           )}

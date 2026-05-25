@@ -1,15 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { ScrollView, Alert } from "react-native";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { FormField } from "@/components/forms/FormField";
 import { Button } from "@/components/ui/Button";
-import { usePostApiRoleInsertRole } from "@/api/generated/role/role";
+import { 
+  usePostApiRoleInsertRole, 
+  usePutApiRoleUpdateRole,
+  useGetApiRoleGetRoleByIdId 
+} from "@/api/generated/role/role";
 import { useAuthStore } from "@/store/authStore";
 import { Card } from "@/components/ui/Card";
+import { parseApiData } from "@/utils/apiResponse";
 
 const roleSchema = z.object({
   roleName: z.string().min(1, "Role name is required"),
@@ -20,10 +25,18 @@ const roleSchema = z.object({
 type RoleFormData = z.infer<typeof roleSchema>;
 
 export default function CreateRoleScreen() {
+  const { id } = useLocalSearchParams();
+  const roleID = id ? parseInt(typeof id === "string" ? id : id[0]) : null;
+  const isEditing = !!roleID;
+
   const { userData } = useAuthStore();
   const insertRole = usePostApiRoleInsertRole();
+  const updateRole = usePutApiRoleUpdateRole();
+  const { data: roleResponse, isLoading: loadingRole } = useGetApiRoleGetRoleByIdId(roleID as number, {
+    query: { enabled: isEditing }
+  });
 
-  const { control, handleSubmit } = useForm<RoleFormData>({
+  const { control, handleSubmit, reset } = useForm<RoleFormData>({
     resolver: zodResolver(roleSchema),
     defaultValues: {
       roleName: "",
@@ -32,25 +45,47 @@ export default function CreateRoleScreen() {
     },
   });
 
+  useEffect(() => {
+    if (roleResponse?.data) {
+      const role = parseApiData(roleResponse.data) as any;
+      reset({
+        roleName: role.roleName || "",
+        roleCode: role.roleCode || "",
+        description: role.description || "",
+      });
+    }
+  }, [roleResponse]);
+
   const onSubmit = async (data: RoleFormData) => {
     try {
-      await insertRole.mutateAsync({
-        data: {
-          ...data,
-          createdBy: parseInt(userData?.id || "0"),
-        },
-      });
-      Alert.alert("Success", "Role created successfully");
+      if (isEditing) {
+        await updateRole.mutateAsync({
+          data: {
+            ...data,
+            roleID: roleID as number,
+            updatedBy: parseInt(userData?.id || "0"),
+          },
+        });
+        Alert.alert("Success", "Role updated successfully");
+      } else {
+        await insertRole.mutateAsync({
+          data: {
+            ...data,
+            createdBy: parseInt(userData?.id || "0"),
+          },
+        });
+        Alert.alert("Success", "Role created successfully");
+      }
       router.back();
     } catch (error: any) {
-      Alert.alert("Error", error.message || "Failed to create role");
+      Alert.alert("Error", error.message || `Failed to ${isEditing ? "update" : "create"} role`);
     }
   };
 
   return (
     <PremiumScreenLayout
-      title="Create Role"
-      subtitle="Define a new user access group"
+      title={isEditing ? "Edit Role" : "Create Role"}
+      subtitle={isEditing ? "Modify access group details" : "Define a new user access group"}
       onBack={() => router.back()}
     >
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -77,9 +112,9 @@ export default function CreateRoleScreen() {
           />
 
           <Button
-            label="Create Role"
+            label={isEditing ? "Save Changes" : "Create Role"}
             onPress={handleSubmit(onSubmit)}
-            loading={insertRole.isPending}
+            loading={isEditing ? updateRole.isPending : insertRole.isPending}
             className="mt-8"
           />
         </Card>

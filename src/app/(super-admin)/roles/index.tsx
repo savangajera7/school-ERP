@@ -2,17 +2,46 @@ import React from "react";
 import { View, FlatList, RefreshControl } from "react-native";
 import { router } from "expo-router";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
-import { useGetApiRoleGetRoleList } from "@/api/generated/role/role";
+import { 
+  useGetApiRoleGetRoleList, 
+  useDeleteApiRoleDeleteRole 
+} from "@/api/generated/role/role";
 import { parseApiList } from "@/utils/apiResponse";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
 import { HeaderActionButton } from "@/components/ui/HeaderActionButton";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { IconCircle } from "@/components/icons/AppIcon";
+import { AppIcon, IconCircle } from "@/components/icons/AppIcon";
+import { Alert, TouchableOpacity } from "react-native";
 
 export default function RolesManagementScreen() {
   const { data, isLoading, refetch } = useGetApiRoleGetRoleList();
+  const deleteRole = useDeleteApiRoleDeleteRole();
   const roles = parseApiList(data?.data);
+
+  const handleDelete = (role: any) => {
+    Alert.alert(
+      "Delete Role",
+      `Are you sure you want to delete "${role.roleName}"?`,
+      [
+        { text: "Cancel", style: "cancel" },
+        { 
+          text: "Delete", 
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await deleteRole.mutateAsync({ 
+                data: { roleID: role.roleID } 
+              });
+              refetch();
+            } catch (error: any) {
+              Alert.alert("Error", error.message || "Failed to delete role");
+            }
+          }
+        }
+      ]
+    );
+  };
 
   const renderRoleItem = ({ item }: { item: any }) => (
     <MobileDataCard
@@ -27,6 +56,22 @@ export default function RolesManagementScreen() {
         { label: "Code", value: item.roleCode || "N/A" },
         { label: "Description", value: item.description || "No description" },
       ]}
+      actions={
+        <View className="flex-row gap-2 ml-auto">
+          <TouchableOpacity 
+            onPress={() => router.push(`/(super-admin)/roles/create?id=${item.roleID}`)}
+            className="bg-blue-50 p-2 rounded-lg"
+          >
+            <AppIcon name="edit" size={18} color="#3B82F6" />
+          </TouchableOpacity>
+          <TouchableOpacity 
+            onPress={() => handleDelete(item)}
+            className="bg-red-50 p-2 rounded-lg"
+          >
+            <AppIcon name="delete" size={18} color="#EF4444" />
+          </TouchableOpacity>
+        </View>
+      }
     />
   );
 

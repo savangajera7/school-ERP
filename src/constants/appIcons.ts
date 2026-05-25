@@ -73,6 +73,7 @@ export type AppIconName =
   | "building"
   | "classroom"
   | "language"
+  | "edit"
   | "delete";
 
 type IconPair = { outline: IoniconsName; filled: IoniconsName };
@@ -149,6 +150,7 @@ export const APP_ICONS: Record<AppIconName, IconPair> = {
   building: { outline: "business-outline", filled: "business" },
   classroom: { outline: "easel-outline", filled: "easel" },
   language: { outline: "globe-outline", filled: "globe" },
+  edit: { outline: "create-outline", filled: "create" },
   delete: { outline: "trash-outline", filled: "trash" },
 };
 
@@ -235,5 +237,6 @@ export const QUICK_ACTION_STYLES: Record<
   building: { bg: "#E0E7FF", iconBg: "#C7D2FE", iconColor: "#4338CA" },
   classroom: { bg: "#FEF3C7", iconBg: "#FDE68A", iconColor: "#B45309" },
   language: { bg: "#E0F2FE", iconBg: "#BAE6FD", iconColor: "#0369A1" },
+  edit: { bg: "#DBEAFE", iconBg: "#BFDBFE", iconColor: "#1D4ED8" },
   delete: { bg: "#FEE2E2", iconBg: "#FECACA", iconColor: "#DC2626" },
 };

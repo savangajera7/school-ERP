@@ -5,6 +5,7 @@ import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { 
   useGetApiBatchGet, 
   usePostApiBatchAdd,
+  usePutApiBatchUpdate,
   useDeleteApiBatchDeleteId 
 } from "@/api/generated/2-master-batch/2-master-batch";
 import { parseApiList } from "@/utils/apiResponse";
@@ -17,8 +18,11 @@ import { MobileDataCard } from "@/components/ui/MobileDataCard";
 
 export default function BatchScreen() {
   const [newName, setNewName] = useState("");
+  const [editingItem, setEditingItem] = useState<any>(null);
+
   const { data, isLoading, refetch } = useGetApiBatchGet();
   const addMutation = usePostApiBatchAdd();
+  const updateMutation = usePutApiBatchUpdate();
   const deleteMutation = useDeleteApiBatchDeleteId();
 
   const items = parseApiList(data?.data);
@@ -34,6 +38,33 @@ export default function BatchScreen() {
     } catch (error: any) {
       Alert.alert("Error", error.message || "Failed to add batch");
     }
+  };
+
+  const handleUpdate = async () => {
+    if (!newName.trim() || !editingItem) return;
+    try {
+      await updateMutation.mutateAsync({
+        data: { 
+          ...editingItem,
+          batchName: newName 
+        }
+      });
+      setNewName("");
+      setEditingItem(null);
+      refetch();
+    } catch (error: any) {
+      Alert.alert("Error", error.message || "Failed to update batch");
+    }
+  };
+
+  const startEdit = (item: any) => {
+    setEditingItem(item);
+    setNewName(item.batchName);
+  };
+
+  const cancelEdit = () => {
+    setEditingItem(null);
+    setNewName("");
   };
 
   const handleDelete = (id: number) => {
@@ -69,12 +100,29 @@ export default function BatchScreen() {
             placeholder="e.g. Morning"
             className="flex-1 h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
           />
-          <Button
-            label="Add"
-            onPress={handleAdd}
-            loading={addMutation.isPending}
-            style={{ width: 80 }}
-          />
+          {editingItem ? (
+            <View className="flex-row gap-2">
+              <Button
+                label="Save"
+                onPress={handleUpdate}
+                loading={updateMutation.isPending}
+                style={{ width: 70 }}
+              />
+              <TouchableOpacity 
+                onPress={cancelEdit}
+                className="bg-gray-100 h-[48px] w-[48px] items-center justify-center rounded-xl"
+              >
+                <AppIcon name="close" size={20} color="#6B7280" />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <Button
+              label="Add"
+              onPress={handleAdd}
+              loading={addMutation.isPending}
+              style={{ width: 80 }}
+            />
+          )}
         </View>
       </Card>
 
@@ -90,12 +138,20 @@ export default function BatchScreen() {
               subtitle={item.isActive ? "Active Batch" : "Inactive"}
               icon={<IconCircle name="masters" size={40} iconSize={20} />}
               actions={
-                <TouchableOpacity 
-                  onPress={() => handleDelete(item.batchID)}
-                  className="bg-red-50 p-2 rounded-lg ml-auto"
-                >
-                  <AppIcon name="delete" size={18} color="#EF4444" />
-                </TouchableOpacity>
+                <View className="flex-row gap-2 ml-auto">
+                  <TouchableOpacity 
+                    onPress={() => startEdit(item)}
+                    className="bg-blue-50 p-2 rounded-lg"
+                  >
+                    <AppIcon name="edit" size={18} color="#3B82F6" />
+                  </TouchableOpacity>
+                  <TouchableOpacity 
+                    onPress={() => handleDelete(item.batchID)}
+                    className="bg-red-50 p-2 rounded-lg"
+                  >
+                    <AppIcon name="delete" size={18} color="#EF4444" />
+                  </TouchableOpacity>
+                </View>
               }
             />
           )}

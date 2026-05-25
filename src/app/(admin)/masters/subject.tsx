@@ -3,11 +3,11 @@ import { View, Text, FlatList, TextInput, TouchableOpacity, Alert } from "react-
 import { router } from "expo-router";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { 
-  useGetApiCategoryGet, 
-  usePostApiCategoryAdd,
-  usePutApiCategoryUpdate,
-  useDeleteApiCategoryDeleteId 
-} from "@/api/generated/2-master-category/2-master-category";
+  useGetApiSubjectGetSubjectList, 
+  usePostApiSubjectInsertSubject,
+  usePutApiSubjectUpdateSubject,
+  useDeleteApiSubjectDeleteSubject 
+} from "@/api/generated/subject/subject";
 import { parseApiList } from "@/utils/apiResponse";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -16,14 +16,14 @@ import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
 import { premiumCardShadow } from "@/constants/premiumStyles";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 
-export default function CategoryScreen() {
+export default function SubjectScreen() {
   const [newName, setNewName] = useState("");
   const [editingItem, setEditingItem] = useState<any>(null);
 
-  const { data, isLoading, refetch } = useGetApiCategoryGet();
-  const addMutation = usePostApiCategoryAdd();
-  const updateMutation = usePutApiCategoryUpdate();
-  const deleteMutation = useDeleteApiCategoryDeleteId();
+  const { data, isLoading, refetch } = useGetApiSubjectGetSubjectList();
+  const addMutation = usePostApiSubjectInsertSubject();
+  const updateMutation = usePutApiSubjectUpdateSubject();
+  const deleteMutation = useDeleteApiSubjectDeleteSubject();
 
   const items = parseApiList(data?.data);
 
@@ -31,12 +31,12 @@ export default function CategoryScreen() {
     if (!newName.trim()) return;
     try {
       await addMutation.mutateAsync({
-        data: { categoryName: newName, isActive: true }
+        data: { subjectName: newName }
       });
       setNewName("");
       refetch();
     } catch (error: any) {
-      Alert.alert("Error", error.message || "Failed to add category");
+      Alert.alert("Error", error.message || "Failed to add subject");
     }
   };
 
@@ -46,20 +46,20 @@ export default function CategoryScreen() {
       await updateMutation.mutateAsync({
         data: { 
           ...editingItem,
-          categoryName: newName 
+          subjectName: newName 
         }
       });
       setNewName("");
       setEditingItem(null);
       refetch();
     } catch (error: any) {
-      Alert.alert("Error", error.message || "Failed to update category");
+      Alert.alert("Error", error.message || "Failed to update subject");
     }
   };
 
   const startEdit = (item: any) => {
     setEditingItem(item);
-    setNewName(item.categoryName);
+    setNewName(item.subjectName);
   };
 
   const cancelEdit = () => {
@@ -67,7 +67,7 @@ export default function CategoryScreen() {
     setNewName("");
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (item: any) => {
     Alert.alert("Delete", "Are you sure?", [
       { text: "Cancel", style: "cancel" },
       { 
@@ -75,7 +75,9 @@ export default function CategoryScreen() {
         style: "destructive", 
         onPress: async () => {
           try {
-            await deleteMutation.mutateAsync({ id });
+            await deleteMutation.mutateAsync({ 
+              data: { subjectID: item.subjectID } 
+            });
             refetch();
           } catch (error: any) {
             Alert.alert("Error", error.message || "Failed to delete");
@@ -87,8 +89,8 @@ export default function CategoryScreen() {
 
   return (
     <PremiumScreenLayout
-      title="Student Categories"
-      subtitle="Manage admission categories"
+      title="Subjects"
+      subtitle="Manage school subjects"
       onBack={() => router.back()}
       scrollable={false}
     >
@@ -97,7 +99,7 @@ export default function CategoryScreen() {
           <TextInput
             value={newName}
             onChangeText={setNewName}
-            placeholder="e.g. General"
+            placeholder="e.g. Mathematics"
             className="flex-1 h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
           />
           {editingItem ? (
@@ -131,12 +133,12 @@ export default function CategoryScreen() {
       ) : (
         <FlatList
           data={items}
-          keyExtractor={(item: any) => String(item.categoryID)}
+          keyExtractor={(item: any) => String(item.subjectID)}
           renderItem={({ item }: { item: any }) => (
             <MobileDataCard
-              title={item.categoryName}
+              title={item.subjectName}
               subtitle={item.isActive ? "Active" : "Inactive"}
-              icon={<IconCircle name="classroom" size={40} iconSize={20} />}
+              icon={<IconCircle name="subjects" size={40} iconSize={20} />}
               actions={
                 <View className="flex-row gap-2 ml-auto">
                   <TouchableOpacity 
@@ -146,7 +148,7 @@ export default function CategoryScreen() {
                     <AppIcon name="edit" size={18} color="#3B82F6" />
                   </TouchableOpacity>
                   <TouchableOpacity 
-                    onPress={() => handleDelete(item.categoryID)}
+                    onPress={() => handleDelete(item)}
                     className="bg-red-50 p-2 rounded-lg"
                   >
                     <AppIcon name="delete" size={18} color="#EF4444" />
