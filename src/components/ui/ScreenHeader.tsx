@@ -5,6 +5,7 @@ import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Colors } from "@/constants/colors";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
+import { AppIcon } from "@/components/icons/AppIcon";
 
 interface ScreenHeaderProps {
   title: string;
@@ -57,7 +58,7 @@ export function ScreenHeader({
               className="w-10 h-10 bg-gray-50 rounded-xl items-center justify-center"
               activeOpacity={0.7}
             >
-              <Text className="text-sm font-bold text-gray-700">←</Text>
+              <AppIcon name="chevronBack" size={22} color="#374151" />
             </TouchableOpacity>
           )}
           <View className="flex-1">
@@ -97,37 +98,44 @@ export function ScreenHeader({
         borderBottomRightRadius: isMobile ? 24 : 32,
       }}
     >
-      <View className="flex-row justify-between items-center">
-        <View className="flex-row items-center gap-3 flex-1">
-          {!hideBack && (
-            <TouchableOpacity
-              onPress={handleBack}
-              className="w-10 h-10 bg-white/10 rounded-xl items-center justify-center border border-white/20"
-              activeOpacity={0.7}
-            >
-              <Text className="text-white font-bold text-sm">←</Text>
-            </TouchableOpacity>
-          )}
-          <View className="flex-1">
-            <Text
-              className="font-black text-white"
-              style={{ fontSize: isMobile ? 17 : 20 }}
-              numberOfLines={1}
-            >
-              {title}
-            </Text>
-            {subtitle && (
-              <Text
-                className="text-white/60 font-bold uppercase tracking-wider mt-0.5"
-                style={{ fontSize: isMobile ? 10 : 12 }}
-                numberOfLines={1}
+      <View>
+        <View className="flex-row items-center">
+          <View className="flex-row items-center gap-3 flex-1 min-w-0">
+            {!hideBack && (
+              <TouchableOpacity
+                onPress={handleBack}
+                className="w-10 h-10 bg-white/10 rounded-xl items-center justify-center border border-white/20"
+                activeOpacity={0.7}
               >
-                {subtitle}
-              </Text>
+                <AppIcon name="chevronBack" size={22} color="#fff" />
+              </TouchableOpacity>
             )}
+            <View className="flex-1 min-w-0">
+              <Text
+                className="font-black text-white"
+                style={{ fontSize: isMobile ? 17 : 20 }}
+                numberOfLines={2}
+              >
+                {title}
+              </Text>
+              {subtitle && (
+                <Text
+                  className="text-white/60 font-bold uppercase tracking-wider mt-0.5"
+                  style={{ fontSize: isMobile ? 10 : 12 }}
+                  numberOfLines={2}
+                >
+                  {subtitle}
+                </Text>
+              )}
+            </View>
           </View>
+          {rightAction && !isMobile ? (
+            <View style={{ marginLeft: 12, flexShrink: 0 }}>{rightAction}</View>
+          ) : null}
         </View>
-        {rightAction && <View className="ml-3">{rightAction}</View>}
+        {rightAction && isMobile ? (
+          <View style={{ marginTop: 12, alignSelf: "stretch" }}>{rightAction}</View>
+        ) : null}
       </View>
     </LinearGradient>
   );

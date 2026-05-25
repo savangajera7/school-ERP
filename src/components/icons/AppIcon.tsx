@@ -102,6 +102,43 @@ export function IconTile({ name, size = 48, active }: TileProps) {
   );
 }
 
+export function GenderIcon({
+  gender,
+  size = 22,
+  color = SchoolTheme.primary,
+}: {
+  gender?: string | null;
+  size?: number;
+  color?: string;
+}) {
+  return (
+    <AppIcon
+      name={gender === "Female" ? "female" : "male"}
+      size={size}
+      color={color}
+      active
+    />
+  );
+}
+
+export function SubjectSlotIcon({
+  subject,
+  size = 20,
+}: {
+  subject?: string | null;
+  size?: number;
+}) {
+  const isLunch = subject === "Lunch Break";
+  return (
+    <AppIcon
+      name={isLunch ? "lunch" : "subjects"}
+      size={size}
+      color={isLunch ? "#C2410C" : SchoolTheme.primary}
+      active
+    />
+  );
+}
+
 const styles = StyleSheet.create({
   circle: {
     alignItems: "center",

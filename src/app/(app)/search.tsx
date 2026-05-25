@@ -10,6 +10,8 @@ import { useGetApiStudentGet } from "@/api/generated/3-student-crud/3-student-cr
 import { parseApiList } from "@/utils/apiResponse";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { AppIcon, GenderIcon } from "@/components/icons/AppIcon";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { Card } from "@/components/ui/Card";
 import { MOBILE_TAB_BAR_HEIGHT } from "@/constants/mobileTabs";
@@ -75,7 +77,7 @@ export default function StudentSearchScreen() {
         accentColor={Colors.accent}
         icon={
           <View className="w-11 h-11 rounded-xl items-center justify-center bg-blue-50/50 border border-blue-100">
-            <Text className="text-lg">{item.gender === "Female" ? "👧🏻" : "👦🏻"}</Text>
+            <GenderIcon gender={item.gender} size={22} />
           </View>
         }
         badge={
@@ -112,7 +114,10 @@ export default function StudentSearchScreen() {
         {/* 🛠️ Advanced Filters Panel */}
         <Card className="bg-white border border-gray-150 p-5 mb-5 shadow-sm rounded-3xl">
           <View className="flex-row items-center justify-between mb-4 border-b border-gray-50 pb-2">
-            <Text className="text-[13px] font-black text-gray-900 uppercase tracking-wider">🔍 Search Controls</Text>
+            <View className="flex-row items-center gap-2">
+              <AppIcon name="search" size={18} color="#134A8C" active />
+              <Text className="text-[13px] font-black text-gray-900 uppercase tracking-wider">Search Controls</Text>
+            </View>
             <TouchableOpacity onPress={clearFilters}>
               <Text className="text-xs font-black text-rose-500 uppercase">Clear All</Text>
             </TouchableOpacity>
@@ -226,7 +231,9 @@ export default function StudentSearchScreen() {
           <SkeletonLoader variant={isMobile ? "card" : "table"} rows={5} />
         ) : filteredStudents.length === 0 ? (
           <Card className="bg-white border border-gray-150 p-10 items-center rounded-3xl">
-            <Text className="text-3xl mb-2">🔍</Text>
+            <View className="mb-2">
+              <AppIcon name="search" size={36} color="#9CA3AF" />
+            </View>
             <Text className="text-sm font-black text-gray-800">No Students Found</Text>
             <Text className="text-xs text-gray-400 font-bold mt-1 text-center">
               Try adjusting your search name, roll number, or class filter selection.
@@ -268,7 +275,7 @@ export default function StudentSearchScreen() {
                     
                     <View className="flex-1 flex-row items-center gap-3">
                       <View className="w-8 h-8 rounded-lg bg-sky-50 items-center justify-center border border-sky-100">
-                        <Text className="text-sm">{item.gender === "Female" ? "👧🏻" : "👦🏻"}</Text>
+                        <GenderIcon gender={item.gender} size={18} />
                       </View>
                       <Text className="text-sm font-black text-gray-800">{fullName}</Text>
                     </View>

@@ -7,6 +7,8 @@ import { Card } from "@/components/ui/Card";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Colors } from "@/constants/colors";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { AppIcon, IconCircle } from "@/components/icons/AppIcon";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import {
   useGetApiTeacherGetTeacherList,
@@ -16,8 +18,7 @@ import { parseApiList } from "@/utils/apiResponse";
 import { useToast } from "@/components/ui/Toast";
 import { useAuthStore } from "@/store/authStore";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
-
-import { EmptyState } from "@/components/ui/EmptyState";
+import { TabChip } from "@/components/icons/TabChip";
 
 export default function TeacherManagementScreen() {
   const { isMobile } = useBreakpoint();
@@ -158,7 +159,7 @@ export default function TeacherManagementScreen() {
                   elevation: 1,
                 }}
               >
-                <Text className="text-gray-400 text-base">🔍</Text>
+                <AppIcon name="search" size={18} color="#9CA3AF" />
                 <TextInput
                   value={searchQuery}
                   onChangeText={setSearchQuery}
@@ -175,7 +176,7 @@ export default function TeacherManagementScreen() {
                 </View>
               ) : filteredTeachers.length === 0 ? (
                 <View className="py-20 items-center justify-center bg-white rounded-3xl border border-gray-100 p-8">
-                  <Text className="text-4xl mb-3">👩‍🏫</Text>
+                  <EmptyState icon="teacherStaff" title="No teachers" message="Staff records will appear here" />
                   <Text className="text-gray-400 font-extrabold text-sm uppercase tracking-wider">No faculty records found</Text>
                 </View>
               ) : isMobile ? (
@@ -187,7 +188,7 @@ export default function TeacherManagementScreen() {
                       subtitle={tc.subject}
                       icon={
                         <View className="w-10 h-10 rounded-xl bg-orange-50 items-center justify-center border border-orange-100">
-                          <Text className="text-base">👩‍🏫</Text>
+                          <AppIcon name="teacherStaff" size={20} color="#BE185D" active />
                         </View>
                       }
                       badge={
@@ -223,7 +224,7 @@ export default function TeacherManagementScreen() {
                     >
                       <View className="flex-1 flex-row items-center gap-3.5">
                         <View className="w-10 h-10 rounded-xl bg-orange-50 items-center justify-center border border-orange-100">
-                          <Text className="text-lg">👩‍🏫</Text>
+                          <IconCircle name="teacherStaff" size={40} iconSize={20} />
                         </View>
                         <View>
                           <Text className="text-sm font-black text-gray-900">{tc.name}</Text>
@@ -264,11 +265,7 @@ export default function TeacherManagementScreen() {
                   }`}
                   activeOpacity={0.8}
                 >
-                  <Text className={`text-xs font-black uppercase tracking-wider ${
-                    activeTab === "basic" ? "text-white" : "text-gray-400"
-                  }`}>
-                    👤 Basic Info
-                  </Text>
+                  <TabChip icon="profile" label="Basic Info" active={activeTab === "basic"} />
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -278,11 +275,7 @@ export default function TeacherManagementScreen() {
                   }`}
                   activeOpacity={0.8}
                 >
-                  <Text className={`text-xs font-black uppercase tracking-wider ${
-                    activeTab === "education" ? "text-white" : "text-gray-400"
-                  }`}>
-                    🎓 Education
-                  </Text>
+                  <TabChip icon="students" label="Education" active={activeTab === "education"} />
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -292,11 +285,7 @@ export default function TeacherManagementScreen() {
                   }`}
                   activeOpacity={0.8}
                 >
-                  <Text className={`text-xs font-black uppercase tracking-wider ${
-                    activeTab === "role" ? "text-white" : "text-gray-400"
-                  }`}>
-                    🔑 Permissions
-                  </Text>
+                  <TabChip icon="roles" label="Permissions" active={activeTab === "role"} />
                 </TouchableOpacity>
               </View>
 

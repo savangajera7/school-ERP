@@ -5,9 +5,9 @@ import type { TabDef } from "@/components/layout/RoleTabBar";
 
 const ADMIN_TABS: TabDef[] = [
   { name: "dashboard", title: "Home", icon: "home", href: "/(admin)/dashboard" },
-  { name: "students", title: "Students", icon: "school", href: "/(admin)/students" },
-  { name: "teachers", title: "Staff", icon: "people", href: "/(admin)/teachers" },
-  { name: "notices", title: "Notices", icon: "megaphone", href: "/(admin)/notices" },
+  { name: "students", title: "Students", icon: "students", href: "/(admin)/students" },
+  { name: "teachers", title: "Staff", icon: "teachers", href: "/(admin)/teachers" },
+  { name: "notices", title: "Notices", icon: "notices", href: "/(admin)/notices" },
   { name: "settings", title: "Settings", icon: "settings", href: "/(admin)/settings" },
 ];
 

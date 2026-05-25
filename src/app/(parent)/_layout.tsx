@@ -5,9 +5,9 @@ import type { TabDef } from "@/components/layout/RoleTabBar";
 
 const PARENT_TABS: TabDef[] = [
   { name: "dashboard", title: "Home", icon: "home", href: "/(parent)/dashboard" },
-  { name: "homework", title: "HW", icon: "book", href: "/(parent)/homework" },
-  { name: "attendance", title: "Attend", icon: "calendar", href: "/(parent)/attendance" },
-  { name: "exam", title: "Exams", icon: "school", href: "/(parent)/exam" },
+  { name: "homework", title: "HW", icon: "homework", href: "/(parent)/homework" },
+  { name: "attendance", title: "Attend", icon: "attendance", href: "/(parent)/attendance" },
+  { name: "exam", title: "Exams", icon: "exams", href: "/(parent)/exam" },
   { name: "menu", title: "More", icon: "menu", href: "/(parent)/menu" },
 ];
 

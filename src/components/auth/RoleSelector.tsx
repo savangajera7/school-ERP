@@ -1,23 +1,23 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Platform } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import type { Role } from "@/types/auth.types";
+import type { AppIconName } from "@/constants/appIcons";
+import { AppIcon } from "@/components/icons/AppIcon";
+import { SchoolTheme } from "@/constants/theme";
 
 interface RoleSelectorProps {
   selected: Role;
   onChange: (role: Role) => void;
 }
 
-const ROLES: { value: Role; label: string; icon: string }[] = [
-  { value: "superadmin", label: "Super Admin", icon: "👑" },
-  { value: "admin", label: "Admin", icon: "🛡️" },
-  { value: "teacher", label: "Teacher", icon: "📖" },
-  { value: "parent", label: "Parent", icon: "👥" },
+const ROLES: { value: Role; label: string; icon: AppIconName }[] = [
+  { value: "superadmin", label: "Super Admin", icon: "superadmin" },
+  { value: "admin", label: "Admin", icon: "admin" },
+  { value: "teacher", label: "Teacher", icon: "teacher" },
+  { value: "parent", label: "Parent", icon: "parentRole" },
 ];
 
-export const RoleSelector: React.FC<RoleSelectorProps> = ({
-  selected,
-  onChange,
-}) => {
+export const RoleSelector: React.FC<RoleSelectorProps> = ({ selected, onChange }) => {
   return (
     <View className="flex-row bg-[#F3F4F6] rounded-xl p-[4px] w-full mb-6">
       {ROLES.map((role) => {
@@ -28,7 +28,7 @@ export const RoleSelector: React.FC<RoleSelectorProps> = ({
             onPress={() => onChange(role.value)}
             activeOpacity={0.8}
             className={`
-              flex-1 h-10 rounded-[10px] items-center justify-center flex-row
+              flex-1 min-h-[44px] rounded-[10px] items-center justify-center flex-row gap-1.5
               ${isActive ? "bg-white" : "bg-transparent"}
             `}
             style={
@@ -43,7 +43,12 @@ export const RoleSelector: React.FC<RoleSelectorProps> = ({
                 : undefined
             }
           >
-            <Text className="text-[16px] mr-1.5">{role.icon}</Text>
+            <AppIcon
+              name={role.icon}
+              size={18}
+              color={isActive ? SchoolTheme.primary : "#9CA3AF"}
+              active={isActive}
+            />
             <Text
               className={`
                 text-[14px] font-bold

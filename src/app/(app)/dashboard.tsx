@@ -19,28 +19,28 @@ import { useGetApiClassGetClassList } from "@/api/generated/master-class/master-
 import { parseApiList } from "@/utils/apiResponse";
 import { usePermissions } from "@/hooks/usePermissions";
 import type { AppRoute } from "@/constants/rolePermissions";
+import type { AppIconName } from "@/constants/appIcons";
+import { AppIcon, IconCircle } from "@/components/icons/AppIcon";
 
 const QUICK_ACTIONS: {
   title: string;
-  icon: string;
+  icon: AppIconName;
   route: AppRoute;
-  bg: string;
-  iconBg: string;
 }[] = [
-  { title: "Students", icon: "🎓", route: "/(app)/students", bg: "#E0F2FE", iconBg: "#BAE6FD" },
-  { title: "Attendance", icon: "📝", route: "/(app)/attendance", bg: "#FEF9C3", iconBg: "#FEF08A" },
-  { title: "Fees", icon: "💰", route: "/(app)/fees", bg: "#DCFCE7", iconBg: "#BBF7D0" },
-  { title: "Exams", icon: "📊", route: "/(app)/exams", bg: "#F3E8FF", iconBg: "#E9D5FF" },
-  { title: "Teachers", icon: "👥", route: "/(app)/teachers", bg: "#FFE4E6", iconBg: "#FECDD3" },
-  { title: "Notices", icon: "📢", route: "/(app)/notices", bg: "#FEF3C7", iconBg: "#FDE68A" },
-  { title: "Academic", icon: "🏫", route: "/(app)/academic-setup", bg: "#E0E7FF", iconBg: "#C7D2FE" },
-  { title: "Inquiries", icon: "💬", route: "/(app)/inquiries", bg: "#CFFAFE", iconBg: "#A5F3FC" },
-  { title: "Results", icon: "🏆", route: "/(app)/parent-results", bg: "#FEF9C3", iconBg: "#FEF08A" },
-  { title: "Timetable", icon: "🗓️", route: "/(app)/timetable", bg: "#FCE7F3", iconBg: "#FBCFE8" },
-  { title: "Reports", icon: "📈", route: "/(app)/attendance-reports", bg: "#F0FDF4", iconBg: "#BBF7D0" },
-  { title: "Admission", icon: "📋", route: "/(app)/admission-form", bg: "#F5F3FF", iconBg: "#DDD6FE" },
-  { title: "Leave", icon: "📅", route: "/(app)/leave", bg: "#E0E7FF", iconBg: "#C7D2FE" },
-  { title: "Alerts", icon: "🔔", route: "/(app)/notifications", bg: "#FEE2E2", iconBg: "#FECACA" },
+  { title: "Students", icon: "students", route: "/(app)/students" },
+  { title: "Attendance", icon: "attendance", route: "/(app)/attendance" },
+  { title: "Fees", icon: "fees", route: "/(app)/fees" },
+  { title: "Exams", icon: "exams", route: "/(app)/exams" },
+  { title: "Teachers", icon: "teachers", route: "/(app)/teachers" },
+  { title: "Notices", icon: "notices", route: "/(app)/notices" },
+  { title: "Academic", icon: "academic", route: "/(app)/academic-setup" },
+  { title: "Inquiries", icon: "inquiries", route: "/(app)/inquiries" },
+  { title: "Results", icon: "results", route: "/(app)/parent-results" },
+  { title: "Timetable", icon: "timetable", route: "/(app)/timetable" },
+  { title: "Reports", icon: "reports", route: "/(app)/attendance-reports" },
+  { title: "Admission", icon: "admission", route: "/(app)/admission-form" },
+  { title: "Leave", icon: "leave", route: "/(app)/leave" },
+  { title: "Alerts", icon: "notifications", route: "/(app)/notifications" },
 ];
 
 export default function DashboardScreen() {
@@ -60,11 +60,11 @@ export default function DashboardScreen() {
 
   const isLoading = loadingStudents || loadingFees || loadingAttendance || loadingTeachers;
 
-  const students = parseApiList(studentsData?.data);
-  const fees = parseApiList(feesData?.data);
-  const attendance = parseApiList(attendanceData?.data);
-  const teachers = parseApiList(teachersData?.data);
-  const classes = parseApiList<{ classID?: number; className?: string }>(classesData?.data);
+  const students = parseApiList(studentsData);
+  const fees = parseApiList(feesData);
+  const attendance = parseApiList(attendanceData);
+  const teachers = parseApiList(teachersData);
+  const classes = parseApiList<{ classID?: number; className?: string }>(classesData);
 
   const classAttendance = useMemo(() => {
     const today = new Date().toISOString().slice(0, 10);
@@ -164,12 +164,12 @@ export default function DashboardScreen() {
             Welcome back
           </Text>
           <Text className="text-white text-2xl font-black mt-0.5">
-            Hello, {firstName} 👋
+            {firstName}
           </Text>
 
           {/* Omni Search */}
           <View className="mt-5 bg-white/10 border border-white/20 rounded-2xl h-[46px] px-4 flex-row items-center gap-2">
-            <Text className="text-white/50 text-sm">🔍</Text>
+            <AppIcon name="search" size={18} color="rgba(255,255,255,0.55)" />
             <TextInput
               value={searchQuery}
               onChangeText={setSearchQuery}
@@ -190,7 +190,7 @@ export default function DashboardScreen() {
             <View className="flex-row flex-wrap gap-3 mb-6">
               <StatCard
                 isMobile={isMobile}
-                emoji="🎓"
+                icon="students"
                 label="Total Students"
                 value={isLoading ? "..." : totalStudentsVal.toString()}
                 sub={isLoading ? "Loading..." : "Total active students enrolled"}
@@ -199,7 +199,7 @@ export default function DashboardScreen() {
               />
               <StatCard
                 isMobile={isMobile}
-                emoji="✅"
+                icon="check"
                 label="Attendance Today"
                 value={isLoading ? "..." : attendanceTodayVal.toString()}
                 sub={isLoading ? "Loading..." : "Average student daily attendance"}
@@ -208,7 +208,7 @@ export default function DashboardScreen() {
               />
               <StatCard
                 isMobile={isMobile}
-                emoji="👥"
+                icon="teachers"
                 label="Total Staff"
                 value={isLoading ? "..." : totalStaffVal.toString()}
                 sub={isLoading ? "Loading..." : "Total registered school faculty"}
@@ -217,7 +217,7 @@ export default function DashboardScreen() {
               />
               <StatCard
                 isMobile={isMobile}
-                emoji="⏱️"
+                icon="clock"
                 label="Staff Attendance"
                 value={isLoading ? "..." : staffAttendanceVal.toString()}
                 sub={isLoading ? "Loading..." : "Faculty attendance record"}
@@ -234,7 +234,7 @@ export default function DashboardScreen() {
             >
               <View className="flex-row justify-between items-center mb-5 border-b border-gray-100 pb-3">
                 <View className="flex-row items-center gap-2">
-                  <Text className="text-xl">📊</Text>
+                  <AppIcon name="chart" size={22} color="#134A8C" />
                   <Text className="text-gray-900 font-black text-sm uppercase tracking-wide">
                     Live Operational Performance Indicators
                   </Text>
@@ -269,7 +269,7 @@ export default function DashboardScreen() {
                   <View className="flex-row items-center px-5 py-4 bg-white">
                     <View style={{ flex: 3.5, flexDirection: "row", alignItems: "center" }} className="gap-3">
                       <View className="w-9 h-9 rounded-xl bg-sky-50 border border-sky-100 items-center justify-center">
-                        <Text className="text-base">🎓</Text>
+                        <AppIcon name="students" size={18} color="#0369A1" />
                       </View>
                       <Text className="text-sm font-extrabold text-gray-800">Total Enrolled Students</Text>
                     </View>
@@ -296,7 +296,7 @@ export default function DashboardScreen() {
                   <View className="flex-row items-center px-5 py-4 bg-gray-50/10">
                     <View style={{ flex: 3.5, flexDirection: "row", alignItems: "center" }} className="gap-3">
                       <View className="w-9 h-9 rounded-xl bg-emerald-50 border border-emerald-100 items-center justify-center">
-                        <Text className="text-base">✅</Text>
+                        <AppIcon name="check" size={18} color="#15803D" />
                       </View>
                       <Text className="text-sm font-extrabold text-gray-800">Student Attendance Today</Text>
                     </View>
@@ -323,7 +323,7 @@ export default function DashboardScreen() {
                   <View className="flex-row items-center px-5 py-4 bg-white">
                     <View style={{ flex: 3.5, flexDirection: "row", alignItems: "center" }} className="gap-3">
                       <View className="w-9 h-9 rounded-xl bg-purple-50 border border-purple-100 items-center justify-center">
-                        <Text className="text-base">👥</Text>
+                        <AppIcon name="teachers" size={18} color="#7E22CE" />
                       </View>
                       <Text className="text-sm font-extrabold text-gray-800">Total Faculty & Staff</Text>
                     </View>
@@ -350,7 +350,7 @@ export default function DashboardScreen() {
                   <View className="flex-row items-center px-5 py-4 bg-gray-50/10">
                     <View style={{ flex: 3.5, flexDirection: "row", alignItems: "center" }} className="gap-3">
                       <View className="w-9 h-9 rounded-xl bg-cyan-50 border border-cyan-100 items-center justify-center">
-                        <Text className="text-base">⏱️</Text>
+                        <AppIcon name="clock" size={18} color="#0E7490" />
                       </View>
                       <Text className="text-sm font-extrabold text-gray-800">Staff Attendance</Text>
                     </View>
@@ -379,7 +379,7 @@ export default function DashboardScreen() {
           )}
 
           {/* ── Quick Actions ─────────────────────────────────────── */}
-          <SectionCard title="Quick Actions" icon="⚡">
+          <SectionCard title="Quick Actions" icon="flash">
             <View className="flex-row flex-wrap">
               {quickActions.map((action, i) => (
                 <TouchableOpacity
@@ -389,11 +389,8 @@ export default function DashboardScreen() {
                   style={{ width: isMobile ? "25%" : "12.5%" }}
                   className="items-center mb-6"
                 >
-                  <View
-                    className="w-14 h-14 rounded-2xl items-center justify-center mb-2"
-                    style={{ backgroundColor: action.bg }}
-                  >
-                    <Text className="text-2xl">{action.icon}</Text>
+                  <View className="mb-2">
+                    <IconCircle name={action.icon} size={52} iconSize={24} />
                   </View>
                   <Text
                     className="text-gray-700 font-bold text-[10px] text-center"
@@ -412,7 +409,7 @@ export default function DashboardScreen() {
 
             {/* Birthday Widget */}
             <View className="flex-1">
-              <SectionCard title="Birthdays" icon="🎂" noPaddingBody>
+              <SectionCard title="Birthdays" icon="birthday" noPaddingBody>
                 {/* Tab toggle */}
                 <View className="flex-row bg-gray-50 border border-gray-150 rounded-xl p-0.5 mx-5 mb-4">
                   {(["today", "upcoming"] as const).map((tab) => (
@@ -437,7 +434,9 @@ export default function DashboardScreen() {
 
                 {/* Empty state */}
                 <View className="items-center justify-center py-10">
-                  <Text className="text-3xl mb-2">🎁</Text>
+                  <View className="mb-2">
+                    <IconCircle name="gift" size={48} iconSize={24} />
+                  </View>
                   <Text className="text-gray-400 font-extrabold text-xs uppercase tracking-wider">
                     No birthdays {birthdayTab === "today" ? "today" : "this week"}
                   </Text>
@@ -447,7 +446,7 @@ export default function DashboardScreen() {
 
             {/* Attendance Status Widget */}
             <View className="flex-1">
-              <SectionCard title="Attendance Status" icon="📊" noPaddingBody>
+              <SectionCard title="Attendance Status" icon="chart" noPaddingBody>
                 {!isMobile ? (
                   /* Elegant Desktop Table */
                   <View className="px-5 pb-5">
@@ -552,9 +551,9 @@ export default function DashboardScreen() {
 /* ── Sub-components ──────────────────────────────────────────── */
 
 function StatCard({
-  isMobile, emoji, label, value, sub, bg, textColor,
+  isMobile, icon, label, value, sub, bg, textColor,
 }: {
-  isMobile: boolean; emoji: string; label: string; value: string;
+  isMobile: boolean; icon: AppIconName; label: string; value: string;
   sub: string; bg: string; textColor: string;
 }) {
   return (
@@ -566,12 +565,7 @@ function StatCard({
       }}
     >
       <View className="flex-row justify-between items-start mb-3">
-        <View
-          className="w-11 h-11 rounded-xl items-center justify-center"
-          style={{ backgroundColor: bg }}
-        >
-          <Text className="text-xl">{emoji}</Text>
-        </View>
+        <IconCircle name={icon} size={44} backgroundColor={bg} color={textColor} />
       </View>
       <Text className="text-gray-400 text-[10px] font-black uppercase tracking-wider mb-0.5">
         {label}
@@ -589,7 +583,7 @@ function StatCard({
 function SectionCard({
   title, icon, children, noPaddingBody = false,
 }: {
-  title: string; icon: string; children: React.ReactNode; noPaddingBody?: boolean;
+  title: string; icon: AppIconName; children: React.ReactNode; noPaddingBody?: boolean;
 }) {
   return (
     <View
@@ -600,7 +594,7 @@ function SectionCard({
     >
       {/* Card header */}
       <View className="flex-row items-center gap-2 px-5 pt-5 pb-4 border-b border-gray-50">
-        <Text className="text-lg">{icon}</Text>
+        <AppIcon name={icon} size={20} color="#134A8C" active />
         <Text className="text-gray-900 font-black text-[14px] uppercase tracking-wide flex-1">
           {title}
         </Text>

@@ -2,27 +2,28 @@ import React from "react";
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import { router, usePathname } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
 import { SchoolTheme } from "@/constants/theme";
 import { useAuth } from "@/hooks/useAuth";
 import { usePermissions } from "@/hooks/usePermissions";
+import type { AppIconName } from "@/constants/appIcons";
+import { AppIcon } from "@/components/icons/AppIcon";
 
-const PRIMARY: { label: string; route: string; icon: keyof typeof Ionicons.glyphMap }[] = [
+const PRIMARY: { label: string; route: string; icon: AppIconName }[] = [
   { label: "Dashboard", route: "/(admin)/dashboard", icon: "home" },
-  { label: "Students", route: "/(admin)/students", icon: "school" },
-  { label: "Teachers", route: "/(admin)/teachers", icon: "people" },
-  { label: "Notices", route: "/(admin)/notices", icon: "megaphone" },
+  { label: "Students", route: "/(admin)/students", icon: "students" },
+  { label: "Teachers", route: "/(admin)/teachers", icon: "teachers" },
+  { label: "Notices", route: "/(admin)/notices", icon: "notices" },
   { label: "Settings", route: "/(admin)/settings", icon: "settings" },
 ];
 
-const MORE: { label: string; route: string; icon: keyof typeof Ionicons.glyphMap; perm?: string }[] = [
-  { label: "Fees", route: "/(admin)/fees", icon: "cash", perm: "viewFees" },
-  { label: "Attendance", route: "/(admin)/attendance", icon: "calendar", perm: "markStudentAttendance" },
-  { label: "Exams", route: "/(admin)/exams", icon: "stats-chart", perm: "viewExams" },
-  { label: "Reports", route: "/(admin)/reports", icon: "bar-chart", perm: "viewReports" },
+const MORE: { label: string; route: string; icon: AppIconName; perm?: string }[] = [
+  { label: "Fees", route: "/(admin)/fees", icon: "fees", perm: "viewFees" },
+  { label: "Attendance", route: "/(admin)/attendance", icon: "attendance", perm: "markStudentAttendance" },
+  { label: "Exams", route: "/(admin)/exams", icon: "exams", perm: "viewExams" },
+  { label: "Reports", route: "/(admin)/reports", icon: "reports", perm: "viewReports" },
   { label: "Alerts", route: "/(admin)/notifications", icon: "notifications", perm: "viewNotifications" },
-  { label: "Parents", route: "/(admin)/parents", icon: "heart", perm: "viewParents" },
-  { label: "Masters", route: "/(admin)/masters", icon: "construct", perm: "manageMasters" },
+  { label: "Parents", route: "/(admin)/parents", icon: "parents", perm: "viewParents" },
+  { label: "Masters", route: "/(admin)/masters", icon: "masters", perm: "manageMasters" },
 ];
 
 export function AdminSidebar() {
@@ -40,7 +41,7 @@ export function AdminSidebar() {
   }: {
     label: string;
     route: string;
-    icon: keyof typeof Ionicons.glyphMap;
+    icon: AppIconName;
   }) => {
     const active = pathname.includes(route.replace("/(admin)/", ""));
     return (
@@ -48,7 +49,12 @@ export function AdminSidebar() {
         onPress={() => router.push(route as never)}
         style={[styles.item, active && styles.itemActive]}
       >
-        <Ionicons name={icon} size={20} color={active ? SchoolTheme.accent : "#94A3B8"} />
+        <AppIcon
+          name={icon}
+          size={20}
+          color={active ? SchoolTheme.primary : SchoolTheme.textSecondary}
+          active={active}
+        />
         <Text style={[styles.itemLabel, active && styles.itemLabelActive]}>{label}</Text>
       </TouchableOpacity>
     );
@@ -72,7 +78,7 @@ export function AdminSidebar() {
         ))}
       </ScrollView>
       <TouchableOpacity onPress={handleLogout} style={styles.logout}>
-        <Ionicons name="log-out-outline" size={20} color={SchoolTheme.error} />
+        <AppIcon name="logout" size={20} color={SchoolTheme.error} />
         <Text style={styles.logoutText}>Sign out</Text>
       </TouchableOpacity>
     </View>

@@ -20,7 +20,7 @@ export function ContentList({ items, readOnly, loading, onRefresh }: Props) {
   if (!loading && items.length === 0) {
     return (
       <EmptyState
-        icon="📚"
+        icon="homework"
         title="Nothing here yet"
         message={
           readOnly

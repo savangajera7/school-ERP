@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Colors } from "@/constants/colors";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { SubjectSlotIcon } from "@/components/icons/AppIcon";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { MOBILE_TAB_BAR_HEIGHT } from "@/constants/mobileTabs";
 
@@ -140,7 +141,7 @@ export default function TimetableScreen() {
                     <View className={`w-10 h-10 rounded-xl items-center justify-center ${
                       slot.subject === "Lunch Break" ? "bg-amber-50" : "bg-blue-50"
                     }`}>
-                      <Text className="text-base">{slot.subject === "Lunch Break" ? "🥪" : "📚"}</Text>
+                      <SubjectSlotIcon subject={slot.subject} size={22} />
                     </View>
                   }
                   badge={
@@ -180,7 +181,7 @@ export default function TimetableScreen() {
                     <View className={`w-9 h-9 rounded-xl items-center justify-center ${
                       slot.subject === 'Lunch Break' ? 'bg-amber-100' : 'bg-blue-100'
                     }`}>
-                      <Text className="text-sm">{slot.subject === 'Lunch Break' ? '🥪' : '📚'}</Text>
+                      <SubjectSlotIcon subject={slot.subject} size={18} />
                     </View>
                     <Text className="text-sm font-extrabold text-gray-850">{slot.subject}</Text>
                   </View>

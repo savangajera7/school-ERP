@@ -15,9 +15,10 @@ import { useAuthStore } from "@/store/authStore";
 import { translations } from "@/constants/translations";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Colors } from "@/constants/colors";
-import { LoginIntentSelector } from "@/components/auth/LoginIntentSelector";
 import { useAuth } from "@/hooks/useAuth";
-import { getHomeRoute, type LoginIntent } from "@/utils/roleRouting";
+import { AppIcon } from "@/components/icons/AppIcon";
+import { SchoolTheme } from "@/constants/theme";
+import { getHomeRoute } from "@/utils/roleRouting";
 
 const loginSchema = z.object({
   email: z.string().min(1, "Email is required"),
@@ -32,7 +33,6 @@ export default function LoginScreen() {
   const language = useAuthStore((state) => state.language);
   const t = translations[language];
   const { signInWithApi, apiLoginMutation } = useAuth();
-  const [loginIntent, setLoginIntent] = React.useState<LoginIntent>("parent");
   const [loginError, setLoginError] = React.useState<string | null>(null);
   const { isMobile } = useBreakpoint();
 
@@ -52,13 +52,12 @@ export default function LoginScreen() {
 
   const onSubmit = async (data: LoginFormData) => {
     setLoginError(null);
-    const result = await signInWithApi(data.email, data.password, loginIntent);
+    const result = await signInWithApi(data.email, data.password);
     if (!result.ok) setLoginError(result.error ?? t.loginFailed);
   };
 
   const renderForm = () => (
     <View style={styles.formContainer}>
-      <LoginIntentSelector selected={loginIntent} onChange={setLoginIntent} />
       <FormField
         control={control}
         name="email"
@@ -72,7 +71,7 @@ export default function LoginScreen() {
         }}
         leftIcon={
           <View style={styles.iconCircle}>
-            <Text style={styles.iconText}>📧</Text>
+            <AppIcon name="email" size={18} color={SchoolTheme.primary} />
           </View>
         }
       />
@@ -87,7 +86,7 @@ export default function LoginScreen() {
         onSubmitEditing={handleSubmit(onSubmit)}
         leftIcon={
           <View style={styles.iconCircle}>
-            <Text style={styles.iconText}>🔒</Text>
+            <AppIcon name="lock" size={18} color={SchoolTheme.primary} />
           </View>
         }
       />
@@ -310,6 +309,13 @@ const styles = StyleSheet.create({
   loginTitle: { fontSize: 36, fontWeight: "900", color: "#0d3666", letterSpacing: -1 },
   loginSubtitle: { fontSize: 16, color: "#6b7280", marginTop: 4, marginBottom: 48, fontWeight: "500" },
   formContainer: { width: "100%" },
+  roleHint: {
+    fontSize: 13,
+    color: SchoolTheme.textSecondary,
+    lineHeight: 20,
+    marginBottom: 20,
+    fontWeight: "500",
+  },
   languageToggleContainer: { alignItems: "center", marginBottom: 32 },
   languageToggleBackground: { flexDirection: "row", backgroundColor: "#f3f4f6", borderRadius: 18, padding: 5, width: "100%", maxWidth: 280, borderWidth: 1, borderColor: "#e5e7eb" },
   languageOption: { flex: 1, paddingVertical: 12, alignItems: "center", justifyContent: "center", borderRadius: 14 },

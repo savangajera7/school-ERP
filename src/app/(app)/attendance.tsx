@@ -18,6 +18,8 @@ import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { usePermissions } from "@/hooks/usePermissions";
+import { GenderIcon } from "@/components/icons/AppIcon";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 export default function AttendanceScreen() {
   const { isMobile } = useBreakpoint();
@@ -128,7 +130,7 @@ export default function AttendanceScreen() {
         accentColor={stripeColor}
         icon={
           <View className="w-10 h-10 rounded-xl items-center justify-center bg-gray-50 border border-gray-100">
-            <Text className="text-lg">{item.gender === "Female" ? "👧🏻" : "👦🏻"}</Text>
+            <GenderIcon gender={item.gender} size={22} />
           </View>
         }
         badge={
@@ -310,11 +312,8 @@ export default function AttendanceScreen() {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: 100 }}
             ListEmptyComponent={
-              <View className="items-center justify-center py-20 bg-white rounded-3xl border border-gray-150 mt-2">
-                <Text className="text-4xl mb-4">👧🏻👦🏻</Text>
-                <Text className="text-gray-400 font-extrabold text-sm uppercase tracking-wider">
-                  No students found
-                </Text>
+              <View className="bg-white rounded-3xl border border-gray-150 mt-2">
+                <EmptyState icon="students" title="No students found" message="Select class and section, or adjust filters" />
               </View>
             }
           />
@@ -331,9 +330,8 @@ export default function AttendanceScreen() {
 
             {/* Rows */}
             {filteredStudents.length === 0 ? (
-              <View className="py-20 items-center justify-center">
-                <Text className="text-3xl mb-3">📭</Text>
-                <Text className="text-gray-400 font-black text-sm uppercase tracking-wider">No students matching criteria</Text>
+              <View className="py-8">
+                <EmptyState icon="empty" title="No students" message="No students match the selected class and section" />
               </View>
             ) : (
               filteredStudents.map((student, index) => {
@@ -349,7 +347,7 @@ export default function AttendanceScreen() {
                     
                     <View className="flex-1 flex-row items-center gap-3">
                       <View className="w-8 h-8 rounded-lg bg-indigo-50/50 border border-indigo-100 items-center justify-center">
-                        <Text className="text-sm">{student.gender === 'Female' ? '👧🏻' : '👦🏻'}</Text>
+                        <GenderIcon gender={student.gender} size={18} />
                       </View>
                       <Text className="text-sm font-black text-gray-900">
                         {student.studentDisplayName || `${student.firstName} ${student.lastName}`}

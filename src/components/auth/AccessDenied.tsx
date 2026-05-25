@@ -1,28 +1,27 @@
-import React, { useEffect } from "react";
-import { View, Text } from "react-native";
+import React from "react";
+import { View, Text, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
-import { Button } from "@/components/ui/Button";
+import { IconCircle } from "@/components/icons/AppIcon";
+import { SchoolTheme } from "@/constants/theme";
 
 type Props = {
   message?: string;
 };
 
 export function AccessDenied({
-  message = "You do not have permission to view this screen.",
+  message = "You do not have permission to view this page.",
 }: Props) {
-  useEffect(() => {
-    const t = setTimeout(() => router.replace("/(app)/dashboard"), 100);
-    return () => clearTimeout(t);
-  }, []);
-
   return (
-    <View className="flex-1 items-center justify-center p-8 bg-[#F8FAFC]">
-      <Text className="text-4xl mb-4">🔒</Text>
-      <Text className="text-lg font-black text-gray-800 text-center">Access restricted</Text>
+    <View className="flex-1 items-center justify-center p-8 bg-[#F4F6FA]">
+      <IconCircle name="lock" size={64} iconSize={32} backgroundColor="#FEE2E2" color={SchoolTheme.error} />
+      <Text className="text-lg font-black text-gray-900 mt-4 text-center">Access restricted</Text>
       <Text className="text-sm text-gray-500 text-center mt-2 leading-5">{message}</Text>
-      <View className="mt-6 w-full max-w-[240px]">
-        <Button label="Go to dashboard" onPress={() => router.replace("/(app)/dashboard")} />
-      </View>
+      <TouchableOpacity
+        onPress={() => router.back()}
+        className="mt-6 px-6 py-3 rounded-xl bg-[#134A8C] min-h-[48px] justify-center"
+      >
+        <Text className="text-white font-bold">Go back</Text>
+      </TouchableOpacity>
     </View>
   );
 }

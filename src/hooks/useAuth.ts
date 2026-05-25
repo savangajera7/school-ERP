@@ -6,14 +6,8 @@ import { authService } from "@/services/auth/authService";
 import { roleFromRoleId } from "@/constants/rolePermissions";
 import { postApiLoginLogin } from "@/api/generated/1-login-no-token/1-login-no-token";
 import type { LoginRequest } from "@/api/model";
-import { registerPushToken } from "@/services/notifications/pushService";
 import type { LoginPayload, Role } from "@/types/auth.types";
-import {
-  getHomeRoute,
-  intentMatchesRole,
-  roleToRouteGroup,
-  type LoginIntent,
-} from "@/utils/roleRouting";
+import { getHomeRoute, roleToRouteGroup } from "@/utils/roleRouting";
 
 export function useAuth() {
   const router = useRouter();
@@ -37,8 +31,7 @@ export function useAuth() {
   const signInWithApi = useCallback(
     async (
       email: string,
-      password: string,
-      intent: LoginIntent
+      password: string
     ): Promise<{ ok: boolean; error?: string }> => {
       try {
         const response = await apiLoginMutation.mutateAsync({
@@ -62,12 +55,6 @@ export function useAuth() {
         }
 
         const userRole = roleFromRoleId(u.roleID);
-        if (!intentMatchesRole(intent, userRole)) {
-          return {
-            ok: false,
-            error: `This account is registered as ${userRole}, not ${intent}.`,
-          };
-        }
 
         login(
           token,
@@ -85,7 +72,9 @@ export function useAuth() {
           },
           userRole
         );
-        registerPushToken().catch(() => {});
+        void import("@/services/notifications/pushService").then((m) =>
+          m.registerPushToken().catch(() => {})
+        );
         router.replace(getHomeRoute(userRole) as never);
         return { ok: true };
       } catch (e) {

@@ -63,7 +63,15 @@ export type AppIconName =
   | "add"
   | "filter"
   | "calendar"
-  | "school";
+  | "school"
+  | "lunch"
+  | "teacherStaff"
+  | "close"
+  | "call"
+  | "whatsapp"
+  | "sync"
+  | "building"
+  | "classroom";
 
 type IconPair = { outline: IoniconsName; filled: IoniconsName };
 
@@ -130,6 +138,14 @@ export const APP_ICONS: Record<AppIconName, IconPair> = {
   filter: { outline: "funnel-outline", filled: "funnel" },
   calendar: { outline: "calendar-outline", filled: "calendar" },
   school: { outline: "school-outline", filled: "school" },
+  lunch: { outline: "restaurant-outline", filled: "restaurant" },
+  teacherStaff: { outline: "person-outline", filled: "person" },
+  close: { outline: "close-outline", filled: "close" },
+  call: { outline: "call-outline", filled: "call" },
+  whatsapp: { outline: "logo-whatsapp", filled: "logo-whatsapp" },
+  sync: { outline: "cloud-upload-outline", filled: "cloud-upload" },
+  building: { outline: "business-outline", filled: "business" },
+  classroom: { outline: "easel-outline", filled: "easel" },
 };
 
 export function resolveIconName(
@@ -206,4 +222,12 @@ export const QUICK_ACTION_STYLES: Record<
   filter: { bg: "#F3F4F6", iconBg: "#E5E7EB", iconColor: "#374151" },
   calendar: { bg: "#E0E7FF", iconBg: "#C7D2FE", iconColor: "#4338CA" },
   school: { bg: "#E0F2FE", iconBg: "#BAE6FD", iconColor: "#0369A1" },
+  lunch: { bg: "#FFEDD5", iconBg: "#FED7AA", iconColor: "#C2410C" },
+  teacherStaff: { bg: "#FCE7F3", iconBg: "#FBCFE8", iconColor: "#BE185D" },
+  close: { bg: "#F3F4F6", iconBg: "#E5E7EB", iconColor: "#6B7280" },
+  call: { bg: "#DBEAFE", iconBg: "#BFDBFE", iconColor: "#1D4ED8" },
+  whatsapp: { bg: "#DCFCE7", iconBg: "#BBF7D0", iconColor: "#15803D" },
+  sync: { bg: "#E0F2FE", iconBg: "#BAE6FD", iconColor: "#0369A1" },
+  building: { bg: "#E0E7FF", iconBg: "#C7D2FE", iconColor: "#4338CA" },
+  classroom: { bg: "#FEF3C7", iconBg: "#FDE68A", iconColor: "#B45309" },
 };

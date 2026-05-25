@@ -39,7 +39,7 @@ export default function ParentAttendanceView() {
         {isLoading ? (
           <SkeletonLoader rows={5} />
         ) : isError ? (
-          <EmptyState icon="⚠️" title="Could not load" message="Pull to refresh or try again." />
+          <EmptyState icon="warning" title="Could not load" message="Pull to refresh or try again." />
         ) : (
           <FlatList
             data={records}

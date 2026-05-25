@@ -13,6 +13,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useAuthStore } from "@/store/authStore";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
+import { AppIcon } from "@/components/icons/AppIcon";
 import { Colors } from "@/constants/colors";
 import { MOBILE_TAB_BAR_HEIGHT } from "@/constants/mobileTabs";
 import { useGetApiStudentGet } from "@/api/generated/3-student-crud/3-student-crud";
@@ -207,7 +208,12 @@ export default function ProfileScreen() {
                       className="flex-row items-center gap-3 p-4 rounded-2xl bg-[#F8FAFC] border border-gray-100"
                     >
                       <View className="w-11 h-11 rounded-xl bg-white border border-sky-100 items-center justify-center">
-                        <Text className="text-xl">{child.gender === "Female" ? "👧" : "👦"}</Text>
+                        <AppIcon
+                          name={child.gender === "Female" ? "female" : "male"}
+                          size={22}
+                          color="#134A8C"
+                          active
+                        />
                       </View>
                       <View className="flex-1">
                         <Text className="text-sm font-black text-gray-800">{studentName(child)}</Text>
@@ -231,7 +237,7 @@ export default function ProfileScreen() {
                 className="mt-4 flex-row items-center justify-center gap-2 py-3 rounded-2xl bg-[#134A8C]/8 border border-[#134A8C]/15"
                 activeOpacity={0.8}
               >
-                <Text className="text-sm">🏆</Text>
+                <AppIcon name="results" size={18} color="#134A8C" active />
                 <Text className="text-[12px] font-black text-[#134A8C]">View academic results</Text>
               </TouchableOpacity>
             </View>
@@ -248,9 +254,9 @@ export default function ProfileScreen() {
               </Text>
               <View className="flex-row flex-wrap gap-2">
                 {[
-                  { label: "Menu", route: "/(app)/menu", icon: "☰" },
-                  { label: "Students", route: "/(app)/students", icon: "🎓" },
-                  { label: "Notices", route: "/(app)/notices", icon: "📢" },
+                  { label: "Menu", route: "/(app)/menu", icon: "menu" as const },
+                  { label: "Students", route: "/(app)/students", icon: "students" as const },
+                  { label: "Notices", route: "/(app)/notices", icon: "notices" as const },
                 ].map((link) => (
                   <TouchableOpacity
                     key={link.route}
@@ -258,7 +264,7 @@ export default function ProfileScreen() {
                     className="flex-row items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-50 border border-gray-100"
                     activeOpacity={0.8}
                   >
-                    <Text>{link.icon}</Text>
+                    <AppIcon name={link.icon} size={18} color="#134A8C" active />
                     <Text className="text-xs font-black text-gray-700">{link.label}</Text>
                   </TouchableOpacity>
                 ))}
@@ -272,7 +278,7 @@ export default function ProfileScreen() {
               activeOpacity={0.85}
               className="flex-row items-center justify-center gap-2.5 py-4 rounded-2xl bg-[#134A8C]/8 border border-[#134A8C]/15 mb-3"
             >
-              <Text className="text-base">🔒</Text>
+              <AppIcon name="lock" size={18} color="#134A8C" active />
               <Text className="text-sm font-black text-[#134A8C] uppercase tracking-wide">
                 Change password
               </Text>
@@ -286,7 +292,7 @@ export default function ProfileScreen() {
             className="flex-row items-center justify-center gap-2.5 py-4 rounded-2xl bg-rose-50 border border-rose-100 mb-2"
             style={{ boxShadow: "0px 2px 12px rgba(239,68,68,0.08)" }}
           >
-            <Text className="text-base">🚪</Text>
+            <AppIcon name="logout" size={18} color="#E11D48" />
             <Text className="text-sm font-black text-rose-600 uppercase tracking-wide">
               Sign out
             </Text>

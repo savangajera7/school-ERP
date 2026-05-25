@@ -1,227 +1,347 @@
 import React, { useState, useMemo } from "react";
-import { View, Text, TouchableOpacity, TextInput, FlatList } from "react-native";
+import { View, Text, TouchableOpacity, TextInput, FlatList, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Colors } from "@/constants/colors";
-import { StudentModel } from "@/api/model/studentModel";
+import type { StudentModel } from "@/api/model/studentModel";
 import { useGetApiStudentGet } from "@/api/generated/3-student-crud/3-student-crud";
 import { parseApiList } from "@/utils/apiResponse";
+import { normalizeStudent, getStudentDisplayName, formatOptional } from "@/utils/studentUtils";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { HeaderActionButton } from "@/components/ui/HeaderActionButton";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { Card } from "@/components/ui/Card";
+import { AppIcon, GenderIcon } from "@/components/icons/AppIcon";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { ErrorState } from "@/components/ui/EmptyState";
+import { usePermissions } from "@/hooks/usePermissions";
 
 export default function StudentManagementScreen() {
   const { isMobile } = useBreakpoint();
+  const { canManageStudents } = usePermissions();
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { data, isLoading, refetch } = useGetApiStudentGet();
+  const { data, isLoading, isError, error, refetch } = useGetApiStudentGet();
 
   const students = useMemo(() => {
-    return parseApiList<StudentModel>(data?.data);
+    const raw = parseApiList<Record<string, unknown>>(data);
+    return raw
+      .map(normalizeStudent)
+      .filter(
+        (s) =>
+          s.studentID != null ||
+          s.studentGRNo ||
+          s.rollNo ||
+          s.firstName ||
+          s.studentDisplayName
+      );
   }, [data]);
 
   const filteredStudents = useMemo(() => {
+    const q = searchQuery.toLowerCase().trim();
+    if (!q) return students;
     return students.filter((student) => {
-      const name = student.studentDisplayName || `${student.firstName} ${student.lastName}`;
-      const search = searchQuery.toLowerCase();
+      const name = getStudentDisplayName(student).toLowerCase();
       return (
-        name.toLowerCase().includes(search) ||
-        student.rollNo?.toLowerCase().includes(search) ||
-        student.studentGRNo?.toLowerCase().includes(search)
+        name.includes(q) ||
+        formatOptional(student.rollNo, "").toLowerCase().includes(q) ||
+        formatOptional(student.studentGRNo, "").toLowerCase().includes(q)
       );
     });
   }, [students, searchQuery]);
 
-  const renderStudentItemMobile = ({ item, index }: { item: StudentModel; index: number }) => {
-    const fullName = item.studentDisplayName || `${item.firstName} ${item.lastName}`;
+  const renderStudentItemMobile = ({ item }: { item: StudentModel }) => {
+    const fullName = getStudentDisplayName(item);
+    const studentId = item.studentID;
     return (
       <MobileDataCard
-        key={item.studentID}
         title={fullName}
-        subtitle={`GR No: ${item.studentGRNo || "N/A"}`}
+        subtitle={`GR No: ${formatOptional(item.studentGRNo)}`}
         accentColor={Colors.accent}
         icon={
-          <View className="w-11 h-11 rounded-xl items-center justify-center bg-blue-50/50 border border-blue-100">
-            <Text className="text-lg">{item.gender === "Female" ? "👧🏻" : "👦🏻"}</Text>
+          <View style={styles.avatarBox}>
+            <GenderIcon gender={item.gender} size={22} />
           </View>
         }
         badge={
-          <View className="bg-orange-50 border border-orange-100 px-2.5 py-0.5 rounded-lg">
-            <Text className="text-[10px] font-black text-orange-600 uppercase">
-              Roll: {item.rollNo || "N/A"}
+          <View style={styles.rollBadge}>
+            <Text style={styles.rollBadgeText}>
+              Roll: {formatOptional(item.rollNo)}
             </Text>
           </View>
         }
         fields={[
-          { label: "Class ID", value: String(item.classID || "N/A") },
-          { label: "Section ID", value: String(item.sectionID || "N/A") },
-          { label: "Status", value: "Active", highlight: "success" },
+          { label: "Class", value: formatOptional(item.classID) },
+          { label: "Section", value: formatOptional(item.sectionID) },
+          { label: "Status", value: formatOptional(item.status, "Active"), highlight: "success" },
         ]}
-        onPress={() =>
+        onPress={() => {
+          if (studentId == null) return;
           router.push({
             pathname: "/(app)/student-profile",
-            params: { id: item.studentID },
-          })
-        }
+            params: { id: String(studentId) },
+          });
+        }}
       />
     );
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F8FAFC]" edges={["left", "right"]}>
+    <SafeAreaView style={styles.safe} edges={["left", "right"]}>
       <StatusBar style="light" translucent backgroundColor="transparent" />
 
       <ScreenHeader
         title="Students Ledger"
         subtitle="Manage student details and records"
-        breadcrumb={["Students"]}
         onBack={() => router.back()}
         rightAction={
-          <TouchableOpacity
-            onPress={() => router.push("/(app)/admission-form")}
-            activeOpacity={0.8}
-            className="bg-[#F5921E] px-4.5 py-2.5 rounded-xl shadow-md shadow-amber-500/20"
-          >
-            <Text className="text-white font-black text-xs uppercase tracking-widest">
-              + New Admission
-            </Text>
-          </TouchableOpacity>
+          canManageStudents ? (
+            <HeaderActionButton
+              label="+ New Admission"
+              shortLabel="+ New"
+              onPress={() => router.push("/(app)/admission-form")}
+              style={isMobile ? { alignSelf: "stretch" } : undefined}
+            />
+          ) : undefined
         }
       />
 
-      <View className="flex-1 px-4 md:px-8 max-w-[1400px] w-full self-center">
-        {/* Search Bar */}
-        <View className="my-5">
-          <View
-            className="bg-white flex-row items-center px-4 h-[52px] rounded-2xl border border-gray-150"
-            style={{
-              boxShadow: "0px 2px 8px rgba(0,0,0,0.03)",
-            }}
-          >
-            <Text className="text-base mr-3">🔍</Text>
+      <View style={styles.content}>
+        <View style={styles.searchWrap}>
+          <View style={styles.searchBar}>
+            <AppIcon name="search" size={18} color="#9CA3AF" />
             <TextInput
-              className="flex-1 h-full text-[14px] font-semibold text-gray-800"
+              style={styles.searchInput}
               placeholder="Search by name, roll no or GR..."
               placeholderTextColor="#9CA3AF"
               value={searchQuery}
               onChangeText={setSearchQuery}
-              style={{ outlineWidth: 0 } as any}
             />
-            {searchQuery.length > 0 && (
+            {searchQuery.length > 0 ? (
               <TouchableOpacity
                 onPress={() => setSearchQuery("")}
-                className="w-7 h-7 bg-gray-100 rounded-full items-center justify-center"
+                style={styles.clearBtn}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               >
-                <Text className="text-gray-400 font-black text-xs">✕</Text>
+                <AppIcon name="close" size={16} color="#9CA3AF" />
               </TouchableOpacity>
-            )}
+            ) : null}
           </View>
         </View>
 
         {isLoading ? (
-          <View className="py-6">
-            <SkeletonLoader variant={isMobile ? "card" : "table"} rows={5} />
+          <SkeletonLoader variant={isMobile ? "card" : "table"} rows={5} />
+        ) : isError ? (
+          <View style={styles.emptyWrap}>
+            <ErrorState
+              message={
+                error instanceof Error
+                  ? error.message
+                  : "Could not load students. Pull to refresh."
+              }
+            />
+            <TouchableOpacity style={styles.retryBtn} onPress={() => refetch()}>
+              <Text style={styles.retryText}>Retry</Text>
+            </TouchableOpacity>
           </View>
         ) : isMobile ? (
-          /* Mobile FlatList with Card View */
           <FlatList
             data={filteredStudents}
             renderItem={renderStudentItemMobile}
-            keyExtractor={(item) => item.studentID?.toString() || Math.random().toString()}
+            keyExtractor={(item, index) =>
+              item.studentID != null ? String(item.studentID) : `student-${index}`
+            }
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: 100 }}
             ListEmptyComponent={
-              <View className="items-center justify-center py-20 bg-white rounded-3xl border border-gray-150 mt-2">
-                <Text className="text-4xl mb-4">📭</Text>
-                <Text className="text-gray-400 font-extrabold text-sm uppercase tracking-wider">
-                  No students found
-                </Text>
-                <Text className="text-gray-350 font-semibold text-xs mt-2 text-center px-6">
-                  {searchQuery ? "Try a different search term" : "Add your first student to get started"}
-                </Text>
-              </View>
+              <EmptyState
+                icon="students"
+                title="No students found"
+                message={
+                  searchQuery
+                    ? "Try a different search term"
+                    : "Add your first student with New Admission"
+                }
+              />
             }
             onRefresh={refetch}
             refreshing={isLoading}
           />
         ) : (
-          /* Desktop Table View inside a clean Section Card */
-          <FlatList
-            data={[1]} // dummy array to wrap table scroll inside FlatList elegantly
-            renderItem={() => (
-              <Card noPadding className="bg-white border border-gray-150 overflow-hidden shadow-sm">
-                {/* Table Header */}
-                <View className="flex-row items-center px-6 py-4 bg-gray-50 border-b border-gray-150">
-                  <Text className="w-16 text-[11px] font-black text-gray-450 uppercase">Roll</Text>
-                  <Text className="w-28 text-[11px] font-black text-gray-450 uppercase">GR No</Text>
-                  <Text className="flex-1 text-[11px] font-black text-gray-450 uppercase">Student Name</Text>
-                  <Text className="w-24 text-[11px] font-black text-gray-450 uppercase">Gender</Text>
-                  <Text className="w-24 text-[11px] font-black text-gray-450 uppercase text-center">Class ID</Text>
-                  <Text className="w-24 text-[11px] font-black text-gray-450 uppercase text-center">Section ID</Text>
-                  <Text className="w-28 text-[11px] font-black text-gray-450 uppercase text-right">Actions</Text>
-                </View>
+          <Card noPadding className="bg-white border border-gray-150 overflow-hidden shadow-sm">
+            <View style={styles.tableHeader}>
+              <Text style={[styles.th, { width: 64 }]}>Roll</Text>
+              <Text style={[styles.th, { width: 100 }]}>GR No</Text>
+              <Text style={[styles.th, { flex: 1 }]}>Student Name</Text>
+              <Text style={[styles.th, { width: 80 }]}>Gender</Text>
+              <Text style={[styles.th, { width: 72, textAlign: "center" }]}>Class</Text>
+              <Text style={[styles.th, { width: 72, textAlign: "center" }]}>Section</Text>
+              <Text style={[styles.th, { width: 100, textAlign: "right" }]}>Actions</Text>
+            </View>
 
-                {/* Table Rows */}
-                {filteredStudents.length === 0 ? (
-                  <View className="items-center justify-center py-20 bg-white">
-                    <Text className="text-4xl mb-4">📭</Text>
-                    <Text className="text-gray-400 font-extrabold text-sm uppercase tracking-wider">
-                      No matching records found
-                    </Text>
-                  </View>
-                ) : (
-                  filteredStudents.map((item, index) => {
-                    const fullName = item.studentDisplayName || `${item.firstName} ${item.lastName}`;
-                    return (
-                      <View
-                        key={item.studentID}
-                        className={`flex-row items-center px-6 py-3.5 border-b border-gray-100 hover:bg-gray-50/50 ${
-                          index % 2 === 0 ? "bg-white" : "bg-gray-55/20"
-                        }`}
-                      >
-                        <Text className="w-16 text-sm font-black text-gray-400">{item.rollNo || "—"}</Text>
-                        <Text className="w-28 text-sm font-bold text-gray-700">{item.studentGRNo || "—"}</Text>
-                        <View className="flex-1 flex-row items-center gap-3">
-                          <View className="w-8 h-8 rounded-lg items-center justify-center bg-blue-50/50 border border-blue-100">
-                            <Text className="text-sm">{item.gender === "Female" ? "👧🏻" : "👦🏻"}</Text>
-                          </View>
-                          <Text className="text-sm font-black text-gray-900">{fullName}</Text>
-                        </View>
-                        <Text className="w-24 text-sm font-semibold text-gray-500">{item.gender || "—"}</Text>
-                        <Text className="w-24 text-sm font-black text-gray-600 text-center">{item.classID || "—"}</Text>
-                        <Text className="w-24 text-sm font-black text-gray-600 text-center">{item.sectionID || "—"}</Text>
-                        <View className="w-28 flex-row justify-end">
-                          <TouchableOpacity
-                            onPress={() =>
-                              router.push({
-                                pathname: "/(app)/student-profile",
-                                params: { id: item.studentID },
-                              })
-                            }
-                            className="bg-[#134A8C]/10 border border-[#134A8C]/20 px-3.5 py-1.5 rounded-xl"
-                            activeOpacity={0.8}
-                          >
-                            <Text className="text-[11px] font-black text-[#134A8C] uppercase tracking-wide">
-                              Profile
-                            </Text>
-                          </TouchableOpacity>
-                        </View>
+            {filteredStudents.length === 0 ? (
+              <EmptyState
+                icon="students"
+                title="No matching records"
+                message="Adjust your search or add a new admission"
+              />
+            ) : (
+              filteredStudents.map((item, index) => {
+                const fullName = getStudentDisplayName(item);
+                return (
+                  <View
+                    key={item.studentID ?? index}
+                    style={[styles.tableRow, index % 2 === 1 && styles.tableRowAlt]}
+                  >
+                    <Text style={[styles.td, { width: 64 }]}>{formatOptional(item.rollNo)}</Text>
+                    <Text style={[styles.td, { width: 100 }]}>{formatOptional(item.studentGRNo)}</Text>
+                    <View style={[styles.nameCell, { flex: 1 }]}>
+                      <View style={styles.avatarBoxSmall}>
+                        <GenderIcon gender={item.gender} size={16} />
                       </View>
-                    );
-                  })
-                )}
-              </Card>
+                      <Text style={styles.nameText} numberOfLines={1}>
+                        {fullName}
+                      </Text>
+                    </View>
+                    <Text style={[styles.tdMuted, { width: 80 }]}>{formatOptional(item.gender)}</Text>
+                    <Text style={[styles.td, { width: 72, textAlign: "center" }]}>
+                      {formatOptional(item.classID)}
+                    </Text>
+                    <Text style={[styles.td, { width: 72, textAlign: "center" }]}>
+                      {formatOptional(item.sectionID)}
+                    </Text>
+                    <View style={{ width: 100, alignItems: "flex-end" }}>
+                      <TouchableOpacity
+                        disabled={item.studentID == null}
+                        onPress={() =>
+                          router.push({
+                            pathname: "/(app)/student-profile",
+                            params: { id: String(item.studentID) },
+                          })
+                        }
+                        style={styles.profileBtn}
+                        activeOpacity={0.8}
+                      >
+                        <Text style={styles.profileBtnText}>Profile</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                );
+              })
             )}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 100 }}
-            onRefresh={refetch}
-            refreshing={isLoading}
-          />
+          </Card>
         )}
       </View>
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  safe: { flex: 1, backgroundColor: "#F8FAFC" },
+  content: { flex: 1, paddingHorizontal: 16, maxWidth: 1400, width: "100%", alignSelf: "center" },
+  searchWrap: { marginVertical: 16 },
+  searchBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "#E8ECF1",
+    paddingHorizontal: 14,
+    height: 52,
+    gap: 10,
+  },
+  searchInput: { flex: 1, fontSize: 14, fontWeight: "600", color: "#111827", paddingVertical: 0 },
+  clearBtn: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: "#F3F4F6",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  avatarBox: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#EFF6FF",
+    borderWidth: 1,
+    borderColor: "#DBEAFE",
+  },
+  avatarBoxSmall: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#EFF6FF",
+    borderWidth: 1,
+    borderColor: "#DBEAFE",
+  },
+  rollBadge: {
+    backgroundColor: "#FFF7ED",
+    borderWidth: 1,
+    borderColor: "#FFEDD5",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  rollBadgeText: { fontSize: 10, fontWeight: "800", color: "#C2410C", textTransform: "uppercase" },
+  emptyWrap: { paddingVertical: 24 },
+  retryBtn: {
+    alignSelf: "center",
+    marginTop: 12,
+    backgroundColor: Colors.primary,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 12,
+    minHeight: 48,
+    justifyContent: "center",
+  },
+  retryText: { color: "#fff", fontWeight: "800" },
+  tableHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    backgroundColor: "#F8FAFC",
+    borderBottomWidth: 1,
+    borderBottomColor: "#E8ECF1",
+  },
+  th: { fontSize: 11, fontWeight: "800", color: "#6B7280", textTransform: "uppercase" },
+  tableRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F3F4F6",
+    backgroundColor: "#fff",
+  },
+  tableRowAlt: { backgroundColor: "#FAFBFC" },
+  td: { fontSize: 14, fontWeight: "700", color: "#374151" },
+  tdMuted: { fontSize: 14, fontWeight: "600", color: "#6B7280" },
+  nameCell: { flexDirection: "row", alignItems: "center", gap: 10, minWidth: 0 },
+  nameText: { flex: 1, fontSize: 14, fontWeight: "800", color: "#111827" },
+  profileBtn: {
+    backgroundColor: `${Colors.primary}18`,
+    borderWidth: 1,
+    borderColor: `${Colors.primary}33`,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 10,
+    minHeight: 40,
+    justifyContent: "center",
+  },
+  profileBtnText: {
+    fontSize: 11,
+    fontWeight: "800",
+    color: Colors.primary,
+    textTransform: "uppercase",
+  },
+});

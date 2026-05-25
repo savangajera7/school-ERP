@@ -7,11 +7,13 @@ import { Card } from "@/components/ui/Card";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Colors } from "@/constants/colors";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { IconCircle } from "@/components/icons/AppIcon";
+import { TabChip } from "@/components/icons/TabChip";
 import { useGetApiNoticeGetNoticeList } from "@/api/generated/notice/notice";
 import { parseApiList } from "@/utils/apiResponse";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
-import { EmptyState } from "@/components/ui/EmptyState";
 
 export default function StudentNoticeHistoryScreen() {
   const { isMobile } = useBreakpoint();
@@ -51,7 +53,7 @@ export default function StudentNoticeHistoryScreen() {
         accentColor={Colors.accent}
         icon={
           <View className="w-10 h-10 rounded-xl items-center justify-center bg-amber-50 border border-amber-100">
-            <Text className="text-lg">📢</Text>
+            <IconCircle name="notices" size={40} iconSize={20} />
           </View>
         }
         actions={
@@ -101,11 +103,7 @@ export default function StudentNoticeHistoryScreen() {
               activeTab === 'school' ? 'bg-[#134A8C]' : 'bg-transparent'
             }`}
           >
-            <Text className={`text-xs font-black uppercase tracking-wider ${
-              activeTab === 'school' ? 'text-white' : 'text-gray-400'
-            }`}>
-              🏢 School Notices
-            </Text>
+            <TabChip icon="building" label="School Notices" active={activeTab === "school"} />
           </TouchableOpacity>
           <TouchableOpacity 
             onPress={() => setActiveTab("class")}
@@ -114,11 +112,7 @@ export default function StudentNoticeHistoryScreen() {
               activeTab === 'class' ? 'bg-[#134A8C]' : 'bg-transparent'
             }`}
           >
-            <Text className={`text-xs font-black uppercase tracking-wider ${
-              activeTab === 'class' ? 'text-white' : 'text-gray-400'
-            }`}>
-              🏫 Class Notices
-            </Text>
+            <TabChip icon="classroom" label="Class Notices" active={activeTab === "class"} />
           </TouchableOpacity>
         </View>
       </View>
@@ -140,7 +134,7 @@ export default function StudentNoticeHistoryScreen() {
             refreshing={isLoading}
             ListEmptyComponent={
               <View className="py-20 items-center justify-center bg-white rounded-3xl border border-gray-150 p-8 mt-2">
-                <Text className="text-4xl mb-3">📭</Text>
+                <EmptyState icon="notices" title="No notices" message="Published notices will appear here" />
                 <Text className="text-gray-400 font-extrabold text-sm uppercase tracking-wider">No notices posted yet</Text>
               </View>
             }
@@ -156,7 +150,7 @@ export default function StudentNoticeHistoryScreen() {
             refreshing={isLoading}
             ListEmptyComponent={
               <View className="py-20 items-center justify-center bg-white rounded-3xl border border-gray-150 p-8 mt-2">
-                <Text className="text-4xl mb-3">📭</Text>
+                <EmptyState icon="notices" title="No notices" message="Published notices will appear here" />
                 <Text className="text-gray-400 font-extrabold text-sm uppercase tracking-wider">No announcements posted yet</Text>
               </View>
             }

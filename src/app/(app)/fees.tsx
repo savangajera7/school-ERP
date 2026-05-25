@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Colors } from "@/constants/colors";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { AppIcon } from "@/components/icons/AppIcon";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import {
   useGetApiFeesGetFeesList,
@@ -294,7 +295,7 @@ export default function FeesManagementScreen() {
                       boxShadow: "0px 2px 8px rgba(0,0,0,0.03)",
                     }}
                   >
-                    <Text className="text-gray-400 text-base">🔍</Text>
+                    <AppIcon name="search" size={18} color="#9CA3AF" />
                     <TextInput
                       value={searchQuery}
                       onChangeText={setSearchQuery}

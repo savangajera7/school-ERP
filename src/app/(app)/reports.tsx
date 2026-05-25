@@ -11,6 +11,8 @@ import { useGetApiStudentAttendanceGetStudentAttendanceList } from "@/api/genera
 import { useGetApiResultGetResultList } from "@/api/generated/result/result";
 import { parseApiList } from "@/utils/apiResponse";
 import { Colors } from "@/constants/colors";
+import type { AppIconName } from "@/constants/appIcons";
+import { IconCircle } from "@/components/icons/AppIcon";
 
 export default function ReportsScreen() {
   const { data: studentsData } = useGetApiStudentGet();
@@ -34,11 +36,11 @@ export default function ReportsScreen() {
     };
   }, [studentsData, feesData, attendanceData, resultsData]);
 
-  const links = [
-    { title: "Attendance Reports", route: "/(app)/attendance-reports", icon: "📝" },
-    { title: "Fees", route: "/(app)/fees", icon: "💰" },
-    { title: "Students", route: "/(app)/students", icon: "🎓" },
-    { title: "Exams", route: "/(app)/exams", icon: "📊" },
+  const links: { title: string; route: string; icon: AppIconName }[] = [
+    { title: "Attendance Reports", route: "/(app)/attendance-reports", icon: "attendanceReport" },
+    { title: "Fees", route: "/(app)/fees", icon: "fees" },
+    { title: "Students", route: "/(app)/students", icon: "students" },
+    { title: "Exams", route: "/(app)/exams", icon: "exams" },
   ];
 
   return (
@@ -66,7 +68,7 @@ export default function ReportsScreen() {
         {links.map((l) => (
           <TouchableOpacity key={l.route} onPress={() => router.push(l.route as never)}>
             <Card className="p-4 mb-3 flex-row items-center gap-3">
-              <Text className="text-2xl">{l.icon}</Text>
+              <IconCircle name={l.icon} size={40} iconSize={20} />
               <Text className="font-bold text-gray-800">{l.title}</Text>
             </Card>
           </TouchableOpacity>

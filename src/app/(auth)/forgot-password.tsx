@@ -13,6 +13,7 @@ import { FormField } from "@/components/forms/FormField";
 import { BackButton } from "@/components/ui/BackButton";
 import { useAuth } from "@/hooks/useAuth";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
+import { IconCircle } from "@/components/icons/AppIcon";
 
 const forgotPasswordSchema = z.object({
   identifier: z.string().min(1, "Email or mobile is required"),
@@ -45,8 +46,8 @@ export default function ForgotPasswordScreen() {
   const renderContent = () => (
     <View className="w-full">
       <View className="items-center mb-6">
-        <View className="w-[64px] h-[64px] bg-[#EFF6FF] rounded-full items-center justify-center mb-4">
-          <Text className="text-2xl">🔑</Text>
+        <View className="mb-4">
+          <IconCircle name="key" size={64} iconSize={30} backgroundColor="#EFF6FF" />
         </View>
         <Text className="text-[22px] font-bold text-gray-900 text-center">Forgot Password?</Text>
         <Text className="text-[14px] text-gray-500 text-center font-medium mt-2 px-4 leading-normal">

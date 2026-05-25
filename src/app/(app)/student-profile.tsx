@@ -7,9 +7,11 @@ import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Card } from "@/components/ui/Card";
 import { useGetApiStudentGetByIDId } from "@/api/generated/3-student-crud/3-student-crud";
 import { StudentModel } from "@/api/model/studentModel";
-import { parseApiData } from "@/utils/apiResponse";
+import { parseApiData, toCamelCaseRow } from "@/utils/apiResponse";
+import { getStudentDisplayName } from "@/utils/studentUtils";
 import { Colors } from "@/constants/colors";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { IconCircle } from "@/components/icons/AppIcon";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
 
 export default function StudentProfileScreen() {
@@ -19,7 +21,8 @@ export default function StudentProfileScreen() {
   const { data, isLoading: loading } = useGetApiStudentGetByIDId(studentId, {
     query: { enabled: studentId > 0 },
   });
-  const student = parseApiData<StudentModel>(data?.data);
+  const raw = parseApiData<Record<string, unknown>>(data);
+  const student = raw ? (toCamelCaseRow(raw) as StudentModel) : null;
 
   const handleCall = () => {
     if (Platform.OS !== 'web' && student?.studentNumber) {
@@ -56,7 +59,7 @@ export default function StudentProfileScreen() {
     );
   }
 
-  const name = student.studentDisplayName || `${student.firstName} ${student.lastName}`;
+  const name = getStudentDisplayName(student);
 
   return (
     <SafeAreaView className="flex-1 bg-[#FDFDFD]" edges={["left", "right"]}>
@@ -74,7 +77,11 @@ export default function StudentProfileScreen() {
           {/* Header Profile Card */}
           <Card className="bg-white border border-gray-150 p-6 mb-6 flex-col md:flex-row items-center md:items-start gap-6 shadow-sm">
             <View className="w-24 h-24 bg-blue-50 rounded-full items-center justify-center border-4 border-blue-100">
-              <Text className="text-4xl">{student.gender === "Female" ? "👧🏻" : "👦🏻"}</Text>
+              <IconCircle
+                name={student.gender === "Female" ? "female" : "male"}
+                size={72}
+                iconSize={36}
+              />
             </View>
             
             <View className="flex-1 items-center md:items-start">

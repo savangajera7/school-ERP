@@ -7,6 +7,7 @@ import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Card } from "@/components/ui/Card";
 import { Colors } from "@/constants/colors";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { AppIcon } from "@/components/icons/AppIcon";
 import { usePostApiStudentAdd } from "@/api/generated/3-student-crud/3-student-crud";
 import { useToast } from "@/components/ui/Toast";
 import { usePermissions } from "@/hooks/usePermissions";
@@ -76,7 +77,7 @@ export default function AdmissionFormScreen() {
       <Card className="bg-white border border-gray-150 p-6 mb-6">
         <View className="flex-row items-center gap-3 mb-5 border-b border-gray-100 pb-4">
           <View className="w-10 h-10 bg-blue-50 rounded-xl items-center justify-center border border-blue-100">
-            <Text className="text-xl">👦</Text>
+            <AppIcon name="male" size={22} color="#0369A1" active />
           </View>
           <Text className="text-[16px] font-black text-gray-900 uppercase tracking-wide">Personal Details</Text>
         </View>
@@ -127,7 +128,7 @@ export default function AdmissionFormScreen() {
       <Card className="bg-white border border-gray-150 p-6 mb-6">
         <View className="flex-row items-center gap-3 mb-5 border-b border-gray-100 pb-4">
           <View className="w-10 h-10 bg-amber-50 rounded-xl items-center justify-center border border-amber-100">
-            <Text className="text-xl">👨‍👩‍👧</Text>
+            <AppIcon name="parents" size={22} color="#B45309" active />
           </View>
           <Text className="text-[16px] font-black text-gray-900 uppercase tracking-wide">Parent Details</Text>
         </View>
@@ -176,7 +177,7 @@ export default function AdmissionFormScreen() {
       <Card className="bg-white border border-gray-150 p-6 mb-10">
         <View className="flex-row items-center gap-3 mb-5 border-b border-gray-100 pb-4">
           <View className="w-10 h-10 bg-emerald-50 rounded-xl items-center justify-center border border-emerald-100">
-            <Text className="text-xl">📚</Text>
+            <AppIcon name="subjects" size={22} color="#15803D" active />
           </View>
           <Text className="text-[16px] font-black text-gray-900 uppercase tracking-wide">Academic Registration</Text>
         </View>

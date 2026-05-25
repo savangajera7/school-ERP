@@ -7,10 +7,6 @@ import { StatusBar } from "expo-status-bar";
 import { View, Platform } from "react-native";
 import { ToastProvider } from "@/components/ui/Toast";
 import { NotificationProvider } from "@/contexts/NotificationContext";
-import {
-  registerPushToken,
-  setupNotificationListeners,
-} from "@/services/notifications/pushService";
 import { AppUpdateModal } from "@/components/updates/AppUpdateModal";
 import { useAppUpdate } from "@/hooks/useAppUpdate";
 import "../../global.css";
@@ -59,8 +55,11 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (Platform.OS === "web") return;
-    const cleanup = setupNotificationListeners();
-    return cleanup;
+    let cleanup = () => {};
+    void import("@/services/notifications/pushService").then((m) => {
+      cleanup = m.setupNotificationListeners();
+    });
+    return () => cleanup();
   }, []);
 
   if (!isReady) {

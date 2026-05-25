@@ -1,15 +1,15 @@
 import React from "react";
 import { View, Text, TouchableOpacity, Platform, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
-import type { Ionicons as IconType } from "@expo/vector-icons";
 import { usePathname, router } from "expo-router";
 import { SchoolTheme } from "@/constants/theme";
+import type { AppIconName } from "@/constants/appIcons";
+import { AppIcon } from "@/components/icons/AppIcon";
 
 export type TabDef = {
   name: string;
   title: string;
-  icon: keyof typeof IconType.glyphMap;
+  icon: AppIconName;
   href: string;
 };
 
@@ -46,11 +46,19 @@ export function RoleTabBar({ tabs, accent = SchoolTheme.primary }: Props) {
             style={styles.tab}
             activeOpacity={0.7}
           >
-            <Ionicons
-              name={tab.icon}
-              size={22}
-              color={active ? accent : "#9CA3AF"}
-            />
+            <View
+              style={[
+                styles.iconWrap,
+                active && { backgroundColor: `${accent}18` },
+              ]}
+            >
+              <AppIcon
+                name={tab.icon}
+                size={22}
+                color={active ? accent : "#9CA3AF"}
+                active={active}
+              />
+            </View>
             <Text
               style={[styles.label, active && { color: accent, fontWeight: "800" }]}
               numberOfLines={1}
@@ -82,6 +90,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     minHeight: 48,
     paddingTop: 6,
+  },
+  iconWrap: {
+    width: 40,
+    height: 28,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
   },
   label: { fontSize: 10, color: "#9CA3AF", marginTop: 2 },
 });

@@ -1,95 +1,171 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { router } from "expo-router";
-import { ResponsiveScreen } from "@/components/layout/ResponsiveScreen";
-import { ROLE_TAB_BAR_HEIGHT } from "@/components/layout/RoleTabBar";
-import { DashboardGreeting } from "@/components/dashboard/DashboardGreeting";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+} from "react-native";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
+import { LinearGradient } from "expo-linear-gradient";
 import { useAuthStore } from "@/store/authStore";
 import { useResponsive } from "@/hooks/useResponsive";
 import { SchoolTheme } from "@/constants/theme";
+import { ROLE_TAB_BAR_HEIGHT } from "@/components/layout/RoleTabBar";
 import { useGetApiStudentGet } from "@/api/generated/3-student-crud/3-student-crud";
 import { useGetApiTeacherGetTeacherList } from "@/api/generated/teacher/teacher";
 import { parseApiList } from "@/utils/apiResponse";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
-
-const QUICK: { label: string; route: string; icon: string }[] = [
-  { label: "Fees", route: "/(admin)/fees", icon: "💰" },
-  { label: "Attendance", route: "/(admin)/attendance", icon: "📝" },
-  { label: "Exams", route: "/(admin)/exams", icon: "📊" },
-  { label: "Reports", route: "/(admin)/reports", icon: "📈" },
-  { label: "Parents", route: "/(admin)/parents", icon: "👨‍👩‍👧" },
-  { label: "Alerts", route: "/(admin)/notifications", icon: "🔔" },
+import { QuickActionGrid, type QuickActionItem } from "@/components/dashboard/QuickActionGrid";
+import { IconCircle } from "@/components/icons/AppIcon";
+import { ROLE_LABELS } from "@/constants/rolePermissions";
+const QUICK: QuickActionItem[] = [
+  { title: "Students", route: "/(admin)/students", icon: "students" },
+  { title: "Teachers", route: "/(admin)/teachers", icon: "teachers" },
+  { title: "Fees", route: "/(admin)/fees", icon: "fees" },
+  { title: "Attendance", route: "/(admin)/attendance", icon: "attendance" },
+  { title: "Exams", route: "/(admin)/exams", icon: "exams" },
+  { title: "Notices", route: "/(admin)/notices", icon: "notices" },
+  { title: "Reports", route: "/(admin)/reports", icon: "reports" },
+  { title: "Parents", route: "/(admin)/parents", icon: "parents" },
+  { title: "Alerts", route: "/(admin)/notifications", icon: "notifications" },
+  { title: "Settings", route: "/(admin)/settings", icon: "settings" },
 ];
 
 export default function AdminDashboardScreen() {
   const { userData, role } = useAuthStore();
-  const { columns, bodySize, titleSize } = useResponsive();
+  const insets = useSafeAreaInsets();
+  const { isMobile, bodySize, titleSize } = useResponsive();
   const { data: studentsData, isLoading: ls } = useGetApiStudentGet();
   const { data: teachersData, isLoading: lt } = useGetApiTeacherGetTeacherList();
-  const students = parseApiList(studentsData?.data);
-  const teachers = parseApiList(teachersData?.data);
+  const students = parseApiList(studentsData);
+  const teachers = parseApiList(teachersData);
   const loading = ls || lt;
+  const firstName = userData?.name?.split(" ")[0] || "Admin";
+  const roleLabel = role ? ROLE_LABELS[role] : "Administrator";
+  const tabPad = isMobile ? ROLE_TAB_BAR_HEIGHT + 24 : 32;
 
   return (
-    <ResponsiveScreen tabBarPadding={ROLE_TAB_BAR_HEIGHT}>
-      <DashboardGreeting name={userData?.name ?? "Admin"} role={role} />
-      {loading ? (
-        <SkeletonLoader rows={2} />
-      ) : (
-        <View style={styles.statsRow}>
-          <View style={styles.stat}>
-            <Text style={[styles.statN, { fontSize: titleSize }]}>{students.length}</Text>
-            <Text style={{ fontSize: bodySize, color: SchoolTheme.textSecondary }}>Students</Text>
+    <SafeAreaView style={styles.safe} edges={["left", "right"]}>
+      <StatusBar style="light" />
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: tabPad }}
+      >
+        <LinearGradient
+          colors={[SchoolTheme.primary, SchoolTheme.primaryDark]}
+          style={[
+            styles.header,
+            {
+              paddingTop: insets.top + 12,
+              paddingBottom: isMobile ? 56 : 64,
+            },
+          ]}
+        >
+          <View style={styles.headerTop}>
+            <Image
+              source={require("../../../assets/school-logo.png")}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+            <View style={styles.headerText}>
+              <Text style={styles.schoolName}>Little Angel&apos;s</Text>
+              <Text style={styles.roleBadge}>{roleLabel}</Text>
+            </View>
           </View>
-          <View style={styles.stat}>
-            <Text style={[styles.statN, { fontSize: titleSize }]}>{teachers.length}</Text>
-            <Text style={{ fontSize: bodySize, color: SchoolTheme.textSecondary }}>Teachers</Text>
+          <Text style={styles.welcome}>Welcome back</Text>
+          <Text style={[styles.userName, { fontSize: titleSize }]}>Hello, {firstName}</Text>
+        </LinearGradient>
+
+        <View style={[styles.body, isMobile && { marginTop: -32 }]}>
+          {loading ? (
+            <SkeletonLoader rows={2} />
+          ) : (
+            <View style={styles.statsRow}>
+              <View style={styles.statCard}>
+                <IconCircle name="students" size={40} />
+                <Text style={[styles.statNum, { fontSize: titleSize }]}>{students.length}</Text>
+                <Text style={[styles.statLabel, { fontSize: bodySize }]}>Students</Text>
+              </View>
+              <View style={styles.statCard}>
+                <IconCircle name="teachers" size={40} />
+                <Text style={[styles.statNum, { fontSize: titleSize }]}>{teachers.length}</Text>
+                <Text style={[styles.statLabel, { fontSize: bodySize }]}>Teachers</Text>
+              </View>
+            </View>
+          )}
+
+          <View style={styles.sectionCard}>
+            <Text style={[styles.sectionTitle, { fontSize: bodySize + 2 }]}>Quick Actions</Text>
+            <QuickActionGrid items={QUICK} mobileColumns={4} />
           </View>
         </View>
-      )}
-      <Text style={[styles.section, { fontSize: bodySize }]}>Quick access</Text>
-      <View style={[styles.grid, columns > 1 && styles.gridMulti]}>
-        {QUICK.map((q) => (
-          <TouchableOpacity
-            key={q.route}
-            style={[styles.tile, columns > 1 && styles.tileMulti]}
-            onPress={() => router.push(q.route as never)}
-          >
-            <Text style={styles.tileIcon}>{q.icon}</Text>
-            <Text style={[styles.tileLabel, { fontSize: bodySize }]}>{q.label}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-    </ResponsiveScreen>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  statsRow: { flexDirection: "row", gap: 12, marginBottom: 20 },
-  stat: {
+  safe: { flex: 1, backgroundColor: SchoolTheme.background },
+  header: {
+    paddingHorizontal: 20,
+    borderBottomLeftRadius: 28,
+    borderBottomRightRadius: 28,
+  },
+  headerTop: { flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 16 },
+  logo: { width: 48, height: 48, borderRadius: 12, backgroundColor: "#fff" },
+  headerText: { flex: 1 },
+  schoolName: { color: "#fff", fontWeight: "900", fontSize: 16 },
+  roleBadge: {
+    color: SchoolTheme.accent,
+    fontSize: 10,
+    fontWeight: "800",
+    textTransform: "uppercase",
+    letterSpacing: 1,
+    marginTop: 2,
+  },
+  welcome: {
+    color: "rgba(255,255,255,0.7)",
+    fontSize: 11,
+    fontWeight: "800",
+    textTransform: "uppercase",
+    letterSpacing: 1,
+  },
+  userName: { color: "#fff", fontWeight: "900", marginTop: 4 },
+  body: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    maxWidth: 1200,
+    width: "100%",
+    alignSelf: "center",
+  },
+  statsRow: { flexDirection: "row", gap: 12, marginBottom: 16 },
+  statCard: {
     flex: 1,
     backgroundColor: "#fff",
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
     borderColor: SchoolTheme.border,
+    alignItems: "flex-start",
+    gap: 6,
   },
-  statN: { fontWeight: "900", color: SchoolTheme.primary },
-  section: { fontWeight: "800", color: SchoolTheme.text, marginBottom: 12 },
-  grid: { gap: 10 },
-  gridMulti: { flexDirection: "row", flexWrap: "wrap" },
-  tile: {
+  statNum: { fontWeight: "900", color: SchoolTheme.primary },
+  statLabel: { color: SchoolTheme.textSecondary, fontWeight: "600" },
+  sectionCard: {
     backgroundColor: "#fff",
-    borderRadius: 14,
+    borderRadius: 20,
     padding: 16,
     borderWidth: 1,
     borderColor: SchoolTheme.border,
-    minHeight: 72,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
   },
-  tileMulti: { flexBasis: "48%", flexGrow: 1 },
-  tileIcon: { fontSize: 24 },
-  tileLabel: { fontWeight: "700", color: SchoolTheme.text },
+  sectionTitle: {
+    fontWeight: "800",
+    color: SchoolTheme.text,
+    marginBottom: 12,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+  },
 });

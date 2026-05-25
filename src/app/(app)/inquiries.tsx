@@ -7,6 +7,8 @@ import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Card } from "@/components/ui/Card";
 import { Colors } from "@/constants/colors";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { AppIcon } from "@/components/icons/AppIcon";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 // Admission Inquiry API not in current Swagger — using local data until backend adds it.
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
@@ -168,7 +170,7 @@ export default function InquiriesScreen() {
             <View 
               className="flex-1 min-w-[200px] h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 flex-row items-center gap-2.5"
             >
-              <Text className="text-xs">🔍</Text>
+              <AppIcon name="search" size={14} color="#9CA3AF" />
               <TextInput
                 placeholder="Search name, parent, or contact..."
                 value={search}
@@ -227,7 +229,7 @@ export default function InquiriesScreen() {
             </View>
           ) : filteredInquiries.length === 0 ? (
             <View className="py-20 items-center justify-center bg-white rounded-3xl border border-gray-100 p-8">
-              <Text className="text-4xl mb-3">📬</Text>
+              <EmptyState icon="inquiries" title="No inquiries" message="New inquiries will show here" />
               <Text className="text-gray-400 font-extrabold text-sm uppercase tracking-wider">No admission inquiries found</Text>
             </View>
           ) : isMobile ? (

@@ -13,14 +13,16 @@ import { useGetApiSectionGetSectionList } from "@/api/generated/master-section/m
 import { useGetApiAcademicYearGet } from "@/api/generated/2-master-academicyear/2-master-academicyear";
 import { useGetApiBatchGet } from "@/api/generated/2-master-batch/2-master-batch";
 import { parseApiList } from "@/utils/apiResponse";
+import type { AppIconName } from "@/constants/appIcons";
+import { AppIcon } from "@/components/icons/AppIcon";
 
 type TabKey = "years" | "classes" | "sections" | "batches";
 
-const TAB_ICONS: Record<TabKey, string> = {
-  years:    "📅",
-  classes:  "🏫",
-  sections: "📋",
-  batches:  "🎓",
+const TAB_ICONS: Record<TabKey, AppIconName> = {
+  years: "calendar",
+  classes: "academic",
+  sections: "admission",
+  batches: "students",
 };
 
 const TAB_COLORS: Record<TabKey, { bg: string; border: string; text: string }> = {
@@ -138,7 +140,7 @@ export default function AcademicSetupScreen() {
           <View className={`flex-row items-center gap-4 mb-5 ${isMobile ? "flex-col items-stretch" : ""}`}>
             <View className="flex-row items-center gap-3 flex-1">
               <View className={`w-10 h-10 rounded-xl items-center justify-center border ${colors.bg} ${colors.border}`}>
-                <Text className="text-xl">{TAB_ICONS[activeTab]}</Text>
+                <AppIcon name={TAB_ICONS[activeTab]} size={22} color={Colors.primary} active />
               </View>
               <View>
                 <Text className="text-[16px] font-black text-gray-900 capitalize">{activeTab} Management</Text>
@@ -153,7 +155,7 @@ export default function AcademicSetupScreen() {
               className="flex-row bg-white border border-gray-200 rounded-xl h-[44px] px-3 items-center gap-2"
               style={{ minWidth: isMobile ? "100%" : 220 }}
             >
-              <Text className="text-gray-300">🔍</Text>
+              <AppIcon name="search" size={18} color="#D1D5DB" />
               <TextInput
                 value={search}
                 onChangeText={setSearch}
@@ -171,7 +173,9 @@ export default function AcademicSetupScreen() {
             </View>
           ) : activeData.items.length === 0 ? (
             <View className="py-20 items-center justify-center bg-white rounded-3xl border border-gray-100">
-              <Text className="text-4xl mb-3">{TAB_ICONS[activeTab]}</Text>
+              <View className="mb-3">
+                <AppIcon name={TAB_ICONS[activeTab]} size={40} color={Colors.primary} active />
+              </View>
               <Text className="text-gray-400 font-extrabold text-sm uppercase tracking-wider">
                 No {activeTab} configured yet
               </Text>

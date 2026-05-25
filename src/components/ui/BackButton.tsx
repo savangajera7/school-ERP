@@ -1,21 +1,28 @@
 import React from "react";
-import { TouchableOpacity, Text, Platform } from "react-native";
+import { TouchableOpacity, Text, Platform, View } from "react-native";
 import { router } from "expo-router";
+import { AppIcon } from "@/components/icons/AppIcon";
+import { SchoolTheme } from "@/constants/theme";
 
 interface BackButtonProps {
   light?: boolean;
 }
 
 export const BackButton: React.FC<BackButtonProps> = ({ light = false }) => {
+  const color = light ? "#fff" : SchoolTheme.primary;
   return (
     <TouchableOpacity
       onPress={() => router.back()}
-      className="flex-row items-center"
-      style={Platform.OS === 'web' ? { cursor: 'pointer' } as any : undefined}
+      className="flex-row items-center gap-1"
+      style={Platform.OS === "web" ? ({ cursor: "pointer" } as object) : undefined}
       hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
     >
-      <Text className={`text-[16px] font-semibold ${light ? "text-white" : "text-primary"}`}>
-        ← Back
+      <AppIcon name="chevronBack" size={20} color={color} />
+      <Text
+        className={`text-[16px] font-semibold ${light ? "text-white" : "text-primary"}`}
+        style={light ? undefined : { color: SchoolTheme.primary }}
+      >
+        Back
       </Text>
     </TouchableOpacity>
   );

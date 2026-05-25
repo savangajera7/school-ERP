@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useAuthStore } from "@/store/authStore";
 import { SchoolTheme } from "@/constants/theme";
 import { useResponsive } from "@/hooks/useResponsive";
+import { AppIcon } from "@/components/icons/AppIcon";
 
 export default function AdminSettingsScreen() {
   const { handleLogout } = useAuth();
@@ -23,19 +24,23 @@ export default function AdminSettingsScreen() {
           onPress={() => router.push("/(admin)/profile" as never)}
         >
           <Text style={[styles.label, { fontSize: bodySize }]}>Profile</Text>
-          <Text style={styles.chev}>›</Text>
+          <AppIcon name="chevronRight" size={20} color="#9CA3AF" />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.row}
           onPress={() => router.push("/(admin)/change-password" as never)}
         >
           <Text style={[styles.label, { fontSize: bodySize }]}>Change password</Text>
-          <Text style={styles.chev}>›</Text>
+          <AppIcon name="chevronRight" size={20} color="#9CA3AF" />
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.row, styles.danger]} onPress={handleLogout}>
+        <TouchableOpacity
+          style={[styles.row, styles.danger]}
+          onPress={handleLogout}
+        >
           <Text style={[styles.label, { color: SchoolTheme.error, fontSize: bodySize }]}>
             Sign out
           </Text>
+          <AppIcon name="logout" size={20} color={SchoolTheme.error} />
         </TouchableOpacity>
       </ResponsiveScreen>
     </View>
@@ -56,6 +61,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   label: { fontWeight: "700", color: SchoolTheme.text },
-  chev: { fontSize: 22, color: "#9CA3AF" },
   danger: { marginTop: 24 },
 });
