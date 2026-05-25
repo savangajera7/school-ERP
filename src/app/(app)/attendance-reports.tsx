@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 import { Card } from "@/components/ui/Card";
-import { useBreakpoint } from "@/hooks/useBreakpoint";
+import { useResponsive } from "@/hooks/useResponsive";
 import { Colors } from "@/constants/colors";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { PremiumStatPills } from "@/components/ui/premium";
@@ -16,7 +16,7 @@ const CLASSES = ["Class I", "Class II", "Class III", "Class IV"];
 const MONTHS = ["May 2026", "April 2026", "March 2026"];
 
 export default function AttendanceReportsScreen() {
-  const { isMobile } = useBreakpoint();
+  const { isMobile } = useResponsive();
   const [selectedClass, setSelectedClass] = useState("Class I");
   const [selectedMonth, setSelectedMonth] = useState("May 2026");
 

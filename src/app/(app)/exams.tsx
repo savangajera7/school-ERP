@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 import { Card } from "@/components/ui/Card";
-import { useBreakpoint } from "@/hooks/useBreakpoint";
+import { useResponsive } from "@/hooks/useResponsive";
 import { Colors } from "@/constants/colors";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { PremiumTabSwitcher } from "@/components/ui/premium";
@@ -36,7 +36,7 @@ import { PremiumLoader } from "@/components/ui/PremiumLoader";
 type Tab = "list" | "marks" | "ranks";
 
 export default function ExamsManagementScreen() {
-  const { isMobile } = useBreakpoint();
+  const { isMobile } = useResponsive();
   const [activeTab, setActiveTab] = useState<Tab>("list");
   const { showToast } = useToast();
   const userData = useAuthStore((s) => s.userData);

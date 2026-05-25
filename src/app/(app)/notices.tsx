@@ -2,7 +2,6 @@ import React, { useState, useMemo } from "react";
 import { View, Text, TouchableOpacity, FlatList } from "react-native";
 import { router } from "expo-router";
 import { Card } from "@/components/ui/Card";
-import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Colors } from "@/constants/colors";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { PremiumTabSwitcher } from "@/components/ui/premium";

@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { View, Text, ScrollView, TouchableOpacity, TextInput, Modal, Platform } from "react-native";
 import { router } from "expo-router";
-import { useBreakpoint } from "@/hooks/useBreakpoint";
+import { useResponsive } from "@/hooks/useResponsive";
 import { Card } from "@/components/ui/Card";
 import { Colors } from "@/constants/colors";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
@@ -51,7 +51,7 @@ export default function InquiriesScreen() {
   if (!can("manageInquiries")) {
     return <AccessDenied message="Admission inquiries are managed by school administrators." />;
   }
-  const { isMobile } = useBreakpoint();
+  const { isMobile } = useResponsive();
   const [search, setSearch] = useState("");
   const [selectedClass, setSelectedClass] = useState("All");
   const [selectedStatus, setSelectedStatus] = useState("All");

@@ -2,7 +2,7 @@ import React, { useState, useMemo } from "react";
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 import { Card } from "@/components/ui/Card";
-import { useBreakpoint } from "@/hooks/useBreakpoint";
+import { useResponsive } from "@/hooks/useResponsive";
 import { useGetApiResultGetResultList } from "@/api/generated/result/result";
 import { useAuthStore } from "@/store/authStore";
 import { Colors } from "@/constants/colors";
@@ -28,7 +28,7 @@ interface StudentResult {
 }
 
 export default function ParentResultsScreen() {
-  const { isMobile } = useBreakpoint();
+  const { isMobile } = useResponsive();
   const { userData } = useAuthStore();
   const [selectedResult, setSelectedResult] = useState<StudentResult | null>(null);
 

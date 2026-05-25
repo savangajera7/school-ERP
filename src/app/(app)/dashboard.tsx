@@ -8,7 +8,7 @@ import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { useAuthStore } from "@/store/authStore";
-import { useBreakpoint } from "@/hooks/useBreakpoint";
+import { useResponsive } from "@/hooks/useResponsive";
 import { Colors } from "@/constants/colors";
 import { MOBILE_TAB_BAR_HEIGHT } from "@/constants/mobileTabs";
 import { useGetApiStudentGet } from "@/api/generated/3-student-crud/3-student-crud";
@@ -48,7 +48,7 @@ const QUICK_ACTIONS: {
 
 export default function DashboardScreen() {
   const { userData } = useAuthStore();
-  const { isMobile } = useBreakpoint();
+  const { isMobile } = useResponsive();
   const { canAccessRoute, roleLabel, isParent, isTeacher } = usePermissions();
   const quickActions = QUICK_ACTIONS.filter((a) => canAccessRoute(a.route));
   const [searchQuery, setSearchQuery] = useState("");

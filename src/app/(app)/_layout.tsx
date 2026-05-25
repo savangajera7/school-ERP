@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { View } from "react-native";
 import { Stack, usePathname, router } from "expo-router";
 import { getHomeRoute } from "@/utils/roleRouting";
-import { useBreakpoint } from "@/hooks/useBreakpoint";
+import { useResponsive } from "@/hooks/useResponsive";
 import { DesktopSidebar } from "@/components/ui/DesktopSidebar";
 import { BottomTabBar } from "@/components/ui/BottomTabBar";
 import { isMobileTabRoute } from "@/constants/mobileTabs";
@@ -10,7 +10,7 @@ import { RouteGuard } from "@/components/auth/RouteGuard";
 import { useAuthStore } from "@/store/authStore";
 
 export default function AppLayout() {
-  const { isMobile } = useBreakpoint();
+  const { isMobile } = useResponsive();
   const pathname = usePathname();
   const role = useAuthStore((s) => s.role);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);

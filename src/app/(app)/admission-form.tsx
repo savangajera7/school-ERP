@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, Alert, ActivityIndicator } from "react-native";
 import { router } from "expo-router";
-import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Card } from "@/components/ui/Card";
 import { Colors } from "@/constants/colors";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";

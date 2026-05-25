@@ -1,6 +1,6 @@
 import React from "react";
 import { TouchableOpacity, Text, StyleSheet, type ViewStyle } from "react-native";
-import { useBreakpoint } from "@/hooks/useBreakpoint";
+import { useResponsive } from "@/hooks/useResponsive";
 import { Colors } from "@/constants/colors";
 
 type Props = {
@@ -18,7 +18,7 @@ export function HeaderActionButton({
   variant = "accent",
   style,
 }: Props) {
-  const { isMobile } = useBreakpoint();
+  const { isMobile } = useResponsive();
   const text = isMobile && shortLabel ? shortLabel : label;
   const isAccent = variant === "accent";
 

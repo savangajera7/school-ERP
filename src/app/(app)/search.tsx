@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { View, Text, TouchableOpacity, TextInput, FlatList, ActivityIndicator, ScrollView, Platform } from "react-native";
-import { useBreakpoint } from "@/hooks/useBreakpoint";
+import { useResponsive } from "@/hooks/useResponsive";
 import { Colors } from "@/constants/colors";
 import { StudentModel } from "@/api/model/studentModel";
 import { useGetApiStudentGet } from "@/api/generated/3-student-crud/3-student-crud";
@@ -19,7 +19,7 @@ import { usePermissions } from "@/hooks/usePermissions";
 import { useTranslation } from "@/hooks/useTranslation";
 
 export default function StudentSearchScreen() {
-  const { isMobile } = useBreakpoint();
+  const { isMobile } = useResponsive();
   const { can } = usePermissions();
   const { t } = useTranslation();
   const canView = can("viewStudents");

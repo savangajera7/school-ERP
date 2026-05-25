@@ -4,7 +4,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Colors } from "@/constants/colors";
-import { useBreakpoint } from "@/hooks/useBreakpoint";
+import { useResponsive } from "@/hooks/useResponsive";
 import { AppIcon } from "@/components/icons/AppIcon";
 
 interface ScreenHeaderProps {
@@ -30,7 +30,7 @@ export function ScreenHeader({
   onBack,
   hideBack = false,
 }: ScreenHeaderProps) {
-  const { isMobile } = useBreakpoint();
+  const { isMobile } = useResponsive();
   const insets = useSafeAreaInsets();
 
   const handleBack = () => {

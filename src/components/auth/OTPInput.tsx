@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { View, TextInput, type NativeSyntheticEvent, type TextInputKeyPressEventData } from "react-native";
-import { useBreakpoint } from "@/hooks/useBreakpoint";
+import { useResponsive } from "@/hooks/useResponsive";
 
 interface OTPInputProps {
   length?: number;
@@ -17,7 +17,7 @@ export const OTPInput: React.FC<OTPInputProps> = ({
   onComplete,
   error = false,
 }) => {
-  const { width } = useBreakpoint();
+  const { width } = useResponsive();
   const inputRefs = useRef<(TextInput | null)[]>([]);
   const [focusedIndex, setFocusedIndex] = useState<number>(0);
 

@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { View, Text, TouchableOpacity, FlatList, StyleSheet } from "react-native";
 import { router } from "expo-router";
-import { useBreakpoint } from "@/hooks/useBreakpoint";
+import { useResponsive } from "@/hooks/useResponsive";
 import { Colors } from "@/constants/colors";
 import type { StudentModel } from "@/api/model/studentModel";
 import { useGetApiStudentGet } from "@/api/generated/3-student-crud/3-student-crud";
@@ -19,7 +19,7 @@ import { ErrorState } from "@/components/ui/EmptyState";
 import { usePermissions } from "@/hooks/usePermissions";
 
 export default function StudentManagementScreen() {
-  const { isMobile } = useBreakpoint();
+  const { isMobile } = useResponsive();
   const { canManageStudents } = usePermissions();
   const [searchQuery, setSearchQuery] = useState("");
 

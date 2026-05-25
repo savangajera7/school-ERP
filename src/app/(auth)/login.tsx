@@ -14,7 +14,7 @@ import { useAuthStore } from "@/store/authStore";
 import { useTranslation } from "@/hooks/useTranslation";
 import { AppBrandLogo } from "@/components/branding/AppBrandLogo";
 import { PoweredByFooter } from "@/components/branding/PoweredByFooter";
-import { useBreakpoint } from "@/hooks/useBreakpoint";
+import { useResponsive } from "@/hooks/useResponsive";
 import { Colors } from "@/constants/colors";
 import { useAuth } from "@/hooks/useAuth";
 import { AppIcon } from "@/components/icons/AppIcon";
@@ -34,7 +34,7 @@ export default function LoginScreen() {
   const { t, language, setLanguage } = useTranslation();
   const { signInWithApi, apiLoginMutation } = useAuth();
   const [loginError, setLoginError] = React.useState<string | null>(null);
-  const { isMobile } = useBreakpoint();
+  const { isMobile } = useResponsive();
 
   React.useEffect(() => {
     if (isAuthenticated) {

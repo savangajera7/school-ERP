@@ -1,6 +1,6 @@
 import React from "react";
 import { View, type ViewProps, type ViewStyle } from "react-native";
-import { useBreakpoint } from "@/hooks/useBreakpoint";
+import { useResponsive } from "@/hooks/useResponsive";
 
 interface CardProps extends ViewProps {
   children: React.ReactNode;
@@ -15,8 +15,7 @@ export const Card: React.FC<CardProps> = ({
   noPadding = false,
   ...props
 }) => {
-  const { isMobile, isTablet } = useBreakpoint();
-
+  const { isMobile, isTablet } = useResponsive();
   const cardStyle: ViewStyle = isMobile
     ? {
         backgroundColor: "#FFFFFF",

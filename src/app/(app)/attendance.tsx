@@ -4,7 +4,6 @@ import { router } from "expo-router";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { PremiumCard } from "@/components/ui/premium";
 import { Card } from "@/components/ui/Card";
-import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { useGetApiClassGetClassList } from "@/api/generated/master-class/master-class";
 import { useGetApiSectionGetSectionList } from "@/api/generated/master-section/master-section";
 import { useGetApiStudentGet } from "@/api/generated/3-student-crud/3-student-crud";

@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, Platform, Linking } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
-import { useBreakpoint } from "@/hooks/useBreakpoint";
+import { useResponsive } from "@/hooks/useResponsive";
 import { Card } from "@/components/ui/Card";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { PremiumCard } from "@/components/ui/premium";
@@ -14,7 +14,7 @@ import { IconCircle } from "@/components/icons/AppIcon";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
 
 export default function StudentProfileScreen() {
-  const { isMobile } = useBreakpoint();
+  const { isMobile } = useResponsive();
   const { id } = useLocalSearchParams();
   const studentId = Number(id) || 0;
   const { data, isLoading: loading } = useGetApiStudentGetByIDId(studentId, {

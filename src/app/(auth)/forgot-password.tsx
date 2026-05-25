@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/Button";
 import { FormField } from "@/components/forms/FormField";
 import { BackButton } from "@/components/ui/BackButton";
 import { useAuth } from "@/hooks/useAuth";
-import { useBreakpoint } from "@/hooks/useBreakpoint";
+import { useResponsive } from "@/hooks/useResponsive";
 import { IconCircle } from "@/components/icons/AppIcon";
 
 const forgotPasswordSchema = z.object({
@@ -23,7 +23,7 @@ type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 
 export default function ForgotPasswordScreen() {
   const { forgotPasswordMutation } = useAuth();
-  const { isMobile } = useBreakpoint();
+  const { isMobile } = useResponsive();
 
   const { control, handleSubmit } = useForm<ForgotPasswordFormData>({
     resolver: zodResolver(forgotPasswordSchema),
