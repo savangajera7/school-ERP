@@ -13,6 +13,6 @@ export const SchoolTheme = {
   success: "#10B981",
   error: "#EF4444",
   admin: "#1A3C6E",
-  teacher: "#0D9488",
-  parent: "#7C3AED",
+  teacher: "#1A3C6E",
+  parent: "#1A3C6E",
 } as const;

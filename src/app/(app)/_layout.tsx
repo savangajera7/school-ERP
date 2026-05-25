@@ -16,11 +16,7 @@ export default function AppLayout() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const showMobileTabs = isMobile && isMobileTabRoute(pathname, role);
 
-  useEffect(() => {
-    if (isAuthenticated && role) {
-      router.replace(getHomeRoute(role) as never);
-    }
-  }, [isAuthenticated, role]);
+
 
   return (
     <View style={{ flex: 1, flexDirection: "row", backgroundColor: "#F8FAFC" }}>

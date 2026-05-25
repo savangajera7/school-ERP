@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { View, Text, TouchableOpacity, TextInput, FlatList, ActivityIndicator } from "react-native";
+import { View, Text, TouchableOpacity, TextInput, FlatList, ActivityIndicator, ScrollView } from "react-native";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Colors } from "@/constants/colors";
 import { StudentModel } from "@/api/model/studentModel";
@@ -12,11 +12,18 @@ import { AppIcon, GenderIcon } from "@/components/icons/AppIcon";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { Card } from "@/components/ui/Card";
+import { normalizeStudent, getStudentDisplayName, formatOptional } from "@/utils/studentUtils";
+import { usePermissions } from "@/hooks/usePermissions";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function StudentSearchScreen() {
   const { isMobile } = useBreakpoint();
+  const { can } = usePermissions();
+  const { t } = useTranslation();
+  const canView = can("viewStudents");
   
   // Advanced Filter States
+  const [showFilters, setShowFilters] = useState(false);
   const [searchName, setSearchName] = useState("");
   const [searchRoll, setSearchRoll] = useState("");
   const [searchGR, setSearchGR] = useState("");
@@ -27,7 +34,8 @@ export default function StudentSearchScreen() {
   const { data, isLoading, refetch } = useGetApiStudentGet();
 
   const students = useMemo(() => {
-    return parseApiList<StudentModel>(data?.data);
+    const raw = parseApiList<Record<string, unknown>>(data);
+    return raw.map(normalizeStudent);
   }, [data]);
 
   // Extract unique classes dynamically
@@ -42,9 +50,9 @@ export default function StudentSearchScreen() {
   // Multifold Search Engine
   const filteredStudents = useMemo(() => {
     return students.filter((student) => {
-      const name = (student.studentDisplayName || `${student.firstName} ${student.lastName}`).toLowerCase();
-      const roll = (student.rollNo || "").toLowerCase();
-      const gr = (student.studentGRNo || "").toLowerCase();
+      const name = getStudentDisplayName(student).toLowerCase();
+      const roll = formatOptional(student.rollNo, "").toLowerCase();
+      const gr = formatOptional(student.studentGRNo, "").toLowerCase();
 
       const matchesName = name.includes(searchName.toLowerCase());
       const matchesRoll = roll.includes(searchRoll.toLowerCase());
@@ -65,12 +73,12 @@ export default function StudentSearchScreen() {
   };
 
   const renderStudentItemMobile = ({ item }: { item: StudentModel }) => {
-    const fullName = item.studentDisplayName || `${item.firstName} ${item.lastName}`;
+    const fullName = getStudentDisplayName(item);
     return (
       <MobileDataCard
         key={item.studentID}
         title={fullName}
-        subtitle={`GR No: ${item.studentGRNo || "N/A"}`}
+        subtitle={`GR No: ${formatOptional(item.studentGRNo)}`}
         accentColor={Colors.accent}
         icon={
           <View className="w-11 h-11 rounded-xl items-center justify-center bg-blue-50/50 border border-blue-100">
@@ -80,22 +88,45 @@ export default function StudentSearchScreen() {
         badge={
           <View className="bg-orange-50 border border-orange-100 px-2.5 py-0.5 rounded-lg">
             <Text className="text-[10px] font-black text-orange-600 uppercase">
-              Roll: {item.rollNo || "N/A"}
+              Roll: {formatOptional(item.rollNo)}
             </Text>
           </View>
         }
         fields={[
-          { label: "Class ID", value: String(item.classID || "N/A") },
-          { label: "Gender", value: item.gender || "N/A" },
+          { label: "Class ID", value: formatOptional(item.classID) },
+          { label: "Gender", value: formatOptional(item.gender) },
           { label: "Registration", value: "Active", highlight: "success" },
         ]}
       />
     );
   };
 
+  if (!canView) {
+    return (
+      <PremiumScreenLayout
+        title={t.students + " " + t.search}
+        subtitle="Filter and locate student records"
+        hideBack={isMobile}
+        withTabBar
+        scrollable={true}
+        bodyStyle={{ marginTop: -20, paddingHorizontal: 16, flex: 1 }}
+      >
+        <Card className="bg-white border border-gray-150 p-10 items-center rounded-3xl mt-6">
+          <View className="mb-4">
+            <AppIcon name="lock" size={44} color="#EF4444" active />
+          </View>
+          <Text className="text-base font-black text-gray-800 uppercase tracking-wide">{t.accessDenied}</Text>
+          <Text className="text-xs text-gray-400 font-bold mt-2 text-center leading-relaxed">
+            {t.noPermissionSearch}
+          </Text>
+        </Card>
+      </PremiumScreenLayout>
+    );
+  }
+
   return (
     <PremiumScreenLayout
-      title="Student Search"
+      title={t.students + " " + t.search}
       subtitle="Filter and locate student records"
       hideBack={isMobile}
       withTabBar
@@ -106,10 +137,10 @@ export default function StudentSearchScreen() {
           <View className="flex-row items-center justify-between mb-4 border-b border-gray-50 pb-2">
             <View className="flex-row items-center gap-2">
               <AppIcon name="search" size={18} color="#134A8C" active />
-              <Text className="text-[13px] font-black text-gray-900 uppercase tracking-wider">Search Controls</Text>
+              <Text className="text-[13px] font-black text-gray-900 uppercase tracking-wider">{t.searchControls}</Text>
             </View>
             <TouchableOpacity onPress={clearFilters}>
-              <Text className="text-xs font-black text-rose-500 uppercase">Clear All</Text>
+              <Text className="text-xs font-black text-rose-500 uppercase">{t.clearAll}</Text>
             </TouchableOpacity>
           </View>
 
@@ -117,7 +148,7 @@ export default function StudentSearchScreen() {
           <View className={`gap-4 ${isMobile ? "flex-col" : "flex-row flex-wrap"}`}>
             {/* Search by Name */}
             <View style={isMobile ? undefined : { flex: 1, minWidth: 220 }}>
-              <Text className="text-[11px] font-black text-gray-400 uppercase mb-1.5">Student Name</Text>
+              <Text className="text-[11px] font-black text-gray-400 uppercase mb-1.5">{t.studentName}</Text>
               <TextInput
                 value={searchName}
                 onChangeText={setSearchName}
@@ -130,7 +161,7 @@ export default function StudentSearchScreen() {
 
             {/* Search by Roll No */}
             <View style={isMobile ? undefined : { width: 140 }}>
-              <Text className="text-[11px] font-black text-gray-400 uppercase mb-1.5">Roll Number</Text>
+              <Text className="text-[11px] font-black text-gray-400 uppercase mb-1.5">{t.rollNumber}</Text>
               <TextInput
                 value={searchRoll}
                 onChangeText={setSearchRoll}
@@ -143,7 +174,7 @@ export default function StudentSearchScreen() {
 
             {/* Search by GR No */}
             <View style={isMobile ? undefined : { width: 140 }}>
-              <Text className="text-[11px] font-black text-gray-400 uppercase mb-1.5">GR Number</Text>
+              <Text className="text-[11px] font-black text-gray-400 uppercase mb-1.5">{t.grNumber}</Text>
               <TextInput
                 value={searchGR}
                 onChangeText={setSearchGR}
@@ -156,7 +187,7 @@ export default function StudentSearchScreen() {
 
             {/* Filter by Gender */}
             <View style={isMobile ? undefined : { width: 200 }}>
-              <Text className="text-[11px] font-black text-gray-400 uppercase mb-1.5">Gender Selection</Text>
+              <Text className="text-[11px] font-black text-gray-400 uppercase mb-1.5">{t.gender}</Text>
               <View className="flex-row bg-gray-55 border border-gray-200 rounded-xl p-0.5 h-[44px]">
                 {(["All", "Male", "Female"] as const).map((gender) => (
                   <TouchableOpacity
@@ -178,7 +209,7 @@ export default function StudentSearchScreen() {
 
             {/* Filter by Class ID */}
             <View style={isMobile ? undefined : { width: 150 }}>
-              <Text className="text-[11px] font-black text-gray-400 uppercase mb-1.5">Class ID Filter</Text>
+              <Text className="text-[11px] font-black text-gray-400 uppercase mb-1.5">{t.classId}</Text>
               <View className="flex-row flex-wrap gap-1.5">
                 <TouchableOpacity
                   onPress={() => setFilterClass("All")}
@@ -211,7 +242,9 @@ export default function StudentSearchScreen() {
         {/* Results overview */}
         <View className="flex-row justify-between items-center mb-4 px-2">
           <Text className="text-xs font-black text-gray-400 uppercase tracking-widest">
-            Found {filteredStudents.length} Matching Student Files
+            {t.language === "gu" || typeof t.language === "string" && (t.language as string).startsWith("gu")
+              ? `મળેલ વિદ્યાર્થીઓ: ${filteredStudents.length}`
+              : `Found ${filteredStudents.length} Matching Student Files`}
           </Text>
           {isLoading && <ActivityIndicator size="small" color="#134A8C" />}
         </View>
@@ -224,7 +257,7 @@ export default function StudentSearchScreen() {
             <View className="mb-2">
               <AppIcon name="search" size={36} color="#9CA3AF" />
             </View>
-            <Text className="text-sm font-black text-gray-800">No Students Found</Text>
+            <Text className="text-sm font-black text-gray-800">{t.noResultFound}</Text>
             <Text className="text-xs text-gray-400 font-bold mt-1 text-center">
               Try adjusting your search name, roll number, or class filter selection.
             </Text>
@@ -234,7 +267,7 @@ export default function StudentSearchScreen() {
           <FlatList
             data={filteredStudents}
             renderItem={renderStudentItemMobile}
-            keyExtractor={(item) => String(item.studentID)}
+            keyExtractor={(item, index) => item.studentID != null ? String(item.studentID) : `student-${index}`}
             contentContainerStyle={{ gap: 12, paddingBottom: 60 }}
             showsVerticalScrollIndicator={false}
           />
@@ -242,26 +275,26 @@ export default function StudentSearchScreen() {
           /* Elegant High-Fidelity Desktop Data Table */
           <Card className="bg-white border border-gray-150 shadow-sm rounded-3xl overflow-hidden">
             <View className="flex-row bg-[#F4F8FC] border-b border-gray-100 px-6 py-4">
-              <Text className="w-[100px] font-black text-gray-400 text-[10px] uppercase tracking-wider">Roll No</Text>
-              <Text className="flex-1 font-black text-gray-400 text-[10px] uppercase tracking-wider">Student Name</Text>
-              <Text className="w-[120px] font-black text-gray-400 text-[10px] uppercase tracking-wider text-center">GR Number</Text>
-              <Text className="w-[120px] font-black text-gray-400 text-[10px] uppercase tracking-wider text-center">Gender</Text>
-              <Text className="w-[120px] font-black text-gray-400 text-[10px] uppercase tracking-wider text-center">Class ID</Text>
-              <Text className="w-[100px] font-black text-gray-400 text-[10px] uppercase tracking-wider text-right">Status</Text>
+              <Text className="w-[100px] font-black text-gray-400 text-[10px] uppercase tracking-wider">{t.rollNumber}</Text>
+              <Text className="flex-1 font-black text-gray-400 text-[10px] uppercase tracking-wider">{t.studentName}</Text>
+              <Text className="w-[120px] font-black text-gray-400 text-[10px] uppercase tracking-wider text-center">{t.grNumber}</Text>
+              <Text className="w-[120px] font-black text-gray-400 text-[10px] uppercase tracking-wider text-center">{t.gender}</Text>
+              <Text className="w-[120px] font-black text-gray-400 text-[10px] uppercase tracking-wider text-center">{t.classId}</Text>
+              <Text className="w-[100px] font-black text-gray-400 text-[10px] uppercase tracking-wider text-right">{t.status}</Text>
             </View>
 
             <FlatList
               data={filteredStudents}
-              keyExtractor={(item) => String(item.studentID)}
+              keyExtractor={(item, index) => item.studentID != null ? String(item.studentID) : `student-${index}`}
               renderItem={({ item, index }) => {
-                const fullName = item.studentDisplayName || `${item.firstName} ${item.lastName}`;
+                const fullName = getStudentDisplayName(item);
                 return (
                   <View
                     className={`flex-row items-center px-6 py-3.5 border-b border-gray-50 ${
                       index % 2 === 0 ? "bg-white" : "bg-gray-50/20"
                     }`}
                   >
-                    <Text className="w-[100px] text-xs font-black text-orange-600">Roll #{item.rollNo || "—"}</Text>
+                    <Text className="w-[100px] text-xs font-black text-orange-600">Roll #{formatOptional(item.rollNo)}</Text>
                     
                     <View className="flex-1 flex-row items-center gap-3">
                       <View className="w-8 h-8 rounded-lg bg-sky-50 items-center justify-center border border-sky-100">
@@ -270,13 +303,13 @@ export default function StudentSearchScreen() {
                       <Text className="text-sm font-black text-gray-800">{fullName}</Text>
                     </View>
 
-                    <Text className="w-[120px] text-xs font-extrabold text-gray-500 text-center">{item.studentGRNo || "—"}</Text>
-                    <Text className="w-[120px] text-xs font-extrabold text-gray-500 text-center">{item.gender || "—"}</Text>
-                    <Text className="w-[120px] text-xs font-extrabold text-gray-500 text-center">Class {item.classID || "—"}</Text>
+                    <Text className="w-[120px] text-xs font-extrabold text-gray-500 text-center">{formatOptional(item.studentGRNo)}</Text>
+                    <Text className="w-[120px] text-xs font-extrabold text-gray-500 text-center">{formatOptional(item.gender)}</Text>
+                    <Text className="w-[120px] text-xs font-extrabold text-gray-500 text-center">Class {formatOptional(item.classID)}</Text>
                     
                     <View className="w-[100px] items-end">
                       <View className="px-2.5 py-0.5 bg-emerald-50 rounded-full border border-emerald-100">
-                        <Text className="text-[9px] font-black text-emerald-600 uppercase">Active</Text>
+                        <Text className="text-[9px] font-black text-emerald-600 uppercase">{t.active}</Text>
                       </View>
                     </View>
                   </View>

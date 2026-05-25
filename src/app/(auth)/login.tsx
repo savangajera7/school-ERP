@@ -53,7 +53,9 @@ export default function LoginScreen() {
   const onSubmit = async (data: LoginFormData) => {
     setLoginError(null);
     const result = await signInWithApi(data.email, data.password);
-    if (!result.ok) setLoginError(result.error ?? t.loginFailed);
+    if (!result.ok) {
+      setLoginError(result.error ?? t.loginFailed);
+    }
   };
 
   const renderForm = () => (

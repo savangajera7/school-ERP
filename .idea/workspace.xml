@@ -6,57 +6,16 @@
   <component name="ChangeListManager">
     <list default="true" id="973b64d6-6094-46c3-ae9b-d54eff11ffd3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.json" beforeDir="false" afterPath="$PROJECT_DIR$/app.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/_layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/dashboard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/academic-setup.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/academic-setup.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/admission-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/admission-form.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/attendance-reports.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/attendance-reports.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/attendance.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/attendance.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/change-password.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/change-password.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/dashboard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/exams.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/exams.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/fees.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/fees.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/inquiries.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/inquiries.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/leave.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/leave.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/masters.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/masters.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/menu.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/menu.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/money.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/money.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/notice-compose.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/notice-compose.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/notices.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/notices.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/notification-compose.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/notification-compose.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/notifications.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/notifications.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/parent-results.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/parent-results.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/parents.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/parents.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/profile.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/reports.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/reports.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/roles.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/roles.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/(app)/search.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/search.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/student-profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/student-profile.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/students.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/students.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/subjects.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/subjects.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/teacher-attendance.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/teacher-attendance.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/teachers.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/teachers.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/timetable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/timetable.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/users.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/users.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/(auth)/login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(auth)/login.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/(parent)/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(parent)/_layout.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/(parent)/dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(parent)/dashboard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(teacher)/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(teacher)/_layout.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/(teacher)/dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(teacher)/dashboard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/_layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/layout/RoleTabBar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/layout/RoleTabBar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/ui/BottomTabBar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/BottomTabBar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/ui/MobileDataCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/MobileDataCard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/constants/appIcons.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/constants/appIcons.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/constants/mobileTabs.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/constants/mobileTabs.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/dashboard/DashboardGreeting.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/dashboard/DashboardGreeting.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/layout/ParentMenuScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/layout/ParentMenuScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/layout/TeacherMenuScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/layout/TeacherMenuScreen.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/constants/rolePermissions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/constants/rolePermissions.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/constants/translations.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/constants/translations.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/hooks/useAuth.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/useAuth.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/services/api/axiosInstance.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/api/axiosInstance.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/store/authStore.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/store/authStore.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/constants/theme.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/constants/theme.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -152,7 +111,7 @@
       <workItem from="1779614870873" duration="12594000" />
       <workItem from="1779650362413" duration="48000" />
       <workItem from="1779702281848" duration="3101000" />
-      <workItem from="1779710067304" duration="4083000" />
+      <workItem from="1779710067304" duration="6076000" />
     </task>
     <servers />
   </component>

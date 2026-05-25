@@ -27,7 +27,7 @@ export function ParentMenuScreen() {
       <StatusBar style="light" />
       <ScrollView contentContainerStyle={{ paddingBottom: ROLE_TAB_BAR_HEIGHT + 24 }}>
         <LinearGradient
-          colors={["#7C3AED", "#5B21B6"]}
+          colors={[SchoolTheme.primary, SchoolTheme.primaryDark]}
           style={[styles.header, { paddingTop: insets.top + 12 }]}
         >
           <Text style={styles.title}>More</Text>
@@ -39,7 +39,7 @@ export function ParentMenuScreen() {
               label={link.title}
               icon={link.icon}
               accentColor={SchoolTheme.parent}
-              iconBackground="#F3E8FF"
+              iconBackground="#E8EFF8"
               onPress={() => router.push(link.href as never)}
             />
           ))}

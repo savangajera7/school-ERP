@@ -8,9 +8,9 @@ import type { Role } from "@/types/auth.types";
 const ROLE_GRADIENT: Record<string, [string, string]> = {
   admin: [SchoolTheme.primary, SchoolTheme.primaryLight],
   superadmin: [SchoolTheme.primaryDark, SchoolTheme.primary],
-  teacher: ["#0D9488", "#14B8A6"],
-  parent: ["#7C3AED", "#A78BFA"],
-  student: ["#7C3AED", "#A78BFA"],
+  teacher: [SchoolTheme.primary, SchoolTheme.primaryLight],
+  parent: [SchoolTheme.primary, SchoolTheme.primaryLight],
+  student: [SchoolTheme.primary, SchoolTheme.primaryLight],
 };
 
 const ROLE_SUBTITLE: Record<string, string> = {

@@ -16,6 +16,37 @@ export default function MenuScreen() {
   const { unreadCount } = useNotifications();
   const { t } = useTranslation();
 
+  const translateLabel = (label: string): string => {
+    switch (label) {
+      case "Dashboard": return t.dashboard;
+      case "Students": return t.students;
+      case "Admission": return t.admission;
+      case "Attendance": return t.attendance;
+      case "Att. Reports": return t.attendanceReports;
+      case "Staff Attend.": return t.staffAttend;
+      case "Fees": return t.fees;
+      case "Accounts": return t.money;
+      case "Exams": return t.exams;
+      case "Subjects": return t.subjects;
+      case "Teachers": return t.teachers;
+      case "Parents": return t.parents;
+      case "Notices": return t.notices;
+      case "Post Notice": return t.postNotice;
+      case "Alerts": return t.alerts;
+      case "Send Alert": return t.sendAlert;
+      case "Leave": return t.leave;
+      case "Timetable": return t.timetable;
+      case "Inquiries": return t.inquiries;
+      case "Reports": return t.reports;
+      case "Academic": return t.academic;
+      case "Masters": return t.masters;
+      case "Users": return t.users;
+      case "Roles": return t.roles;
+      case "My Results": return t.myResults;
+      default: return label;
+    }
+  };
+
   const items = navItems.map((item) =>
     item.route === "/(app)/notifications"
       ? { ...item, badge: unreadCount }
@@ -41,7 +72,7 @@ export default function MenuScreen() {
             style={[styles.tile, isMobile ? styles.tileMobile : styles.tileDesktop]}
           >
             <IconCircle name={item.icon} size={40} iconSize={20} />
-            <Text style={styles.tileLabel}>{item.label}</Text>
+            <Text style={styles.tileLabel}>{translateLabel(item.label)}</Text>
             {item.desc ? (
               <Text style={styles.tileDesc} numberOfLines={2}>
                 {item.desc}

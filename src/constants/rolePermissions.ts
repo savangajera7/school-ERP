@@ -387,14 +387,14 @@ export const MOBILE_TABS_BY_ROLE: Record<
   ],
   parent: [
     { label: "Menu", icon: "menu", route: "/(app)/menu" },
-    { label: "Search", icon: "search", route: "/(app)/search" },
+    { label: "Notices", icon: "notices", route: "/(app)/notices" },
     { label: "Home", icon: "home", route: "/(app)/dashboard" },
     { label: "Time Table", icon: "timetable", route: "/(app)/timetable" },
     { label: "Profile", icon: "profile", route: "/(app)/profile" },
   ],
   student: [
     { label: "Menu", icon: "menu", route: "/(app)/menu" },
-    { label: "Search", icon: "search", route: "/(app)/search" },
+    { label: "Notices", icon: "notices", route: "/(app)/notices" },
     { label: "Home", icon: "home", route: "/(app)/dashboard" },
     { label: "Time Table", icon: "timetable", route: "/(app)/timetable" },
     { label: "Profile", icon: "profile", route: "/(app)/profile" },

@@ -1,69 +1,104 @@
 import React from "react";
-import { View, Text, ScrollView, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  Image,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
-import { router } from "expo-router";
 import { useAuthStore } from "@/store/authStore";
-import { SchoolTheme } from "@/constants/theme";
 import { useResponsive } from "@/hooks/useResponsive";
+import { SchoolTheme } from "@/constants/theme";
 import { ROLE_TAB_BAR_HEIGHT } from "@/components/layout/RoleTabBar";
 import { DashboardTopBar } from "@/components/layout/DashboardTopBar";
-import { MobileScreenShell } from "@/components/layout/MobileScreenShell";
 import { useTranslation } from "@/hooks/useTranslation";
-import { ActionListRow } from "@/components/dashboard/ActionListRow";
-import type { AppIconName } from "@/constants/appIcons";
-
-const LINKS: { label: string; route: string; icon: AppIconName }[] = [
-  { label: "Homework", route: "/(parent)/homework", icon: "homework" },
-  { label: "Attendance", route: "/(parent)/attendance", icon: "attendance" },
-  { label: "Exams", route: "/(parent)/exam", icon: "exams" },
-  { label: "Results", route: "/(parent)/result", icon: "results" },
-  { label: "Timetable", route: "/(parent)/timetable", icon: "timetable" },
-  { label: "Notices", route: "/(parent)/notices", icon: "notices" },
-];
+import { MobileScreenShell } from "@/components/layout/MobileScreenShell";
+import { QuickActionGrid, type QuickActionItem } from "@/components/dashboard/QuickActionGrid";
+import { IconCircle } from "@/components/icons/AppIcon";
+import { ROLE_LABELS } from "@/constants/rolePermissions";
 
 export default function ParentDashboardScreen() {
-  const { userData } = useAuthStore();
+  const { userData, role } = useAuthStore();
   const insets = useSafeAreaInsets();
-  const { isMobile, titleSize } = useResponsive();
+  const { isMobile, bodySize, titleSize } = useResponsive();
   const firstName = userData?.name?.split(" ")[0] || "Parent";
+  const roleLabel = role ? ROLE_LABELS[role] : "Parent";
+  const tabPad = isMobile ? ROLE_TAB_BAR_HEIGHT + 24 : 32;
   const { t } = useTranslation();
 
+  const QUICK: QuickActionItem[] = [
+    { title: t.homework, route: "/(parent)/homework", icon: "homework" },
+    { title: t.attendance, route: "/(parent)/attendance", icon: "attendance" },
+    { title: t.exams, route: "/(parent)/exam", icon: "exams" },
+    { title: t.examMarks, route: "/(parent)/exam-marks", icon: "exams" },
+    { title: t.results, route: "/(parent)/result", icon: "results" },
+    { title: t.timetable, route: "/(parent)/timetable", icon: "timetable" },
+    { title: t.notices, route: "/(parent)/notices", icon: "notices" },
+    { title: t.syllabus, route: "/(parent)/syllabus", icon: "syllabus" },
+    { title: t.profile, route: "/(parent)/profile", icon: "profile" },
+  ];
+
   return (
-    <MobileScreenShell withTabBar={isMobile} backgroundColor={SchoolTheme.background}>
+    <MobileScreenShell withTabBar={isMobile} edges={["left", "right"]} backgroundColor={SchoolTheme.background}>
       <StatusBar style="light" />
       <ScrollView
-        contentContainerStyle={{ paddingBottom: ROLE_TAB_BAR_HEIGHT + 24, flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: tabPad, flexGrow: 1 }}
       >
         <LinearGradient
-          colors={["#7C3AED", "#5B21B6"]}
-          style={[styles.header, { paddingTop: insets.top + 12 }]}
+          colors={[SchoolTheme.primary, SchoolTheme.primaryDark]}
+          style={[
+            styles.header,
+            {
+              paddingTop: insets.top + 12,
+              paddingBottom: isMobile ? 56 : 64,
+            },
+          ]}
         >
           {isMobile ? (
             <DashboardTopBar notificationsHref="/(parent)/notices" />
           ) : (
             <>
-              <Text style={styles.welcome}>Parent portal</Text>
-              <Text style={[styles.userName, { fontSize: titleSize }]}>
-                {t.welcomeBack}, {firstName}
-              </Text>
+              <View style={styles.headerTop}>
+                <Image
+                  source={require("../../../assets/school-logo.png")}
+                  style={styles.logo}
+                  resizeMode="contain"
+                />
+                <View style={styles.headerText}>
+                  <Text style={styles.schoolName}>
+                    {t.schoolName}
+                  </Text>
+                  <Text style={styles.roleBadge}>{roleLabel}</Text>
+                </View>
+              </View>
+              <Text style={styles.welcome}>{t.welcomeBack}</Text>
+              <Text style={[styles.userName, { fontSize: titleSize }]}>Hello, {firstName}</Text>
             </>
           )}
         </LinearGradient>
 
-        <View style={[styles.body, isMobile && { marginTop: -24 }]}>
-          {LINKS.map((a) => (
-            <ActionListRow
-              key={a.route}
-              label={a.label}
-              icon={a.icon}
-              accentColor={SchoolTheme.parent}
-              iconBackground="#F3E8FF"
-              onPress={() => router.push(a.route as never)}
-            />
-          ))}
+        <View style={[styles.body, isMobile && { marginTop: -32 }]}>
+          <View style={styles.statsRow}>
+            <View style={styles.statCard}>
+              <IconCircle name="attendance" size={40} />
+              <Text style={[styles.statNum, { fontSize: titleSize }]}>Excellent</Text>
+              <Text style={[styles.statLabel, { fontSize: bodySize }]}>Attendance Rate</Text>
+            </View>
+            <View style={styles.statCard}>
+              <IconCircle name="fees" size={40} />
+              <Text style={[styles.statNum, { fontSize: titleSize }]}>Paid</Text>
+              <Text style={[styles.statLabel, { fontSize: bodySize }]}>Fee Ledger status</Text>
+            </View>
+          </View>
+
+          <View style={styles.sectionCard}>
+            <Text style={[styles.sectionTitle, { fontSize: bodySize + 2 }]}>{t.quickActions}</Text>
+            <QuickActionGrid items={QUICK} mobileColumns={4} />
+          </View>
         </View>
       </ScrollView>
     </MobileScreenShell>
@@ -74,17 +109,61 @@ const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: SchoolTheme.background },
   header: {
     paddingHorizontal: 20,
-    paddingBottom: 48,
     borderBottomLeftRadius: 28,
     borderBottomRightRadius: 28,
   },
+  headerTop: { flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 16 },
+  logo: { width: 48, height: 48, borderRadius: 12, backgroundColor: "#fff" },
+  headerText: { flex: 1 },
+  schoolName: { color: "#fff", fontWeight: "900", fontSize: 16 },
+  roleBadge: {
+    color: SchoolTheme.accent,
+    fontSize: 10,
+    fontWeight: "800",
+    textTransform: "uppercase",
+    letterSpacing: 1,
+    marginTop: 2,
+  },
   welcome: {
-    color: "rgba(255,255,255,0.85)",
+    color: "rgba(255,255,255,0.7)",
     fontSize: 11,
     fontWeight: "800",
     textTransform: "uppercase",
     letterSpacing: 1,
   },
   userName: { color: "#fff", fontWeight: "900", marginTop: 4 },
-  body: { paddingHorizontal: 16, paddingTop: 12 },
+  body: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    maxWidth: 1200,
+    width: "100%",
+    alignSelf: "center",
+  },
+  statsRow: { flexDirection: "row", gap: 12, marginBottom: 16 },
+  statCard: {
+    flex: 1,
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: SchoolTheme.border,
+    alignItems: "flex-start",
+    gap: 6,
+  },
+  statNum: { fontWeight: "900", color: SchoolTheme.primary },
+  statLabel: { color: SchoolTheme.textSecondary, fontWeight: "600" },
+  sectionCard: {
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: SchoolTheme.border,
+  },
+  sectionTitle: {
+    fontWeight: "800",
+    color: SchoolTheme.text,
+    marginBottom: 12,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+  },
 });
