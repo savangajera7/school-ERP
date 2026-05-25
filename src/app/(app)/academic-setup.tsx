@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert, ActivityIndicator } from "react-native";
 import { router } from "expo-router";
-import { useBreakpoint } from "@/hooks/useBreakpoint";
+import { useResponsive } from "@/hooks/useResponsive";
 import { Card } from "@/components/ui/Card";
 import { Colors } from "@/constants/colors";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
@@ -32,7 +32,7 @@ const TAB_COLORS: Record<TabKey, { bg: string; border: string; text: string }> =
 };
 
 export default function AcademicSetupScreen() {
-  const { isMobile } = useBreakpoint();
+  const { isMobile } = useResponsive();
   const [activeTab, setActiveTab] = useState<TabKey>("years");
   const [search, setSearch] = useState("");
 

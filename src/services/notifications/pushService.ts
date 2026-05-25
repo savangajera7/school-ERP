@@ -70,7 +70,7 @@ export async function registerPushToken(): Promise<void> {
 
   const userId = parseInt(userData.id, 10) || 0;
   const roleMap: Record<string, number> = {
-    superadmin: 1,
+    super_admin: 1,
     admin: 2,
     teacher: 3,
     parent: 4,

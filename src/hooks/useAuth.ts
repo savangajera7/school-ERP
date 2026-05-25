@@ -136,7 +136,7 @@ export function useAuthGuard() {
       isAuthenticated &&
       expected &&
       group &&
-      (group === "(admin)" || group === "(teacher)" || group === "(parent)") &&
+      (group === "(admin)" || group === "(teacher)" || group === "(parent)" || group === "(super-admin)") &&
       group !== expected
     ) {
       router.replace(getHomeRoute(role) as never);

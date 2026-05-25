@@ -19,9 +19,10 @@ import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { usePermissions } from "@/hooks/usePermissions";
 import { GenderIcon } from "@/components/icons/AppIcon";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { useResponsive } from "@/hooks/useResponsive";
 
 export default function AttendanceScreen() {
-  const { isMobile } = useBreakpoint();
+  const { isMobile } = useResponsive();
   const { isTeacher, isSchoolAdmin } = usePermissions();
   const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
   const [selectedSectionId, setSelectedSectionId] = useState<number | null>(null);
@@ -196,8 +197,9 @@ export default function AttendanceScreen() {
           onPress={handleSave}
           disabled={markAttendance.isPending}
           className={`px-4 py-2.5 rounded-xl flex-row items-center gap-1.5 shadow-md ${
-            markAttendance.isPending ? "bg-white/10" : "bg-[#F5921E] shadow-amber-500/20"
+            markAttendance.isPending ? "bg-white/10" : ""
           }`}
+          style={!markAttendance.isPending ? { backgroundColor: Colors.accent } : {}}
           activeOpacity={0.8}
         >
           {markAttendance.isPending ? (
@@ -221,7 +223,7 @@ export default function AttendanceScreen() {
                       onPress={() => setSelectedClassId(cls.classID!)}
                       className={`px-4 py-2.5 rounded-xl border-[1.5px] ${
                         selectedClassId === cls.classID 
-                          ? "bg-[#134A8C] border-[#134A8C]" 
+                          ? "bg-[#1A3C6E] border-[#1A3C6E]" 
                           : "bg-gray-50/50 border-gray-200"
                       }`}
                       activeOpacity={0.8}
@@ -245,7 +247,7 @@ export default function AttendanceScreen() {
                       onPress={() => setSelectedSectionId(sec.sectionID!)}
                       className={`px-4 py-2.5 rounded-xl border-[1.5px] ${
                         selectedSectionId === sec.sectionID 
-                          ? "bg-[#134A8C] border-[#134A8C]" 
+                          ? "bg-[#1A3C6E] border-[#1A3C6E]" 
                           : "bg-gray-50/50 border-gray-200"
                       }`}
                       activeOpacity={0.8}
@@ -396,9 +398,10 @@ export default function AttendanceScreen() {
                         onPress={() => toggleStatus(student.studentID!, 'Late')}
                         className={`w-[36px] h-[36px] rounded-xl items-center justify-center border ${
                           status === 'Late' 
-                            ? 'bg-[#f5921e] border-[#f5921e] shadow-sm shadow-orange-150' 
+                            ? 'shadow-sm shadow-orange-150' 
                             : 'bg-white border-gray-200 hover:bg-gray-50'
                         }`}
+                        style={status === 'Late' ? { backgroundColor: Colors.accent, borderColor: Colors.accent } : {}}
                         activeOpacity={0.8}
                       >
                         <Text className={`text-xs font-black ${

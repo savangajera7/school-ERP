@@ -1,19 +1,25 @@
-export type Role = "superadmin" | "admin" | "teacher" | "parent" | "student";
+export type Role = 'super_admin' | 'admin' | 'teacher' | 'parent' | 'student';
 
-export interface UserData {
+export interface AuthUser {
+  id: number;
+  name: string;
+  email: string;
+  role: Role;
+  roleId: number;       // from RoleRights
+  token: string;
+}
+
+export interface UserData extends Partial<AuthUser> {
   studentID?: number;
   firstName?: string;
   lastName?: string;
-  email?: string;
   studentEmail?: string;
-  role: Role;
   // Legacy fields for compatibility
-  id: string;
-  name: string;
-  mobile: string;
-  schoolName: string;
+  id?: any;
+  name?: any;
+  mobile?: string;
+  schoolName?: string;
   avatar?: string;
-  /** From login API — used for device token registration */
   roleID?: number;
   referenceID?: number;
 }

@@ -1,183 +1,135 @@
-import React from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  StyleSheet,
-  Image,
-} from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
-import { LinearGradient } from "expo-linear-gradient";
-import { useAuthStore } from "@/store/authStore";
+import React, { useMemo } from "react";
+import { View, Text, ScrollView, TouchableOpacity, RefreshControl, Platform } from "react-native";
+import { router } from "expo-router";
 import { useResponsive } from "@/hooks/useResponsive";
-import { SchoolTheme } from "@/constants/theme";
-import { ROLE_TAB_BAR_HEIGHT } from "@/components/layout/RoleTabBar";
-import { DashboardTopBar } from "@/components/layout/DashboardTopBar";
-import { useTranslation } from "@/hooks/useTranslation";
-import { MobileScreenShell } from "@/components/layout/MobileScreenShell";
+import { Colors } from "@/constants/colors";
+import { AppIcon } from "@/components/icons/AppIcon";
 import { useGetApiStudentGet } from "@/api/generated/3-student-crud/3-student-crud";
 import { useGetApiTeacherGetTeacherList } from "@/api/generated/teacher/teacher";
+import { useGetApiClassGetClassList } from "@/api/generated/master-class/master-class";
 import { parseApiList } from "@/utils/apiResponse";
-import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
-import { QuickActionGrid, type QuickActionItem } from "@/components/dashboard/QuickActionGrid";
-import { IconCircle } from "@/components/icons/AppIcon";
-import { ROLE_LABELS } from "@/constants/rolePermissions";
-const QUICK: QuickActionItem[] = [
-  { title: "Students", route: "/(admin)/students", icon: "students" },
-  { title: "Teachers", route: "/(admin)/teachers", icon: "teachers" },
-  { title: "Fees", route: "/(admin)/fees", icon: "fees" },
-  { title: "Attendance", route: "/(admin)/attendance", icon: "attendance" },
-  { title: "Exams", route: "/(admin)/exams", icon: "exams" },
-  { title: "Notices", route: "/(admin)/notices", icon: "notices" },
-  { title: "Reports", route: "/(admin)/reports", icon: "reports" },
-  { title: "Parents", route: "/(admin)/parents", icon: "parents" },
-  { title: "Alerts", route: "/(admin)/notifications", icon: "notifications" },
-  { title: "Settings", route: "/(admin)/settings", icon: "settings" },
-];
+import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
+import { PremiumCard } from "@/components/ui/premium";
 
-export default function AdminDashboardScreen() {
-  const { userData, role } = useAuthStore();
-  const insets = useSafeAreaInsets();
-  const { isMobile, bodySize, titleSize } = useResponsive();
-  const { data: studentsData, isLoading: ls } = useGetApiStudentGet();
-  const { data: teachersData, isLoading: lt } = useGetApiTeacherGetTeacherList();
-  const students = parseApiList(studentsData);
-  const teachers = parseApiList(teachersData);
-  const loading = ls || lt;
-  const firstName = userData?.name?.split(" ")[0] || "Admin";
-  const roleLabel = role ? ROLE_LABELS[role] : "Administrator";
-  const tabPad = isMobile ? ROLE_TAB_BAR_HEIGHT + 24 : 32;
-  const { t } = useTranslation();
+export default function AdminDashboard() {
+  const { isMobile } = useResponsive();
+
+  // API Hooks
+  const { data: studentsData, isLoading: loadingStudents, refetch: refetchStudents } = useGetApiStudentGet();
+  const { data: teachersData, isLoading: loadingTeachers, refetch: refetchTeachers } = useGetApiTeacherGetTeacherList();
+  const { data: classesData, isLoading: loadingClasses, refetch: refetchClasses } = useGetApiClassGetClassList();
+
+  const studentCount = useMemo(() => parseApiList(studentsData?.data).length, [studentsData]);
+  const teacherCount = useMemo(() => parseApiList(teachersData?.data).length, [teachersData]);
+  const classCount = useMemo(() => parseApiList(classesData?.data).length, [classesData]);
+
+  const onRefresh = () => {
+    refetchStudents();
+    refetchTeachers();
+    refetchClasses();
+  };
+
+  const stats = [
+    { label: "Total Students", value: studentCount, icon: "students", color: "#3B82F6", route: "/(admin)/students" },
+    { label: "Total Teachers", value: teacherCount, icon: "teacher", color: "#10B981", route: "/(admin)/teachers" },
+    { label: "Total Classes", value: classCount, icon: "class", color: "#F59E0B", route: "/(admin)/classes" },
+    { label: "Fees Collected", value: "₹2.4M", icon: "money", color: "#6366F1", route: "/(admin)/fees" },
+  ];
+
+  const quickActions = [
+    { label: "Add Student", icon: "add", route: "/(admin)/students/create" },
+    { label: "Mark Attendance", icon: "calendar", route: "/(admin)/attendance" },
+    { label: "Send Notice", icon: "compose", route: "/(admin)/notices/create" },
+    { label: "View Reports", icon: "search", route: "/(admin)/results" },
+  ];
 
   return (
-    <MobileScreenShell withTabBar={isMobile} edges={["left", "right"]} backgroundColor={SchoolTheme.background}>
-      <StatusBar style="light" />
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: tabPad, flexGrow: 1 }}
-      >
-        <LinearGradient
-          colors={[SchoolTheme.primary, SchoolTheme.primaryDark]}
-          style={[
-            styles.header,
-            {
-              paddingTop: insets.top + 12,
-              paddingBottom: isMobile ? 56 : 64,
-            },
-          ]}
-        >
-          {isMobile ? (
-            <DashboardTopBar notificationsHref="/(admin)/notifications" />
-          ) : (
-            <>
-              <View style={styles.headerTop}>
-                <Image
-                  source={require("../../../assets/school-logo.png")}
-                  style={styles.logo}
-                  resizeMode="contain"
-                />
-                <View style={styles.headerText}>
-                  <Text style={styles.schoolName}>
-                    {t.schoolName}
+    <PremiumScreenLayout
+      title="School Overview"
+      subtitle="Welcome back, Administrator"
+      withTabBar
+      refreshControl={
+        <RefreshControl refreshing={loadingStudents || loadingTeachers || loadingClasses} onRefresh={onRefresh} />
+      }
+    >
+      {/* Stats Grid */}
+      <View className={`flex-row flex-wrap gap-4 ${isMobile ? "flex-col" : ""}`}>
+        {stats.map((stat, i) => (
+          <TouchableOpacity 
+            key={i} 
+            onPress={() => router.push(stat.route as any)}
+            className={`${isMobile ? "w-full" : "flex-1 min-w-[200px]"}`}
+            activeOpacity={0.9}
+          >
+            <PremiumCard style={{ padding: 20 }}>
+              <View className="flex-row items-center gap-4">
+                <View 
+                  style={{ backgroundColor: `${stat.color}15`, padding: 12, borderRadius: 16 }}
+                >
+                  <AppIcon name={stat.icon as any} size={24} color={stat.color} active />
+                </View>
+                <View>
+                  <Text className="text-[11px] font-black text-gray-400 uppercase tracking-wider">
+                    {stat.label}
                   </Text>
-                  <Text style={styles.roleBadge}>{roleLabel}</Text>
+                  <Text className="text-2xl font-black text-gray-900 mt-0.5">
+                    {stat.value}
+                  </Text>
                 </View>
               </View>
-              <Text style={styles.welcome}>{t.welcomeBack}</Text>
-              <Text style={[styles.userName, { fontSize: titleSize }]}>Hello, {firstName}</Text>
-            </>
-          )}
-        </LinearGradient>
+            </PremiumCard>
+          </TouchableOpacity>
+        ))}
+      </View>
 
-        <View style={[styles.body, isMobile && { marginTop: -32 }]}>
-          {loading ? (
-            <SkeletonLoader rows={2} />
-          ) : (
-            <View style={styles.statsRow}>
-              <View style={styles.statCard}>
-                <IconCircle name="students" size={40} />
-                <Text style={[styles.statNum, { fontSize: titleSize }]}>{students.length}</Text>
-                <Text style={[styles.statLabel, { fontSize: bodySize }]}>Students</Text>
-              </View>
-              <View style={styles.statCard}>
-                <IconCircle name="teachers" size={40} />
-                <Text style={[styles.statNum, { fontSize: titleSize }]}>{teachers.length}</Text>
-                <Text style={[styles.statLabel, { fontSize: bodySize }]}>Teachers</Text>
-              </View>
+      {/* Quick Actions */}
+      <Text className="text-sm font-black text-gray-900 uppercase tracking-widest mt-8 mb-4 px-1">
+        Quick Actions
+      </Text>
+      <View className="flex-row flex-wrap gap-3">
+        {quickActions.map((action, i) => (
+          <TouchableOpacity
+            key={i}
+            onPress={() => router.push(action.route as any)}
+            className={`flex-1 min-w-[100px] bg-white border border-gray-150 rounded-2xl p-4 items-center justify-center`}
+            style={Platform.OS === 'web' ? { outlineWidth: 0 } as any : {}}
+          >
+            <View className="bg-gray-50 p-3 rounded-xl mb-2">
+              <AppIcon name={action.icon as any} size={20} color={Colors.primary} active />
             </View>
-          )}
+            <Text className="text-[10px] font-black text-gray-800 uppercase text-center">
+              {action.label}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
 
-          <View style={styles.sectionCard}>
-            <Text style={[styles.sectionTitle, { fontSize: bodySize + 2 }]}>{t.quickActions}</Text>
-            <QuickActionGrid items={QUICK} mobileColumns={4} />
+      {/* Recent Activity Section (Placeholder) */}
+      <Text className="text-sm font-black text-gray-900 uppercase tracking-widest mt-8 mb-4 px-1">
+        Recent Activity
+      </Text>
+      <PremiumCard noAccent style={{ padding: 0, overflow: 'hidden' }}>
+        {[1, 2, 3].map((_, i) => (
+          <View 
+            key={i} 
+            className={`flex-row items-center justify-between p-4 border-b border-gray-50 ${
+              i % 2 === 1 ? 'bg-gray-50/30' : 'bg-white'
+            }`}
+          >
+            <View className="flex-row items-center gap-3">
+              <View className="w-2 h-2 rounded-full bg-blue-500" />
+              <Text className="text-xs font-bold text-gray-700">
+                {i === 0 ? "Teacher Ramesh Kumar marked attendance for Class 10A" : 
+                 i === 1 ? "New student 'Yash' registered for Grade 1" : 
+                 "System backup completed successfully"}
+              </Text>
+            </View>
+            <Text className="text-[10px] font-black text-gray-400 uppercase">
+              {i === 0 ? "10m ago" : i === 1 ? "1h ago" : "2h ago"}
+            </Text>
           </View>
-        </View>
-      </ScrollView>
-    </MobileScreenShell>
+        ))}
+      </PremiumCard>
+    </PremiumScreenLayout>
   );
 }
-
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: SchoolTheme.background },
-  header: {
-    paddingHorizontal: 20,
-    borderBottomLeftRadius: 28,
-    borderBottomRightRadius: 28,
-  },
-  headerTop: { flexDirection: "row", alignItems: "center", gap: 12, marginBottom: 16 },
-  logo: { width: 48, height: 48, borderRadius: 12, backgroundColor: "#fff" },
-  headerText: { flex: 1 },
-  schoolName: { color: "#fff", fontWeight: "900", fontSize: 16 },
-  roleBadge: {
-    color: SchoolTheme.accent,
-    fontSize: 10,
-    fontWeight: "800",
-    textTransform: "uppercase",
-    letterSpacing: 1,
-    marginTop: 2,
-  },
-  welcome: {
-    color: "rgba(255,255,255,0.7)",
-    fontSize: 11,
-    fontWeight: "800",
-    textTransform: "uppercase",
-    letterSpacing: 1,
-  },
-  userName: { color: "#fff", fontWeight: "900", marginTop: 4 },
-  body: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    maxWidth: 1200,
-    width: "100%",
-    alignSelf: "center",
-  },
-  statsRow: { flexDirection: "row", gap: 12, marginBottom: 16 },
-  statCard: {
-    flex: 1,
-    backgroundColor: "#fff",
-    borderRadius: 16,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: SchoolTheme.border,
-    alignItems: "flex-start",
-    gap: 6,
-  },
-  statNum: { fontWeight: "900", color: SchoolTheme.primary },
-  statLabel: { color: SchoolTheme.textSecondary, fontWeight: "600" },
-  sectionCard: {
-    backgroundColor: "#fff",
-    borderRadius: 20,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: SchoolTheme.border,
-  },
-  sectionTitle: {
-    fontWeight: "800",
-    color: SchoolTheme.text,
-    marginBottom: 12,
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-  },
-});

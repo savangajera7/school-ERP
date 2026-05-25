@@ -12,9 +12,10 @@ import { useGetApiNoticeGetNoticeList } from "@/api/generated/notice/notice";
 import { parseApiList } from "@/utils/apiResponse";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
+import { useResponsive } from "@/hooks/useResponsive";
 
 export default function StudentNoticeHistoryScreen() {
-  const { isMobile } = useBreakpoint();
+  const { isMobile } = useResponsive();
   const [activeTab, setActiveTab] = useState<"school" | "class">("school");
   const [expandedNoticeId, setExpandedNoticeId] = useState<string | null>(null);
   
@@ -64,7 +65,10 @@ export default function StudentNoticeHistoryScreen() {
             </Text>
             {item.description.length > 120 && (
               <TouchableOpacity onPress={() => toggleExpand(item.id)} className="mt-2.5 self-start">
-                <Text className="text-[11px] font-black text-[#134A8C] uppercase tracking-wide">
+                <Text 
+                  className="text-[11px] font-black uppercase tracking-wide"
+                  style={{ color: Colors.primary }}
+                >
                   {isExpanded ? "Read Less ▲" : "Read More ▼"}
                 </Text>
               </TouchableOpacity>
@@ -137,7 +141,7 @@ export default function StudentNoticeHistoryScreen() {
                   key={item.id} 
                   className="bg-white border border-gray-150 p-5 rounded-2xl mb-4 relative overflow-hidden flex-col shadow-sm"
                 >
-                  <View className="w-1.5 bg-[#134A8C] absolute left-0 top-0 bottom-0" />
+                  <View className="w-1.5 absolute left-0 top-0 bottom-0" style={{ backgroundColor: Colors.primary }} />
                   
                   <View className="flex-1 pl-3">
                     <View className="flex-row justify-between items-center mb-3">
@@ -157,7 +161,10 @@ export default function StudentNoticeHistoryScreen() {
                       <Text className="text-[16px] font-black text-gray-900 mb-2 flex-1">{item.title}</Text>
                       {item.description.length > 200 && (
                         <TouchableOpacity onPress={() => toggleExpand(item.id)} className="bg-gray-50 border border-gray-150 px-3 py-1.5 rounded-xl">
-                          <Text className="text-[10px] font-black text-[#134A8C] uppercase tracking-wide">
+                          <Text 
+                            className="text-[10px] font-black uppercase tracking-wide"
+                            style={{ color: Colors.primary }}
+                          >
                             {isExpanded ? "Collapse ▲" : "Expand Description ▼"}
                           </Text>
                         </TouchableOpacity>

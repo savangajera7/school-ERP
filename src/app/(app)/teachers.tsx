@@ -2,7 +2,7 @@ import React, { useState, useMemo } from "react";
 import { View, Text, TouchableOpacity, TextInput, Alert, Platform, ActivityIndicator } from "react-native";
 import { router } from "expo-router";
 import { Card } from "@/components/ui/Card";
-import { useBreakpoint } from "@/hooks/useBreakpoint";
+import { useResponsive } from "@/hooks/useResponsive";
 import { Colors } from "@/constants/colors";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { PremiumSearchField, PremiumTabSwitcher } from "@/components/ui/premium";
@@ -19,7 +19,7 @@ import { useAuthStore } from "@/store/authStore";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
 
 export default function TeacherManagementScreen() {
-  const { isMobile } = useBreakpoint();
+  const { isMobile } = useResponsive();
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"list" | "add">("list");
 
@@ -81,13 +81,7 @@ export default function TeacherManagementScreen() {
         },
       });
 
-      const msg = "New employee successfully registered and synced.";
-      if (Platform.OS !== 'web') {
-        Alert.alert("Success", msg);
-      } else {
-        window.alert(`Success!\n${msg}`);
-      }
-
+      showToast("New employee successfully registered.", "success");
       setViewMode("list");
       refetch();
       // Reset Form
@@ -99,14 +93,7 @@ export default function TeacherManagementScreen() {
       setPassingYear("");
       setAssignedClass("");
     } catch (error) {
-      // Fallback local save in case API has no active persistence layer
-      const msg = "Registered successfully in local state.";
-      if (Platform.OS !== 'web') {
-        Alert.alert("Success", msg);
-      } else {
-        window.alert(`Success!\n${msg}`);
-      }
-      setViewMode("list");
+      showToast("Failed to register employee.", "error");
     }
   };
 
@@ -119,10 +106,12 @@ export default function TeacherManagementScreen() {
         viewMode === "list" ? (
           <TouchableOpacity
             onPress={() => setViewMode("add")}
-            className="px-4 py-2.5 bg-orange-500 rounded-xl"
+            className="px-4 py-2.5 rounded-xl flex-row items-center gap-1.5"
+            style={{ backgroundColor: Colors.accent }}
             activeOpacity={0.8}
           >
-            <Text className="text-white font-black text-xs uppercase tracking-widest">+ Add</Text>
+            <AppIcon name="add" size={16} color="white" active />
+            <Text className="text-white font-black text-xs uppercase tracking-widest">Add</Text>
           </TouchableOpacity>
         ) : (
           <TouchableOpacity
@@ -150,7 +139,6 @@ export default function TeacherManagementScreen() {
               ) : filteredTeachers.length === 0 ? (
                 <View className="py-20 items-center justify-center bg-white rounded-3xl border border-gray-100 p-8">
                   <EmptyState icon="teacherStaff" title="No teachers" message="Staff records will appear here" />
-                  <Text className="text-gray-400 font-extrabold text-sm uppercase tracking-wider">No faculty records found</Text>
                 </View>
               ) : isMobile ? (
                 <View className="gap-2">
@@ -160,8 +148,8 @@ export default function TeacherManagementScreen() {
                       title={tc.name}
                       subtitle={tc.subject}
                       icon={
-                        <View className="w-10 h-10 rounded-xl bg-orange-50 items-center justify-center border border-orange-100">
-                          <AppIcon name="teacherStaff" size={20} color="#BE185D" active />
+                        <View className="w-10 h-10 rounded-xl bg-blue-50 items-center justify-center border border-blue-100">
+                          <AppIcon name="teacherStaff" size={20} color={Colors.primary} active />
                         </View>
                       }
                       badge={
@@ -181,10 +169,10 @@ export default function TeacherManagementScreen() {
                 <Card noPadding className="bg-white border border-gray-100 overflow-hidden shadow-sm">
                   {/* Header */}
                   <View className="flex-row items-center px-5 py-4 bg-gray-50 border-b border-gray-150">
-                    <Text className="flex-1 text-xs font-black text-gray-400 uppercase">Employee Details</Text>
-                    <Text className="w-[150px] text-xs font-black text-gray-400 uppercase text-center">Designation</Text>
-                    <Text className="w-[200px] text-xs font-black text-gray-400 uppercase text-center">Contact Info</Text>
-                    <Text className="w-[120px] text-xs font-black text-gray-400 uppercase text-right">Status</Text>
+                    <Text className="flex-1 text-[10px] font-black text-gray-400 uppercase tracking-wider">Employee Details</Text>
+                    <Text className="w-[150px] text-[10px] font-black text-gray-400 uppercase text-center tracking-wider">Designation</Text>
+                    <Text className="w-[200px] text-[10px] font-black text-gray-400 uppercase text-center tracking-wider">Contact Info</Text>
+                    <Text className="w-[120px] text-[10px] font-black text-gray-400 uppercase text-right tracking-wider">Status</Text>
                   </View>
 
                   {/* Rows */}
@@ -196,8 +184,8 @@ export default function TeacherManagementScreen() {
                       }`}
                     >
                       <View className="flex-1 flex-row items-center gap-3.5">
-                        <View className="w-10 h-10 rounded-xl bg-orange-50 items-center justify-center border border-orange-100">
-                          <IconCircle name="teacherStaff" size={40} iconSize={20} />
+                        <View className="w-10 h-10 rounded-xl bg-blue-50 items-center justify-center border border-blue-100">
+                          <AppIcon name="teacherStaff" size={20} color={Colors.primary} active />
                         </View>
                         <View>
                           <Text className="text-sm font-black text-gray-900">{tc.name}</Text>
@@ -239,28 +227,28 @@ export default function TeacherManagementScreen() {
 
                      {activeTab === "basic" && (
                 <Card className="bg-white border border-gray-150 p-6 gap-5 max-w-[800px] w-full self-center shadow-sm">
-                  <Text className="text-[15px] font-black text-[#134A8C] border-b border-gray-100 pb-3">Basic & Personal Details</Text>
+                  <Text className="text-[15px] font-black text-gray-900 border-b border-gray-100 pb-3" style={{ color: Colors.primary }}>Basic & Personal Details</Text>
                   
                   <View className={`flex-row gap-4 ${isMobile ? "flex-col" : ""}`}>
                     <View className="flex-1">
-                      <Text className="text-[12px] font-black text-gray-450 mb-2 uppercase">First Name *</Text>
+                      <Text className="text-[11px] font-black text-gray-400 mb-2 uppercase tracking-wider">First Name *</Text>
                       <TextInput 
                         value={firstName} 
                         onChangeText={setFirstName}
                         placeholder="Enter first name"
                         placeholderTextColor="#9CA3AF"
-                        className="h-[48px] bg-gray-55 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
+                        className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
                         style={{ outlineWidth: 0 } as any}
                       />
                     </View>
                     <View className="flex-1">
-                      <Text className="text-[12px] font-black text-gray-450 mb-2 uppercase">Last Name *</Text>
+                      <Text className="text-[11px] font-black text-gray-400 mb-2 uppercase tracking-wider">Last Name *</Text>
                       <TextInput 
                         value={lastName} 
                         onChangeText={setLastName}
                         placeholder="Enter last name"
                         placeholderTextColor="#9CA3AF"
-                        className="h-[48px] bg-gray-55 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
+                        className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
                         style={{ outlineWidth: 0 } as any}
                       />
                     </View>
@@ -268,25 +256,25 @@ export default function TeacherManagementScreen() {
 
                   <View className={`flex-row gap-4 ${isMobile ? "flex-col" : ""}`}>
                     <View className="flex-1">
-                      <Text className="text-[12px] font-black text-gray-450 mb-2 uppercase">Mobile Number *</Text>
+                      <Text className="text-[11px] font-black text-gray-400 mb-2 uppercase tracking-wider">Mobile Number *</Text>
                       <TextInput 
                         value={mobile} 
                         onChangeText={setMobile}
                         placeholder="Enter mobile number"
                         placeholderTextColor="#9CA3AF"
                         keyboardType="numeric"
-                        className="h-[48px] bg-gray-55 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
+                        className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
                         style={{ outlineWidth: 0 } as any}
                       />
                     </View>
                     <View className="flex-1">
-                      <Text className="text-[12px] font-black text-gray-450 mb-2 uppercase">Designation</Text>
+                      <Text className="text-[11px] font-black text-gray-400 mb-2 uppercase tracking-wider">Designation</Text>
                       <TextInput 
                         value={designation} 
                         onChangeText={setDesignation}
                         placeholder="e.g. Faculty, Admin Staff"
                         placeholderTextColor="#9CA3AF"
-                        className="h-[48px] bg-gray-55 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
+                        className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
                         style={{ outlineWidth: 0 } as any}
                       />
                     </View>
@@ -297,29 +285,29 @@ export default function TeacherManagementScreen() {
               {/* Tab 2: Education Details */}
               {activeTab === "education" && (
                 <Card className="bg-white border border-gray-150 p-6 gap-5 max-w-[800px] w-full self-center shadow-sm">
-                  <Text className="text-[15px] font-black text-[#134A8C] border-b border-gray-100 pb-3">Academic & Qualification History</Text>
+                  <Text className="text-[15px] font-black text-gray-900 border-b border-gray-100 pb-3" style={{ color: Colors.primary }}>Academic & Qualification History</Text>
                   
                   <View className={`flex-row gap-4 ${isMobile ? "flex-col" : ""}`}>
                     <View className="flex-1">
-                      <Text className="text-[12px] font-black text-gray-450 mb-2 uppercase">Qualification Degree</Text>
+                      <Text className="text-[11px] font-black text-gray-400 mb-2 uppercase tracking-wider">Qualification Degree</Text>
                       <TextInput 
                         value={qualification} 
                         onChangeText={setQualification}
                         placeholder="e.g. B.Ed, M.Sc"
                         placeholderTextColor="#9CA3AF"
-                        className="h-[48px] bg-gray-55 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
+                        className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
                         style={{ outlineWidth: 0 } as any}
                       />
                     </View>
                     <View className="flex-1">
-                      <Text className="text-[12px] font-black text-gray-450 mb-2 uppercase">Passing Year</Text>
+                      <Text className="text-[11px] font-black text-gray-400 mb-2 uppercase tracking-wider">Passing Year</Text>
                       <TextInput 
                         value={passingYear} 
                         onChangeText={setPassingYear}
                         placeholder="e.g. 2018"
                         placeholderTextColor="#9CA3AF"
                         keyboardType="numeric"
-                        className="h-[48px] bg-gray-55 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
+                        className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
                         style={{ outlineWidth: 0 } as any}
                       />
                     </View>
@@ -330,16 +318,16 @@ export default function TeacherManagementScreen() {
               {/* Tab 3: Role & Permission Allocations */}
               {activeTab === "role" && (
                 <Card className="bg-white border border-gray-150 p-6 gap-5 max-w-[800px] w-full self-center shadow-sm">
-                  <Text className="text-[15px] font-black text-[#134A8C] border-b border-gray-100 pb-3">App Permission & Assignments</Text>
+                  <Text className="text-[15px] font-black text-gray-900 border-b border-gray-100 pb-3" style={{ color: Colors.primary }}>App Permission & Assignments</Text>
                   
                   <View className="flex-1">
-                    <Text className="text-[12px] font-black text-gray-450 mb-2 uppercase">Assigned Subject / Class Expertise</Text>
+                    <Text className="text-[11px] font-black text-gray-400 mb-2 uppercase tracking-wider">Assigned Subject / Class Expertise</Text>
                     <TextInput 
                       value={assignedClass} 
                       onChangeText={setAssignedClass}
                       placeholder="e.g. Mathematics Class I-A"
                       placeholderTextColor="#9CA3AF"
-                      className="h-[48px] bg-gray-55 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
+                      className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
                       style={{ outlineWidth: 0 } as any}
                     />
                   </View>
@@ -347,7 +335,8 @@ export default function TeacherManagementScreen() {
                   <TouchableOpacity 
                     onPress={handleAddTeacher}
                     disabled={addTeacherMutation.isPending}
-                    className="h-[52px] bg-[#F5921E] rounded-xl justify-center items-center mt-4 shadow-lg shadow-amber-500/20 flex-row gap-2"
+                    className="h-[52px] rounded-xl justify-center items-center mt-4 shadow-lg flex-row gap-2"
+                    style={{ backgroundColor: Colors.accent, shadowColor: Colors.accent }}
                     activeOpacity={0.8}
                   >
                     {addTeacherMutation.isPending ? (

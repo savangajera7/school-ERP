@@ -2,7 +2,7 @@ import React, { useState, useMemo } from "react";
 import { View, Text, TouchableOpacity, TextInput, Alert, Platform } from "react-native";
 import { router } from "expo-router";
 import { Card } from "@/components/ui/Card";
-import { useBreakpoint } from "@/hooks/useBreakpoint";
+import { useResponsive } from "@/hooks/useResponsive";
 import { Colors } from "@/constants/colors";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { PremiumTabSwitcher, PremiumStatPills } from "@/components/ui/premium";
@@ -27,7 +27,7 @@ const FEE_STRUCTURE = [
 ];
 
 export default function FeesManagementScreen() {
-  const { isMobile } = useBreakpoint();
+  const { isMobile } = useResponsive();
   const { canManageFees, isParent } = usePermissions();
   const [activeTab, setActiveTab] = useState<"collect" | "history" | "structure">(
     canManageFees ? "collect" : "history"
@@ -269,7 +269,8 @@ export default function FeesManagementScreen() {
                         actions={
                           <TouchableOpacity 
                             onPress={() => handleOpenCollect(item)}
-                            className="flex-1 py-3 bg-[#F5921E] rounded-xl justify-center items-center shadow-md shadow-amber-500/10"
+                            className="flex-1 py-3 rounded-xl justify-center items-center shadow-md flex-row gap-2"
+                            style={{ backgroundColor: Colors.accent, shadowColor: Colors.accent }}
                             activeOpacity={0.8}
                           >
                             <Text className="text-xs font-black text-white uppercase tracking-wider">Collect Payment</Text>
@@ -297,7 +298,8 @@ export default function FeesManagementScreen() {
                           <View className="w-[140px] items-end">
                             <TouchableOpacity 
                               onPress={() => handleOpenCollect(item)}
-                              className="px-4 py-2 bg-[#F5921E] rounded-xl"
+                              className="px-4 py-2 rounded-xl"
+                              style={{ backgroundColor: Colors.accent }}
                               activeOpacity={0.8}
                             >
                               <Text className="text-xs font-black text-white">Collect</Text>
@@ -369,11 +371,12 @@ export default function FeesManagementScreen() {
                         </View>
 
                         <TouchableOpacity 
-                          onPress={handleProcessPayment}
-                          disabled={isProcessing}
-                          className="h-[52px] bg-[#134A8C] rounded-xl items-center justify-center mt-2 shadow-lg shadow-indigo-100 flex-row gap-2"
-                          activeOpacity={0.8}
-                        >
+                            onPress={handleProcessPayment}
+                            disabled={isProcessing}
+                            className="h-[52px] rounded-xl items-center justify-center mt-2 shadow-lg flex-row gap-2"
+                            style={{ backgroundColor: Colors.primary }}
+                            activeOpacity={0.8}
+                          >
                           <Text className="text-sm font-black text-white uppercase tracking-wider">
                             {isProcessing 
                               ? "Processing Payment..." 

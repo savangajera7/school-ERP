@@ -1,80 +1,107 @@
-import React, { useMemo, useState } from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
-import { ResponsiveScreen } from "@/components/layout/ResponsiveScreen";
-import { RoleHeader } from "@/components/layout/RoleHeader";
-import { ROLE_TAB_BAR_HEIGHT } from "@/components/layout/RoleTabBar";
-import { SchoolTheme } from "@/constants/theme";
+import React, { useMemo } from "react";
+import { View, Text, FlatList, RefreshControl } from "react-native";
+import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
+import { MobileDataCard } from "@/components/ui/MobileDataCard";
+import { Colors } from "@/constants/colors";
 import { useGetApiStudentAttendanceGetStudentAttendanceList } from "@/api/generated/student-attendance/student-attendance";
 import { useAuthStore } from "@/store/authStore";
 import { parseApiList } from "@/utils/apiResponse";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useResponsive } from "@/hooks/useResponsive";
+import { useTranslation } from "@/hooks/useTranslation";
 
 /** Read-only attendance for parent / student */
 export default function ParentAttendanceView() {
   const refId = useAuthStore((s) => s.userData?.referenceID);
   const { data, isLoading, refetch, isError } =
     useGetApiStudentAttendanceGetStudentAttendanceList();
-  const { columns, bodySize } = useResponsive();
+  const { isMobile } = useResponsive();
+  const { t } = useTranslation();
+
   const records = useMemo(() => {
     const all = parseApiList<{
       studentID?: number;
       attendanceDate?: string;
-      status?: string;
+      attendanceStatus?: string;
       remarks?: string;
     }>(data?.data);
-    if (!refId) return all.slice(0, 50);
-    return all.filter((r) => r.studentID === refId).slice(0, 100);
+    
+    // Filter by child ID if available
+    const filtered = refId ? all.filter((r) => r.studentID === refId) : all;
+    
+    // Sort by date descending
+    return filtered.sort((a, b) => 
+      new Date(b.attendanceDate || 0).getTime() - new Date(a.attendanceDate || 0).getTime()
+    ).slice(0, 100);
   }, [data, refId]);
 
   return (
-    <View style={{ flex: 1 }}>
-      <RoleHeader
-        title="Attendance"
-        subtitle="View only — contact school to correct records"
-        accentColor={SchoolTheme.parent}
-      />
-      <ResponsiveScreen tabBarPadding={ROLE_TAB_BAR_HEIGHT}>
+    <PremiumScreenLayout
+      title={t.attendance}
+      subtitle="View your child's daily presence records"
+      withTabBar
+      scrollable={false}
+      bodyStyle={{ paddingHorizontal: 0, marginTop: -16, flex: 1 }}
+    >
         {isLoading ? (
-          <SkeletonLoader rows={5} />
+          <View className="px-4 py-4">
+            <SkeletonLoader variant={isMobile ? "card" : "table"} rows={5} />
+          </View>
         ) : isError ? (
-          <EmptyState icon="warning" title="Could not load" message="Pull to refresh or try again." />
+          <View className="px-4 py-4">
+            <EmptyState icon="warning" title="Could not load" message="Pull to refresh or try again." />
+          </View>
         ) : (
           <FlatList
             data={records}
-            key={`att-${columns}`}
-            numColumns={columns}
             keyExtractor={(item, i) => `${item.attendanceDate}-${i}`}
             onRefresh={refetch}
             refreshing={isLoading}
+            contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 100, gap: 12 }}
             ListEmptyComponent={
               <EmptyState title="No records" message="Attendance will appear after teachers mark it." />
             }
-            renderItem={({ item }) => (
-              <View style={[styles.card, columns > 1 && { flex: 1, margin: 4 }]}>
-                <Text style={[styles.date, { fontSize: bodySize }]}>
-                  {String(item.attendanceDate ?? "").slice(0, 10)}
-                </Text>
-                <Text style={styles.status}>{item.status ?? "—"}</Text>
-              </View>
-            )}
+            renderItem={({ item }) => {
+              const status = item.attendanceStatus || "Pending";
+              const dateStr = item.attendanceDate ? new Date(item.attendanceDate).toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+              }) : "—";
+
+              const statusColor = 
+                status === "Present" ? Colors.success :
+                status === "Absent" ? Colors.error :
+                status === "Late" ? Colors.accent : "#94A3B8";
+
+              return (
+                <MobileDataCard
+                  title={dateStr}
+                  subtitle={status}
+                  accentColor={statusColor}
+                  badge={
+                    <View 
+                      className="px-2 py-0.5 rounded-lg border"
+                      style={{ 
+                        backgroundColor: `${statusColor}10`,
+                        borderColor: `${statusColor}30`
+                      }}
+                    >
+                      <Text 
+                        className="text-[10px] font-black uppercase"
+                        style={{ color: statusColor }}
+                      >
+                        {status}
+                      </Text>
+                    </View>
+                  }
+                  fields={item.remarks ? [{ label: "Remarks", value: item.remarks }] : []}
+                />
+              );
+            }}
           />
         )}
-      </ResponsiveScreen>
-    </View>
+    </PremiumScreenLayout>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: "#fff",
-    padding: 14,
-    borderRadius: 12,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: SchoolTheme.border,
-  },
-  date: { fontWeight: "700", color: SchoolTheme.text },
-  status: { marginTop: 4, color: SchoolTheme.textSecondary, fontWeight: "600" },
-});

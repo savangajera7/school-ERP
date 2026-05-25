@@ -1,21 +1,21 @@
 export const Colors = {
-  primary: "#0d3666", // Deep Blue
-  accent: "#f5921e",  // Orange
-  primaryLight: "#1e40af",
-  primaryDark: "#0a264a",
+  primary: "#1A3C6E", // Deep School Blue
+  accent: "#F5A623",  // Gold
+  primaryLight: "#2C5282",
+  primaryDark: "#102A43",
   secondary: "#FFFFFF",
-  background: "#fdfdfd",
+  background: "#F8F9FA",
   card: "#FFFFFF",
   border: "#E5E7EB",
-  text: "#111827",
+  text: "#2C3E50",
   textSecondary: "#4b5563",
-  textTertiary: "#9CA3AF",
-  error: "#EF4444",
-  success: "#10B981",
-  warning: "#F59E0B",
-  gradientStart: "#0d3666",
-  gradientEnd: "#1e40af",
-  orangeGradientStart: "#f5921e",
+  textTertiary: "#95A5A6",
+  error: "#E74C3C",
+  success: "#27AE60",
+  warning: "#F5A623",
+  gradientStart: "#1A3C6E",
+  gradientEnd: "#2C5282",
+  orangeGradientStart: "#F5A623",
   orangeGradientEnd: "#fbbf24",
 } as const;
 

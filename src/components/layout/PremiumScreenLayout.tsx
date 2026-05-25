@@ -6,6 +6,7 @@ import {
   Platform,
   StyleSheet,
   type ViewStyle,
+  type RefreshControlProps,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
@@ -29,6 +30,7 @@ type Props = {
   keyboard?: boolean;
   bodyStyle?: ViewStyle;
   flatHeader?: boolean;
+  refreshControl?: React.ReactElement<RefreshControlProps>;
 };
 
 /**
@@ -47,6 +49,7 @@ export function PremiumScreenLayout({
   keyboard = false,
   bodyStyle,
   flatHeader = false,
+  refreshControl,
 }: Props) {
   const { isMobile } = useResponsive();
 
@@ -67,6 +70,7 @@ export function PremiumScreenLayout({
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
       contentContainerStyle={styles.scrollGrow}
+      refreshControl={refreshControl}
     >
       <ScreenHeader
         title={title}

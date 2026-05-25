@@ -5,7 +5,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="973b64d6-6094-46c3-ae9b-d54eff11ffd3" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/timetable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/timetable.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/dashboard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/academic-setup.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/academic-setup.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/admission-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/admission-form.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/attendance.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/attendance.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/fees.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/fees.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/masters.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/masters.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/notices.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/notices.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/parents.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/parents.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/teachers.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/teachers.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/layout/PremiumScreenLayout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/layout/PremiumScreenLayout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/constants/colors.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/constants/colors.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/constants/rolePermissions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/constants/rolePermissions.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/constants/theme.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/constants/theme.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/screens/parent/ParentAttendanceView.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/screens/parent/ParentAttendanceView.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/notifications/pushService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/notifications/pushService.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/types/auth.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/auth.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/roleRouting.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/roleRouting.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -101,7 +118,7 @@
       <workItem from="1779614870873" duration="12594000" />
       <workItem from="1779650362413" duration="48000" />
       <workItem from="1779702281848" duration="3101000" />
-      <workItem from="1779710067304" duration="7189000" />
+      <workItem from="1779710067304" duration="8892000" />
     </task>
     <servers />
   </component>

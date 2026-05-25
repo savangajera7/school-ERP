@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { FlatList, TextInput } from "react-native";
+import { FlatList, TextInput, TouchableOpacity, Text, ActivityIndicator, View } from "react-native";
 import { router } from "expo-router";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { PremiumCard } from "@/components/ui/premium";
@@ -19,7 +19,10 @@ import { Colors } from "@/constants/colors";
 import { usePermissions } from "@/hooks/usePermissions";
 import { AccessDenied } from "@/components/auth/AccessDenied";
 
+import { useResponsive } from "@/hooks/useResponsive";
+
 export default function ParentsScreen() {
+  const { isMobile } = useResponsive();
   const { canManageParents } = usePermissions();
   if (!canManageParents) {
     return <AccessDenied message="Parent records are managed by school administrators." />;
@@ -70,11 +73,52 @@ export default function ParentsScreen() {
       bodyStyle={{ flex: 1, paddingHorizontal: 0, marginTop: -16 }}
     >
       <PremiumCard noAccent style={{ padding: 16, marginHorizontal: 16, marginBottom: 12, gap: 8 }}>
-        <TextInput placeholder="Father name *" value={fatherName} onChangeText={setFatherName} className="border border-gray-200 rounded-xl px-4 py-2" />
-        <TextInput placeholder="Mother name" value={motherName} onChangeText={setMotherName} className="border border-gray-200 rounded-xl px-4 py-2" />
-        <TextInput placeholder="Father mobile" value={fatherMobile} onChangeText={setFatherMobile} className="border border-gray-200 rounded-xl px-4 py-2" keyboardType="phone-pad" />
-        <TextInput placeholder="Address" value={address} onChangeText={setAddress} className="border border-gray-200 rounded-xl px-4 py-2" />
-        <Button label="Add parent" onPress={handleAdd} loading={insertMutation.isPending} />
+        <TextInput 
+          placeholder="Father name *" 
+          value={fatherName} 
+          onChangeText={setFatherName} 
+          className="border border-gray-200 rounded-xl px-4 py-3 bg-gray-50/50" 
+          placeholderTextColor="#9CA3AF"
+          style={{ outlineWidth: 0 } as any}
+        />
+        <TextInput 
+          placeholder="Mother name" 
+          value={motherName} 
+          onChangeText={setMotherName} 
+          className="border border-gray-200 rounded-xl px-4 py-3 bg-gray-50/50" 
+          placeholderTextColor="#9CA3AF"
+          style={{ outlineWidth: 0 } as any}
+        />
+        <TextInput 
+          placeholder="Father mobile" 
+          value={fatherMobile} 
+          onChangeText={setFatherMobile} 
+          className="border border-gray-200 rounded-xl px-4 py-3 bg-gray-50/50" 
+          keyboardType="phone-pad" 
+          placeholderTextColor="#9CA3AF"
+          style={{ outlineWidth: 0 } as any}
+        />
+        <TextInput 
+          placeholder="Address" 
+          value={address} 
+          onChangeText={setAddress} 
+          className="border border-gray-200 rounded-xl px-4 py-3 bg-gray-50/50" 
+          placeholderTextColor="#9CA3AF"
+          style={{ outlineWidth: 0 } as any}
+        />
+        <TouchableOpacity
+          onPress={handleAdd}
+          disabled={insertMutation.isPending}
+          className="h-[52px] rounded-xl justify-center items-center mt-2 shadow-lg"
+          style={{ backgroundColor: Colors.accent }}
+          activeOpacity={0.8}
+        >
+          {insertMutation.isPending ? (
+            <ActivityIndicator size="small" color="white" />
+          ) : (
+            <Text className="text-white font-black text-xs uppercase tracking-widest">Add Parent</Text>
+          )}
+        </TouchableOpacity>
       </PremiumCard>
       {isLoading ? (
         <PremiumLoader color={Colors.primary} />

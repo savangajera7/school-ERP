@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/Button";
 import { useGetApiBloodGroupGet, usePostApiBloodGroupAdd } from "@/api/generated/2-master-bloodgroup/2-master-bloodgroup";
 import { useGetApiCategoryGet, usePostApiCategoryAdd } from "@/api/generated/2-master-category/2-master-category";
 import { useGetApiReligionGet, usePostApiReligionAdd } from "@/api/generated/2-master-religion/2-master-religion";
+import { useGetApiAcademicYearGet, usePostApiAcademicYearAdd } from "@/api/generated/2-master-academicyear/2-master-academicyear";
+import { useGetApiBatchGet, usePostApiBatchAdd } from "@/api/generated/2-master-batch/2-master-batch";
 import { parseApiList } from "@/utils/apiResponse";
 import { recordLabel } from "@/utils/recordHelpers";
 import { useToast } from "@/components/ui/Toast";
@@ -17,7 +19,7 @@ import { Colors } from "@/constants/colors";
 import { usePermissions } from "@/hooks/usePermissions";
 import { AccessDenied } from "@/components/auth/AccessDenied";
 
-type Tab = "blood" | "category" | "religion";
+type Tab = "blood" | "category" | "religion" | "year" | "batch";
 
 export default function MastersScreen() {
   const { can } = usePermissions();
@@ -30,9 +32,14 @@ export default function MastersScreen() {
   const bloodQ = useGetApiBloodGroupGet();
   const catQ = useGetApiCategoryGet();
   const relQ = useGetApiReligionGet();
+  const yearQ = useGetApiAcademicYearGet();
+  const batchQ = useGetApiBatchGet();
+
   const addBlood = usePostApiBloodGroupAdd();
   const addCat = usePostApiCategoryAdd();
   const addRel = usePostApiReligionAdd();
+  const addYear = usePostApiAcademicYearAdd();
+  const addBatch = usePostApiBatchAdd();
 
   const { items, loading, refetch, addPending, onAdd } = useMemo(() => {
     if (tab === "blood") {
@@ -63,24 +70,52 @@ export default function MastersScreen() {
         nameKey: "categoryName",
       };
     }
+    if (tab === "religion") {
+      return {
+        items: parseApiList<Record<string, unknown>>(relQ.data?.data),
+        loading: relQ.isLoading,
+        refetch: relQ.refetch,
+        addPending: addRel.isPending,
+        onAdd: async (n: string) => {
+          await addRel.mutateAsync({ data: { religionName: n } });
+          relQ.refetch();
+        },
+        idKey: "religionID",
+        nameKey: "religionName",
+      };
+    }
+    if (tab === "year") {
+      return {
+        items: parseApiList<Record<string, unknown>>(yearQ.data?.data),
+        loading: yearQ.isLoading,
+        refetch: yearQ.refetch,
+        addPending: addYear.isPending,
+        onAdd: async (n: string) => {
+          await addYear.mutateAsync({ data: { academicYearName: n } });
+          yearQ.refetch();
+        },
+        idKey: "academicYearID",
+        nameKey: "academicYearName",
+      };
+    }
     return {
-      items: parseApiList<Record<string, unknown>>(relQ.data?.data),
-      loading: relQ.isLoading,
-      refetch: relQ.refetch,
-      addPending: addRel.isPending,
+      items: parseApiList<Record<string, unknown>>(batchQ.data?.data),
+      loading: batchQ.isLoading,
+      refetch: batchQ.refetch,
+      addPending: addBatch.isPending,
       onAdd: async (n: string) => {
-        await addRel.mutateAsync({ data: { religionName: n } });
-        relQ.refetch();
+        await addBatch.mutateAsync({ data: { batchName: n } });
+        batchQ.refetch();
       },
-      idKey: "religionID",
-      nameKey: "religionName",
+      idKey: "batchID",
+      nameKey: "batchName",
     };
-  }, [tab, bloodQ, catQ, relQ, addBlood, addCat, addRel]);
+  }, [tab, bloodQ, catQ, relQ, yearQ, batchQ, addBlood, addCat, addRel, addYear, addBatch]);
 
   const idKey =
-    tab === "blood" ? "bloodGroupID" : tab === "category" ? "categoryID" : "religionID";
+    tab === "blood" ? "bloodGroupID" : tab === "category" ? "categoryID" : tab === "religion" ? "religionID" : tab === "year" ? "academicYearID" : "batchID";
   const nameKey =
-    tab === "blood" ? "bloodGroupName" : tab === "category" ? "categoryName" : "religionName";
+    tab === "blood" ? "bloodGroupName" : tab === "category" ? "categoryName" : tab === "religion" ? "religionName" : tab === "year" ? "academicYearName" : "batchName";
 
   const handleAdd = async () => {
     if (!name.trim()) {
@@ -99,13 +134,15 @@ export default function MastersScreen() {
   return (
     <PremiumScreenLayout
       title="Master data"
-      subtitle="Blood group, category, religion"
+      subtitle="Academic year, batch, blood group..."
       onBack={() => router.back()}
       scrollable={false}
       bodyStyle={{ flex: 1, paddingHorizontal: 0, marginTop: -16 }}
       headerSlot={
         <PremiumTabSwitcher
           tabs={[
+            { key: "year", label: "Year" },
+            { key: "batch", label: "Batch" },
             { key: "blood", label: "Blood" },
             { key: "category", label: "Category" },
             { key: "religion", label: "Religion" },

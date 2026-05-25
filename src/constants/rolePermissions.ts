@@ -12,7 +12,7 @@ import type { Role } from "@/types/auth.types";
 import type { AppIconName } from "@/constants/appIcons";
 
 export const ROLE_IDS = {
-  superadmin: 1,
+  super_admin: 1,
   admin: 2,
   teacher: 3,
   parent: 4,
@@ -126,7 +126,7 @@ const SCHOOL_ADMIN_PERMISSIONS: Permission[] = [...ALL_PERMISSIONS];
 
 /** Maps app role → API capabilities (mirrors backend Authorize attributes). */
 const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
-  superadmin: SCHOOL_ADMIN_PERMISSIONS,
+  super_admin: SCHOOL_ADMIN_PERMISSIONS,
   admin: SCHOOL_ADMIN_PERMISSIONS,
   teacher: [
     "viewDashboard",
@@ -167,8 +167,8 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
 
 export function roleFromRoleId(roleId?: number): Role {
   switch (roleId) {
-    case ROLE_IDS.superadmin:
-      return "superadmin";
+    case ROLE_IDS.super_admin:
+      return "super_admin";
     case ROLE_IDS.admin:
       return "admin";
     case ROLE_IDS.teacher:
@@ -189,7 +189,7 @@ export function hasPermission(role: Role | null, permission: Permission): boolea
 
 /** Routes each role may open (deep links guarded in RouteGuard). */
 export const ROUTE_ACCESS: Record<Role, AppRoute[]> = {
-  superadmin: [
+  super_admin: [
     "/(app)/dashboard",
     "/(app)/menu",
     "/(app)/search",
@@ -348,11 +348,11 @@ export function canAccessRoute(role: Role | null, route: string): boolean {
 }
 
 export function isSchoolAdmin(role: Role | null): boolean {
-  return role === "admin" || role === "superadmin";
+  return role === "admin" || role === "super_admin";
 }
 
 export const ROLE_LABELS: Record<Role, string> = {
-  superadmin: "Super Admin",
+  super_admin: "Super Admin",
   admin: "School Admin",
   teacher: "Teacher",
   parent: "Parent / Guardian",
@@ -364,7 +364,7 @@ export const MOBILE_TABS_BY_ROLE: Record<
   Role,
   { label: string; icon: AppIconName; route: AppRoute }[]
 > = {
-  superadmin: [
+  super_admin: [
     { label: "Menu", icon: "menu", route: "/(app)/menu" },
     { label: "Search", icon: "search", route: "/(app)/search" },
     { label: "Home", icon: "home", route: "/(app)/dashboard" },

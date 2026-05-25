@@ -10,6 +10,7 @@ import { usePostApiStudentAdd } from "@/api/generated/3-student-crud/3-student-c
 import { useToast } from "@/components/ui/Toast";
 import { usePermissions } from "@/hooks/usePermissions";
 import { AccessDenied } from "@/components/auth/AccessDenied";
+import { useResponsive } from "@/hooks/useResponsive";
 
 export default function AdmissionFormScreen() {
   const { canManageStudents } = usePermissions();
@@ -17,7 +18,7 @@ export default function AdmissionFormScreen() {
     return <AccessDenied message="New admissions are handled by school administrators." />;
   }
 
-  const { isMobile } = useBreakpoint();
+  const { isMobile } = useResponsive();
   const [loading, setLoading] = useState(false);
 
   // Form State
@@ -99,7 +100,7 @@ export default function AdmissionFormScreen() {
                 <TouchableOpacity
                   key={g}
                   onPress={() => setGender(g)}
-                  className={`flex-1 items-center justify-center rounded-lg ${gender === g ? "bg-[#0d3666]" : ""}`}
+                  className={`flex-1 items-center justify-center rounded-lg ${gender === g ? "bg-[#1A3C6E]" : ""}`}
                 >
                   <Text className={`text-xs font-black uppercase ${gender === g ? "text-white" : "text-gray-500"}`}>
                     {g}
@@ -226,7 +227,8 @@ export default function AdmissionFormScreen() {
           <TouchableOpacity
             onPress={handleSubmit}
             disabled={loading}
-            className="px-5 py-2.5 bg-orange-500 rounded-xl flex-row gap-2"
+            className="px-5 py-2.5 rounded-xl flex-row gap-2"
+            style={{ backgroundColor: Colors.accent }}
             activeOpacity={0.8}
           >
             {loading ? (
@@ -244,7 +246,8 @@ export default function AdmissionFormScreen() {
           <TouchableOpacity
             onPress={handleSubmit}
             disabled={loading}
-            className="h-[52px] bg-[#f5921e] rounded-xl items-center justify-center shadow-lg shadow-orange-100 flex-row gap-2"
+            className="h-[52px] rounded-xl items-center justify-center shadow-lg flex-row gap-2"
+            style={{ backgroundColor: Colors.accent }}
             activeOpacity={0.8}
           >
             {loading ? (
