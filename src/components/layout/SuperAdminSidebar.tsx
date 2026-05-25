@@ -15,14 +15,6 @@ const PRIMARY: { label: string; route: string; icon: AppIconName }[] = [
   { label: "Settings", route: "/(super-admin)/settings", icon: "settings" },
 ];
 
-const MASTERS: { label: string; route: string; icon: AppIconName }[] = [
-  { label: "Academic Year", route: "/(super-admin)/masters/academic-year", icon: "academic" },
-  { label: "Batches", route: "/(super-admin)/masters/batch", icon: "masters" },
-  { label: "Blood Groups", route: "/(super-admin)/masters/blood-group", icon: "building" },
-  { label: "Categories", route: "/(super-admin)/masters/category", icon: "classroom" },
-  { label: "Religions", route: "/(super-admin)/masters/religion", icon: "language" },
-];
-
 export function SuperAdminSidebar() {
   const pathname = usePathname();
   const insets = useSafeAreaInsets();
@@ -63,12 +55,8 @@ export function SuperAdminSidebar() {
         {userData?.name}
       </Text>
       <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-        <Text style={styles.section}>Main</Text>
+        <Text style={styles.section}>Main Control</Text>
         {PRIMARY.map((item) => (
-          <NavItem key={item.route} {...item} />
-        ))}
-        <Text style={[styles.section, { marginTop: 16 }]}>Master Data</Text>
-        {MASTERS.map((item) => (
           <NavItem key={item.route} {...item} />
         ))}
       </ScrollView>

@@ -31,6 +31,7 @@ type Props = {
   bodyStyle?: ViewStyle;
   flatHeader?: boolean;
   refreshControl?: React.ReactElement<RefreshControlProps>;
+  showTopBar?: boolean;
 };
 
 /**
@@ -50,6 +51,7 @@ export function PremiumScreenLayout({
   bodyStyle,
   flatHeader = false,
   refreshControl,
+  showTopBar = false,
 }: Props) {
   const { isMobile } = useResponsive();
 
@@ -79,6 +81,7 @@ export function PremiumScreenLayout({
         hideBack={hideBack}
         rightAction={rightAction}
         flat={flatHeader}
+        showTopBar={showTopBar}
       />
       {body}
     </ScrollView>
@@ -91,6 +94,7 @@ export function PremiumScreenLayout({
         hideBack={hideBack}
         rightAction={rightAction}
         flat={flatHeader}
+        showTopBar={showTopBar}
       />
       <View style={styles.flex}>{body}</View>
     </View>

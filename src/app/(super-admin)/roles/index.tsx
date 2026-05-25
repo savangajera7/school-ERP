@@ -34,6 +34,7 @@ export default function RolesManagementScreen() {
     <PremiumScreenLayout
       title="Role Management"
       subtitle="Define user roles and access levels"
+      showTopBar
       scrollable={false}
       rightAction={
         <HeaderActionButton 

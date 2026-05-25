@@ -10,8 +10,10 @@ import {
 import { parseApiList } from "@/utils/apiResponse";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { AppIcon } from "@/components/icons/AppIcon";
+import { AppIcon, IconCircle } from "@/components/icons/AppIcon";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
+import { premiumCardShadow } from "@/constants/premiumStyles";
+import { MobileDataCard } from "@/components/ui/MobileDataCard";
 
 export default function AcademicYearScreen() {
   const [newYear, setNewYear] = useState("");
@@ -59,7 +61,7 @@ export default function AcademicYearScreen() {
       onBack={() => router.back()}
       scrollable={false}
     >
-      <Card className="p-4 mb-6">
+      <Card className="p-4 mb-6" style={premiumCardShadow}>
         <View className="flex-row gap-3">
           <TextInput
             value={newYear}
@@ -83,12 +85,19 @@ export default function AcademicYearScreen() {
           data={years}
           keyExtractor={(item: any) => String(item.academicYearID)}
           renderItem={({ item }: { item: any }) => (
-            <View className="flex-row items-center justify-between bg-white p-4 rounded-2xl mb-3 border border-gray-100">
-              <Text className="text-sm font-bold text-gray-800">{item.academicYearName}</Text>
-              <TouchableOpacity onPress={() => handleDelete(item.academicYearID)}>
-                <AppIcon name="delete" size={20} color="#EF4444" />
-              </TouchableOpacity>
-            </View>
+            <MobileDataCard
+              title={item.academicYearName}
+              subtitle={item.isActive ? "Active Session" : "Inactive"}
+              icon={<IconCircle name="academic" size={40} iconSize={20} />}
+              actions={
+                <TouchableOpacity 
+                  onPress={() => handleDelete(item.academicYearID)}
+                  className="bg-red-50 p-2 rounded-lg ml-auto"
+                >
+                  <AppIcon name="delete" size={18} color="#EF4444" />
+                </TouchableOpacity>
+              }
+            />
           )}
           contentContainerStyle={{ paddingBottom: 20 }}
         />

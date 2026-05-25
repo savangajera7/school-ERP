@@ -37,6 +37,7 @@ export default function SuperAdminUsersScreen() {
     <PremiumScreenLayout
       title="User Management"
       subtitle="Manage platform administrators and staff"
+      showTopBar
       scrollable={false}
       rightAction={
         <HeaderActionButton 

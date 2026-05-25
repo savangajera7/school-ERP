@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Colors } from "@/constants/colors";
 import { useResponsive } from "@/hooks/useResponsive";
 import { AppIcon } from "@/components/icons/AppIcon";
+import { DashboardTopBar } from "@/components/layout/DashboardTopBar";
 
 interface ScreenHeaderProps {
   title: string;
@@ -20,6 +21,8 @@ interface ScreenHeaderProps {
   onBack?: () => void;
   /** Hide the back button (e.g. for root screens) */
   hideBack?: boolean;
+  /** Show the user dashboard top bar (greeting, avatar) */
+  showTopBar?: boolean;
 }
 
 export function ScreenHeader({
@@ -29,6 +32,7 @@ export function ScreenHeader({
   flat = false,
   onBack,
   hideBack = false,
+  showTopBar = false,
 }: ScreenHeaderProps) {
   const { isMobile } = useResponsive();
   const insets = useSafeAreaInsets();
@@ -93,12 +97,17 @@ export function ScreenHeader({
       style={{
         paddingHorizontal: isMobile ? 16 : 24,
         paddingTop: (insets.top || 0) + (isMobile ? 14 : 20),
-        paddingBottom: isMobile ? 40 : 48,
+        paddingBottom: isMobile ? (showTopBar ? 56 : 40) : 48,
         borderBottomLeftRadius: isMobile ? 24 : 32,
         borderBottomRightRadius: isMobile ? 24 : 32,
       }}
     >
       <View>
+        {showTopBar && (
+          <View className="mb-4">
+            <DashboardTopBar />
+          </View>
+        )}
         <View className="flex-row items-center">
           <View className="flex-row items-center gap-3 flex-1 min-w-0">
             {!hideBack && (
@@ -110,24 +119,28 @@ export function ScreenHeader({
                 <AppIcon name="chevronBack" size={22} color="#fff" />
               </TouchableOpacity>
             )}
-            <View className="flex-1 min-w-0">
-              <Text
-                className="font-black text-white"
-                style={{ fontSize: isMobile ? 17 : 20 }}
-                numberOfLines={2}
-              >
-                {title}
-              </Text>
-              {subtitle && (
-                <Text
-                  className="text-white/60 font-bold uppercase tracking-wider mt-0.5"
-                  style={{ fontSize: isMobile ? 10 : 12 }}
-                  numberOfLines={2}
-                >
-                  {subtitle}
-                </Text>
-              )}
-            </View>
+            {(title !== "" || subtitle !== "") && (
+              <View className="flex-1 min-w-0">
+                {title !== "" && (
+                  <Text
+                    className="font-black text-white"
+                    style={{ fontSize: isMobile ? 17 : 20 }}
+                    numberOfLines={2}
+                  >
+                    {title}
+                  </Text>
+                )}
+                {subtitle && (
+                  <Text
+                    className="text-white/60 font-bold uppercase tracking-wider mt-0.5"
+                    style={{ fontSize: isMobile ? 10 : 12 }}
+                    numberOfLines={2}
+                  >
+                    {subtitle}
+                  </Text>
+                )}
+              </View>
+            )}
           </View>
           {rightAction && !isMobile ? (
             <View style={{ marginLeft: 12, flexShrink: 0 }}>{rightAction}</View>

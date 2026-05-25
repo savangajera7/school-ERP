@@ -3,21 +3,23 @@ import { View, Text, FlatList, TextInput, TouchableOpacity, Alert } from "react-
 import { router } from "expo-router";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { 
-  useGetApiReligionGet, 
-  usePostApiReligionAdd,
-  useDeleteApiReligionDeleteId 
-} from "@/api/generated/2-master-religion/2-master-religion";
+  useGetApiCategoryGet, 
+  usePostApiCategoryAdd,
+  useDeleteApiCategoryDeleteId 
+} from "@/api/generated/2-master-category/2-master-category";
 import { parseApiList } from "@/utils/apiResponse";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { AppIcon } from "@/components/icons/AppIcon";
+import { AppIcon, IconCircle } from "@/components/icons/AppIcon";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
+import { premiumCardShadow } from "@/constants/premiumStyles";
+import { MobileDataCard } from "@/components/ui/MobileDataCard";
 
-export default function ReligionScreen() {
+export default function CategoryScreen() {
   const [newName, setNewName] = useState("");
-  const { data, isLoading, refetch } = useGetApiReligionGet();
-  const addMutation = usePostApiReligionAdd();
-  const deleteMutation = useDeleteApiReligionDeleteId();
+  const { data, isLoading, refetch } = useGetApiCategoryGet();
+  const addMutation = usePostApiCategoryAdd();
+  const deleteMutation = useDeleteApiCategoryDeleteId();
 
   const items = parseApiList(data?.data);
 
@@ -25,12 +27,12 @@ export default function ReligionScreen() {
     if (!newName.trim()) return;
     try {
       await addMutation.mutateAsync({
-        data: { religionName: newName, isActive: true }
+        data: { categoryName: newName, isActive: true }
       });
       setNewName("");
       refetch();
     } catch (error: any) {
-      Alert.alert("Error", error.message || "Failed to add religion");
+      Alert.alert("Error", error.message || "Failed to add category");
     }
   };
 
@@ -54,17 +56,17 @@ export default function ReligionScreen() {
 
   return (
     <PremiumScreenLayout
-      title="Religions"
-      subtitle="Manage school diversity data"
+      title="Student Categories"
+      subtitle="Manage admission categories"
       onBack={() => router.back()}
       scrollable={false}
     >
-      <Card className="p-4 mb-6">
+      <Card className="p-4 mb-6" style={premiumCardShadow}>
         <View className="flex-row gap-3">
           <TextInput
             value={newName}
             onChangeText={setNewName}
-            placeholder="e.g. Hindu"
+            placeholder="e.g. General"
             className="flex-1 h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
           />
           <Button
@@ -81,14 +83,21 @@ export default function ReligionScreen() {
       ) : (
         <FlatList
           data={items}
-          keyExtractor={(item: any) => String(item.religionID)}
+          keyExtractor={(item: any) => String(item.categoryID)}
           renderItem={({ item }: { item: any }) => (
-            <View className="flex-row items-center justify-between bg-white p-4 rounded-2xl mb-3 border border-gray-100">
-              <Text className="text-sm font-bold text-gray-800">{item.religionName}</Text>
-              <TouchableOpacity onPress={() => handleDelete(item.religionID)}>
-                <AppIcon name="delete" size={20} color="#EF4444" />
-              </TouchableOpacity>
-            </View>
+            <MobileDataCard
+              title={item.categoryName}
+              subtitle={item.isActive ? "Active" : "Inactive"}
+              icon={<IconCircle name="classroom" size={40} iconSize={20} />}
+              actions={
+                <TouchableOpacity 
+                  onPress={() => handleDelete(item.categoryID)}
+                  className="bg-red-50 p-2 rounded-lg ml-auto"
+                >
+                  <AppIcon name="delete" size={18} color="#EF4444" />
+                </TouchableOpacity>
+              }
+            />
           )}
           contentContainerStyle={{ paddingBottom: 20 }}
         />
