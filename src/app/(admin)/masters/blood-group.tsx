@@ -88,9 +88,10 @@ export default function BloodGroupScreen() {
   return (
     <PremiumScreenLayout
       title="Blood Groups"
-      subtitle="Manage student medical data"
+      subtitle="Manage medical data"
       onBack={() => router.back()}
       scrollable={false}
+      flatHeader
     >
       <Card className="p-4 mb-6" style={premiumCardShadow}>
         <View className="flex-row gap-3">

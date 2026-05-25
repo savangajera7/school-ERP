@@ -11,12 +11,42 @@ type Props = {
   subtitle?: string;
   /** Optional row below title (e.g. avatar) */
   children?: React.ReactNode;
+  /** Use flat white style instead of gradient */
+  flat?: boolean;
 };
 
-/** Gradient header for bottom-tab root screens (no back button). */
-export function TabScreenHeader({ eyebrow, title, subtitle, children }: Props) {
+/** Header for bottom-tab root screens (no back button). */
+export function TabScreenHeader({ eyebrow, title, subtitle, children, flat = false }: Props) {
   const insets = useSafeAreaInsets();
   const { isMobile } = useResponsive();
+
+  if (flat) {
+    return (
+      <View
+        className="bg-white border-b border-gray-100"
+        style={{
+          paddingHorizontal: 20,
+          paddingTop: (insets.top || 0) + (isMobile ? 16 : 20),
+          paddingBottom: children ? 24 : 20,
+        }}
+      >
+        {eyebrow && (
+          <Text className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">
+            {eyebrow}
+          </Text>
+        )}
+        <View className="flex-row justify-between items-end">
+          <View className="flex-1">
+            <Text className="text-2xl font-black text-gray-900">{title}</Text>
+            {subtitle && (
+              <Text className="text-xs font-semibold text-gray-500 mt-0.5">{subtitle}</Text>
+            )}
+          </View>
+        </View>
+        {children && <View className="mt-4">{children}</View>}
+      </View>
+    );
+  }
 
   return (
     <LinearGradient

@@ -17,7 +17,11 @@ export default function AdminSettingsScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      <RoleHeader title="Settings" subtitle={userData?.email} />
+      <RoleHeader
+        title="Settings"
+        subtitle={userData?.email}
+        flatHeader
+      />
       <ResponsiveScreen tabBarPadding={ROLE_TAB_BAR_HEIGHT}>
         <TouchableOpacity
           style={styles.row}

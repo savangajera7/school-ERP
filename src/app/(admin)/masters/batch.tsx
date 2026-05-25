@@ -91,6 +91,7 @@ export default function BatchScreen() {
       subtitle="Manage student batches"
       onBack={() => router.back()}
       scrollable={false}
+      flatHeader
     >
       <Card className="p-4 mb-6" style={premiumCardShadow}>
         <View className="flex-row gap-3">

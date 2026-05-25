@@ -106,6 +106,7 @@ export default function TeacherFormScreen() {
       title={isEditing ? "Edit Teacher" : "Teacher Form"}
       subtitle={isEditing ? "Modify faculty member details" : "Register a new faculty member"}
       onBack={() => router.back()}
+      flatHeader
       keyboard
     >
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>

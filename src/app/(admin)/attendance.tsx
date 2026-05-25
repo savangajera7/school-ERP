@@ -52,7 +52,7 @@ export default function AdminAttendanceManagementScreen() {
           onPress: async () => {
             try {
               await deleteAttendance.mutateAsync({ 
-                data: { studentAttendanceID: record.studentAttendanceID } 
+                data: { attendanceID: record.studentAttendanceID } 
               });
               refetch();
             } catch (err: any) {
@@ -110,7 +110,7 @@ export default function AdminAttendanceManagementScreen() {
       title="Attendance"
       subtitle="Daily student tracking"
       scrollable={false}
-      showTopBar
+      flatHeader
       rightAction={
         <HeaderActionButton
           label="+ Mark Attendance"
@@ -131,7 +131,6 @@ export default function AdminAttendanceManagementScreen() {
       ) : isError ? (
         <ErrorState
           message={error instanceof Error ? error.message : "Could not load attendance"}
-          onRetry={refetch}
         />
       ) : (
         <FlatList

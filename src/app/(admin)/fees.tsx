@@ -105,7 +105,7 @@ export default function AdminFeesManagementScreen() {
       title="Fee Records"
       subtitle="Manage school revenue"
       scrollable={false}
-      showTopBar
+      flatHeader
       rightAction={
         <HeaderActionButton
           label="+ Collect Fees"
@@ -126,7 +126,6 @@ export default function AdminFeesManagementScreen() {
       ) : isError ? (
         <ErrorState
           message={error instanceof Error ? error.message : "Could not load fee records"}
-          onRetry={refetch}
         />
       ) : (
         <FlatList

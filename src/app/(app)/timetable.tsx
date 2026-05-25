@@ -45,6 +45,7 @@ export default function TimetableScreen() {
       subtitle="Weekly class schedules and lecture slots"
       hideBack={isMobile}
       withTabBar
+      flatHeader
       rightAction={
         isSchoolAdmin ? (
           <TouchableOpacity 

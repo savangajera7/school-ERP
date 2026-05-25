@@ -61,7 +61,7 @@ export function PremiumScreenLayout({
   };
 
   const body = (
-    <View style={[styles.body, bodyStyle]}>
+    <View style={[styles.body, flatHeader && { marginTop: 0 }, bodyStyle]}>
       {headerSlot}
       {children}
     </View>

@@ -10,6 +10,7 @@ type Props = {
   onBack?: () => void;
   right?: React.ReactNode;
   accentColor?: string;
+  flatHeader?: boolean;
 };
 
 export function RoleHeader({
@@ -18,8 +19,53 @@ export function RoleHeader({
   onBack,
   right,
   accentColor = SchoolTheme.primary,
+  flatHeader = false,
 }: Props) {
-  const { titleSize, bodySize, padding } = useResponsive();
+  const { titleSize, bodySize, padding, isMobile } = useResponsive();
+
+  if (flatHeader) {
+    return (
+      <View
+        className="bg-white border-b border-gray-100 flex-row justify-between items-center z-10"
+        style={{
+          paddingHorizontal: padding,
+          paddingTop: isMobile ? 54 : 64, // Approximate safe area + padding
+          paddingBottom: isMobile ? 14 : 18,
+        }}
+      >
+        <View className="flex-row items-center gap-3 flex-1">
+          {onBack && (
+            <TouchableOpacity
+              onPress={onBack}
+              className="w-10 h-10 bg-gray-50 rounded-xl items-center justify-center"
+              activeOpacity={0.7}
+            >
+              <Ionicons name="chevron-back" size={22} color="#374151" />
+            </TouchableOpacity>
+          )}
+          <View className="flex-1">
+            <Text
+              className="font-black text-gray-900"
+              style={{ fontSize: titleSize }}
+              numberOfLines={1}
+            >
+              {title}
+            </Text>
+            {subtitle && (
+              <Text
+                className="text-gray-400 font-semibold mt-0.5"
+                style={{ fontSize: bodySize - 2 }}
+                numberOfLines={1}
+              >
+                {subtitle}
+              </Text>
+            )}
+          </View>
+        </View>
+        {right && <View className="ml-3">{right}</View>}
+      </View>
+    );
+  }
 
   return (
     <View style={[styles.wrap, { backgroundColor: accentColor, paddingHorizontal: padding }]}>

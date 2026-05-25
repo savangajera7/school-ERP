@@ -70,7 +70,7 @@ export default function AdminNoticesManagementScreen() {
         fields={[
           { label: "Date", value: item.noticeDate ? String(item.noticeDate).slice(0, 10) : "N/A" },
           { label: "Target", value: item.targetAudience || "Everyone" },
-          { label: "Status", value: item.isActive ? "Active" : "Expired", highlight: item.isActive ? "success" : "default" },
+          { label: "Status", value: item.isActive ? "Active" : "Expired", highlight: item.isActive ? "success" : "muted" },
         ]}
         actions={
           <View className="flex-row gap-2 ml-auto">
@@ -97,7 +97,7 @@ export default function AdminNoticesManagementScreen() {
       title="Notices"
       subtitle="Publish school announcements"
       scrollable={false}
-      showTopBar
+      flatHeader
       rightAction={
         <HeaderActionButton
           label="+ Publish Notice"
@@ -118,7 +118,6 @@ export default function AdminNoticesManagementScreen() {
       ) : isError ? (
         <ErrorState
           message={error instanceof Error ? error.message : "Could not load notices"}
-          onRetry={refetch}
         />
       ) : (
         <FlatList

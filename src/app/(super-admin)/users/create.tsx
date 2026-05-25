@@ -67,6 +67,7 @@ export default function CreateUserScreen() {
       subtitle="Add a new platform administrator or staff member"
       onBack={() => router.back()}
       keyboard
+      flatHeader
     >
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
         <Card className="p-6">

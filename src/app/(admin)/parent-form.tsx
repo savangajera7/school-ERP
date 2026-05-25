@@ -100,6 +100,7 @@ export default function ParentFormScreen() {
       title={isEditing ? "Edit Guardian" : "Guardian Form"}
       subtitle={isEditing ? "Modify parent/guardian details" : "Register a new student guardian"}
       onBack={() => router.back()}
+      flatHeader
       keyboard
     >
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>

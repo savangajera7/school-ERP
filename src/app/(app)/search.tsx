@@ -124,7 +124,8 @@ export default function StudentSearchScreen() {
       hideBack={isMobile}
       withTabBar
       scrollable={false}
-      bodyStyle={{ marginTop: -20, paddingHorizontal: 0, flex: 1 }}
+      bodyStyle={{ paddingHorizontal: 0, flex: 1 }}
+      flatHeader
     >
         <View className="px-4 pt-2">
           <View className="flex-row gap-2 items-center mb-2">

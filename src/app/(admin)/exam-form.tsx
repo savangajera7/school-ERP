@@ -100,6 +100,7 @@ export default function ExamFormScreen() {
       title={isEditing ? "Edit Exam" : "New Exam"}
       subtitle={isEditing ? "Modify examination schedule" : "Schedule a new examination"}
       onBack={() => router.back()}
+      flatHeader
       keyboard
     >
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>

@@ -60,6 +60,7 @@ export default function NotificationComposeScreen() {
       title="Send Notification"
       subtitle="Push + in-app alert"
       onBack={() => router.back()}
+      flatHeader
       keyboard
     >
       <PremiumCard noAccent style={{ padding: 20, gap: 12 }}>

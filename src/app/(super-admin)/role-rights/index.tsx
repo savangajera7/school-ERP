@@ -63,6 +63,7 @@ export default function RoleRightsScreen() {
       subtitle={`Configuring access for ${roleName || "Role"}`}
       onBack={() => router.back()}
       scrollable={false}
+      flatHeader
     >
       {isLoading ? (
         <SkeletonLoader rows={8} />

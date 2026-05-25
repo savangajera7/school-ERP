@@ -101,6 +101,7 @@ export default function AttendanceFormScreen() {
       title={isEditing ? "Edit Attendance" : "Mark Attendance"}
       subtitle={isEditing ? "Modify attendance status" : "Record daily presence for a student"}
       onBack={() => router.back()}
+      flatHeader
       keyboard
     >
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>

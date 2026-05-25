@@ -71,7 +71,7 @@ export default function AdminExamsManagementScreen() {
         fields={[
           { label: "Class", value: item.className || "All Classes" },
           { label: "Date", value: item.examDate ? String(item.examDate).slice(0, 10) : "TBA" },
-          { label: "Status", value: item.status || "Upcoming", highlight: "warning" },
+          { label: "Status", value: item.status || "Upcoming", highlight: "accent" },
         ]}
         actions={
           <View className="flex-row gap-2 ml-auto">
@@ -98,7 +98,7 @@ export default function AdminExamsManagementScreen() {
       title="Examinations"
       subtitle="Schedule & results management"
       scrollable={false}
-      showTopBar
+      flatHeader
       rightAction={
         <HeaderActionButton
           label="+ Create Exam"
@@ -119,7 +119,6 @@ export default function AdminExamsManagementScreen() {
       ) : isError ? (
         <ErrorState
           message={error instanceof Error ? error.message : "Could not load exams"}
-          onRetry={refetch}
         />
       ) : (
         <FlatList

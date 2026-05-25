@@ -18,6 +18,7 @@ export default function SuperAdminSettingsScreen() {
       title="Platform Settings"
       subtitle="Configure global system parameters"
       showTopBar
+      flatHeader
     >
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
         {/* General Settings */}

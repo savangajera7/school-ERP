@@ -85,8 +85,9 @@ export default function CreateRoleScreen() {
   return (
     <PremiumScreenLayout
       title={isEditing ? "Edit Role" : "Create Role"}
-      subtitle={isEditing ? "Modify access group details" : "Define a new user access group"}
+      subtitle="Define system access levels"
       onBack={() => router.back()}
+      flatHeader
     >
       <ScrollView showsVerticalScrollIndicator={false}>
         <Card className="p-6">

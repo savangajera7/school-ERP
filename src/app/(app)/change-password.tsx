@@ -72,6 +72,7 @@ export default function ChangePasswordScreen() {
       title="Change password"
       subtitle="Update your account password"
       onBack={() => router.back()}
+      flatHeader
       keyboard
     >
       <PremiumCard noAccent style={{ padding: 20, gap: 12 }}>

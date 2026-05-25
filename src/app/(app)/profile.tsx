@@ -61,7 +61,7 @@ export default function ProfileScreen() {
 
   const initials = (userData?.name || "U")
     .split(" ")
-    .map((n) => n[0])
+    .map((n: string) => n[0])
     .join("")
     .slice(0, 2)
     .toUpperCase();
@@ -71,7 +71,7 @@ export default function ProfileScreen() {
   return (
     <TabScreenLayout
       header={
-        <TabScreenHeader eyebrow="My Account" title="Profile" subtitle={displayRole}>
+        <TabScreenHeader eyebrow="My Account" title="Profile" subtitle={displayRole} flat>
           <ProfileAvatarPicker
             name={userData?.name || "User"}
             avatarUri={userData?.avatar}

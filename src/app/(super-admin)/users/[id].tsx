@@ -109,6 +109,7 @@ export default function UserDetailScreen() {
       subtitle={user?.fullName || "Manage platform user"}
       onBack={() => router.back()}
       keyboard
+      flatHeader
     >
       {loadingUser ? (
         <SkeletonLoader rows={6} />

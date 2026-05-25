@@ -60,6 +60,7 @@ export default function MenuScreen() {
           eyebrow={role ? ROLE_LABELS[role] : "Portal"}
           title={t.portalMenu}
           subtitle={`${roleLabel} · ${t.schoolName}`}
+          flat
         />
       }
     >

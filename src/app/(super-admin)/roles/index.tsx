@@ -81,6 +81,7 @@ export default function RolesManagementScreen() {
       subtitle="Define user roles and access levels"
       showTopBar
       scrollable={false}
+      flatHeader
       rightAction={
         <HeaderActionButton 
           label="Add Role" 

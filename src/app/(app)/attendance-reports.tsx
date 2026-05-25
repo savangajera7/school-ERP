@@ -92,6 +92,7 @@ export default function AttendanceReportsScreen() {
       title="Attendance Reports"
       subtitle="Monthly student presence summaries"
       onBack={() => router.push("/(app)/dashboard")}
+      flatHeader
     >
           <PremiumStatPills
             items={[

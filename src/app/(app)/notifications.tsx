@@ -19,14 +19,15 @@ export default function NotificationsScreen() {
       subtitle="Alerts and reminders"
       onBack={() => router.back()}
       scrollable={false}
-      bodyStyle={{ flex: 1, paddingHorizontal: 0, marginTop: -16 }}
+      bodyStyle={{ flex: 1, paddingHorizontal: 0 }}
+      flatHeader
       rightAction={
         isAdminRole(role) ? (
           <TouchableOpacity
             onPress={() => router.push("/(app)/notification-compose")}
-            className="bg-white/20 px-3 py-1.5 rounded-lg"
+            className="bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100"
           >
-            <Text className="text-white font-bold text-xs">Send</Text>
+            <Text className="text-blue-600 font-bold text-xs">Send</Text>
           </TouchableOpacity>
         ) : undefined
       }

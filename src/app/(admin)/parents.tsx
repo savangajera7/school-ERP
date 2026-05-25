@@ -101,7 +101,7 @@ export default function AdminParentManagementScreen() {
       title="Parents"
       subtitle="Manage guardian records"
       scrollable={false}
-      showTopBar
+      flatHeader
       rightAction={
         canManageStudents ? (
           <HeaderActionButton
@@ -124,7 +124,6 @@ export default function AdminParentManagementScreen() {
       ) : isError ? (
         <ErrorState
           message={error instanceof Error ? error.message : "Could not load parents"}
-          onRetry={refetch}
         />
       ) : (
         <FlatList

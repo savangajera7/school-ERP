@@ -132,7 +132,7 @@ export default function AdminStudentManagementScreen() {
       title="Students"
       subtitle="Manage school enrollment"
       scrollable={false}
-      showTopBar
+      flatHeader
       rightAction={
         canManageStudents ? (
           <HeaderActionButton
@@ -155,7 +155,6 @@ export default function AdminStudentManagementScreen() {
       ) : isError ? (
         <ErrorState
           message={error instanceof Error ? error.message : "Could not load students"}
-          onRetry={refetch}
         />
       ) : (
         <FlatList

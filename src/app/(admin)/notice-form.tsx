@@ -97,6 +97,7 @@ export default function NoticeFormScreen() {
       title={isEditing ? "Edit Notice" : "New Notice"}
       subtitle={isEditing ? "Modify announcement details" : "Publish a new announcement to the school"}
       onBack={() => router.back()}
+      flatHeader
       keyboard
     >
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>

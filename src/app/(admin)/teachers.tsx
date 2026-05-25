@@ -101,7 +101,7 @@ export default function AdminTeacherManagementScreen() {
       title="Teachers"
       subtitle="Manage school faculty"
       scrollable={false}
-      showTopBar
+      flatHeader
       rightAction={
         canManageTeachers ? (
           <HeaderActionButton
@@ -124,7 +124,6 @@ export default function AdminTeacherManagementScreen() {
       ) : isError ? (
         <ErrorState
           message={error instanceof Error ? error.message : "Could not load teachers"}
-          onRetry={refetch}
         />
       ) : (
         <FlatList

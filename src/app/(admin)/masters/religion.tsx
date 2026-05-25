@@ -88,9 +88,10 @@ export default function ReligionScreen() {
   return (
     <PremiumScreenLayout
       title="Religions"
-      subtitle="Manage student demographic data"
+      subtitle="Manage demographic options"
       onBack={() => router.back()}
       scrollable={false}
+      flatHeader
     >
       <Card className="p-4 mb-6" style={premiumCardShadow}>
         <View className="flex-row gap-3">

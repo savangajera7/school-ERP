@@ -39,6 +39,7 @@ export default function SuperAdminUsersScreen() {
       subtitle="Manage platform administrators and staff"
       showTopBar
       scrollable={false}
+      flatHeader
       rightAction={
         <HeaderActionButton 
           label="Add User" 

@@ -23,6 +23,7 @@ export default function MastersMenuScreen() {
       subtitle="Configure school-wide parameters"
       hideBack={false}
       onBack={() => router.back()}
+      flatHeader
     >
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
         <View style={styles.grid}>
