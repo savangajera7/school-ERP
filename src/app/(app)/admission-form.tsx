@@ -1,17 +1,25 @@
-import React, { useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, Alert, ActivityIndicator } from "react-native";
-import { router } from "expo-router";
+import React, { useState, useEffect } from "react";
+import { View, Text, TouchableOpacity, TextInput, Alert, ActivityIndicator } from "react-native";
+import { router, useLocalSearchParams } from "expo-router";
 import { Card } from "@/components/ui/Card";
 import { Colors } from "@/constants/colors";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { AppIcon } from "@/components/icons/AppIcon";
-import { usePostApiStudentAdd } from "@/api/generated/3-student-crud/3-student-crud";
-import { useToast } from "@/components/ui/Toast";
+import { 
+  usePostApiStudentAdd, 
+  usePutApiStudentUpdate, 
+  useGetApiStudentGetByIDId 
+} from "@/api/generated/3-student-crud/3-student-crud";
 import { usePermissions } from "@/hooks/usePermissions";
 import { AccessDenied } from "@/components/auth/AccessDenied";
 import { useResponsive } from "@/hooks/useResponsive";
+import { parseApiData } from "@/utils/apiResponse";
 
 export default function AdmissionFormScreen() {
+  const { id } = useLocalSearchParams();
+  const studentID = id ? parseInt(typeof id === "string" ? id : id[0]) : null;
+  const isEditing = !!studentID;
+
   const { canManageStudents } = usePermissions();
   if (!canManageStudents) {
     return <AccessDenied message="New admissions are handled by school administrators." />;
@@ -29,12 +37,30 @@ export default function AdmissionFormScreen() {
   const [mobile, setMobile] = useState("");
   const [email, setEmail] = useState("");
 
-  const [formNo] = useState("LAES-2026-089");
+  const [formNo, setFormNo] = useState("LAES-2026-089");
   const [batchId, setBatchId] = useState("");
   const [admissionDate, setAdmissionDate] = useState(new Date().toISOString().split("T")[0]);
 
-  const { showToast } = useToast();
   const studentAddMutation = usePostApiStudentAdd();
+  const studentUpdateMutation = usePutApiStudentUpdate();
+  const { data: studentResponse, isLoading: loadingStudent } = useGetApiStudentGetByIDId(studentID as number, {
+    query: { enabled: isEditing }
+  });
+
+  useEffect(() => {
+    if (studentResponse?.data) {
+      const s = parseApiData(studentResponse.data) as any;
+      setStudentName(`${s.firstName || ""} ${s.lastName || ""}`.trim());
+      setGender(s.gender || "Male");
+      setDob(s.dob ? String(s.dob).slice(0, 10) : "");
+      setParentName(s.fatherName || "");
+      setMobile(s.studentNumber || "");
+      setEmail(s.studentEmail || "");
+      setFormNo(s.studentGRNo || "");
+      setBatchId(String(s.batchID || ""));
+      setAdmissionDate(s.admissionDate ? String(s.admissionDate).slice(0, 10) : "");
+    }
+  }, [studentResponse]);
 
   const handleSubmit = async () => {
     if (!studentName || !parentName || !mobile) {
@@ -42,32 +68,47 @@ export default function AdmissionFormScreen() {
       return;
     }
 
+    const payload = {
+      firstName: studentName.split(" ")[0] || studentName,
+      lastName: studentName.split(" ").slice(1).join(" ") || "",
+      gender,
+      dob,
+      studentNumber: mobile,
+      studentEmail: email || `${studentName.toLowerCase().replace(" ", "")}@laes.com`,
+      fatherName: parentName,
+      studentGRNo: formNo,
+      admissionDate,
+      isActive: true,
+    };
+
     try {
       setLoading(true);
-      await studentAddMutation.mutateAsync({
-        data: {
-          firstName: studentName.split(" ")[0] || studentName,
-          lastName: studentName.split(" ")[1] || "",
-          gender,
-          dob,
-          studentNumber: mobile,
-          studentEmail: email || `${studentName.toLowerCase().replace(" ", "")}@laes.com`,
-          fatherName: parentName,
-          studentGRNo: formNo,
-          admissionDate,
-          isActive: true,
-        }
-      });
+      if (isEditing) {
+        await studentUpdateMutation.mutateAsync({
+          data: { ...payload, studentID: studentID as number }
+        });
+        Alert.alert("Success", "Student Records Updated Successfully!");
+      } else {
+        await studentAddMutation.mutateAsync({
+          data: payload
+        });
+        Alert.alert("Success", "Student Admission Registered Successfully!");
+      }
       setLoading(false);
-      Alert.alert("Success", "Student Admission Registered Successfully!");
-      router.push("/(app)/dashboard");
-    } catch (error) {
+      router.back();
+    } catch (error: any) {
       setLoading(false);
-      // Local simulated success fallback
-      Alert.alert("Success", "Student Admission successfully registered in local state.");
-      router.push("/(app)/dashboard");
+      Alert.alert("Error", error.message || `Failed to ${isEditing ? "update" : "register"} student`);
     }
   };
+
+  if (loadingStudent) {
+    return (
+      <PremiumScreenLayout title="Loading..." subtitle="Fetching student details">
+        <ActivityIndicator size="large" color={Colors.primary} className="mt-20" />
+      </PremiumScreenLayout>
+    );
+  }
 
   const formContent = (
     <>
@@ -75,7 +116,7 @@ export default function AdmissionFormScreen() {
       <Card className="bg-white border border-gray-150 p-6 mb-6">
         <View className="flex-row items-center gap-3 mb-5 border-b border-gray-100 pb-4">
           <View className="w-10 h-10 bg-blue-50 rounded-xl items-center justify-center border border-blue-100">
-            <AppIcon name="male" size={22} color="#0369A1" active />
+            <AppIcon name={gender.toLowerCase() === "female" ? "female" : "male"} size={22} color="#0369A1" active />
           </View>
           <Text className="text-[16px] font-black text-gray-900 uppercase tracking-wide">Personal Details</Text>
         </View>
@@ -185,8 +226,9 @@ export default function AdmissionFormScreen() {
             <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">Admission Form No.</Text>
             <TextInput
               value={formNo}
+              onChangeText={setFormNo}
               className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-bold text-gray-800"
-              editable={false}
+              editable={!isEditing}
               style={{ outlineWidth: 0 } as any}
             />
           </View>
@@ -217,9 +259,9 @@ export default function AdmissionFormScreen() {
 
   return (
     <PremiumScreenLayout
-      title="Admission Form"
-      subtitle="Register a new student into the school ledger"
-      onBack={() => router.push("/(app)/dashboard")}
+      title={isEditing ? "Edit Admission" : "Admission Form"}
+      subtitle={isEditing ? "Modify existing student records" : "Register a new student into the school ledger"}
+      onBack={() => router.back()}
       keyboard
       rightAction={
         !isMobile ? (
@@ -233,7 +275,9 @@ export default function AdmissionFormScreen() {
             {loading ? (
               <ActivityIndicator size="small" color="white" />
             ) : (
-              <Text className="text-white font-black text-xs uppercase tracking-widest">Register</Text>
+              <Text className="text-white font-black text-xs uppercase tracking-widest">
+                {isEditing ? "Update" : "Register"}
+              </Text>
             )}
           </TouchableOpacity>
         ) : undefined
@@ -252,7 +296,9 @@ export default function AdmissionFormScreen() {
             {loading ? (
               <ActivityIndicator size="small" color="white" />
             ) : (
-              <Text className="text-white font-black uppercase tracking-wider">Register Student</Text>
+              <Text className="text-white font-black text-xs uppercase tracking-widest">
+                {isEditing ? "Update Record" : "Register Student"}
+              </Text>
             )}
           </TouchableOpacity>
         </View>
