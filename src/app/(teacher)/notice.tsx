@@ -1,1 +1,1 @@
-export { default } from "@/app/(app)/notice-compose";
+export { default } from "@/app/(app)/notices";

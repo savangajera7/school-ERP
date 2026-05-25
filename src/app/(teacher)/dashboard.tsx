@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import {
   View,
   Text,
@@ -19,6 +19,8 @@ import { MobileScreenShell } from "@/components/layout/MobileScreenShell";
 import { QuickActionGrid, type QuickActionItem } from "@/components/dashboard/QuickActionGrid";
 import { IconCircle } from "@/components/icons/AppIcon";
 import { ROLE_LABELS } from "@/constants/rolePermissions";
+import { useGetApiClassGetClassList } from "@/api/generated/master-class/master-class";
+import { parseApiList } from "@/utils/apiResponse";
 
 export default function TeacherDashboardScreen() {
   const { userData, role } = useAuthStore();
@@ -39,6 +41,9 @@ export default function TeacherDashboardScreen() {
     { title: t.postNotice, route: "/(teacher)/notice", icon: "notices" },
     { title: t.profile, route: "/(teacher)/profile", icon: "profile" },
   ];
+
+  const { data: classesData, isLoading: loadingClasses } = useGetApiClassGetClassList();
+  const classCount = useMemo(() => parseApiList(classesData?.data).length, [classesData]);
 
   return (
     <MobileScreenShell withTabBar={isMobile} edges={["left", "right"]} backgroundColor={SchoolTheme.background}>
@@ -84,13 +89,15 @@ export default function TeacherDashboardScreen() {
           <View style={styles.statsRow}>
             <View style={styles.statCard}>
               <IconCircle name="academic" size={40} />
-              <Text style={[styles.statNum, { fontSize: titleSize }]}>Active</Text>
+              <Text style={[styles.statNum, { fontSize: titleSize }]}>
+                {loadingClasses ? "..." : classCount}
+              </Text>
               <Text style={[styles.statLabel, { fontSize: bodySize }]}>Classrooms</Text>
             </View>
             <View style={styles.statCard}>
               <IconCircle name="subjects" size={40} />
-              <Text style={[styles.statNum, { fontSize: titleSize }]}>Normal</Text>
-              <Text style={[styles.statLabel, { fontSize: bodySize }]}>Syllabus State</Text>
+              <Text style={[styles.statNum, { fontSize: titleSize }]}>Active</Text>
+              <Text style={[styles.statLabel, { fontSize: bodySize }]}>Assignments</Text>
             </View>
           </View>
 

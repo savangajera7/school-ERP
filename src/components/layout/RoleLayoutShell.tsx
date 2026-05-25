@@ -5,13 +5,15 @@ import { usePathname } from "expo-router";
 import { useResponsive } from "@/hooks/useResponsive";
 import { RoleTabBar, ROLE_TAB_BAR_HEIGHT, type TabDef } from "@/components/layout/RoleTabBar";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
+import { SuperAdminSidebar } from "@/components/layout/SuperAdminSidebar";
+
 type Props = {
   children?: React.ReactNode;
   tabs?: TabDef[];
   tabAccent?: string;
   /** Paths that show bottom tabs on mobile (basename match) */
   tabRoutes?: string[];
-  sidebar?: "admin" | "teacher" | "parent" | null;
+  sidebar?: "admin" | "super_admin" | "teacher" | "parent" | null;
 };
 
 export function RoleLayoutShell({
@@ -22,7 +24,7 @@ export function RoleLayoutShell({
 }: Props) {
   const pathname = usePathname();
   const { isMobile, isTablet, isWeb } = useResponsive();
-  const showSidebar = (isTablet || isWeb) && sidebar === "admin";
+  const showSidebar = (isTablet || isWeb) && sidebar !== null;
   const showTabs =
     isMobile &&
     tabs.length > 0 &&
@@ -30,7 +32,9 @@ export function RoleLayoutShell({
 
   return (
     <View style={styles.root}>
-      {showSidebar && <AdminSidebar />}
+      {showSidebar && (
+        sidebar === "super_admin" ? <SuperAdminSidebar /> : <AdminSidebar />
+      )}
       <View style={styles.main}>
         <Stack
           screenOptions={{

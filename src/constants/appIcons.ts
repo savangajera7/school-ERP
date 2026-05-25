@@ -72,7 +72,8 @@ export type AppIconName =
   | "sync"
   | "building"
   | "classroom"
-  | "language";
+  | "language"
+  | "delete";
 
 type IconPair = { outline: IoniconsName; filled: IoniconsName };
 
@@ -148,6 +149,7 @@ export const APP_ICONS: Record<AppIconName, IconPair> = {
   building: { outline: "business-outline", filled: "business" },
   classroom: { outline: "easel-outline", filled: "easel" },
   language: { outline: "globe-outline", filled: "globe" },
+  delete: { outline: "trash-outline", filled: "trash" },
 };
 
 export function resolveIconName(
@@ -233,4 +235,5 @@ export const QUICK_ACTION_STYLES: Record<
   building: { bg: "#E0E7FF", iconBg: "#C7D2FE", iconColor: "#4338CA" },
   classroom: { bg: "#FEF3C7", iconBg: "#FDE68A", iconColor: "#B45309" },
   language: { bg: "#E0F2FE", iconBg: "#BAE6FD", iconColor: "#0369A1" },
+  delete: { bg: "#FEE2E2", iconBg: "#FECACA", iconColor: "#DC2626" },
 };

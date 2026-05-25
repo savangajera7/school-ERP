@@ -13,8 +13,12 @@ import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { useResponsive } from "@/hooks/useResponsive";
 
+import { usePermissions } from "@/hooks/usePermissions";
+import { HeaderActionButton } from "@/components/ui/HeaderActionButton";
+
 export default function StudentNoticeHistoryScreen() {
   const { isMobile } = useResponsive();
+  const { canPublishNotices } = usePermissions();
   const [activeTab, setActiveTab] = useState<"school" | "class">("school");
   const [expandedNoticeId, setExpandedNoticeId] = useState<string | null>(null);
   
@@ -85,6 +89,15 @@ export default function StudentNoticeHistoryScreen() {
       onBack={() => router.push("/(app)/dashboard")}
       scrollable={false}
       bodyStyle={{ flex: 1, marginTop: -20, paddingHorizontal: 0 }}
+      rightAction={
+        canPublishNotices && (
+          <HeaderActionButton
+            label="Compose"
+            shortLabel="Post"
+            onPress={() => router.push("/(app)/notice-compose")}
+          />
+        )
+      }
       headerSlot={
         <PremiumTabSwitcher
           tabs={[

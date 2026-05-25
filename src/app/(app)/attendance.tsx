@@ -191,6 +191,8 @@ export default function AttendanceScreen() {
           : "Mark student attendance class-wise and section-wise"
       }
       onBack={() => router.push("/(app)/dashboard")}
+      scrollable={false}
+      bodyStyle={{ flex: 1, paddingHorizontal: 0 }}
       rightAction={
         <TouchableOpacity
           onPress={handleSave}
