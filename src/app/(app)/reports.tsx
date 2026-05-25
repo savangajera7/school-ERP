@@ -1,9 +1,8 @@
 import React, { useMemo } from "react";
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
+import { View, Text, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
-import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
+import { PremiumStatPills } from "@/components/ui/premium";
 import { Card } from "@/components/ui/Card";
 import { useGetApiStudentGet } from "@/api/generated/3-student-crud/3-student-crud";
 import { useGetApiFeesGetFeesList } from "@/api/generated/fees/fees";
@@ -44,26 +43,19 @@ export default function ReportsScreen() {
   ];
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F4F6FA]" edges={["left", "right"]}>
-      <StatusBar style="light" />
-      <ScreenHeader title="Reports" subtitle="Overview & drill-down" onBack={() => router.back()} />
-
-      <ScrollView className="p-4 md:p-8" contentContainerStyle={{ paddingBottom: 40 }}>
-        <View className="flex-row flex-wrap gap-3 mb-6">
-          {[
-            { label: "Students", value: stats.students },
-            { label: "Pending fees", value: stats.pendingFees },
-            { label: "Attendance rows", value: stats.attendanceRecords },
-            { label: "Result rows", value: stats.resultRecords },
-          ].map((s) => (
-            <Card key={s.label} className="flex-1 min-w-[140px] p-4">
-              <Text className="text-2xl font-black" style={{ color: Colors.primary }}>
-                {s.value}
-              </Text>
-              <Text className="text-gray-500 text-sm">{s.label}</Text>
-            </Card>
-          ))}
-        </View>
+    <PremiumScreenLayout
+      title="Reports"
+      subtitle="Overview & drill-down"
+      onBack={() => router.back()}
+    >
+        <PremiumStatPills
+          items={[
+            { label: "Students", value: String(stats.students), bg: "#E8EEF7", color: Colors.primary },
+            { label: "Pending fees", value: String(stats.pendingFees), bg: "#FFF4E6", color: Colors.accent },
+            { label: "Attendance", value: String(stats.attendanceRecords), bg: "#ECFDF5" },
+            { label: "Results", value: String(stats.resultRecords), bg: "#F3F4F6" },
+          ]}
+        />
 
         {links.map((l) => (
           <TouchableOpacity key={l.route} onPress={() => router.push(l.route as never)}>
@@ -73,7 +65,6 @@ export default function ReportsScreen() {
             </Card>
           </TouchableOpacity>
         ))}
-      </ScrollView>
-    </SafeAreaView>
+    </PremiumScreenLayout>
   );
 }

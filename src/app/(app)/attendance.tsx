@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from "react";
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Alert, Platform, FlatList } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Alert, FlatList } from "react-native";
 import { router } from "expo-router";
+import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
+import { PremiumCard } from "@/components/ui/premium";
 import { Card } from "@/components/ui/Card";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { useGetApiClassGetClassList } from "@/api/generated/master-class/master-class";
@@ -14,7 +14,6 @@ import { useToast } from "@/components/ui/Toast";
 import { useAuthStore } from "@/store/authStore";
 import { StudentModel } from "@/api/model/studentModel";
 import { Colors } from "@/constants/colors";
-import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { usePermissions } from "@/hooks/usePermissions";
@@ -184,39 +183,32 @@ export default function AttendanceScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F8FAFC]" edges={["left", "right"]}>
-      <StatusBar style="light" translucent backgroundColor="transparent" />
-      
-      <ScreenHeader 
-        title="Class Attendance" 
-        subtitle={
-          isTeacher
-            ? "Mark daily presence for your class (teacher & admin)"
-            : "Mark student attendance class-wise and section-wise"
-        }
-        breadcrumb={["Attendance"]}
-        onBack={() => router.push("/(app)/dashboard")}
-        rightAction={
-          <TouchableOpacity 
-            onPress={handleSave}
-            disabled={markAttendance.isPending}
-            className={`px-4 py-2.5 rounded-xl flex-row items-center gap-1.5 shadow-md ${
-              markAttendance.isPending ? 'bg-white/10' : 'bg-[#F5921E] shadow-amber-500/20'
-            }`}
-            activeOpacity={0.8}
-          >
-            {markAttendance.isPending ? (
-              <ActivityIndicator size="small" color="white" />
-            ) : (
-              <Text className="text-white font-black text-xs uppercase tracking-widest">✓ Sync Logs</Text>
-            )}
-          </TouchableOpacity>
-        }
-      />
-
-      <View className="flex-1 px-4 md:px-8 max-w-[1400px] w-full self-center">
-        {/* Configuration Card */}
-        <Card className="bg-white border border-gray-150 p-5 mt-6 mb-6">
+    <PremiumScreenLayout
+      title="Class Attendance"
+      subtitle={
+        isTeacher
+          ? "Mark daily presence for your class (teacher & admin)"
+          : "Mark student attendance class-wise and section-wise"
+      }
+      onBack={() => router.push("/(app)/dashboard")}
+      rightAction={
+        <TouchableOpacity
+          onPress={handleSave}
+          disabled={markAttendance.isPending}
+          className={`px-4 py-2.5 rounded-xl flex-row items-center gap-1.5 shadow-md ${
+            markAttendance.isPending ? "bg-white/10" : "bg-[#F5921E] shadow-amber-500/20"
+          }`}
+          activeOpacity={0.8}
+        >
+          {markAttendance.isPending ? (
+            <ActivityIndicator size="small" color="white" />
+          ) : (
+            <Text className="text-white font-black text-xs uppercase tracking-widest">Save</Text>
+          )}
+        </TouchableOpacity>
+      }
+    >
+        <PremiumCard noAccent style={{ padding: 16, marginBottom: 14 }}>
           <View className={`flex-row gap-6 ${isMobile ? "flex-col" : "items-center justify-between"}`}>
             
             <View className="flex-row gap-4 flex-1">
@@ -277,7 +269,7 @@ export default function AttendanceScreen() {
             </View>
 
           </View>
-        </Card>
+        </PremiumCard>
 
         {/* List Header */}
         <View className="flex-row justify-between items-end mb-4 px-1">
@@ -420,7 +412,6 @@ export default function AttendanceScreen() {
             )}
           </Card>
         )}
-      </View>
-    </SafeAreaView>
+    </PremiumScreenLayout>
   );
 }

@@ -1,7 +1,9 @@
 import type { Role } from "@/types/auth.types";
 import { MOBILE_TABS_BY_ROLE, type AppRoute } from "@/constants/rolePermissions";
 
-export const MOBILE_TAB_BAR_HEIGHT = 72;
+import { PREMIUM_TAB_BAR_HEIGHT } from "@/components/layout/PremiumBottomTabBar";
+
+export const MOBILE_TAB_BAR_HEIGHT = PREMIUM_TAB_BAR_HEIGHT;
 
 export function getMobileTabsForRole(role: Role | null) {
   if (!role) return [];

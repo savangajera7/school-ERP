@@ -1,12 +1,11 @@
 import React, { useMemo, useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert, ActivityIndicator } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Card } from "@/components/ui/Card";
 import { Colors } from "@/constants/colors";
-import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
+import { PremiumTabSwitcher } from "@/components/ui/premium";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
 import { useGetApiClassGetClassList } from "@/api/generated/master-class/master-class";
 import { useGetApiSectionGetSectionList } from "@/api/generated/master-section/master-section";
@@ -86,55 +85,26 @@ export default function AcademicSetupScreen() {
   const colors = TAB_COLORS[activeTab];
 
   return (
-    <SafeAreaView className="flex-1 bg-[#FDFDFD]" edges={["left", "right"]}>
-      <StatusBar style="light" translucent backgroundColor="transparent" />
-
-      <ScreenHeader
-        title="Academic Setup"
-        subtitle="School infrastructure configuration"
-        onBack={() => router.back()}
-      />
-
-      {/* Tab Switcher */}
-      <View className="px-4 md:px-8 -mt-6">
-        <View
-          className="bg-white p-1 rounded-2xl flex-row border border-gray-100"
-          style={{
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 8 },
-            shadowOpacity: 0.05,
-            shadowRadius: 16,
-            elevation: 4,
+    <PremiumScreenLayout
+      title="Academic Setup"
+      subtitle="School infrastructure configuration"
+      onBack={() => router.back()}
+      headerSlot={
+        <PremiumTabSwitcher
+          tabs={[
+            { key: "years", label: "Years" },
+            { key: "classes", label: "Classes" },
+            { key: "sections", label: "Sections" },
+            { key: "batches", label: "Batches" },
+          ]}
+          active={activeTab}
+          onChange={(k) => {
+            setActiveTab(k as TabKey);
+            setSearch("");
           }}
-        >
-          {(["years", "classes", "sections", "batches"] as TabKey[]).map((tab) => (
-            <TouchableOpacity
-              key={tab}
-              onPress={() => { setActiveTab(tab); setSearch(""); }}
-              activeOpacity={0.8}
-              className={`flex-1 items-center py-3 rounded-xl flex-row justify-center gap-1 ${
-                activeTab === tab ? "bg-[#0d3666]" : "bg-transparent"
-              }`}
-            >
-              <Text style={{ fontSize: isMobile ? 12 : 14 }}>{TAB_ICONS[tab]}</Text>
-              <Text
-                className={`font-black uppercase tracking-wider ${
-                  activeTab === tab ? "text-white" : "text-gray-400"
-                }`}
-                style={{ fontSize: isMobile ? 9 : 11 }}
-              >
-                {tab}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </View>
-
-      <ScrollView
-        className="flex-1 px-4 mt-6 md:px-8"
-        showsVerticalScrollIndicator={false}
-      >
-        <View className="max-w-[1200px] w-full self-center pb-10">
+        />
+      }
+    >
 
           {/* Section header + search */}
           <View className={`flex-row items-center gap-4 mb-5 ${isMobile ? "flex-col items-stretch" : ""}`}>
@@ -227,8 +197,6 @@ export default function AcademicSetupScreen() {
             </View>
           )}
 
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    </PremiumScreenLayout>
   );
 }

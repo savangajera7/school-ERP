@@ -1,15 +1,13 @@
 import React, { useState, useMemo } from "react";
-import { View, Text, ScrollView, TouchableOpacity, FlatList } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
+import { View, Text, TouchableOpacity, FlatList } from "react-native";
 import { router } from "expo-router";
 import { Card } from "@/components/ui/Card";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Colors } from "@/constants/colors";
-import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
+import { PremiumTabSwitcher } from "@/components/ui/premium";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { IconCircle } from "@/components/icons/AppIcon";
-import { TabChip } from "@/components/icons/TabChip";
 import { useGetApiNoticeGetNoticeList } from "@/api/generated/notice/notice";
 import { parseApiList } from "@/utils/apiResponse";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
@@ -78,46 +76,24 @@ export default function StudentNoticeHistoryScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F8FAFC]" edges={["left", "right"]}>
-      <StatusBar style="light" translucent backgroundColor="transparent" />
-      
-      <ScreenHeader 
-        title="Notice Board" 
-        subtitle="Official school announcements & circulars"
-        breadcrumb={["Notice Board"]}
-        onBack={() => router.push("/(app)/dashboard")}
-      />
-
-      {/* High-End Tab Bar Switcher */}
-      <View className="px-6 -mt-6 max-w-[800px] w-full self-center">
-        <View 
-          className="bg-white p-1 rounded-2xl flex-row border border-gray-150"
-          style={{
-            boxShadow: "0px 8px 16px rgba(0,0,0,0.04)",
-          }}
-        >
-          <TouchableOpacity 
-            onPress={() => setActiveTab("school")}
-            activeOpacity={0.8}
-            className={`flex-1 items-center py-3 rounded-xl flex-row justify-center gap-1.5 ${
-              activeTab === 'school' ? 'bg-[#134A8C]' : 'bg-transparent'
-            }`}
-          >
-            <TabChip icon="building" label="School Notices" active={activeTab === "school"} />
-          </TouchableOpacity>
-          <TouchableOpacity 
-            onPress={() => setActiveTab("class")}
-            activeOpacity={0.8}
-            className={`flex-1 items-center py-3 rounded-xl flex-row justify-center gap-1.5 ${
-              activeTab === 'class' ? 'bg-[#134A8C]' : 'bg-transparent'
-            }`}
-          >
-            <TabChip icon="classroom" label="Class Notices" active={activeTab === "class"} />
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      <View className="flex-1 px-4 mt-6 md:px-8 max-w-[1000px] w-full self-center">
+    <PremiumScreenLayout
+      title="Notice Board"
+      subtitle="Official school announcements & circulars"
+      onBack={() => router.push("/(app)/dashboard")}
+      scrollable={false}
+      bodyStyle={{ flex: 1, marginTop: -20, paddingHorizontal: 0 }}
+      headerSlot={
+        <PremiumTabSwitcher
+          tabs={[
+            { key: "school", label: "School Notices" },
+            { key: "class", label: "Class Notices" },
+          ]}
+          active={activeTab}
+          onChange={(k) => setActiveTab(k as "school" | "class")}
+        />
+      }
+    >
+      <View style={{ flex: 1 }}>
         {isLoading ? (
           <View className="py-6">
             <SkeletonLoader variant={isMobile ? "card" : "table"} rows={4} />
@@ -203,6 +179,6 @@ export default function StudentNoticeHistoryScreen() {
           />
         )}
       </View>
-    </SafeAreaView>
+    </PremiumScreenLayout>
   );
 }

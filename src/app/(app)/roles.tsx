@@ -1,9 +1,7 @@
 import React, { useMemo } from "react";
 import { View, Text, FlatList } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
-import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
 import { useGetApiRoleGetRoleList } from "@/api/generated/role/role";
@@ -32,10 +30,13 @@ export default function RolesScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-[#FDFDFD]" edges={["left", "right"]}>
-      <StatusBar style="light" />
-      <ScreenHeader title="Roles & Rights" subtitle="Access control" onBack={() => router.back()} />
-
+    <PremiumScreenLayout
+      title="Roles & Rights"
+      subtitle="Access control"
+      onBack={() => router.back()}
+      scrollable={false}
+      bodyStyle={{ flex: 1, paddingHorizontal: 0, marginTop: -16 }}
+    >
       <FlatList
         ListHeaderComponent={
           <Text className="text-lg font-black text-primary px-4 pt-4 pb-2">Roles</Text>
@@ -63,6 +64,6 @@ export default function RolesScreen() {
           </>
         }
       />
-    </SafeAreaView>
+    </PremiumScreenLayout>
   );
 }

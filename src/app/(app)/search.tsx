@@ -1,20 +1,17 @@
 import React, { useState, useMemo } from "react";
-import { View, Text, TouchableOpacity, TextInput, FlatList, ActivityIndicator, Platform } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
-import { router } from "expo-router";
+import { View, Text, TouchableOpacity, TextInput, FlatList, ActivityIndicator } from "react-native";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Colors } from "@/constants/colors";
 import { StudentModel } from "@/api/model/studentModel";
 import { useGetApiStudentGet } from "@/api/generated/3-student-crud/3-student-crud";
 import { parseApiList } from "@/utils/apiResponse";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
-import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
+import { PremiumCard } from "@/components/ui/premium";
 import { AppIcon, GenderIcon } from "@/components/icons/AppIcon";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { Card } from "@/components/ui/Card";
-import { MOBILE_TAB_BAR_HEIGHT } from "@/constants/mobileTabs";
 
 export default function StudentSearchScreen() {
   const { isMobile } = useBreakpoint();
@@ -97,22 +94,15 @@ export default function StudentSearchScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F8FAFC]" edges={["left", "right"]}>
-      <StatusBar style="dark" />
-
-      {/* Persistent Header */}
-      <ScreenHeader
-        title="Student Search"
-        subtitle="Filter and locate student records"
-        hideBack={isMobile}
-      />
-
-      <View
-        className="flex-1 px-4 md:px-8 max-w-[1200px] w-full self-center"
-        style={{ paddingBottom: isMobile ? MOBILE_TAB_BAR_HEIGHT + 24 : 24 }}
-      >
-        {/* 🛠️ Advanced Filters Panel */}
-        <Card className="bg-white border border-gray-150 p-5 mb-5 shadow-sm rounded-3xl">
+    <PremiumScreenLayout
+      title="Student Search"
+      subtitle="Filter and locate student records"
+      hideBack={isMobile}
+      withTabBar
+      scrollable={false}
+      bodyStyle={{ marginTop: -20, paddingHorizontal: 0, flex: 1 }}
+    >
+        <PremiumCard noAccent style={{ padding: 16, marginBottom: 12 }}>
           <View className="flex-row items-center justify-between mb-4 border-b border-gray-50 pb-2">
             <View className="flex-row items-center gap-2">
               <AppIcon name="search" size={18} color="#134A8C" active />
@@ -216,9 +206,9 @@ export default function StudentSearchScreen() {
               </View>
             </View>
           </View>
-        </Card>
+        </PremiumCard>
 
-        {/* 📊 Results Overview Badge */}
+        {/* Results overview */}
         <View className="flex-row justify-between items-center mb-4 px-2">
           <Text className="text-xs font-black text-gray-400 uppercase tracking-widest">
             Found {filteredStudents.length} Matching Student Files
@@ -295,8 +285,6 @@ export default function StudentSearchScreen() {
             />
           </Card>
         )}
-      </View>
-
-    </SafeAreaView>
+    </PremiumScreenLayout>
   );
 }

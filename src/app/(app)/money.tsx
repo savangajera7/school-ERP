@@ -1,9 +1,8 @@
 import React, { useMemo, useState } from "react";
 import { View, FlatList, TextInput } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
-import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
+import { PremiumCard } from "@/components/ui/premium";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
@@ -64,16 +63,20 @@ export default function MoneyScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#FDFDFD]" edges={["left", "right"]}>
-      <StatusBar style="light" />
-      <ScreenHeader title="Accounts" subtitle="Money / petty cash" onBack={() => router.back()} />
-      <View className="p-4 bg-white border-b border-gray-100 gap-2">
+    <PremiumScreenLayout
+      title="Accounts"
+      subtitle="Money / petty cash"
+      onBack={() => router.back()}
+      scrollable={false}
+      bodyStyle={{ flex: 1, paddingHorizontal: 0, marginTop: -16 }}
+    >
+      <PremiumCard noAccent style={{ padding: 16, marginHorizontal: 16, marginBottom: 12, gap: 8 }}>
         <TextInput placeholder="Type (e.g. Expense)" value={moneyType} onChangeText={setMoneyType} className="border border-gray-200 rounded-xl px-4 py-2" />
         <TextInput placeholder="Amount" value={amount} onChangeText={setAmount} keyboardType="decimal-pad" className="border border-gray-200 rounded-xl px-4 py-2" />
         <TextInput placeholder="Payment mode" value={paymentMode} onChangeText={setPaymentMode} className="border border-gray-200 rounded-xl px-4 py-2" />
         <TextInput placeholder="Remark" value={remark} onChangeText={setRemark} className="border border-gray-200 rounded-xl px-4 py-2" />
         <Button label="Add entry" onPress={handleAdd} loading={insertMutation.isPending} />
-      </View>
+      </PremiumCard>
       {isLoading ? (
         <PremiumLoader color={Colors.primary} />
       ) : (
@@ -97,6 +100,6 @@ export default function MoneyScreen() {
           )}
         />
       )}
-    </SafeAreaView>
+    </PremiumScreenLayout>
   );
 }

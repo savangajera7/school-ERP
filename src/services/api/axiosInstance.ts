@@ -40,10 +40,21 @@ export const customInstance = <T>(
   url: string,
   options: any
 ): Promise<T> => {
+  const body = options.body;
+  const isFormData =
+    typeof FormData !== "undefined" && body instanceof FormData;
+
   return axiosInstance({
     url,
-    ...options,
-    data: options.body ? JSON.parse(options.body) : undefined,
+    method: options.method,
+    headers: isFormData
+      ? { ...(options.headers || {}), "Content-Type": "multipart/form-data" }
+      : options.headers,
+    data: isFormData
+      ? body
+      : typeof body === "string"
+        ? JSON.parse(body)
+        : body,
   }).then((response: AxiosResponse<T>) => {
     return {
       data: response.data,

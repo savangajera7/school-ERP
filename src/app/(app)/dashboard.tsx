@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import {
   View, Text, ScrollView, TouchableOpacity,
-  TextInput, Image, Platform
+  TextInput, Platform
 } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
@@ -21,6 +21,9 @@ import { usePermissions } from "@/hooks/usePermissions";
 import type { AppRoute } from "@/constants/rolePermissions";
 import type { AppIconName } from "@/constants/appIcons";
 import { AppIcon, IconCircle } from "@/components/icons/AppIcon";
+import { DashboardTopBar } from "@/components/layout/DashboardTopBar";
+import { AppBrandLogo } from "@/components/branding/AppBrandLogo";
+import { useTranslation } from "@/hooks/useTranslation";
 
 const QUICK_ACTIONS: {
   title: string;
@@ -44,7 +47,7 @@ const QUICK_ACTIONS: {
 ];
 
 export default function DashboardScreen() {
-  const { userData, logout } = useAuthStore();
+  const { userData } = useAuthStore();
   const { isMobile } = useBreakpoint();
   const { canAccessRoute, roleLabel, isParent, isTeacher } = usePermissions();
   const quickActions = QUICK_ACTIONS.filter((a) => canAccessRoute(a.route));
@@ -96,6 +99,7 @@ export default function DashboardScreen() {
 
   const firstName = userData?.name?.split(" ")[0] || "Admin";
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
 
   return (
     <SafeAreaView className="flex-1 bg-[#F4F6FA]" edges={["left", "right", "bottom"]}>
@@ -121,51 +125,22 @@ export default function DashboardScreen() {
             borderBottomRightRadius: 36,
           }}
         >
-          {/* Top bar: logo + school name + year + logout (Mobile only) */}
-          {isMobile && (
-            <View className="flex-row justify-between items-center mb-5">
-              <View className="flex-row items-center gap-3">
-                <View
-                  className="w-11 h-11 rounded-2xl bg-white border border-white/20 overflow-hidden items-center justify-center p-0.5"
-                >
-                  <Image
-                    source={{ uri: "https://little-angle.mahispark.com/images/logo.png" }}
-                    className="w-9 h-9"
-                    resizeMode="contain"
-                  />
-                </View>
-                <View>
-                  <Text className="text-white font-black text-[15px] tracking-wide" style={{ fontFamily: "Outfit" }}>
-                    Little Angel's
-                  </Text>
-                  <Text className="text-[#F5921E] text-[10px] font-black uppercase tracking-widest">
-                    સાંઈ વિદ્યા મંદિર · ERP
-                  </Text>
-                </View>
-              </View>
-
-              <View className="flex-row items-center gap-2">
-                <View className="bg-white/10 border border-white/20 px-3 py-1.5 rounded-xl">
-                  <Text className="text-white text-[11px] font-black">2026–2027</Text>
-                </View>
-                <TouchableOpacity
-                  onPress={logout}
-                  className="w-8 h-8 bg-rose-500/20 border border-rose-400/30 rounded-xl items-center justify-center"
-                  activeOpacity={0.8}
-                >
-                  <Text className="text-sm">🚪</Text>
-                </TouchableOpacity>
-              </View>
+          {isMobile ? (
+            <DashboardTopBar />
+          ) : (
+            <View className="mb-5">
+              <AppBrandLogo light title={t.schoolName} tagline={t.schoolTagline} />
             </View>
           )}
 
-          {/* Greeting */}
-          <Text className="text-white/60 text-xs font-black uppercase tracking-widest">
-            Welcome back
-          </Text>
-          <Text className="text-white text-2xl font-black mt-0.5">
-            {firstName}
-          </Text>
+          {!isMobile && (
+            <>
+              <Text className="text-white/60 text-xs font-black uppercase tracking-widest">
+                {t.welcomeBack}
+              </Text>
+              <Text className="text-white text-2xl font-black mt-0.5">{firstName}</Text>
+            </>
+          )}
 
           {/* Omni Search */}
           <View className="mt-5 bg-white/10 border border-white/20 rounded-2xl h-[46px] px-4 flex-row items-center gap-2">
@@ -173,7 +148,7 @@ export default function DashboardScreen() {
             <TextInput
               value={searchQuery}
               onChangeText={setSearchQuery}
-              placeholder="Search students, fees, notices…"
+              placeholder={t.searchPlaceholder}
               placeholderTextColor="rgba(255,255,255,0.35)"
               className="flex-1 text-white text-[13px] font-semibold h-full"
               style={{ outlineWidth: 0 } as any}

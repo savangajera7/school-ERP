@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { View, Text, ScrollView, TextInput, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
+import { Text, TextInput } from "react-native";
 import { router } from "expo-router";
-import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
+import { PremiumCard } from "@/components/ui/premium";
 import { Button } from "@/components/ui/Button";
 import { usePostApiNotificationInsertNotification } from "@/api/generated/notification/notification";
 import { useToast } from "@/components/ui/Toast";
@@ -57,10 +56,13 @@ export default function NotificationComposeScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white" edges={["left", "right"]}>
-      <StatusBar style="light" />
-      <ScreenHeader title="Send Notification" subtitle="Push + in-app alert" onBack={() => router.back()} />
-      <ScrollView className="p-6 gap-4">
+    <PremiumScreenLayout
+      title="Send Notification"
+      subtitle="Push + in-app alert"
+      onBack={() => router.back()}
+      keyboard
+    >
+      <PremiumCard noAccent style={{ padding: 20, gap: 12 }}>
         <Text className="text-sm font-semibold text-gray-600">Title</Text>
         <TextInput
           value={title}
@@ -68,7 +70,7 @@ export default function NotificationComposeScreen() {
           className="border border-gray-200 rounded-xl px-4 py-3"
           placeholder="Notification title"
         />
-        <Text className="text-sm font-semibold text-gray-600 mt-4">Message</Text>
+        <Text className="text-sm font-semibold text-gray-600 mt-2">Message</Text>
         <TextInput
           value={message}
           onChangeText={setMessage}
@@ -77,15 +79,22 @@ export default function NotificationComposeScreen() {
           className="border border-gray-200 rounded-xl px-4 py-3 min-h-[100px]"
           placeholder="Message body"
         />
-        <Text className="text-sm font-semibold text-gray-600 mt-4">Deep link route</Text>
+        <Text className="text-sm font-semibold text-gray-600 mt-2">Deep link route</Text>
         <TextInput
           value={screenName}
           onChangeText={setScreenName}
           className="border border-gray-200 rounded-xl px-4 py-3"
-          placeholder="/(app)/fees"
+          placeholder="/(app)/dashboard"
         />
-        <Button label="Send" onPress={handleSend} loading={insertMutation.isPending} />
-      </ScrollView>
-    </SafeAreaView>
+        <Text className="text-sm font-semibold text-gray-600 mt-2">Type</Text>
+        <TextInput
+          value={notificationType}
+          onChangeText={setNotificationType}
+          className="border border-gray-200 rounded-xl px-4 py-3"
+          placeholder="General"
+        />
+        <Button label="Send notification" onPress={handleSend} loading={insertMutation.isPending} />
+      </PremiumCard>
+    </PremiumScreenLayout>
   );
 }

@@ -1,12 +1,11 @@
 import React, { useState, useMemo } from "react";
-import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert, Platform, ActivityIndicator } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
+import { View, Text, TouchableOpacity, TextInput, Alert, Platform, ActivityIndicator } from "react-native";
 import { router } from "expo-router";
 import { Card } from "@/components/ui/Card";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Colors } from "@/constants/colors";
-import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
+import { PremiumSearchField, PremiumTabSwitcher } from "@/components/ui/premium";
 import { AppIcon, IconCircle } from "@/components/icons/AppIcon";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
@@ -18,7 +17,6 @@ import { parseApiList } from "@/utils/apiResponse";
 import { useToast } from "@/components/ui/Toast";
 import { useAuthStore } from "@/store/authStore";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
-import { TabChip } from "@/components/icons/TabChip";
 
 export default function TeacherManagementScreen() {
   const { isMobile } = useBreakpoint();
@@ -113,62 +111,37 @@ export default function TeacherManagementScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F8FAFC]" edges={["left", "right"]}>
-      <StatusBar style="light" translucent backgroundColor="transparent" />
-      
-      <ScreenHeader 
-        title="Teacher Directory" 
-        subtitle="Manage faculty and administrative profiles"
-        breadcrumb={["Teachers"]}
-        onBack={() => router.push("/(app)/dashboard")}
-        rightAction={
-          viewMode === "list" ? (
-            <TouchableOpacity 
-              onPress={() => setViewMode("add")}
-              className="px-4 py-2.5 bg-orange-500 rounded-xl"
-              activeOpacity={0.8}
-            >
-              <Text className="text-white font-black text-xs uppercase tracking-widest">+ Add Faculty</Text>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity 
-              onPress={() => setViewMode("list")}
-              className="px-4 py-2.5 bg-white/10 rounded-xl border border-white/20"
-              activeOpacity={0.8}
-            >
-              <Text className="text-white font-black text-xs uppercase tracking-widest">Cancel</Text>
-            </TouchableOpacity>
-          )
-        }
-      />
-
-      <ScrollView className="flex-1 px-4 mt-6 md:px-8" showsVerticalScrollIndicator={false}>
-        <View className="max-w-[1200px] w-full self-center pb-10">
-
-          {/* MODE 1: Directory List View */}
+    <PremiumScreenLayout
+      title="Teacher Directory"
+      subtitle="Manage faculty and administrative profiles"
+      onBack={() => router.push("/(app)/dashboard")}
+      rightAction={
+        viewMode === "list" ? (
+          <TouchableOpacity
+            onPress={() => setViewMode("add")}
+            className="px-4 py-2.5 bg-orange-500 rounded-xl"
+            activeOpacity={0.8}
+          >
+            <Text className="text-white font-black text-xs uppercase tracking-widest">+ Add</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            onPress={() => setViewMode("list")}
+            className="px-4 py-2.5 bg-white/10 rounded-xl border border-white/20"
+            activeOpacity={0.8}
+          >
+            <Text className="text-white font-black text-xs uppercase tracking-widest">Cancel</Text>
+          </TouchableOpacity>
+        )
+      }
+    >
           {viewMode === "list" && (
             <View className="gap-4">
-              {/* Search Bar */}
-              <View 
-                className="bg-white border border-gray-100 rounded-xl h-[52px] px-4 flex-row items-center gap-3"
-                style={{
-                  shadowColor: "#000",
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.02,
-                  shadowRadius: 8,
-                  elevation: 1,
-                }}
-              >
-                <AppIcon name="search" size={18} color="#9CA3AF" />
-                <TextInput
-                  value={searchQuery}
-                  onChangeText={setSearchQuery}
-                  placeholder="Search faculty by name or subject..."
-                  placeholderTextColor="#9CA3AF"
-                  className="flex-1 text-sm font-semibold text-gray-800"
-                  style={{ outlineWidth: 0 } as any}
-                />
-              </View>
+              <PremiumSearchField
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                placeholder="Search faculty by name or subject..."
+              />
 
               {isGetLoading ? (
                 <View className="py-20">
@@ -254,40 +227,15 @@ export default function TeacherManagementScreen() {
           {/* MODE 2: Add Employee Multi-Tab Wizard */}
           {viewMode === "add" && (
             <View>
-              {/* Form Navigation Tabs */}
-              <View 
-                className="bg-white p-1 rounded-2xl flex-row border border-gray-150 mb-6 shadow-sm max-w-[800px] w-full self-center"
-              >
-                <TouchableOpacity
-                  onPress={() => setActiveTab("basic")}
-                  className={`flex-1 py-3 rounded-xl flex-row justify-center items-center gap-1.5 ${
-                    activeTab === "basic" ? "bg-[#134A8C]" : "bg-transparent"
-                  }`}
-                  activeOpacity={0.8}
-                >
-                  <TabChip icon="profile" label="Basic Info" active={activeTab === "basic"} />
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => setActiveTab("education")}
-                  className={`flex-1 py-3 rounded-xl flex-row justify-center items-center gap-1.5 ${
-                    activeTab === "education" ? "bg-[#134A8C]" : "bg-transparent"
-                  }`}
-                  activeOpacity={0.8}
-                >
-                  <TabChip icon="students" label="Education" active={activeTab === "education"} />
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => setActiveTab("role")}
-                  className={`flex-1 py-3 rounded-xl flex-row justify-center items-center gap-1.5 ${
-                    activeTab === "role" ? "bg-[#134A8C]" : "bg-transparent"
-                  }`}
-                  activeOpacity={0.8}
-                >
-                  <TabChip icon="roles" label="Permissions" active={activeTab === "role"} />
-                </TouchableOpacity>
-              </View>
+              <PremiumTabSwitcher
+                tabs={[
+                  { key: "basic", label: "Basic Info" },
+                  { key: "education", label: "Education" },
+                  { key: "role", label: "Permissions" },
+                ]}
+                active={activeTab}
+                onChange={(k) => setActiveTab(k as typeof activeTab)}
+              />
 
                      {activeTab === "basic" && (
                 <Card className="bg-white border border-gray-150 p-6 gap-5 max-w-[800px] w-full self-center shadow-sm">
@@ -413,8 +361,6 @@ export default function TeacherManagementScreen() {
             </View>
           )}
 
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    </PremiumScreenLayout>
   );
 }

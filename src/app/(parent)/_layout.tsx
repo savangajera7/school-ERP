@@ -4,14 +4,14 @@ import { SchoolTheme } from "@/constants/theme";
 import type { TabDef } from "@/components/layout/RoleTabBar";
 
 const PARENT_TABS: TabDef[] = [
-  { name: "dashboard", title: "Home", icon: "home", href: "/(parent)/dashboard" },
-  { name: "homework", title: "HW", icon: "homework", href: "/(parent)/homework" },
-  { name: "attendance", title: "Attend", icon: "attendance", href: "/(parent)/attendance" },
-  { name: "exam", title: "Exams", icon: "exams", href: "/(parent)/exam" },
-  { name: "menu", title: "More", icon: "menu", href: "/(parent)/menu" },
+  { name: "menu", title: "Menu", icon: "menu", href: "/(parent)/menu" },
+  { name: "search", title: "Search", icon: "search", href: "/(parent)/search" },
+  { name: "dashboard", title: "Home", icon: "home", href: "/(parent)/dashboard", center: true },
+  { name: "timetable", title: "Time Table", icon: "timetable", href: "/(parent)/timetable" },
+  { name: "profile", title: "Profile", icon: "profile", href: "/(parent)/profile" },
 ];
 
-const TAB_ROUTES = ["dashboard", "homework", "attendance", "exam", "menu"];
+const TAB_ROUTES = ["menu", "search", "dashboard", "timetable", "profile"];
 
 export default function ParentLayout() {
   return (

@@ -1,12 +1,11 @@
 import React, { useState, useMemo } from "react";
-import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert, Platform } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
+import { View, Text, TouchableOpacity, TextInput, Alert, Platform } from "react-native";
 import { router } from "expo-router";
 import { Card } from "@/components/ui/Card";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Colors } from "@/constants/colors";
-import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
+import { PremiumTabSwitcher, PremiumStatPills } from "@/components/ui/premium";
 import { AppIcon } from "@/components/icons/AppIcon";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import {
@@ -188,95 +187,39 @@ export default function FeesManagementScreen() {
     }
   };
 
-  // Loading states
   const showLoader = activeTab === "collect" ? isPendingLoading : isHistoryLoading;
 
+  const feeTabs = [
+    ...(canManageFees ? [{ key: "collect", label: "Collect" }] : []),
+    { key: "history", label: "History" },
+    ...(canManageFees ? [{ key: "structure", label: "Structure" }] : []),
+  ];
+
   return (
-    <SafeAreaView className="flex-1 bg-[#F8FAFC]" edges={["left", "right"]}>
-      <StatusBar style="light" translucent backgroundColor="transparent" />
-      
-      <ScreenHeader 
-        title={canManageFees ? "Fees Management" : "Fee statements"} 
-        subtitle={
-          canManageFees
-            ? "Add class-wise fees, collect payments (admin only)"
-            : isParent
-              ? "View fee balance and payment history for your children"
-              : "View fee records"
-        }
-        breadcrumb={["Fees"]}
-        onBack={() => router.push("/(app)/dashboard")}
-      />
-
-      {/* Modern Tabs Row */}
-      <View className="px-6 -mt-6 max-w-[1200px] w-full self-center">
-        <View 
-          className="bg-white p-1 rounded-2xl flex-row border border-gray-150"
-          style={{
-            boxShadow: "0px 8px 16px rgba(0,0,0,0.04)",
-          }}
-        >
-          {canManageFees && (
-          <TouchableOpacity 
-            onPress={() => setActiveTab("collect")}
-            className={`flex-1 items-center py-3 rounded-xl flex-row justify-center gap-1.5 ${
-              activeTab === 'collect' ? 'bg-[#134A8C]' : 'bg-transparent'
-            }`}
-          >
-            <Text className={`text-xs font-bold uppercase tracking-wider ${
-              activeTab === 'collect' ? 'text-white' : 'text-gray-400'
-            }`}>
-              💳 Collect
-            </Text>
-          </TouchableOpacity>
-          )}
-          <TouchableOpacity 
-            onPress={() => setActiveTab("history")}
-            className={`flex-1 items-center py-3 rounded-xl flex-row justify-center gap-1.5 ${
-              activeTab === 'history' ? 'bg-[#134A8C]' : 'bg-transparent'
-            }`}
-          >
-            <Text className={`text-xs font-bold uppercase tracking-wider ${
-              activeTab === 'history' ? 'text-white' : 'text-gray-400'
-            }`}>
-              🧾 History
-            </Text>
-          </TouchableOpacity>
-          {canManageFees && (
-          <TouchableOpacity 
-            onPress={() => setActiveTab("structure")}
-            className={`flex-1 items-center py-3 rounded-xl flex-row justify-center gap-1.5 ${
-              activeTab === 'structure' ? 'bg-[#134A8C]' : 'bg-transparent'
-            }`}
-          >
-            <Text className={`text-xs font-bold uppercase tracking-wider ${
-              activeTab === 'structure' ? 'text-white' : 'text-gray-400'
-            }`}>
-              ⚙️ Structure
-            </Text>
-          </TouchableOpacity>
-          )}
-        </View>
-      </View>
-
-      <ScrollView className="flex-1 px-4 mt-6 md:px-8" showsVerticalScrollIndicator={false}>
-        <View className="max-w-[1200px] w-full self-center pb-10">
-          
-          {/* Quick Stats Grid */}
-          <View className={`flex-row gap-4 mb-6 ${isMobile ? "flex-col" : ""}`}>
-            <Card className="flex-1 bg-[#134A8C] p-5">
-              <Text className="text-xs font-bold text-indigo-150 uppercase tracking-wider mb-1">
-                Total Fee Collected
-              </Text>
-              <Text className="text-2xl font-black text-white">₹3,45,000</Text>
-            </Card>
-            <Card className="flex-1 bg-orange-50 border border-orange-100 p-5">
-              <Text className="text-xs font-bold text-[#F5921E] uppercase tracking-wider mb-1">
-                Total Outstanding
-              </Text>
-              <Text className="text-2xl font-black text-[#134A8C]">₹1,20,000</Text>
-            </Card>
-          </View>
+    <PremiumScreenLayout
+      title={canManageFees ? "Fees Management" : "Fee statements"}
+      subtitle={
+        canManageFees
+          ? "Add class-wise fees, collect payments (admin only)"
+          : isParent
+            ? "View fee balance and payment history for your children"
+            : "View fee records"
+      }
+      onBack={() => router.push("/(app)/dashboard")}
+      headerSlot={
+        <PremiumTabSwitcher
+          tabs={feeTabs}
+          active={activeTab}
+          onChange={(k) => setActiveTab(k as typeof activeTab)}
+        />
+      }
+    >
+          <PremiumStatPills
+            items={[
+              { label: "Collected", value: "₹3,45,000", bg: "#E8EEF7", color: Colors.primary },
+              { label: "Outstanding", value: "₹1,20,000", bg: "#FFF4E6", color: Colors.accent },
+            ]}
+          />
 
           {/* Loader */}
           {showLoader ? (
@@ -521,8 +464,6 @@ export default function FeesManagementScreen() {
             </>
           )}
 
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    </PremiumScreenLayout>
   );
 }

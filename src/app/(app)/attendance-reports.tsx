@@ -1,12 +1,11 @@
 import React, { useMemo, useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 import { Card } from "@/components/ui/Card";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Colors } from "@/constants/colors";
-import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
+import { PremiumStatPills } from "@/components/ui/premium";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
 import { useGetApiStudentAttendanceGetStudentAttendanceList } from "@/api/generated/student-attendance/student-attendance";
@@ -89,36 +88,18 @@ export default function AttendanceReportsScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#FDFDFD]" edges={["left", "right"]}>
-      <StatusBar style="light" translucent backgroundColor="transparent" />
-
-      <ScreenHeader
-        title="Attendance Reports"
-        subtitle="Monthly student presence summaries"
-        onBack={() => router.push("/(app)/dashboard")}
-      />
-
-      <ScrollView
-        className="flex-1 px-4 mt-6 md:px-8"
-        showsVerticalScrollIndicator={false}
-      >
-        <View className="max-w-[1200px] w-full self-center pb-10">
-
-          {/* Summary Stats */}
-          <View className={`flex-row gap-3 mb-6 ${isMobile ? "flex-row" : ""}`}>
-            <Card className="flex-1 bg-white border border-gray-150 p-4 items-center">
-              <Text className="text-2xl font-black text-[#0d3666]">{avgPct}%</Text>
-              <Text className="text-[10px] font-black text-gray-400 uppercase tracking-wider mt-1">Avg Attendance</Text>
-            </Card>
-            <Card className="flex-1 bg-white border border-gray-150 p-4 items-center">
-              <Text className="text-2xl font-black text-emerald-600">{perfectCount}</Text>
-              <Text className="text-[10px] font-black text-gray-400 uppercase tracking-wider mt-1">Perfect Record</Text>
-            </Card>
-            <Card className="flex-1 bg-white border border-gray-150 p-4 items-center">
-              <Text className="text-2xl font-black text-red-500">{lowCount}</Text>
-              <Text className="text-[10px] font-black text-gray-400 uppercase tracking-wider mt-1">Below 75%</Text>
-            </Card>
-          </View>
+    <PremiumScreenLayout
+      title="Attendance Reports"
+      subtitle="Monthly student presence summaries"
+      onBack={() => router.push("/(app)/dashboard")}
+    >
+          <PremiumStatPills
+            items={[
+              { label: "Avg Attendance", value: `${avgPct}%`, bg: "#E8EEF7", color: "#0d3666" },
+              { label: "Perfect", value: String(perfectCount), bg: "#ECFDF5", color: "#059669" },
+              { label: "Below 75%", value: String(lowCount), bg: "#FEF2F2", color: "#EF4444" },
+            ]}
+          />
 
           {/* Filter Configuration */}
           <Card className="bg-white border border-gray-150 p-5 mb-6">
@@ -275,8 +256,6 @@ export default function AttendanceReportsScreen() {
             </Card>
           )}
 
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    </PremiumScreenLayout>
   );
 }

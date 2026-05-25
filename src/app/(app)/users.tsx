@@ -1,11 +1,9 @@
 import React, { useMemo } from "react";
 import { FlatList, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
-import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
+import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { useGetApiUserGetUserList } from "@/api/generated/user/user";
 import { parseApiList } from "@/utils/apiResponse";
 import { Colors } from "@/constants/colors";
@@ -19,10 +17,13 @@ export default function UsersScreen() {
   const users = useMemo(() => parseApiList(data?.data), [data]);
 
   return (
-    <SafeAreaView className="flex-1 bg-[#FDFDFD]" edges={["left", "right"]}>
-      <StatusBar style="light" />
-      <ScreenHeader title="Users" subtitle="System accounts" onBack={() => router.back()} />
-
+    <PremiumScreenLayout
+      title="Users"
+      subtitle="System accounts"
+      onBack={() => router.back()}
+      scrollable={false}
+      bodyStyle={{ flex: 1, paddingHorizontal: 0, marginTop: -16 }}
+    >
       {isLoading ? (
         <View className="flex-1 items-center justify-center">
           <PremiumLoader color={Colors.primary} />
@@ -31,7 +32,7 @@ export default function UsersScreen() {
         <FlatList
           data={users}
           keyExtractor={(item, i) => String((item as { userID?: number }).userID ?? i)}
-          contentContainerStyle={{ padding: 16 }}
+          contentContainerStyle={{ padding: 16, paddingBottom: 32 }}
           onRefresh={refetch}
           refreshing={isLoading}
           renderItem={({ item }: { item: Record<string, unknown> }) => (
@@ -46,6 +47,6 @@ export default function UsersScreen() {
           )}
         />
       )}
-    </SafeAreaView>
+    </PremiumScreenLayout>
   );
 }

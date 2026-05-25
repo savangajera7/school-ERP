@@ -1,7 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { View, Text, TouchableOpacity, TextInput, FlatList, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
+import { View, Text, TouchableOpacity, FlatList, StyleSheet } from "react-native";
 import { router } from "expo-router";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Colors } from "@/constants/colors";
@@ -10,8 +8,9 @@ import { useGetApiStudentGet } from "@/api/generated/3-student-crud/3-student-cr
 import { parseApiList } from "@/utils/apiResponse";
 import { normalizeStudent, getStudentDisplayName, formatOptional } from "@/utils/studentUtils";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
-import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { HeaderActionButton } from "@/components/ui/HeaderActionButton";
+import { PremiumSearchField } from "@/components/ui/premium";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { Card } from "@/components/ui/Card";
 import { AppIcon, GenderIcon } from "@/components/icons/AppIcon";
@@ -90,47 +89,28 @@ export default function StudentManagementScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safe} edges={["left", "right"]}>
-      <StatusBar style="light" translucent backgroundColor="transparent" />
-
-      <ScreenHeader
-        title="Students Ledger"
-        subtitle="Manage student details and records"
-        onBack={() => router.back()}
-        rightAction={
-          canManageStudents ? (
-            <HeaderActionButton
-              label="+ New Admission"
-              shortLabel="+ New"
-              onPress={() => router.push("/(app)/admission-form")}
-              style={isMobile ? { alignSelf: "stretch" } : undefined}
-            />
-          ) : undefined
-        }
+    <PremiumScreenLayout
+      title="Students Ledger"
+      subtitle="Manage student details and records"
+      scrollable={false}
+      bodyStyle={styles.listBody}
+      rightAction={
+        canManageStudents ? (
+          <HeaderActionButton
+            label="+ New Admission"
+            shortLabel="+ New"
+            onPress={() => router.push("/(app)/admission-form")}
+            style={isMobile ? { alignSelf: "stretch" } : undefined}
+          />
+        ) : undefined
+      }
+    >
+      <PremiumSearchField
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+        placeholder="Search by name, roll no or GR..."
+        onClear={() => setSearchQuery("")}
       />
-
-      <View style={styles.content}>
-        <View style={styles.searchWrap}>
-          <View style={styles.searchBar}>
-            <AppIcon name="search" size={18} color="#9CA3AF" />
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Search by name, roll no or GR..."
-              placeholderTextColor="#9CA3AF"
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-            />
-            {searchQuery.length > 0 ? (
-              <TouchableOpacity
-                onPress={() => setSearchQuery("")}
-                style={styles.clearBtn}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-              >
-                <AppIcon name="close" size={16} color="#9CA3AF" />
-              </TouchableOpacity>
-            ) : null}
-          </View>
-        </View>
 
         {isLoading ? (
           <SkeletonLoader variant={isMobile ? "card" : "table"} rows={5} />
@@ -234,35 +214,12 @@ export default function StudentManagementScreen() {
             )}
           </Card>
         )}
-      </View>
-    </SafeAreaView>
+    </PremiumScreenLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: "#F8FAFC" },
-  content: { flex: 1, paddingHorizontal: 16, maxWidth: 1400, width: "100%", alignSelf: "center" },
-  searchWrap: { marginVertical: 16 },
-  searchBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: "#E8ECF1",
-    paddingHorizontal: 14,
-    height: 52,
-    gap: 10,
-  },
-  searchInput: { flex: 1, fontSize: 14, fontWeight: "600", color: "#111827", paddingVertical: 0 },
-  clearBtn: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: "#F3F4F6",
-    alignItems: "center",
-    justifyContent: "center",
-  },
+  listBody: { flex: 1, marginTop: -20, paddingHorizontal: 0 },
   avatarBox: {
     width: 44,
     height: 44,

@@ -1,9 +1,8 @@
 import React, { useMemo, useState } from "react";
-import { View, FlatList, TextInput } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
+import { FlatList, TextInput } from "react-native";
 import { router } from "expo-router";
-import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
+import { PremiumCard } from "@/components/ui/premium";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
@@ -61,15 +60,19 @@ export default function TeacherAttendanceScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#FDFDFD]" edges={["left", "right"]}>
-      <StatusBar style="light" />
-      <ScreenHeader title="Staff attendance" subtitle="Teacher register" onBack={() => router.back()} />
-      <View className="p-4 bg-white border-b border-gray-100 gap-2">
+    <PremiumScreenLayout
+      title="Staff attendance"
+      subtitle="Teacher register"
+      onBack={() => router.back()}
+      scrollable={false}
+      bodyStyle={{ flex: 1, paddingHorizontal: 0, marginTop: -16 }}
+    >
+      <PremiumCard noAccent style={{ padding: 16, marginHorizontal: 16, marginBottom: 12, gap: 8 }}>
         <TextInput placeholder="Teacher ID" value={teacherId} onChangeText={setTeacherId} keyboardType="number-pad" className="border border-gray-200 rounded-xl px-4 py-2" />
         <TextInput placeholder="Date YYYY-MM-DD" value={date} onChangeText={setDate} className="border border-gray-200 rounded-xl px-4 py-2" />
         <TextInput placeholder="Status (Present/Absent)" value={status} onChangeText={setStatus} className="border border-gray-200 rounded-xl px-4 py-2" />
         <Button label="Mark attendance" onPress={handleMark} loading={insertMutation.isPending} />
-      </View>
+      </PremiumCard>
       {isLoading ? (
         <PremiumLoader color={Colors.primary} />
       ) : (
@@ -91,6 +94,6 @@ export default function TeacherAttendanceScreen() {
           )}
         />
       )}
-    </SafeAreaView>
+    </PremiumScreenLayout>
   );
 }

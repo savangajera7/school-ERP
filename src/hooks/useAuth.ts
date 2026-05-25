@@ -8,6 +8,7 @@ import { postApiLoginLogin } from "@/api/generated/1-login-no-token/1-login-no-t
 import type { LoginRequest } from "@/api/model";
 import type { LoginPayload, Role } from "@/types/auth.types";
 import { getHomeRoute, roleToRouteGroup } from "@/utils/roleRouting";
+import { resolveMediaUrl } from "@/services/upload/uploadService";
 
 export function useAuth() {
   const router = useRouter();
@@ -68,7 +69,7 @@ export function useAuth() {
             roleID: u.roleID,
             referenceID: u.referenceID,
             schoolName: "Little Angel's English School",
-            avatar: u.profilePhoto,
+            avatar: resolveMediaUrl(u.profilePhoto) ?? u.profilePhoto,
           },
           userRole
         );

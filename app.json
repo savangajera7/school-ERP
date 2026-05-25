@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "School ERP",
+    "name": "Little Angel's ERP",
     "slug": "school-erp",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -49,6 +49,12 @@
         {
           "icon": "./assets/icon.png",
           "color": "#0d3666"
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow access to your photos to set a profile picture."
         }
       ]
     ],

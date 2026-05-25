@@ -1,9 +1,8 @@
 import React, { useMemo, useState } from "react";
 import { View, Text, FlatList, TextInput, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
-import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
+import { PremiumTabSwitcher, PremiumCard } from "@/components/ui/premium";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
@@ -98,21 +97,25 @@ export default function MastersScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#FDFDFD]" edges={["left", "right"]}>
-      <StatusBar style="light" />
-      <ScreenHeader title="Master data" subtitle="Blood group, category, religion" onBack={() => router.back()} />
-      <View className="flex-row p-4 gap-2">
-        {(["blood", "category", "religion"] as Tab[]).map((t) => (
-          <TouchableOpacity
-            key={t}
-            onPress={() => setTab(t)}
-            className={`flex-1 py-2 rounded-xl items-center ${tab === t ? "bg-[#0d3666]" : "bg-gray-100"}`}
-          >
-            <Text className={`text-xs font-bold capitalize ${tab === t ? "text-white" : "text-gray-600"}`}>{t}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-      <View className="px-4 pb-2 flex-row gap-2">
+    <PremiumScreenLayout
+      title="Master data"
+      subtitle="Blood group, category, religion"
+      onBack={() => router.back()}
+      scrollable={false}
+      bodyStyle={{ flex: 1, paddingHorizontal: 0, marginTop: -16 }}
+      headerSlot={
+        <PremiumTabSwitcher
+          tabs={[
+            { key: "blood", label: "Blood" },
+            { key: "category", label: "Category" },
+            { key: "religion", label: "Religion" },
+          ]}
+          active={tab}
+          onChange={(k) => setTab(k as Tab)}
+        />
+      }
+    >
+      <PremiumCard noAccent style={{ marginHorizontal: 16, marginBottom: 12, padding: 12, flexDirection: "row", gap: 8 }}>
         <TextInput
           placeholder={`New ${tab} name`}
           value={name}
@@ -120,7 +123,7 @@ export default function MastersScreen() {
           className="flex-1 border border-gray-200 rounded-xl px-4 py-2 bg-white"
         />
         <Button label="Add" onPress={handleAdd} loading={addPending} />
-      </View>
+      </PremiumCard>
       {loading ? (
         <PremiumLoader color={Colors.primary} />
       ) : (
@@ -136,6 +139,6 @@ export default function MastersScreen() {
           )}
         />
       )}
-    </SafeAreaView>
+    </PremiumScreenLayout>
   );
 }

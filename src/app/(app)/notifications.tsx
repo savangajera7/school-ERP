@@ -1,42 +1,36 @@
 import React from "react";
-import { View, Text, ScrollView, TouchableOpacity, FlatList } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
+import { View, Text, TouchableOpacity, FlatList } from "react-native";
 import { router } from "expo-router";
-import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
+import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { useNotifications } from "@/contexts/NotificationContext";
-import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Colors } from "@/constants/colors";
 import { isAdminRole } from "@/hooks/useRoleAccess";
 import { useAuthStore } from "@/store/authStore";
 
 export default function NotificationsScreen() {
-  const { isMobile } = useBreakpoint();
   const { role } = useAuthStore();
   const { notifications, isLoading, openNotification, refetch } = useNotifications();
 
   return (
-    <SafeAreaView className="flex-1 bg-[#FDFDFD]" edges={["left", "right"]}>
-      <StatusBar style="light" translucent backgroundColor="transparent" />
-
-      <ScreenHeader
-        title="Notifications"
-        subtitle="Alerts and reminders"
-        onBack={() => router.back()}
-        rightAction={
-          isAdminRole(role) ? (
-            <TouchableOpacity
-              onPress={() => router.push("/(app)/notification-compose")}
-              className="bg-white/20 px-3 py-1.5 rounded-lg"
-            >
-              <Text className="text-white font-bold text-xs">Send</Text>
-            </TouchableOpacity>
-          ) : undefined
-        }
-      />
-
+    <PremiumScreenLayout
+      title="Notifications"
+      subtitle="Alerts and reminders"
+      onBack={() => router.back()}
+      scrollable={false}
+      bodyStyle={{ flex: 1, paddingHorizontal: 0, marginTop: -16 }}
+      rightAction={
+        isAdminRole(role) ? (
+          <TouchableOpacity
+            onPress={() => router.push("/(app)/notification-compose")}
+            className="bg-white/20 px-3 py-1.5 rounded-lg"
+          >
+            <Text className="text-white font-bold text-xs">Send</Text>
+          </TouchableOpacity>
+        ) : undefined
+      }
+    >
       {isLoading ? (
         <View className="flex-1 items-center justify-center">
           <PremiumLoader color={Colors.primary} />
@@ -79,6 +73,6 @@ export default function NotificationsScreen() {
           )}
         />
       )}
-    </SafeAreaView>
+    </PremiumScreenLayout>
   );
 }

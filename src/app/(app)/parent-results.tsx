@@ -1,14 +1,12 @@
 import React, { useState, useMemo } from "react";
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 import { Card } from "@/components/ui/Card";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { useGetApiResultGetResultList } from "@/api/generated/result/result";
 import { useAuthStore } from "@/store/authStore";
 import { Colors } from "@/constants/colors";
-import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
 import { parseApiList } from "@/utils/apiResponse";
 
@@ -88,17 +86,11 @@ export default function ParentResultsScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-[#FDFDFD]" edges={["left", "right"]}>
-      <StatusBar style="light" translucent backgroundColor="transparent" />
-
-      <ScreenHeader
-        title="Academic Results"
-        subtitle="Exam performance and marksheets"
-        onBack={() => router.push("/(app)/dashboard")}
-      />
-
-      <ScrollView className="flex-1 px-4 mt-6 md:px-8" showsVerticalScrollIndicator={false}>
-        <View className="max-w-[1200px] w-full self-center pb-10">
+    <PremiumScreenLayout
+      title="Academic Results"
+      subtitle="Exam performance and marksheets"
+      onBack={() => router.push("/(app)/dashboard")}
+    >
           {results.length === 0 ? (
             <Card className="p-8 items-center">
               <Text className="text-gray-500 text-center">
@@ -160,8 +152,6 @@ export default function ParentResultsScreen() {
               )}
             </>
           )}
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    </PremiumScreenLayout>
   );
 }

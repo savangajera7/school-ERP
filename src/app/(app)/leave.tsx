@@ -1,9 +1,8 @@
 import React, { useMemo, useState } from "react";
 import { View, Text, FlatList, TouchableOpacity, TextInput } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
-import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
+import { PremiumCard } from "@/components/ui/premium";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
 import {
@@ -59,21 +58,20 @@ export default function LeaveScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#FDFDFD]" edges={["left", "right"]}>
-      <StatusBar style="light" />
-      <ScreenHeader
-        title="Leave"
-        subtitle={
-          isTeacher
-            ? "Apply for leave — student attendance is under Class Attendance"
-            : isParent
-              ? "Apply for leave for your ward"
-              : "Review and track leave applications"
-        }
-        onBack={() => router.back()}
-      />
-
-      <View className="p-4 border-b border-gray-100 bg-white">
+    <PremiumScreenLayout
+      title="Leave"
+      subtitle={
+        isTeacher
+          ? "Apply for leave — student attendance is under Class Attendance"
+          : isParent
+            ? "Apply for leave for your ward"
+            : "Review and track leave applications"
+      }
+      onBack={() => router.back()}
+      scrollable={false}
+      bodyStyle={{ flex: 1, paddingHorizontal: 0, marginTop: -16 }}
+    >
+      <PremiumCard noAccent style={{ marginHorizontal: 16, marginBottom: 12, padding: 16, gap: 8 }}>
         <TextInput
           placeholder="From date (YYYY-MM-DD)"
           value={fromDate}
@@ -93,7 +91,7 @@ export default function LeaveScreen() {
           className="border border-gray-200 rounded-xl px-4 py-2 mb-3"
         />
         <Button label="Apply Leave" onPress={handleApply} loading={insertMutation.isPending} />
-      </View>
+      </PremiumCard>
 
       {!canReviewLeave ? (
         <Text className="text-center text-gray-500 px-6 py-8 text-sm">
@@ -122,6 +120,6 @@ export default function LeaveScreen() {
           }
         />
       )}
-    </SafeAreaView>
+    </PremiumScreenLayout>
   );
 }

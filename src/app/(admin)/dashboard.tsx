@@ -7,13 +7,16 @@ import {
   StyleSheet,
   Image,
 } from "react-native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
 import { useAuthStore } from "@/store/authStore";
 import { useResponsive } from "@/hooks/useResponsive";
 import { SchoolTheme } from "@/constants/theme";
 import { ROLE_TAB_BAR_HEIGHT } from "@/components/layout/RoleTabBar";
+import { DashboardTopBar } from "@/components/layout/DashboardTopBar";
+import { useTranslation } from "@/hooks/useTranslation";
+import { MobileScreenShell } from "@/components/layout/MobileScreenShell";
 import { useGetApiStudentGet } from "@/api/generated/3-student-crud/3-student-crud";
 import { useGetApiTeacherGetTeacherList } from "@/api/generated/teacher/teacher";
 import { parseApiList } from "@/utils/apiResponse";
@@ -46,13 +49,14 @@ export default function AdminDashboardScreen() {
   const firstName = userData?.name?.split(" ")[0] || "Admin";
   const roleLabel = role ? ROLE_LABELS[role] : "Administrator";
   const tabPad = isMobile ? ROLE_TAB_BAR_HEIGHT + 24 : 32;
+  const { t } = useTranslation();
 
   return (
-    <SafeAreaView style={styles.safe} edges={["left", "right"]}>
+    <MobileScreenShell withTabBar={isMobile} edges={["left", "right"]} backgroundColor={SchoolTheme.background}>
       <StatusBar style="light" />
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: tabPad }}
+        contentContainerStyle={{ paddingBottom: tabPad, flexGrow: 1 }}
       >
         <LinearGradient
           colors={[SchoolTheme.primary, SchoolTheme.primaryDark]}
@@ -64,19 +68,27 @@ export default function AdminDashboardScreen() {
             },
           ]}
         >
-          <View style={styles.headerTop}>
-            <Image
-              source={require("../../../assets/school-logo.png")}
-              style={styles.logo}
-              resizeMode="contain"
-            />
-            <View style={styles.headerText}>
-              <Text style={styles.schoolName}>Little Angel&apos;s</Text>
-              <Text style={styles.roleBadge}>{roleLabel}</Text>
-            </View>
-          </View>
-          <Text style={styles.welcome}>Welcome back</Text>
-          <Text style={[styles.userName, { fontSize: titleSize }]}>Hello, {firstName}</Text>
+          {isMobile ? (
+            <DashboardTopBar notificationsHref="/(admin)/notifications" />
+          ) : (
+            <>
+              <View style={styles.headerTop}>
+                <Image
+                  source={require("../../../assets/school-logo.png")}
+                  style={styles.logo}
+                  resizeMode="contain"
+                />
+                <View style={styles.headerText}>
+                  <Text style={styles.schoolName}>
+                    {t.schoolName}
+                  </Text>
+                  <Text style={styles.roleBadge}>{roleLabel}</Text>
+                </View>
+              </View>
+              <Text style={styles.welcome}>{t.welcomeBack}</Text>
+              <Text style={[styles.userName, { fontSize: titleSize }]}>Hello, {firstName}</Text>
+            </>
+          )}
         </LinearGradient>
 
         <View style={[styles.body, isMobile && { marginTop: -32 }]}>
@@ -98,12 +110,12 @@ export default function AdminDashboardScreen() {
           )}
 
           <View style={styles.sectionCard}>
-            <Text style={[styles.sectionTitle, { fontSize: bodySize + 2 }]}>Quick Actions</Text>
+            <Text style={[styles.sectionTitle, { fontSize: bodySize + 2 }]}>{t.quickActions}</Text>
             <QuickActionGrid items={QUICK} mobileColumns={4} />
           </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </MobileScreenShell>
   );
 }
 

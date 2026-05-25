@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, ScrollView } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
+import { Text, TextInput, ScrollView } from "react-native";
 import { router } from "expo-router";
-import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
+import { PremiumCard } from "@/components/ui/premium";
 import { Button } from "@/components/ui/Button";
 import { useAuthStore } from "@/store/authStore";
 import { useToast } from "@/components/ui/Toast";
@@ -69,10 +68,13 @@ export default function ChangePasswordScreen() {
     parentMut.isPending || studentMut.isPending || teacherMut.isPending;
 
   return (
-    <SafeAreaView className="flex-1 bg-[#FDFDFD]" edges={["left", "right"]}>
-      <StatusBar style="light" />
-      <ScreenHeader title="Change password" onBack={() => router.back()} />
-      <ScrollView contentContainerStyle={{ padding: 24, gap: 12 }}>
+    <PremiumScreenLayout
+      title="Change password"
+      subtitle="Update your account password"
+      onBack={() => router.back()}
+      keyboard
+    >
+      <PremiumCard noAccent style={{ padding: 20, gap: 12 }}>
         <Text className="text-sm text-gray-500">
           Update your account password. Admin accounts should reset via the web portal or IT support.
         </Text>
@@ -98,7 +100,7 @@ export default function ChangePasswordScreen() {
           className="border border-gray-200 rounded-xl px-4 py-3 bg-white"
         />
         <Button label="Update password" onPress={handleSubmit} loading={loading} />
-      </ScrollView>
-    </SafeAreaView>
+      </PremiumCard>
+    </PremiumScreenLayout>
   );
 }

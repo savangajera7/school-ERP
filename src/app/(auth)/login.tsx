@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, Image, Dimensions, StyleSheet } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, Dimensions, StyleSheet } from "react-native";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -8,11 +8,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from "expo-linear-gradient";
 
-import { Header } from "@/components/ui/Header";
 import { Button } from "@/components/ui/Button";
 import { FormField } from "@/components/forms/FormField";
 import { useAuthStore } from "@/store/authStore";
-import { translations } from "@/constants/translations";
+import { useTranslation } from "@/hooks/useTranslation";
+import { AppBrandLogo } from "@/components/branding/AppBrandLogo";
+import { PoweredByFooter } from "@/components/branding/PoweredByFooter";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Colors } from "@/constants/colors";
 import { useAuth } from "@/hooks/useAuth";
@@ -30,8 +31,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 export default function LoginScreen() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const role = useAuthStore((state) => state.role);
-  const language = useAuthStore((state) => state.language);
-  const t = translations[language];
+  const { t, language, setLanguage } = useTranslation();
   const { signInWithApi, apiLoginMutation } = useAuth();
   const [loginError, setLoginError] = React.useState<string | null>(null);
   const { isMobile } = useBreakpoint();
@@ -137,19 +137,37 @@ export default function LoginScreen() {
           {isMobile ? (
             <View style={{ flex: 1 }}>
               <LinearGradient colors={[Colors.gradientStart, Colors.gradientEnd]} style={styles.mobileHeader}>
-                <View style={styles.logoContainerSmall}>
-                  <Image source={require("../../../assets/school-logo.png")} style={styles.logo} resizeMode="contain" />
+                <View style={styles.langRow}>
+                  <TouchableOpacity
+                    style={[styles.langChip, language === "gu" && styles.langChipActive]}
+                    onPress={() => setLanguage("gu")}
+                  >
+                    <Text style={[styles.langChipText, language === "gu" && styles.langChipTextActive]}>ગુજરાતી</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.langChip, language === "en" && styles.langChipActive]}
+                    onPress={() => setLanguage("en")}
+                  >
+                    <Text style={[styles.langChipText, language === "en" && styles.langChipTextActive]}>English</Text>
+                  </TouchableOpacity>
                 </View>
-                <Text style={styles.mobileTitle}>Little Angel's</Text>
-                <Text style={styles.mobileSubtitle}>English School</Text>
+                <AppBrandLogo
+                  size="lg"
+                  variant="stacked"
+                  light
+                  title={t.schoolName}
+                  tagline={t.smartSystem}
+                />
               </LinearGradient>
               <View style={styles.mobileCardContainer}>
-                <View style={{ width: '100%', paddingBottom: 20 }}>
-                  <Text style={[styles.loginTitle, { textAlign: 'center', marginBottom: 8 }]}>{t.welcome}</Text>
-                  <Text style={[styles.loginSubtitle, { textAlign: 'center', marginBottom: 32 }]}>{t.signInSubtitle}</Text>
+                <View style={styles.mobileFormWrap}>
+                  <Text style={[styles.loginTitle, styles.centerText]}>{t.welcome}</Text>
+                  <Text style={[styles.loginSubtitle, styles.centerText, { marginBottom: 32 }]}>
+                    {t.signInSubtitle}
+                  </Text>
                   {renderForm()}
                 </View>
-                <Text style={styles.footerText}>Powered by {t.schoolERP}</Text>
+                <PoweredByFooter />
               </View>
             </View>
           ) : (
@@ -165,13 +183,14 @@ export default function LoginScreen() {
                 <View style={styles.decorativeCircle2} />
                 
                 <View style={styles.brandingContent}>
-                  <View style={styles.logoContainer}>
-                    <Image source={require("../../../assets/school-logo.png")} style={styles.logo} resizeMode="contain" />
-                  </View>
-                  <Text style={styles.brandingTitle}>Little Angel's</Text>
-                  <Text style={styles.brandingSubtitle}>English School</Text>
-                  
-                  {/* Removed feature list for a cleaner look */}
+                  <AppBrandLogo
+                    size="lg"
+                    variant="stacked"
+                    light
+                    title={t.schoolName}
+                    tagline={t.smartSystem}
+                  />
+                  <PoweredByFooter light style={{ marginTop: 48 }} />
                 </View>
               </LinearGradient>
               <View style={styles.desktopLoginForm}>
@@ -180,6 +199,7 @@ export default function LoginScreen() {
                   <Text style={styles.loginSubtitle}>{t.signInSubtitle}</Text>
                   {renderForm()}
                 </View>
+                <PoweredByFooter style={{ position: "absolute", bottom: 24, alignSelf: "center" }} />
               </View>
             </View>
           )}
@@ -206,10 +226,36 @@ function FeatureItem({ icon, text, desc }: { icon: string, text: string, desc: s
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff" },
   mobileHeader: {
-    paddingTop: 60,
-    paddingBottom: 80,
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingTop: 48,
+    paddingBottom: 72,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 20,
+  },
+  langRow: {
+    flexDirection: "row",
+    gap: 8,
+    alignSelf: "flex-end",
+    marginBottom: 20,
+  },
+  langChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 10,
+    backgroundColor: "rgba(255,255,255,0.15)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.25)",
+  },
+  langChipActive: {
+    backgroundColor: "#fff",
+  },
+  langChipText: {
+    fontSize: 12,
+    fontWeight: "800",
+    color: "rgba(255,255,255,0.8)",
+  },
+  langChipTextActive: {
+    color: Colors.primary,
   },
   logoContainerSmall: {
     width: 100,
@@ -271,7 +317,16 @@ const styles = StyleSheet.create({
     left: -50,
   },
   brandingContent: { width: "100%", maxWidth: 420, alignItems: "center", zIndex: 1 },
-  desktopLoginForm: { width: "58%", backgroundColor: "#f9fafb", alignItems: "center", justifyContent: "center", padding: 40 },
+  desktopLoginForm: {
+    width: "58%",
+    backgroundColor: "#f9fafb",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 40,
+    position: "relative",
+  },
+  mobileFormWrap: { width: "100%", paddingBottom: 20, flex: 1 },
+  centerText: { textAlign: "center", marginBottom: 8 },
   logoContainer: { 
     width: 160, 
     height: 160, 
@@ -360,5 +415,4 @@ const styles = StyleSheet.create({
   },
   errorContainer: { backgroundColor: "#fef2f2", padding: 16, borderRadius: 16, marginTop: 24, borderWidth: 1, borderColor: "#fee2e2" },
   errorText: { color: "#ef4444", fontSize: 14, textAlign: "center", fontWeight: "bold" },
-  footerText: { textAlign: "center", color: "#e5e7eb", fontSize: 13, fontWeight: "800", marginTop: 40, letterSpacing: 2 }
 });

@@ -4,7 +4,8 @@ import { AuthGate } from "@/components/auth/AuthGate";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import { View, Platform } from "react-native";
+import { Platform } from "react-native";
+import { PremiumLoadingScreen } from "@/components/ui/PremiumLoadingScreen";
 import { ToastProvider } from "@/components/ui/Toast";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { AppUpdateModal } from "@/components/updates/AppUpdateModal";
@@ -63,9 +64,7 @@ export default function RootLayout() {
   }, []);
 
   if (!isReady) {
-    return (
-      <View style={{ flex: 1, backgroundColor: "#0d3666" }} />
-    );
+    return <PremiumLoadingScreen />;
   }
 
   return (

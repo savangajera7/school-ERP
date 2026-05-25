@@ -1,21 +1,12 @@
 import React, { useMemo } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  Image,
-  ActivityIndicator,
-} from "react-native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
-import { LinearGradient } from "expo-linear-gradient";
+import { View, Text, TouchableOpacity, ActivityIndicator, StyleSheet, Platform } from "react-native";
 import { router } from "expo-router";
 import { useAuthStore } from "@/store/authStore";
-import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { AppIcon } from "@/components/icons/AppIcon";
 import { Colors } from "@/constants/colors";
-import { MOBILE_TAB_BAR_HEIGHT } from "@/constants/mobileTabs";
+import { TabScreenLayout } from "@/components/layout/TabScreenLayout";
+import { TabScreenHeader } from "@/components/layout/TabScreenHeader";
+import { ProfileAvatarPicker } from "@/components/profile/ProfileAvatarPicker";
 import { useGetApiStudentGet } from "@/api/generated/3-student-crud/3-student-crud";
 import { useNotifications } from "@/contexts/NotificationContext";
 import type { StudentModel } from "@/api/model/studentModel";
@@ -56,10 +47,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 export default function ProfileScreen() {
   const { userData, role, logout, language } = useAuthStore();
   const { roleLabel } = usePermissions();
-  const { isMobile } = useBreakpoint();
-  const insets = useSafeAreaInsets();
 
-  const parentId = Number(userData?.id) || 0;
   const isParent = role === "parent";
 
   const { unreadCount } = useNotifications();
@@ -80,64 +68,22 @@ export default function ProfileScreen() {
 
   const displayRole = roleLabel || (role ? ROLE_LABELS[role] : "User");
 
-  const bottomPad = isMobile ? MOBILE_TAB_BAR_HEIGHT + (insets.bottom || 0) + 16 : 40;
-
   return (
-    <SafeAreaView className="flex-1 bg-[#F4F6FA]" edges={["left", "right"]}>
-      <StatusBar style="light" translucent backgroundColor="transparent" />
-
-      <ScrollView
-        className="flex-1"
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: bottomPad }}
-      >
-        <LinearGradient
-          colors={["#134A8C", "#0D3666"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={{
-            paddingHorizontal: 24,
-            paddingTop: (insets.top || 0) + 20,
-            paddingBottom: 56,
-            borderBottomLeftRadius: 32,
-            borderBottomRightRadius: 32,
-          }}
-        >
-          <Text className="text-white/60 text-[10px] font-black uppercase tracking-widest">
-            My Account
-          </Text>
-          <Text className="text-white text-2xl font-black mt-1" style={{ fontFamily: "Outfit" }}>
-            Profile
-          </Text>
-
-          <View className="flex-row items-center gap-4 mt-6">
-            {userData?.avatar ? (
-              <Image
-                source={{ uri: userData.avatar }}
-                className="w-16 h-16 rounded-2xl border-2 border-white/30"
-              />
-            ) : (
-              <View className="w-16 h-16 rounded-2xl bg-white/15 border-2 border-white/25 items-center justify-center">
-                <Text className="text-2xl font-black text-white">{initials}</Text>
-              </View>
-            )}
-            <View className="flex-1">
-              <Text className="text-white text-lg font-black">{userData?.name || "User"}</Text>
-              <View className="self-start mt-1.5 px-2.5 py-1 rounded-lg bg-[#F5921E]/25 border border-[#F5921E]/40">
-                <Text className="text-[#FDE68A] text-[10px] font-black uppercase tracking-wider">
-                  {displayRole}
-                </Text>
-              </View>
-            </View>
-          </View>
-        </LinearGradient>
-
-        <View className="px-4 w-full self-center max-w-[800px]" style={{ marginTop: -28 }}>
+    <TabScreenLayout
+      header={
+        <TabScreenHeader eyebrow="My Account" title="Profile" subtitle={displayRole}>
+          <ProfileAvatarPicker
+            name={userData?.name || "User"}
+            avatarUri={userData?.avatar}
+            initials={initials}
+            size={76}
+          />
+        </TabScreenHeader>
+      }
+    >
+      <View style={styles.content}>
           {/* Account details */}
-          <View
-            className="bg-white rounded-3xl border border-gray-100 p-5 mb-4"
-            style={{ boxShadow: "0px 4px 20px rgba(0,0,0,0.04)" }}
-          >
+          <View className="bg-white rounded-3xl border border-gray-100 p-5 mb-4" style={cardShadow}>
             <Text className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1">
               Account Details
             </Text>
@@ -166,7 +112,7 @@ export default function ProfileScreen() {
           {isParent && (
             <View
               className="bg-white rounded-3xl border border-gray-100 p-5 mb-4"
-              style={{ boxShadow: "0px 4px 20px rgba(0,0,0,0.04)" }}
+              style={cardShadow}
             >
               <View className="flex-row items-center justify-between mb-3">
                 <Text className="text-[11px] font-black text-gray-400 uppercase tracking-widest">
@@ -245,10 +191,7 @@ export default function ProfileScreen() {
 
           {/* Quick actions for staff */}
           {role && role !== "parent" && (
-            <View
-              className="bg-white rounded-3xl border border-gray-100 p-5 mb-4"
-              style={{ boxShadow: "0px 4px 20px rgba(0,0,0,0.04)" }}
-            >
+            <View className="bg-white rounded-3xl border border-gray-100 p-5 mb-4" style={cardShadow}>
               <Text className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-3">
                 Quick links
               </Text>
@@ -298,11 +241,41 @@ export default function ProfileScreen() {
             </Text>
           </TouchableOpacity>
 
-          <Text className="text-center text-[10px] font-bold text-gray-400 pb-2">
-            Little Angel's ERP · {new Date().getFullYear()}
+          <Text style={styles.footer}>
+            Little Angel&apos;s ERP · {new Date().getFullYear()}
           </Text>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+      </View>
+    </TabScreenLayout>
   );
 }
+
+const cardShadow =
+  Platform.OS === "web"
+    ? { boxShadow: "0px 4px 20px rgba(0,0,0,0.04)" }
+    : {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.04,
+        shadowRadius: 10,
+        elevation: 2,
+      };
+
+const styles = StyleSheet.create({
+  content: { gap: 0 },
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: "#F3F4F6",
+    padding: 20,
+    marginBottom: 16,
+    ...cardShadow,
+  },
+  footer: {
+    textAlign: "center",
+    fontSize: 10,
+    fontWeight: "700",
+    color: "#9CA3AF",
+    paddingBottom: 8,
+  },
+});

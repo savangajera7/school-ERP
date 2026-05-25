@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { View, Text, ScrollView, TextInput, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
+import { Text, TextInput, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
-import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
+import { PremiumCard, PremiumTabSwitcher } from "@/components/ui/premium";
 import { Button } from "@/components/ui/Button";
 import { usePostApiNoticeInsertNotice } from "@/api/generated/notice/notice";
 import { useToast } from "@/components/ui/Toast";
@@ -40,26 +39,28 @@ export default function NoticeComposeScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white" edges={["left", "right"]}>
-      <StatusBar style="light" />
-      <ScreenHeader title="Publish Notice" subtitle="School or class circular" onBack={() => router.back()} />
-      <ScrollView className="p-6">
-        <View className="flex-row gap-2 mb-4">
-          {(["School", "Class"] as const).map((t) => (
-            <TouchableOpacity
-              key={t}
-              onPress={() => setNoticeFor(t)}
-              className={`px-4 py-2 rounded-xl border ${noticeFor === t ? "bg-primary border-primary" : "border-gray-200"}`}
-            >
-              <Text className={noticeFor === t ? "text-white font-bold" : "text-gray-600"}>{t}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+    <PremiumScreenLayout
+      title="Publish Notice"
+      subtitle="School or class circular"
+      onBack={() => router.back()}
+      keyboard
+      headerSlot={
+        <PremiumTabSwitcher
+          tabs={[
+            { key: "School", label: "School" },
+            { key: "Class", label: "Class" },
+          ]}
+          active={noticeFor}
+          onChange={(k) => setNoticeFor(k as "School" | "Class")}
+        />
+      }
+    >
+      <PremiumCard noAccent style={{ padding: 20, gap: 12 }}>
         <TextInput
           value={noticeTitle}
           onChangeText={setNoticeTitle}
           placeholder="Notice title"
-          className="border border-gray-200 rounded-xl px-4 py-3 mb-4"
+          className="border border-gray-200 rounded-xl px-4 py-3"
         />
         <TextInput
           value={noticeDescription}
@@ -67,10 +68,10 @@ export default function NoticeComposeScreen() {
           placeholder="Notice description"
           multiline
           numberOfLines={6}
-          className="border border-gray-200 rounded-xl px-4 py-3 mb-6 min-h-[120px]"
+          className="border border-gray-200 rounded-xl px-4 py-3 min-h-[120px]"
         />
         <Button label="Publish" onPress={handlePublish} loading={insertMutation.isPending} />
-      </ScrollView>
-    </SafeAreaView>
+      </PremiumCard>
+    </PremiumScreenLayout>
   );
 }

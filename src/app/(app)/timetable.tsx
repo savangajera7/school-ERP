@@ -1,14 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity, Platform } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { Card } from "@/components/ui/Card";
+import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
+import { PremiumCard } from "@/components/ui/premium";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Colors } from "@/constants/colors";
-import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { SubjectSlotIcon } from "@/components/icons/AppIcon";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
-import { MOBILE_TAB_BAR_HEIGHT } from "@/constants/mobileTabs";
 
 const CLASSES = ["Class I-A", "Class II-B", "Class III-A", "Class IV-B"];
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -55,23 +53,13 @@ export default function TimetableScreen() {
   const [selectedDay, setSelectedDay] = useState("Monday");
 
   return (
-    <SafeAreaView className="flex-1 bg-[#FDFDFD]" edges={["left", "right"]}>
-      <StatusBar style="light" translucent backgroundColor="transparent" />
-      
-      <ScreenHeader 
-        title="School Timetable" 
-        subtitle="Weekly class schedules and lecture slots"
-        hideBack={isMobile}
-      />
-
-      <ScrollView className="flex-1 px-4 mt-6 md:px-8" showsVerticalScrollIndicator={false}>
-        <View
-          className="max-w-[1200px] w-full self-center"
-          style={{ paddingBottom: isMobile ? MOBILE_TAB_BAR_HEIGHT + 24 : 40 }}
-        >
-
-          {/* Selector Configurations */}
-          <Card className="bg-white border border-gray-150 p-5 mb-6">
+    <PremiumScreenLayout
+      title="School Timetable"
+      subtitle="Weekly class schedules and lecture slots"
+      hideBack={isMobile}
+      withTabBar
+    >
+          <PremiumCard noAccent style={{ padding: 16, marginBottom: 14 }}>
             <View className={`flex-row gap-6 ${isMobile ? "flex-col" : "items-center justify-between"}`}>
               <View className="flex-1">
                 <Text className="text-[12px] font-black text-gray-400 mb-3.5 uppercase tracking-wider">Select Standard</Text>
@@ -121,9 +109,9 @@ export default function TimetableScreen() {
                 </ScrollView>
               </View>
             </View>
-          </Card>
+          </PremiumCard>
 
-          {/* Lecture Timeline List */}
+          {/* Lecture timeline */}
           <View className="mb-4 px-1">
             <Text className="text-[16px] font-black text-gray-900">{selectedDay}'s Lecture Schedule</Text>
             <Text className="text-[12px] text-gray-400 font-bold mt-0.5">Showing timetable for {selectedClass}</Text>
@@ -193,8 +181,6 @@ export default function TimetableScreen() {
             </Card>
           )}
 
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    </PremiumScreenLayout>
   );
 }

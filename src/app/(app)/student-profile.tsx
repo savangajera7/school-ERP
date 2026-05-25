@@ -1,16 +1,15 @@
 import React from "react";
-import { View, Text, ScrollView, TouchableOpacity, Platform, Linking } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
+import { View, Text, TouchableOpacity, Platform, Linking } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Card } from "@/components/ui/Card";
+import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
+import { PremiumCard } from "@/components/ui/premium";
 import { useGetApiStudentGetByIDId } from "@/api/generated/3-student-crud/3-student-crud";
 import { StudentModel } from "@/api/model/studentModel";
 import { parseApiData, toCamelCaseRow } from "@/utils/apiResponse";
 import { getStudentDisplayName } from "@/utils/studentUtils";
 import { Colors } from "@/constants/colors";
-import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { IconCircle } from "@/components/icons/AppIcon";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
 
@@ -62,20 +61,12 @@ export default function StudentProfileScreen() {
   const name = getStudentDisplayName(student);
 
   return (
-    <SafeAreaView className="flex-1 bg-[#FDFDFD]" edges={["left", "right"]}>
-      <StatusBar style="light" translucent backgroundColor="transparent" />
-      
-      <ScreenHeader 
-        title="Student Profile" 
-        subtitle={`GR No: ${student.studentGRNo || 'N/A'}`}
-        onBack={() => router.back()}
-      />
-
-      <ScrollView className="flex-1 mt-6" showsVerticalScrollIndicator={false}>
-        <View className="max-w-[1200px] w-full self-center pb-10 px-4">
-          
-          {/* Header Profile Card */}
-          <Card className="bg-white border border-gray-150 p-6 mb-6 flex-col md:flex-row items-center md:items-start gap-6 shadow-sm">
+    <PremiumScreenLayout
+      title="Student Profile"
+      subtitle={`GR No: ${student.studentGRNo || "N/A"}`}
+      onBack={() => router.back()}
+    >
+          <PremiumCard noAccent style={{ padding: 20, marginBottom: 14 }}>
             <View className="w-24 h-24 bg-blue-50 rounded-full items-center justify-center border-4 border-blue-100">
               <IconCircle
                 name={student.gender === "Female" ? "female" : "male"}
@@ -112,7 +103,7 @@ export default function StudentProfileScreen() {
                 </TouchableOpacity>
               </View>
             </View>
-          </Card>
+          </PremiumCard>
 
           <View className={`flex-col ${!isMobile ? 'flex-row gap-6' : 'gap-6'}`}>
             {/* Personal Details */}
@@ -143,9 +134,7 @@ export default function StudentProfileScreen() {
               </Card>
             </View>
           </View>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    </PremiumScreenLayout>
   );
 }
 

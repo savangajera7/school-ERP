@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
@@ -8,6 +8,9 @@ import { useAuthStore } from "@/store/authStore";
 import { SchoolTheme } from "@/constants/theme";
 import { useResponsive } from "@/hooks/useResponsive";
 import { ROLE_TAB_BAR_HEIGHT } from "@/components/layout/RoleTabBar";
+import { DashboardTopBar } from "@/components/layout/DashboardTopBar";
+import { MobileScreenShell } from "@/components/layout/MobileScreenShell";
+import { useTranslation } from "@/hooks/useTranslation";
 import { ActionListRow } from "@/components/dashboard/ActionListRow";
 import type { AppIconName } from "@/constants/appIcons";
 
@@ -25,20 +28,29 @@ export default function ParentDashboardScreen() {
   const insets = useSafeAreaInsets();
   const { isMobile, titleSize } = useResponsive();
   const firstName = userData?.name?.split(" ")[0] || "Parent";
+  const { t } = useTranslation();
 
   return (
-    <SafeAreaView style={styles.safe} edges={["left", "right"]}>
+    <MobileScreenShell withTabBar={isMobile} backgroundColor={SchoolTheme.background}>
       <StatusBar style="light" />
       <ScrollView
-        contentContainerStyle={{ paddingBottom: ROLE_TAB_BAR_HEIGHT + 24 }}
+        contentContainerStyle={{ paddingBottom: ROLE_TAB_BAR_HEIGHT + 24, flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
       >
         <LinearGradient
           colors={["#7C3AED", "#5B21B6"]}
           style={[styles.header, { paddingTop: insets.top + 12 }]}
         >
-          <Text style={styles.welcome}>Parent portal</Text>
-          <Text style={[styles.userName, { fontSize: titleSize }]}>Hello, {firstName}</Text>
+          {isMobile ? (
+            <DashboardTopBar notificationsHref="/(parent)/notices" />
+          ) : (
+            <>
+              <Text style={styles.welcome}>Parent portal</Text>
+              <Text style={[styles.userName, { fontSize: titleSize }]}>
+                {t.welcomeBack}, {firstName}
+              </Text>
+            </>
+          )}
         </LinearGradient>
 
         <View style={[styles.body, isMobile && { marginTop: -24 }]}>
@@ -54,7 +66,7 @@ export default function ParentDashboardScreen() {
           ))}
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </MobileScreenShell>
   );
 }
 

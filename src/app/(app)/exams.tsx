@@ -8,13 +8,12 @@ import {
   FlatList,
   ActivityIndicator,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 import { Card } from "@/components/ui/Card";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Colors } from "@/constants/colors";
-import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
+import { PremiumTabSwitcher } from "@/components/ui/premium";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useGetApiClassGetClassList } from "@/api/generated/master-class/master-class";
@@ -173,40 +172,26 @@ export default function ExamsManagementScreen() {
   const isLoading = loadingExams || loadingClasses;
 
   return (
-    <SafeAreaView className="flex-1 bg-[#FDFDFD]" edges={["left", "right"]}>
-      <StatusBar style="light" />
-      <ScreenHeader
-        title="Examinations"
-        subtitle="Exams, marks & rankings"
-        onBack={() => router.back()}
-      />
-
-      <View className="px-4 -mt-4">
-        <View className="bg-white p-1 rounded-2xl flex-row border border-gray-100">
-          {(["list", "marks", "ranks"] as Tab[]).map((tab) => (
-            <TouchableOpacity
-              key={tab}
-              onPress={() => setActiveTab(tab)}
-              className={`flex-1 py-3 rounded-xl items-center ${
-                activeTab === tab ? "bg-[#0d3666]" : ""
-              }`}
-            >
-              <Text
-                className={`text-xs font-black uppercase ${
-                  activeTab === tab ? "text-white" : "text-gray-400"
-                }`}
-              >
-                {tab === "list" ? "Exams" : tab === "marks" ? "Marks" : "Ranks"}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </View>
-
+    <PremiumScreenLayout
+      title="Examinations"
+      subtitle="Exams, marks & rankings"
+      onBack={() => router.back()}
+      headerSlot={
+        <PremiumTabSwitcher
+          tabs={[
+            { key: "list", label: "Exams" },
+            { key: "marks", label: "Marks" },
+            { key: "ranks", label: "Ranks" },
+          ]}
+          active={activeTab}
+          onChange={(k) => setActiveTab(k as Tab)}
+        />
+      }
+    >
       {isLoading ? (
         <PremiumLoader color={Colors.primary} />
       ) : (
-        <ScrollView className="flex-1 px-4 mt-4" contentContainerStyle={{ paddingBottom: 40 }}>
+        <View>
           {activeTab === "list" && (
             <View className="gap-3">
               <TouchableOpacity
@@ -390,8 +375,8 @@ export default function ExamsManagementScreen() {
               )}
             </View>
           )}
-        </ScrollView>
+        </View>
       )}
-    </SafeAreaView>
+    </PremiumScreenLayout>
   );
 }

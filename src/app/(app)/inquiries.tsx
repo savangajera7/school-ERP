@@ -1,12 +1,10 @@
 import React, { useState, useMemo } from "react";
 import { View, Text, ScrollView, TouchableOpacity, TextInput, Modal, Platform } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Card } from "@/components/ui/Card";
 import { Colors } from "@/constants/colors";
-import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { AppIcon } from "@/components/icons/AppIcon";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
@@ -135,34 +133,27 @@ export default function InquiriesScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#FDFDFD]" edges={["left", "right"]}>
-      <StatusBar style="light" translucent backgroundColor="transparent" />
-      
+    <PremiumScreenLayout
+      title="Online Inquiries"
+      subtitle="Manage admission inquiry leads"
+      onBack={() => router.push("/(app)/dashboard")}
+      rightAction={
+        <TouchableOpacity
+          onPress={() => setIsModalVisible(true)}
+          className="px-4 py-2.5 bg-orange-500 rounded-xl"
+          activeOpacity={0.8}
+        >
+          <Text className="text-white font-black text-xs uppercase tracking-widest">+ New</Text>
+        </TouchableOpacity>
+      }
+    >
       {apiPending && (
-        <View className="mx-4 mt-2 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+        <View className="mb-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
           <Text className="text-amber-800 text-sm font-semibold text-center">
             Admission Inquiry API is not in the current backend spec. Data is stored locally until the endpoint is available.
           </Text>
         </View>
       )}
-
-      <ScreenHeader 
-        title="Online Inquiries" 
-        subtitle="Manage admission inquiry leads"
-        onBack={() => router.push("/(app)/dashboard")}
-        rightAction={
-          <TouchableOpacity 
-            onPress={() => setIsModalVisible(true)}
-            className="px-4 py-2.5 bg-orange-500 rounded-xl"
-            activeOpacity={0.8}
-          >
-            <Text className="text-white font-black text-xs uppercase tracking-widest">+ New Inquiry</Text>
-          </TouchableOpacity>
-        }
-      />
-
-      <ScrollView className="flex-1 px-4 mt-6 md:px-8" showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-        <View className="max-w-[1200px] w-full self-center pb-10">
 
           {/* Filters Bar */}
           <Card className="bg-white border border-gray-150 p-4 mb-6 flex-row flex-wrap gap-4 items-center">
@@ -343,8 +334,6 @@ export default function InquiriesScreen() {
               </View>
             </Card>
           )}
-        </View>
-      </ScrollView>
 
       {/* Modal: New Inquiry Form */}
       <Modal
@@ -448,6 +437,6 @@ export default function InquiriesScreen() {
           </Card>
         </View>
       </Modal>
-    </SafeAreaView>
+    </PremiumScreenLayout>
   );
 }

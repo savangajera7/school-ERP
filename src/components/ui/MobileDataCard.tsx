@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { Colors } from "@/constants/colors";
+import { premiumCardShadow } from "@/constants/premiumStyles";
 
 interface DataField {
   label: string;
@@ -57,7 +58,7 @@ export function MobileDataCard({
       activeOpacity={onPress ? 0.7 : 1}
       className="bg-white rounded-2xl border border-gray-100 p-4 mb-3"
       style={{
-        boxShadow: "0px 2px 8px rgba(0,0,0,0.03)",
+        ...premiumCardShadow,
         borderLeftWidth: noAccent ? 1 : 4,
         borderLeftColor: noAccent ? "#F3F4F6" : (accentColor || Colors.primary),
       }}

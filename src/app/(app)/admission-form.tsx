@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, Alert, ActivityIndicator } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 import { Card } from "@/components/ui/Card";
 import { Colors } from "@/constants/colors";
-import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { AppIcon } from "@/components/icons/AppIcon";
 import { usePostApiStudentAdd } from "@/api/generated/3-student-crud/3-student-crud";
 import { useToast } from "@/components/ui/Toast";
@@ -218,61 +216,45 @@ export default function AdmissionFormScreen() {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-[#FDFDFD]" edges={["left", "right"]}>
-      <StatusBar style="light" translucent backgroundColor="transparent" />
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-      >
-        <ScreenHeader 
-          title="Admission Form" 
-          subtitle="Register a new student into the school ledger"
-          onBack={() => router.push("/(app)/dashboard")}
-          rightAction={
-            !isMobile ? (
-              <TouchableOpacity 
-                onPress={handleSubmit}
-                disabled={loading}
-                className="px-5 py-2.5 bg-orange-500 rounded-xl flex-row gap-2"
-                activeOpacity={0.8}
-              >
-                {loading ? (
-                  <ActivityIndicator size="small" color="white" />
-                ) : (
-                  <Text className="text-white font-black text-xs uppercase tracking-widest">Register Student</Text>
-                )}
-              </TouchableOpacity>
-            ) : null
-          }
-        />
-
-        <ScrollView
-          className="flex-1 px-4 mt-6 md:px-8"
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-        >
-          <View className="max-w-[1000px] w-full self-center">
-            {formContent}
-
-            {isMobile && (
-              <View className="mb-10">
-                <TouchableOpacity 
-                  onPress={handleSubmit}
-                  disabled={loading}
-                  className="h-[52px] bg-[#f5921e] rounded-xl items-center justify-center shadow-lg shadow-orange-100 flex-row gap-2"
-                  activeOpacity={0.8}
-                >
-                  {loading ? (
-                    <ActivityIndicator size="small" color="white" />
-                  ) : (
-                    <Text className="text-white font-black uppercase tracking-wider">Register Student</Text>
-                  )}
-                </TouchableOpacity>
-              </View>
+    <PremiumScreenLayout
+      title="Admission Form"
+      subtitle="Register a new student into the school ledger"
+      onBack={() => router.push("/(app)/dashboard")}
+      keyboard
+      rightAction={
+        !isMobile ? (
+          <TouchableOpacity
+            onPress={handleSubmit}
+            disabled={loading}
+            className="px-5 py-2.5 bg-orange-500 rounded-xl flex-row gap-2"
+            activeOpacity={0.8}
+          >
+            {loading ? (
+              <ActivityIndicator size="small" color="white" />
+            ) : (
+              <Text className="text-white font-black text-xs uppercase tracking-widest">Register</Text>
             )}
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+          </TouchableOpacity>
+        ) : undefined
+      }
+    >
+      {formContent}
+      {isMobile && (
+        <View className="mb-10">
+          <TouchableOpacity
+            onPress={handleSubmit}
+            disabled={loading}
+            className="h-[52px] bg-[#f5921e] rounded-xl items-center justify-center shadow-lg shadow-orange-100 flex-row gap-2"
+            activeOpacity={0.8}
+          >
+            {loading ? (
+              <ActivityIndicator size="small" color="white" />
+            ) : (
+              <Text className="text-white font-black uppercase tracking-wider">Register Student</Text>
+            )}
+          </TouchableOpacity>
+        </View>
+      )}
+    </PremiumScreenLayout>
   );
 }
