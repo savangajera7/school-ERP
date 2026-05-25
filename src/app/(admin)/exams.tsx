@@ -66,7 +66,7 @@ export default function AdminExamsManagementScreen() {
       <MobileDataCard
         title={item.examName || "Untitled Exam"}
         subtitle={item.examCode || "No Code"}
-        accentColor={Colors.accent}
+        accentColor={Colors.primary}
         icon={<IconCircle name="exams" size={44} iconSize={22} />}
         fields={[
           { label: "Class", value: item.className || "All Classes" },

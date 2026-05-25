@@ -59,7 +59,7 @@ export default function StudentManagementScreen() {
       <MobileDataCard
         title={fullName}
         subtitle={`GR No: ${formatOptional(item.studentGRNo)}`}
-        accentColor={Colors.accent}
+        accentColor={Colors.primary}
         icon={
           <View style={styles.avatarBox}>
             <GenderIcon gender={item.gender} size={22} />

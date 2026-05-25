@@ -52,7 +52,7 @@ export default function StudentNoticeHistoryScreen() {
         key={item.id}
         title={item.title}
         subtitle={`${item.date} • by ${item.author}`}
-        accentColor={Colors.accent}
+        accentColor={Colors.primary}
         icon={
           <View className="w-10 h-10 rounded-xl items-center justify-center bg-amber-50 border border-amber-100">
             <IconCircle name="notices" size={40} iconSize={20} />

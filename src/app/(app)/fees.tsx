@@ -256,7 +256,7 @@ export default function FeesManagementScreen() {
                         key={String(item.id)}
                         title={item.name}
                         subtitle={`Roll No: ${item.rollNo}`}
-                        accentColor={Colors.accent}
+                        accentColor={Colors.primary}
                         badge={
                           <View className="bg-red-50 px-2 py-1 rounded-md border border-red-100">
                             <Text className="text-[11px] font-extrabold text-red-600">₹{item.outstanding}</Text>
@@ -397,7 +397,7 @@ export default function FeesManagementScreen() {
                       key={tx.id}
                       title={tx.studentName}
                       subtitle={`Date: ${tx.date}`}
-                      accentColor={Colors.accent}
+                      accentColor={Colors.primary}
                       badge={
                         <View className="bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">
                           <Text className="text-[10px] font-extrabold text-emerald-600 uppercase">{tx.status}</Text>

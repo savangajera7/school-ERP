@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { router } from "expo-router";
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -29,6 +29,7 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginScreen() {
+  const insets = useSafeAreaInsets();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const role = useAuthStore((state) => state.role);
   const { t, language, setLanguage } = useTranslation();
@@ -124,22 +125,26 @@ export default function LoginScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="dark" />
+    <View style={styles.container}>
+      <StatusBar style="light" />
       <KeyboardAvoidingView
         style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
       >
         <ScrollView
           style={{ flex: 1 }}
-          contentContainerStyle={{ flexGrow: 1 }}
+          contentContainerStyle={{ flexGrow: 1, paddingBottom: 60 }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
           bounces={false}
         >
           {isMobile ? (
-            <View style={{ flex: 1 }}>
-              <LinearGradient colors={[Colors.gradientStart, Colors.gradientEnd]} style={styles.mobileHeader}>
+            <View style={{ flex: 1, backgroundColor: Colors.primary }}>
+              <LinearGradient 
+                   colors={[Colors.gradientStart, Colors.gradientEnd]} 
+                   style={[styles.mobileHeader, { paddingTop: insets.top + 20 }]}
+                 >
                 <View style={styles.langRow}>
                   <TouchableOpacity
                     style={[styles.langChip, language === "gu" && styles.langChipActive]}
@@ -165,7 +170,7 @@ export default function LoginScreen() {
               <View style={styles.mobileCardContainer}>
                 <View style={styles.mobileFormWrap}>
                   <Text style={[styles.loginTitle, styles.centerText]}>{t.welcome}</Text>
-                  <Text style={[styles.loginSubtitle, styles.centerText, { marginBottom: 32 }]}>
+                  <Text style={[styles.loginSubtitle, styles.centerText, { marginBottom: 16 }]}>
                     {t.signInSubtitle}
                   </Text>
                   {renderForm()}
@@ -208,7 +213,7 @@ export default function LoginScreen() {
           )}
         </ScrollView>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -227,10 +232,9 @@ function FeatureItem({ icon, text, desc }: { icon: string, text: string, desc: s
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff" },
+  container: { flex: 1, backgroundColor: Colors.primary },
   mobileHeader: {
-    paddingTop: 32,
-    paddingBottom: 48,
+    paddingBottom: 60,
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 20,
@@ -239,7 +243,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 8,
     alignSelf: "flex-end",
-    marginBottom: 12,
+    marginBottom: 0,
   },
   langChip: {
     paddingHorizontal: 12,
@@ -289,14 +293,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff", 
     borderTopLeftRadius: 36, 
     borderTopRightRadius: 36, 
-    paddingTop: 32, 
+    paddingTop: 24, 
     flex: 1,
-    marginTop: -24,
+    marginTop: -40,
+    minHeight: Dimensions.get('window').height * 0.75,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: -10 },
     shadowOpacity: 0.1,
     shadowRadius: 20,
-    elevation: 10
+    elevation: 20,
   },
   desktopContainer: { flex: 1, flexDirection: "row", height: "100%" },
   desktopBranding: { width: "42%", alignItems: "center", justifyContent: "center", padding: 40, overflow: 'hidden' },
@@ -327,7 +332,10 @@ const styles = StyleSheet.create({
     padding: 40,
     position: "relative",
   },
-  mobileFormWrap: { width: "100%", paddingBottom: 20 },
+  mobileFormWrap: {
+    width: "100%",
+    marginBottom: 12,
+  },
   centerText: { textAlign: "center", marginBottom: 8 },
   logoContainer: { 
     width: 160, 

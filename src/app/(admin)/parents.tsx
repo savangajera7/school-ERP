@@ -69,7 +69,7 @@ export default function AdminParentManagementScreen() {
       <MobileDataCard
         title={fullName}
         subtitle={item.mobileNo || "No Contact"}
-        accentColor={Colors.accent}
+        accentColor={Colors.primary}
         icon={<IconCircle name="parents" size={44} iconSize={22} />}
         fields={[
           { label: "Email", value: item.email || "N/A" },

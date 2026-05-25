@@ -72,7 +72,7 @@ export default function StudentSearchScreen() {
         key={item.studentID}
         title={fullName}
         subtitle={`GR No: ${formatOptional(item.studentGRNo)}`}
-        accentColor={Colors.accent}
+        accentColor={Colors.primary}
         icon={
           <View className="w-11 h-11 rounded-xl items-center justify-center bg-blue-50/50 border border-blue-100">
             <GenderIcon gender={item.gender} size={22} />

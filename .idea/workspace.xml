@@ -6,46 +6,17 @@
   <component name="ChangeListManager">
     <list default="true" id="973b64d6-6094-46c3-ae9b-d54eff11ffd3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/attendance-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/attendance-form.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/attendance.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/attendance.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/exam-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/exam-form.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/(admin)/exams.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/exams.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/fees-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/fees-form.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/fees.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/fees.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/masters/academic-year.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/masters/academic-year.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/masters/batch.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/masters/batch.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/masters/blood-group.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/masters/blood-group.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/masters/category.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/masters/category.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/masters/class.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/masters/class.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/masters/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/masters/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/masters/religion.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/masters/religion.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/masters/section.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/masters/section.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/masters/subject.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/masters/subject.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/notice-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/notice-form.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/notices.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/notices.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/parent-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/parent-form.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/(admin)/parents.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/parents.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/settings.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/settings.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/(admin)/students.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/students.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/teacher-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/teacher-form.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/teachers.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/teachers.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/attendance-reports.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/attendance-reports.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/change-password.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/change-password.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/menu.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/menu.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/notification-compose.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/notification-compose.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/notifications.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/notifications.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/profile.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/fees.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/fees.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/notices.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/notices.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/(app)/search.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/search.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/timetable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/timetable.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/roles/create.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(super-admin)/roles/create.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/roles/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(super-admin)/roles/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/settings.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(super-admin)/settings.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/users/[id].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(super-admin)/users/[id].tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/users/create.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(super-admin)/users/create.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/users/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(super-admin)/users/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/layout/PremiumScreenLayout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/layout/PremiumScreenLayout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/layout/RoleHeader.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/layout/RoleHeader.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/layout/TabScreenHeader.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/layout/TabScreenHeader.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/students.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/students.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(auth)/login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(auth)/login.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/branding/AppBrandLogo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/branding/AppBrandLogo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/MobileDataCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/MobileDataCard.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -145,7 +116,7 @@
       <workItem from="1779650362413" duration="48000" />
       <workItem from="1779702281848" duration="3101000" />
       <workItem from="1779710067304" duration="8892000" />
-      <workItem from="1779730502344" duration="4033000" />
+      <workItem from="1779730502344" duration="4914000" />
     </task>
     <servers />
   </component>

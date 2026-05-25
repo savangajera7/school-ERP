@@ -57,12 +57,24 @@ export function MobileDataCard({
       onPress={onPress}
       activeOpacity={onPress ? 0.7 : 1}
       className="bg-white rounded-2xl border border-gray-100 p-4 mb-3"
-      style={{
-        ...premiumCardShadow,
-        borderLeftWidth: noAccent ? 1 : 4,
-        borderLeftColor: noAccent ? "#F3F4F6" : (accentColor || Colors.primary),
-      }}
+      style={premiumCardShadow}
     >
+      {/* Accent Line (Subtle) */}
+      {!noAccent && (accentColor || Colors.primary) && (
+        <View 
+          style={{ 
+            position: 'absolute', 
+            left: 0, 
+            top: 16, 
+            bottom: 16, 
+            width: 3, 
+            backgroundColor: accentColor || Colors.primary,
+            borderTopRightRadius: 4,
+            borderBottomRightRadius: 4,
+          }} 
+        />
+      )}
+
       {/* Header */}
       <View className="flex-row items-center justify-between mb-3">
         <View className="flex-row items-center gap-3 flex-1">

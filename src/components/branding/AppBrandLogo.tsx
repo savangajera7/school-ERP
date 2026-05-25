@@ -34,9 +34,9 @@ const SIZES = {
     logo: 64,
     title: 20,
     tag: 11,
-    stackedLogo: 148,
-    stackedTitle: 30,
-    stackedTag: 12,
+    stackedLogo: 100,
+    stackedTitle: 26,
+    stackedTag: 10,
   },
 };
 
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 20,
+    marginBottom: 12,
     ...(Platform.OS === "web"
       ? { boxShadow: "0px 12px 40px rgba(0,0,0,0.2)" }
       : {
