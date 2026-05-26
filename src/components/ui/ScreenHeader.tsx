@@ -23,6 +23,8 @@ interface ScreenHeaderProps {
   hideBack?: boolean;
   /** Show the user dashboard top bar (greeting, avatar) */
   showTopBar?: boolean;
+  /** Content to render inside the header gradient */
+  children?: React.ReactNode;
 }
 
 export function ScreenHeader({
@@ -33,6 +35,7 @@ export function ScreenHeader({
   onBack,
   hideBack = false,
   showTopBar = false,
+  children,
 }: ScreenHeaderProps) {
   const { isMobile } = useResponsive();
   const insets = useSafeAreaInsets();
@@ -97,59 +100,50 @@ export function ScreenHeader({
       style={{
         paddingHorizontal: isMobile ? 16 : 24,
         paddingTop: (insets.top || 0) + (isMobile ? 14 : 20),
-        paddingBottom: isMobile ? (showTopBar ? 56 : 40) : 48,
-        borderBottomLeftRadius: isMobile ? 24 : 32,
-        borderBottomRightRadius: isMobile ? 24 : 32,
+        paddingBottom: isMobile ? (showTopBar ? 64 : 40) : 64,
+        borderBottomLeftRadius: isMobile ? 32 : 0,
+        borderBottomRightRadius: isMobile ? 32 : 0,
       }}
     >
-      <View>
-        {showTopBar && (
-          <View className="mb-4">
-            <DashboardTopBar />
-          </View>
-        )}
-        <View className="flex-row items-center">
-          <View className="flex-row items-center gap-3 flex-1 min-w-0">
+      {showTopBar ? (
+        <DashboardTopBar />
+      ) : (
+        <View className="flex-row justify-between items-center">
+          <View className="flex-row items-center gap-3 flex-1">
             {!hideBack && (
               <TouchableOpacity
                 onPress={handleBack}
-                className="w-10 h-10 bg-white/10 rounded-xl items-center justify-center border border-white/20"
+                className="w-10 h-10 bg-white/10 rounded-xl items-center justify-center border border-white/10"
                 activeOpacity={0.7}
               >
                 <AppIcon name="chevronBack" size={22} color="#fff" />
               </TouchableOpacity>
             )}
-            {(title !== "" || subtitle !== "") && (
-              <View className="flex-1 min-w-0">
-                {title !== "" && (
-                  <Text
-                    className="font-black text-white"
-                    style={{ fontSize: isMobile ? 17 : 20 }}
-                    numberOfLines={2}
-                  >
-                    {title}
-                  </Text>
-                )}
-                {subtitle && (
-                  <Text
-                    className="text-white/60 font-bold uppercase tracking-wider mt-0.5"
-                    style={{ fontSize: isMobile ? 10 : 12 }}
-                    numberOfLines={2}
-                  >
-                    {subtitle}
-                  </Text>
-                )}
-              </View>
-            )}
+            <View className="flex-1">
+              {title && (
+                <Text
+                  className="font-black text-white"
+                  style={{ fontSize: isMobile ? 22 : 28 }}
+                  numberOfLines={1}
+                >
+                  {title}
+                </Text>
+              )}
+              {subtitle && (
+                <Text
+                  className="text-white/60 font-semibold mt-0.5"
+                  style={{ fontSize: isMobile ? 12 : 14 }}
+                  numberOfLines={1}
+                >
+                  {subtitle}
+                </Text>
+              )}
+            </View>
           </View>
-          {rightAction && !isMobile ? (
-            <View style={{ marginLeft: 12, flexShrink: 0 }}>{rightAction}</View>
-          ) : null}
+          {rightAction && <View className="ml-3">{rightAction}</View>}
         </View>
-        {rightAction && isMobile ? (
-          <View style={{ marginTop: 12, alignSelf: "stretch" }}>{rightAction}</View>
-        ) : null}
-      </View>
+      )}
+      {children}
     </LinearGradient>
   );
 }

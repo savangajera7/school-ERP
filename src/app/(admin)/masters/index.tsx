@@ -1,9 +1,8 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import { View } from "react-native";
 import { router } from "expo-router";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
-import { IconCircle } from "@/components/icons/AppIcon";
-import { premiumCardShadow } from "@/constants/premiumStyles";
+import { ActionListRow } from "@/components/dashboard/ActionListRow";
 
 export default function MastersMenuScreen() {
   const masterItems = [
@@ -23,61 +22,19 @@ export default function MastersMenuScreen() {
       subtitle="Configure school-wide parameters"
       hideBack={false}
       onBack={() => router.back()}
-      flatHeader
     >
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
-        <View style={styles.grid}>
-          {masterItems.map((item) => (
-            <TouchableOpacity
-              key={item.route}
-              onPress={() => router.push(item.route as any)}
-              activeOpacity={0.7}
-              style={[styles.card, premiumCardShadow]}
-            >
-              <View style={styles.cardHeader}>
-                <IconCircle name={item.icon as any} size={44} iconSize={22} />
-                <View style={styles.textContainer}>
-                  <Text style={styles.label}>{item.label}</Text>
-                  <Text style={styles.desc}>{item.desc}</Text>
-                </View>
-                <IconCircle name="chevronRight" size={32} iconSize={16} backgroundColor="transparent" color="#D1D5DB" />
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </ScrollView>
+      <View className="pb-10">
+        {masterItems.map((item) => (
+          <ActionListRow
+            key={item.route}
+            label={item.label}
+            description={item.desc}
+            icon={item.icon as any}
+            accentColor="#B45309"
+            onPress={() => router.push(item.route as any)}
+          />
+        ))}
+      </View>
     </PremiumScreenLayout>
   );
 }
-
-const styles = StyleSheet.create({
-  grid: {
-    gap: 12,
-  },
-  card: {
-    backgroundColor: "#fff",
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "#F3F4F6",
-    padding: 16,
-  },
-  cardHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  textContainer: {
-    flex: 1,
-    marginLeft: 12,
-  },
-  label: {
-    fontSize: 15,
-    fontWeight: "800",
-    color: "#1F2937",
-  },
-  desc: {
-    fontSize: 12,
-    color: "#6B7280",
-    marginTop: 2,
-    fontWeight: "500",
-  },
-});

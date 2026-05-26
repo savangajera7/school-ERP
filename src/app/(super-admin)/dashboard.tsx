@@ -59,17 +59,16 @@ export default function SuperAdminDashboard() {
       refreshControl={
         <RefreshControl refreshing={isLoading} onRefresh={onRefresh} />
       }
-      headerSlot={
+      headerContent={
         /* Search */
-        <View className="mb-6 bg-white/10 border border-white/20 rounded-2xl h-[46px] px-4 flex-row items-center gap-2" 
-              style={{ backgroundColor: "rgba(0,0,0,0.03)", borderColor: "rgba(0,0,0,0.05)" }}>
-          <AppIcon name="search" size={18} color="rgba(0,0,0,0.4)" />
+        <View className="mt-4 bg-white/10 border border-white/20 rounded-2xl h-[46px] px-4 flex-row items-center gap-2">
+          <AppIcon name="search" size={18} color="rgba(255,255,255,0.6)" />
           <TextInput
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholder="Search platform..."
-            placeholderTextColor="rgba(0,0,0,0.3)"
-            className="flex-1 text-gray-800 text-[13px] font-semibold h-full"
+            placeholderTextColor="rgba(255,255,255,0.4)"
+            className="flex-1 text-white text-[13px] font-semibold h-full"
             style={{ outlineWidth: 0 } as any}
           />
         </View>

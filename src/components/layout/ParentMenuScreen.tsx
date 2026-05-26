@@ -1,65 +1,42 @@
 import React from "react";
-import { View, ScrollView, StyleSheet, Text } from "react-native";
+import { View, ScrollView } from "react-native";
 import { router } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
-import { LinearGradient } from "expo-linear-gradient";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { SchoolTheme } from "@/constants/theme";
-import { ROLE_TAB_BAR_HEIGHT } from "@/components/layout/RoleTabBar";
 import { ActionListRow } from "@/components/dashboard/ActionListRow";
+import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import type { AppIconName } from "@/constants/appIcons";
 
-const LINKS: { title: string; href: string; icon: AppIconName }[] = [
-  { title: "Homework", href: "/(parent)/homework", icon: "homework" },
-  { title: "Attendance", href: "/(parent)/attendance", icon: "attendance" },
-  { title: "Fees & Dues", href: "/(parent)/fees", icon: "fees" },
-  { title: "Syllabus", href: "/(parent)/syllabus", icon: "syllabus" },
-  { title: "Timetable", href: "/(parent)/timetable", icon: "timetable" },
-  { title: "Exam Marks", href: "/(parent)/exam-marks", icon: "exams" },
-  { title: "Results", href: "/(parent)/result", icon: "results" },
-  { title: "Notices", href: "/(parent)/notices", icon: "notices" },
-  { title: "Profile", href: "/(parent)/profile", icon: "profile" },
+const LINKS: { title: string; href: string; icon: AppIconName; desc: string }[] = [
+  { title: "Homework", href: "/(parent)/homework", icon: "homework", desc: "View daily student assignments" },
+  { title: "Attendance", href: "/(parent)/attendance", icon: "attendance", desc: "Track daily presence records" },
+  { title: "Fees & Dues", href: "/(parent)/fees", icon: "fees", desc: "Payment history and pending dues" },
+  { title: "Syllabus", href: "/(parent)/syllabus", icon: "syllabus", desc: "Curriculum and course content" },
+  { title: "Timetable", href: "/(parent)/timetable", icon: "timetable", desc: "Weekly class schedule" },
+  { title: "Exam Marks", href: "/(parent)/exam-marks", icon: "exams", desc: "Subject-wise assessment scores" },
+  { title: "Results", href: "/(parent)/result", icon: "results", desc: "Final examination reports" },
+  { title: "Notices", href: "/(parent)/notices", icon: "notices", desc: "School announcements and alerts" },
+  { title: "Profile", href: "/(parent)/profile", icon: "profile", desc: "Personal information and settings" },
 ];
 
 export function ParentMenuScreen() {
-  const insets = useSafeAreaInsets();
-
   return (
-    <SafeAreaView style={styles.safe} edges={["left", "right"]}>
-      <StatusBar style="light" />
-      <ScrollView contentContainerStyle={{ paddingBottom: ROLE_TAB_BAR_HEIGHT + 24 }}>
-        <LinearGradient
-          colors={[SchoolTheme.primary, SchoolTheme.primaryDark]}
-          style={[styles.header, { paddingTop: insets.top + 12 }]}
-        >
-          <Text style={styles.title}>More</Text>
-        </LinearGradient>
-        <View style={styles.body}>
-          {LINKS.map((link) => (
-            <ActionListRow
-              key={link.href}
-              label={link.title}
-              icon={link.icon}
-              accentColor={SchoolTheme.parent}
-              iconBackground="#E8EFF8"
-              onPress={() => router.push(link.href as never)}
-            />
-          ))}
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <PremiumScreenLayout
+      title="More Options"
+      subtitle="Additional parent services"
+      hideBack={false}
+      onBack={() => router.back()}
+    >
+      <View className="pb-10">
+        {LINKS.map((link) => (
+          <ActionListRow
+            key={link.href}
+            label={link.title}
+            description={link.desc}
+            icon={link.icon}
+            accentColor="#0369A1"
+            onPress={() => router.push(link.href as any)}
+          />
+        ))}
+      </View>
+    </PremiumScreenLayout>
   );
 }
-
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: SchoolTheme.background },
-  header: {
-    paddingHorizontal: 20,
-    paddingBottom: 40,
-    borderBottomLeftRadius: 28,
-    borderBottomRightRadius: 28,
-  },
-  title: { color: "#fff", fontSize: 22, fontWeight: "900" },
-  body: { paddingHorizontal: 16, marginTop: -20, paddingTop: 8 },
-});

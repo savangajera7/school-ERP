@@ -89,7 +89,9 @@ export function PremiumScreenLayout({
         rightAction={rightAction}
         flat={flatHeader}
         showTopBar={showTopBar}
-      />
+      >
+        {headerSlot}
+      </ScreenHeader>
       {body}
     </ScrollView>
   ) : (
@@ -141,5 +143,6 @@ const styles = StyleSheet.create({
     width: "100%",
     maxWidth: 800,
     alignSelf: "center",
+    zIndex: 10,
   },
 });

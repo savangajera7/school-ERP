@@ -1,8 +1,8 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import type { AppIconName } from "@/constants/appIcons";
 import { AppIcon, IconCircle } from "@/components/icons/AppIcon";
-import { SchoolTheme } from "@/constants/theme";
+import { premiumCardShadow } from "@/constants/premiumStyles";
 
 type Props = {
   label: string;
@@ -10,58 +10,44 @@ type Props = {
   onPress: () => void;
   accentColor?: string;
   iconBackground?: string;
+  description?: string;
 };
 
 export function ActionListRow({
   label,
   icon,
   onPress,
-  accentColor = SchoolTheme.primary,
+  accentColor = "#134A8C",
   iconBackground,
+  description,
 }: Props) {
   return (
-    <TouchableOpacity style={styles.row} onPress={onPress} activeOpacity={0.8}>
+    <TouchableOpacity 
+      onPress={onPress} 
+      activeOpacity={0.7}
+      className="bg-white border border-gray-100 rounded-2xl p-4 flex-row items-center mb-3"
+      style={premiumCardShadow}
+    >
       <IconCircle
         name={icon}
         size={44}
         iconSize={22}
         color={accentColor}
-        backgroundColor={iconBackground ?? `${accentColor}18`}
+        backgroundColor={iconBackground ?? `${accentColor}10`}
       />
-      <Text style={styles.label} numberOfLines={2}>
-        {label}
-      </Text>
-      <View style={styles.chevron}>
-        <AppIcon name="chevronRight" size={20} color="#9CA3AF" />
+      <View className="flex-1 ml-4 mr-2">
+        <Text className="text-[15px] font-black text-gray-800">
+          {label}
+        </Text>
+        {description && (
+          <Text className="text-[11px] font-semibold text-gray-400 mt-0.5">
+            {description}
+          </Text>
+        )}
+      </View>
+      <View className="w-8 items-center justify-center">
+        <AppIcon name="chevronRight" size={18} color="#D1D5DB" />
       </View>
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    borderRadius: 14,
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: SchoolTheme.border,
-    minHeight: 56,
-  },
-  label: {
-    flex: 1,
-    marginLeft: 14,
-    marginRight: 8,
-    fontWeight: "700",
-    fontSize: 15,
-    color: SchoolTheme.text,
-  },
-  chevron: {
-    width: 28,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
