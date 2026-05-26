@@ -74,7 +74,8 @@ export type AppIconName =
   | "classroom"
   | "language"
   | "edit"
-  | "delete";
+  | "delete"
+  | "bell";
 
 type IconPair = { outline: IoniconsName; filled: IoniconsName };
 
@@ -152,6 +153,7 @@ export const APP_ICONS: Record<AppIconName, IconPair> = {
   language: { outline: "globe-outline", filled: "globe" },
   edit: { outline: "create-outline", filled: "create" },
   delete: { outline: "trash-outline", filled: "trash" },
+  bell: { outline: "notifications-outline", filled: "notifications" },
 };
 
 export function resolveIconName(
@@ -239,4 +241,5 @@ export const QUICK_ACTION_STYLES: Record<
   language: { bg: "#E0F2FE", iconBg: "#BAE6FD", iconColor: "#0369A1" },
   edit: { bg: "#DBEAFE", iconBg: "#BFDBFE", iconColor: "#1D4ED8" },
   delete: { bg: "#FEE2E2", iconBg: "#FECACA", iconColor: "#DC2626" },
+  bell: { bg: "#FEE2E2", iconBg: "#FECACA", iconColor: "#DC2626" },
 };

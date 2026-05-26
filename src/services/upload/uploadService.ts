@@ -15,7 +15,14 @@ export function resolveMediaUrl(path: string | null | undefined): string | null 
   const trimmed = path.trim();
   if (!trimmed) return null;
   if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
+
   const base = API_BASE_URL.replace(/\/$/, "");
+  
+  // If it's just a filename (no slash), assume it's in the default StudentImg folder
+  if (!trimmed.includes("/") && !trimmed.includes("\\")) {
+    return `${base}/Uploads/StudentImg/${trimmed}`;
+  }
+
   const rel = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
   return `${base}${rel}`;
 }

@@ -3,6 +3,7 @@ import { API_ENDPOINTS } from "@/constants/api";
 import { postApiLoginForgotPassword } from "@/api/generated/1-login-no-token/1-login-no-token";
 import type { LoginPayload, LoginResponse, UserData, ApiResult } from "@/types/auth.types";
 import { getApiErrorMessage } from "@/utils/recordHelpers";
+import { resolveMediaUrl } from "@/services/upload/uploadService";
 
 export const authService = {
   loginUser: async (data: LoginPayload): Promise<LoginResponse> => {
@@ -27,6 +28,7 @@ export const authService = {
           role: (apiData.role as UserData["role"]) ?? "parent",
           roleID: apiData.roleID as number | undefined,
           schoolName: "Little Angel's English School",
+          avatar: resolveMediaUrl(apiData.profilePhoto as string) ?? undefined,
           ...apiData,
         },
       };
@@ -62,6 +64,7 @@ export const authService = {
         mobile: String(apiData.mobile ?? ""),
         role: (apiData.role as UserData["role"]) ?? "parent",
         schoolName: "Little Angel's English School",
+        avatar: resolveMediaUrl(apiData.profilePhoto as string) ?? undefined,
         ...apiData,
       };
     }

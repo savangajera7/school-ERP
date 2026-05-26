@@ -1,14 +1,14 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Platform, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, FlatList } from "react-native";
 import { router } from "expo-router";
 import { usePermissions } from "@/hooks/usePermissions";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { ROLE_LABELS } from "@/constants/rolePermissions";
-import { IconCircle } from "@/components/icons/AppIcon";
-import { TabScreenLayout } from "@/components/layout/TabScreenLayout";
-import { TabScreenHeader } from "@/components/layout/TabScreenHeader";
+import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { useResponsive } from "@/hooks/useResponsive";
 import { useTranslation } from "@/hooks/useTranslation";
+import { ActionListRow } from "@/components/dashboard/ActionListRow";
+import { Colors } from "@/constants/colors";
 
 export default function MenuScreen() {
   const { isMobile } = useResponsive();
@@ -54,96 +54,36 @@ export default function MenuScreen() {
   );
 
   return (
-    <TabScreenLayout
-      header={
-        <TabScreenHeader
-          eyebrow={role ? ROLE_LABELS[role] : "Portal"}
-          title={t.portalMenu}
-          subtitle={`${roleLabel} · ${t.schoolName}`}
-          flat
-        />
-      }
+    <PremiumScreenLayout
+      title={t.portalMenu}
+      subtitle={`${roleLabel} · ${t.schoolName}`}
+      hideBack={true}
+      flatHeader
     >
-      <View style={[styles.grid, isMobile && styles.gridMobile]}>
-        {items.map((item) => (
-          <TouchableOpacity
-            key={item.route}
-            onPress={() => router.push(item.route as never)}
-            activeOpacity={0.85}
-            style={[styles.tile, isMobile ? styles.tileMobile : styles.tileDesktop]}
-          >
-            <IconCircle name={item.icon} size={40} iconSize={20} />
-            <Text style={styles.tileLabel}>{translateLabel(item.label)}</Text>
-            {item.desc ? (
-              <Text style={styles.tileDesc} numberOfLines={2}>
-                {item.desc}
-              </Text>
-            ) : null}
-            {"badge" in item && typeof item.badge === "number" && item.badge > 0 ? (
-              <View style={styles.badge}>
-                <Text style={styles.badgeText}>{item.badge}</Text>
-              </View>
-            ) : null}
-          </TouchableOpacity>
-        ))}
+      <View className="pb-10">
+        <View className={`flex-row flex-wrap gap-4 ${isMobile ? "flex-col" : ""}`}>
+          {items.map((item) => (
+            <View 
+              key={item.route} 
+              style={{ width: isMobile ? "100%" : "31.5%" }}
+            >
+              <ActionListRow
+                label={translateLabel(item.label)}
+                description={item.desc}
+                icon={item.icon as any}
+                accentColor={Colors.primary}
+                onPress={() => router.push(item.route as any)}
+              />
+              {/* Optional Badge for notifications */}
+              {"badge" in item && typeof item.badge === "number" && item.badge > 0 && (
+                <View className="absolute top-2 right-2 bg-rose-500 rounded-full min-w-[20px] h-[20px] items-center justify-center px-1.5 border-2 border-white">
+                  <Text className="text-white text-[10px] font-black">{item.badge}</Text>
+                </View>
+              )}
+            </View>
+          ))}
+        </View>
       </View>
-    </TabScreenLayout>
+    </PremiumScreenLayout>
   );
 }
-
-const tileShadow =
-  Platform.OS === "web"
-    ? { boxShadow: "0px 4px 16px rgba(0,0,0,0.06)" }
-    : {
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.06,
-        shadowRadius: 8,
-        elevation: 3,
-      };
-
-const styles = StyleSheet.create({
-  grid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 12,
-    justifyContent: "space-between",
-  },
-  gridMobile: {},
-  tile: {
-    backgroundColor: "#fff",
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: "#F3F4F6",
-    padding: 16,
-    minHeight: 118,
-    ...tileShadow,
-  },
-  tileMobile: { width: "47.5%" },
-  tileDesktop: { width: "31%" },
-  tileLabel: {
-    fontSize: 14,
-    fontWeight: "900",
-    color: "#111827",
-    marginTop: 10,
-  },
-  tileDesc: {
-    fontSize: 11,
-    color: "#6B7280",
-    marginTop: 4,
-    lineHeight: 15,
-  },
-  badge: {
-    position: "absolute",
-    top: 10,
-    right: 10,
-    backgroundColor: "#EF4444",
-    borderRadius: 10,
-    minWidth: 20,
-    height: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 5,
-  },
-  badgeText: { color: "#fff", fontSize: 10, fontWeight: "900" },
-});
