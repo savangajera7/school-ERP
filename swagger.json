@@ -2241,78 +2241,6 @@
  ]
  }
  },
- "/api/Parent/InsertParent": {
- "post": {
- "tags": [
- "Parent"
- ],
- "requestBody": {
- "content": {
- "application/json": {
- "schema": {
- "$ref": "#/components/schemas/ParentInsertRequest"
- }
- },
- "text/json": {
- "schema": {
- "$ref": "#/components/schemas/ParentInsertRequest"
- }
- },
- "application/*+json": {
- "schema": {
- "$ref": "#/components/schemas/ParentInsertRequest"
- }
- }
- }
- },
- "responses": {
- "200": {
- "description": "Success"
- }
- },
- "security": [
- {
- "Bearer": [ ]
- }
- ]
- }
- },
- "/api/Parent/UpdateParent": {
- "put": {
- "tags": [
- "Parent"
- ],
- "requestBody": {
- "content": {
- "application/json": {
- "schema": {
- "$ref": "#/components/schemas/ParentUpdateRequest"
- }
- },
- "text/json": {
- "schema": {
- "$ref": "#/components/schemas/ParentUpdateRequest"
- }
- },
- "application/*+json": {
- "schema": {
- "$ref": "#/components/schemas/ParentUpdateRequest"
- }
- }
- }
- },
- "responses": {
- "200": {
- "description": "Success"
- }
- },
- "security": [
- {
- "Bearer": [ ]
- }
- ]
- }
- },
  "/api/Religion/Add": {
  "post": {
  "tags": [
@@ -3196,10 +3124,10 @@
  ]
  }
  },
- "/api/Student/Add": {
+ "/api/Admission/Add": {
  "post": {
  "tags": [
- "3. Student (CRUD)"
+ "4. Admission"
  ],
  "requestBody": {
  "content": {
@@ -3221,25 +3149,44 @@
  }
  },
  "responses": {
- "401": {
- "description": "Unauthorized",
- "content": {
- "text/plain": {
- "schema": {
- "$ref": "#/components/schemas/ProblemDetails"
+ "200": {
+ "description": "Success"
  }
  },
+ "security": [
+ {
+ "Bearer": [ ]
+ }
+ ]
+ }
+ },
+ "/api/Admission/Update": {
+ "put": {
+ "tags": [
+ "4. Admission"
+ ],
+ "requestBody": {
+ "content": {
  "application/json": {
  "schema": {
- "$ref": "#/components/schemas/ProblemDetails"
+ "$ref": "#/components/schemas/StudentModel"
  }
  },
  "text/json": {
  "schema": {
- "$ref": "#/components/schemas/ProblemDetails"
+ "$ref": "#/components/schemas/StudentModel"
+ }
+ },
+ "application/*+json": {
+ "schema": {
+ "$ref": "#/components/schemas/StudentModel"
  }
  }
  }
+ },
+ "responses": {
+ "200": {
+ "description": "Success"
  }
  },
  "security": [
@@ -3412,59 +3359,6 @@
  }
  }
  ],
- "responses": {
- "401": {
- "description": "Unauthorized",
- "content": {
- "text/plain": {
- "schema": {
- "$ref": "#/components/schemas/ProblemDetails"
- }
- },
- "application/json": {
- "schema": {
- "$ref": "#/components/schemas/ProblemDetails"
- }
- },
- "text/json": {
- "schema": {
- "$ref": "#/components/schemas/ProblemDetails"
- }
- }
- }
- }
- },
- "security": [
- {
- "Bearer": [ ]
- }
- ]
- }
- },
- "/api/Student/Update": {
- "put": {
- "tags": [
- "3. Student (CRUD)"
- ],
- "requestBody": {
- "content": {
- "application/json": {
- "schema": {
- "$ref": "#/components/schemas/StudentModel"
- }
- },
- "text/json": {
- "schema": {
- "$ref": "#/components/schemas/StudentModel"
- }
- },
- "application/*+json": {
- "schema": {
- "$ref": "#/components/schemas/StudentModel"
- }
- }
- }
- },
  "responses": {
  "401": {
  "description": "Unauthorized",

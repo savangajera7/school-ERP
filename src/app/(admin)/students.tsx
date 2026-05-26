@@ -133,15 +133,6 @@ export default function AdminStudentManagementScreen() {
       subtitle="Manage school enrollment"
       scrollable={false}
       flatHeader
-      rightAction={
-        canManageStudents ? (
-          <HeaderActionButton
-            label="+ New Student"
-            shortLabel="+ New"
-            onPress={() => router.push("/(app)/admission-form")}
-          />
-        ) : undefined
-      }
     >
       <PremiumSearchField
         value={searchQuery}

@@ -49,7 +49,15 @@ export type AppRoute =
   | "/(app)/users"
   | "/(app)/parent-results"
   | "/(app)/profile"
-  | "/(app)/change-password";
+  | "/(app)/change-password"
+  | "/(teacher)/homework"
+  | "/(teacher)/classwork"
+  | "/(teacher)/notebook"
+  | "/(teacher)/exam-marks"
+  | "/(parent)/homework"
+  | "/(parent)/syllabus"
+  | "/(parent)/attendance"
+  | "/(parent)/fees";
 
 export type Permission =
   | "viewDashboard"
@@ -84,7 +92,14 @@ export type Permission =
   | "manageInquiries"
   | "viewTimetable"
   | "viewOwnResults"
-  | "changeOwnPassword";
+  | "changeOwnPassword"
+  | "manageHomework"
+  | "viewHomework"
+  | "manageClasswork"
+  | "viewClasswork"
+  | "manageNotebook"
+  | "viewNotebook"
+  | "viewSyllabus";
 
 const ALL_PERMISSIONS: Permission[] = [
   "viewDashboard",
@@ -120,13 +135,24 @@ const ALL_PERMISSIONS: Permission[] = [
   "viewTimetable",
   "viewOwnResults",
   "changeOwnPassword",
+  "manageHomework",
+  "viewHomework",
+  "manageClasswork",
+  "viewClasswork",
+  "manageNotebook",
+  "viewNotebook",
+  "viewSyllabus",
 ];
 
-const SCHOOL_ADMIN_PERMISSIONS: Permission[] = [...ALL_PERMISSIONS];
+const SUPER_ADMIN_PERMISSIONS: Permission[] = [...ALL_PERMISSIONS];
+
+const SCHOOL_ADMIN_PERMISSIONS: Permission[] = ALL_PERMISSIONS.filter(
+  (p) => p !== "manageUsers" && p !== "manageRoles"
+);
 
 /** Maps app role → API capabilities (mirrors backend Authorize attributes). */
 const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
-  super_admin: SCHOOL_ADMIN_PERMISSIONS,
+  super_admin: SUPER_ADMIN_PERMISSIONS,
   admin: SCHOOL_ADMIN_PERMISSIONS,
   teacher: [
     "viewDashboard",
@@ -143,6 +169,9 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "reviewLeave",
     "viewTimetable",
     "changeOwnPassword",
+    "manageHomework",
+    "manageClasswork",
+    "manageNotebook",
   ],
   parent: [
     "viewDashboard",
@@ -153,6 +182,10 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "applyLeave",
     "viewTimetable",
     "changeOwnPassword",
+    "viewHomework",
+    "viewClasswork",
+    "viewNotebook",
+    "viewSyllabus",
   ],
   student: [
     "viewDashboard",
@@ -162,6 +195,8 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "viewOwnResults",
     "viewExams",
     "changeOwnPassword",
+    "viewHomework",
+    "viewSyllabus",
   ],
 };
 
@@ -246,8 +281,6 @@ export const ROUTE_ACCESS: Record<Role, AppRoute[]> = {
     "/(app)/masters",
     "/(app)/admission-form",
     "/(app)/leave",
-    "/(app)/roles",
-    "/(app)/users",
     "/(app)/profile",
     "/(app)/change-password",
   ],
@@ -268,6 +301,10 @@ export const ROUTE_ACCESS: Record<Role, AppRoute[]> = {
     "/(app)/leave",
     "/(app)/profile",
     "/(app)/change-password",
+    "/(teacher)/homework",
+    "/(teacher)/classwork",
+    "/(teacher)/notebook",
+    "/(teacher)/exam-marks",
   ],
   parent: [
     "/(app)/dashboard",
@@ -280,6 +317,10 @@ export const ROUTE_ACCESS: Record<Role, AppRoute[]> = {
     "/(app)/leave",
     "/(app)/profile",
     "/(app)/change-password",
+    "/(parent)/homework",
+    "/(parent)/syllabus",
+    "/(parent)/attendance",
+    "/(parent)/fees",
   ],
   student: [
     "/(app)/dashboard",
@@ -289,6 +330,8 @@ export const ROUTE_ACCESS: Record<Role, AppRoute[]> = {
     "/(app)/parent-results",
     "/(app)/profile",
     "/(app)/change-password",
+    "/(parent)/homework",
+    "/(parent)/syllabus",
   ],
 };
 

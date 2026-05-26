@@ -10,7 +10,7 @@ import { StudentModel } from "@/api/model/studentModel";
 import { parseApiData, toCamelCaseRow } from "@/utils/apiResponse";
 import { getStudentDisplayName } from "@/utils/studentUtils";
 import { Colors } from "@/constants/colors";
-import { IconCircle } from "@/components/icons/AppIcon";
+import { IconCircle, AppIcon } from "@/components/icons/AppIcon";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
 
 export default function StudentProfileScreen() {
@@ -58,7 +58,7 @@ export default function StudentProfileScreen() {
     );
   }
 
-  const name = getStudentDisplayName(student);
+  const name = `${student.firstName} ${student.middleName || ""} ${student.lastName}`.trim();
 
   return (
     <PremiumScreenLayout
@@ -66,83 +66,136 @@ export default function StudentProfileScreen() {
       subtitle={`GR No: ${student.studentGRNo || "N/A"}`}
       onBack={() => router.back()}
     >
-          <PremiumCard noAccent style={{ padding: 20, marginBottom: 14 }}>
-            <View className="w-24 h-24 bg-blue-50 rounded-full items-center justify-center border-4 border-blue-100">
-              <IconCircle
-                name={student.gender === "Female" ? "female" : "male"}
-                size={72}
-                iconSize={36}
-              />
+      <PremiumCard noAccent style={{ padding: 20, marginBottom: 14 }}>
+        <View className="flex-row items-center gap-6">
+          <View className="w-24 h-24 bg-blue-50 rounded-full items-center justify-center border-4 border-blue-100">
+            <IconCircle
+              name={student.gender === "Female" ? "female" : "male"}
+              size={72}
+              iconSize={36}
+            />
+          </View>
+          
+          <View className="flex-1">
+            <View className="flex-row items-center gap-3 mb-1.5">
+              <Text className="text-2xl font-black text-gray-900">{name}</Text>
+              <View className="px-2.5 py-0.5 bg-emerald-50 rounded border border-emerald-100">
+                <Text className="text-[10px] font-black text-emerald-600 uppercase tracking-wider">
+                  {student.isActive ? "Active" : "In-Active"}
+                </Text>
+              </View>
             </View>
+            <Text className="text-[13px] text-gray-450 font-bold mb-4">
+              Roll No: {student.rollNo || 'N/A'} • GR No: {student.studentGRNo || 'N/A'}
+            </Text>
             
-            <View className="flex-1 items-center md:items-start">
-              <View className="flex-row items-center gap-3 mb-1.5">
-                <Text className="text-2xl font-black text-gray-900">{name}</Text>
-                <View className="px-2.5 py-0.5 bg-emerald-50 rounded border border-emerald-100">
-                  <Text className="text-[10px] font-black text-emerald-600 uppercase tracking-wider">Active</Text>
-                </View>
-              </View>
-              <Text className="text-[13px] text-gray-450 font-bold mb-4">
-                Roll No: {student.rollNo || 'N/A'} • Class ID: {student.classID || 'N/A'}
-              </Text>
-              
-              <View className="flex-row gap-3">
-                <TouchableOpacity 
-                  onPress={handleCall}
-                  className="px-5 py-3 bg-[#0d3666] rounded-xl shadow-md shadow-indigo-150"
-                  activeOpacity={0.8}
-                >
-                  <Text className="text-white text-xs font-black uppercase tracking-wider">📞 Call Parent</Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                  onPress={handleWhatsApp}
-                  className="px-5 py-3 bg-emerald-50 border border-emerald-150 rounded-xl"
-                  activeOpacity={0.8}
-                >
-                  <Text className="text-emerald-700 text-xs font-black uppercase tracking-wider">💬 WhatsApp</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </PremiumCard>
-
-          <View className={`flex-col ${!isMobile ? 'flex-row gap-6' : 'gap-6'}`}>
-            {/* Personal Details */}
-            <View className={`${!isMobile ? 'flex-1' : ''}`}>
-              <Card className="bg-white border border-gray-150 p-6">
-                <Text className="text-[12px] font-black text-gray-400 mb-5 uppercase tracking-wider">Personal Details</Text>
-                <View className="gap-5">
-                  <DetailItem label="Full Legal Name" value={name} />
-                  <DetailItem label="Email Address" value={student.studentEmail || 'N/A'} />
-                  <DetailItem label="Gender" value={student.gender || 'N/A'} />
-                  <DetailItem label="Date of Birth" value={student.dob || 'N/A'} />
-                  <DetailItem label="Current Address" value={student.currentAddress || 'N/A'} />
-                </View>
-              </Card>
-            </View>
-
-            {/* Academic Details */}
-            <View className={`${!isMobile ? 'flex-1' : ''}`}>
-              <Card className="bg-white border border-gray-150 p-6">
-                <Text className="text-[12px] font-black text-gray-400 mb-5 uppercase tracking-wider">Academic Placement</Text>
-                <View className="gap-5">
-                  <DetailItem label="GR Number" value={student.studentGRNo || 'N/A'} />
-                  <DetailItem label="Admission Year" value={student.admissionYear || 'N/A'} />
-                  <DetailItem label="Class ID Placement" value={student.classID?.toString() || 'N/A'} />
-                  <DetailItem label="Section ID Placement" value={student.sectionID?.toString() || 'N/A'} />
-                  <DetailItem label="Batch ID Allocation" value={student.batchID?.toString() || 'N/A'} />
-                </View>
-              </Card>
+            <View className="flex-row gap-3">
+              <TouchableOpacity 
+                onPress={handleCall}
+                className="px-5 py-3 bg-[#0d3666] rounded-xl shadow-md shadow-indigo-150"
+                activeOpacity={0.8}
+              >
+                <Text className="text-white text-xs font-black uppercase tracking-wider">📞 Call Parent</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                onPress={handleWhatsApp}
+                className="px-5 py-3 bg-emerald-50 border border-emerald-150 rounded-xl"
+                activeOpacity={0.8}
+              >
+                <Text className="text-emerald-700 text-xs font-black uppercase tracking-wider">💬 WhatsApp</Text>
+              </TouchableOpacity>
             </View>
           </View>
+        </View>
+      </PremiumCard>
+
+      <View className="gap-6 pb-20">
+        {/* SECTION 1: Personal & Identification */}
+        <Card className="bg-white border border-gray-150 p-6">
+          <View className="flex-row items-center gap-2 mb-5">
+            <AppIcon name="profile" size={18} color={Colors.primary} active />
+            <Text className="text-[12px] font-black text-gray-400 uppercase tracking-wider">Personal & Identification</Text>
+          </View>
+          <View className="gap-4">
+            <View className="flex-row flex-wrap gap-x-10">
+              <DetailItem label="Gender" value={student.gender || 'N/A'} />
+              <DetailItem label="Date of Birth" value={student.dob ? String(student.dob).slice(0, 10) : 'N/A'} />
+              <DetailItem label="Blood Group" value={String((student as any).bloodGroupID || 'N/A')} />
+            </View>
+            <View className="flex-row flex-wrap gap-x-10">
+              <DetailItem label="Religion" value={String((student as any).religionID || 'N/A')} />
+              <DetailItem label="Category" value={String((student as any).categoryID || 'N/A')} />
+            </View>
+            <View className="h-[1px] bg-gray-50 my-2" />
+            <DetailItem label="Aadhaar Number" value={(student as any).aadhaarNo || 'N/A'} />
+            <DetailItem label="PEN Number" value={(student as any).penNo || 'N/A'} />
+            <DetailItem label="APAR ID" value={(student as any).aparID || 'N/A'} />
+          </View>
+        </Card>
+
+        {/* SECTION 2: Contact & Address */}
+        <Card className="bg-white border border-gray-150 p-6">
+          <View className="flex-row items-center gap-2 mb-5">
+            <AppIcon name="notifications" size={18} color={Colors.primary} active />
+            <Text className="text-[12px] font-black text-gray-400 uppercase tracking-wider">Contact & Address</Text>
+          </View>
+          <View className="gap-4">
+            <DetailItem label="Mobile Number" value={student.studentNumber || 'N/A'} />
+            <DetailItem label="Email Address" value={student.studentEmail || 'N/A'} />
+            <DetailItem label="Current Address" value={`${student.currentAddress || 'N/A'}, ${(student as any).currentCity || ''}`} />
+            <DetailItem label="Permanent Address" value={`${(student as any).permanentAddress || 'N/A'}, ${(student as any).permanentCity || ''}`} />
+          </View>
+        </Card>
+
+        {/* SECTION 3: Guardian Details */}
+        <Card className="bg-white border border-gray-150 p-6">
+          <View className="flex-row items-center gap-2 mb-5">
+            <AppIcon name="parents" size={18} color={Colors.primary} active />
+            <Text className="text-[12px] font-black text-gray-400 uppercase tracking-wider">Guardian Information</Text>
+          </View>
+          <View className="gap-4">
+            <Text className="text-[11px] font-black text-blue-600 uppercase mb-1">Father's Details</Text>
+            <DetailItem label="Father Name" value={student.fatherName || 'N/A'} />
+            <DetailItem label="Phone Number" value={(student as any).fatherNumber || 'N/A'} />
+            <DetailItem label="Occupation" value={(student as any).fatherOccupation || 'N/A'} />
+            <DetailItem label="Education" value={(student as any).fatherEducation || 'N/A'} />
+            
+            <View className="h-[1px] bg-gray-50 my-2" />
+            
+            <Text className="text-[11px] font-black text-pink-600 uppercase mb-1">Mother's Details</Text>
+            <DetailItem label="Mother Name" value={(student as any).motherName || 'N/A'} />
+            <DetailItem label="Phone Number" value={(student as any).motherNumber || 'N/A'} />
+            <DetailItem label="Occupation" value={(student as any).motherOccupation || 'N/A'} />
+            <DetailItem label="Education" value={(student as any).motherEducation || 'N/A'} />
+          </View>
+        </Card>
+
+        {/* SECTION 4: Academic & Registration */}
+        <Card className="bg-white border border-gray-150 p-6">
+          <View className="flex-row items-center gap-2 mb-5">
+            <AppIcon name="subjects" size={18} color={Colors.primary} active />
+            <Text className="text-[12px] font-black text-gray-400 uppercase tracking-wider">Academic & Registration</Text>
+          </View>
+          <View className="gap-4">
+            <DetailItem label="Admission Date" value={student.admissionDate ? String(student.admissionDate).slice(0, 10) : 'N/A'} />
+            <DetailItem label="Assigned Class" value={student.classID?.toString() || 'N/A'} />
+            <DetailItem label="Assigned Batch" value={student.batchID?.toString() || 'N/A'} />
+            <DetailItem label="Previous School" value={(student as any).previousSchoolName || 'N/A'} />
+            <DetailItem label="Last Year %" value={`${(student as any).lastSemesterYearPercentage || '0'}%`} />
+            <DetailItem label="Reference" value={(student as any).referenceSource || 'N/A'} />
+            <DetailItem label="Remarks" value={(student as any).remarks || 'N/A'} />
+          </View>
+        </Card>
+      </View>
     </PremiumScreenLayout>
   );
 }
 
 function DetailItem({ label, value }: { label: string, value: string }) {
   return (
-    <View className="flex-row justify-between items-start border-b border-gray-50 pb-3.5">
-      <Text className="text-[13px] text-gray-400 font-extrabold">{label}</Text>
-      <Text className="text-[13px] text-gray-805 font-black text-right flex-1 ml-4">{value}</Text>
+    <View className="flex-1 min-w-[200px] border-b border-gray-50 pb-3">
+      <Text className="text-[11px] text-gray-400 font-extrabold uppercase tracking-tight mb-1">{label}</Text>
+      <Text className="text-[14px] text-gray-805 font-black">{value}</Text>
     </View>
   );
 }

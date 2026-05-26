@@ -11,6 +11,9 @@ import { ActionListRow } from "@/components/dashboard/ActionListRow";
 import type { AppIconName } from "@/constants/appIcons";
 
 const LINKS: { title: string; href: string; icon: AppIconName }[] = [
+  { title: "Homework", href: "/(parent)/homework", icon: "homework" },
+  { title: "Attendance", href: "/(parent)/attendance", icon: "attendance" },
+  { title: "Fees & Dues", href: "/(parent)/fees", icon: "fees" },
   { title: "Syllabus", href: "/(parent)/syllabus", icon: "syllabus" },
   { title: "Timetable", href: "/(parent)/timetable", icon: "timetable" },
   { title: "Exam Marks", href: "/(parent)/exam-marks", icon: "exams" },

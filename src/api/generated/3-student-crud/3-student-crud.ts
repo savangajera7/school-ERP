@@ -38,8 +38,7 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
-  ProblemDetails,
-  StudentModel
+  ProblemDetails
 } from '../../model';
 
 import { customInstance } from '../../../services/api/axiosInstance';
@@ -49,92 +48,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
 
-export type postApiStudentAddResponse401TextPlain = {
-  data: ProblemDetails
-  status: 401
-}
-
-export type postApiStudentAddResponse401ApplicationJson = {
-  data: ProblemDetails
-  status: 401
-}
-
-export type postApiStudentAddResponse401TextJson = {
-  data: ProblemDetails
-  status: 401
-}
-
-;
-export type postApiStudentAddResponseError = (postApiStudentAddResponse401TextPlain | postApiStudentAddResponse401ApplicationJson | postApiStudentAddResponse401TextJson) & {
-  headers: Headers;
-};
-
-export type postApiStudentAddResponse = (postApiStudentAddResponseError)
-
-export const getPostApiStudentAddUrl = () => {
-
-
-
-
-  return `/api/Student/Add`
-}
-
-export const postApiStudentAdd = async (studentModel?: StudentModel, options?: RequestInit): Promise<postApiStudentAddResponse> => {
-
-  return customInstance<postApiStudentAddResponse>(getPostApiStudentAddUrl(),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(studentModel)
-  }
-);}
-
-
-
-
-export const getPostApiStudentAddMutationOptions = <TError = ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiStudentAdd>>, TError,{data?: StudentModel}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof postApiStudentAdd>>, TError,{data?: StudentModel}, TContext> => {
-
-const mutationKey = ['postApiStudentAdd'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiStudentAdd>>, {data?: StudentModel}> = (props) => {
-          const {data} = props ?? {};
-
-          return  postApiStudentAdd(data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type PostApiStudentAddMutationResult = NonNullable<Awaited<ReturnType<typeof postApiStudentAdd>>>
-    export type PostApiStudentAddMutationBody = StudentModel | undefined
-    export type PostApiStudentAddMutationError = ProblemDetails
-
-    export const usePostApiStudentAdd = <TError = ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiStudentAdd>>, TError,{data?: StudentModel}, TContext>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof postApiStudentAdd>>,
-        TError,
-        {data?: StudentModel},
-        TContext
-      > => {
-      return useMutation(getPostApiStudentAddMutationOptions(options), queryClient);
-    }
-    export type deleteApiStudentDeleteIdResponse401TextPlain = {
+export type deleteApiStudentDeleteIdResponse401TextPlain = {
   data: ProblemDetails
   status: 401
 }
@@ -683,88 +597,3 @@ export function useGetApiStudentGetByIDId<TData = Awaited<ReturnType<typeof getA
 
 
 
-export type putApiStudentUpdateResponse401TextPlain = {
-  data: ProblemDetails
-  status: 401
-}
-
-export type putApiStudentUpdateResponse401ApplicationJson = {
-  data: ProblemDetails
-  status: 401
-}
-
-export type putApiStudentUpdateResponse401TextJson = {
-  data: ProblemDetails
-  status: 401
-}
-
-;
-export type putApiStudentUpdateResponseError = (putApiStudentUpdateResponse401TextPlain | putApiStudentUpdateResponse401ApplicationJson | putApiStudentUpdateResponse401TextJson) & {
-  headers: Headers;
-};
-
-export type putApiStudentUpdateResponse = (putApiStudentUpdateResponseError)
-
-export const getPutApiStudentUpdateUrl = () => {
-
-
-
-
-  return `/api/Student/Update`
-}
-
-export const putApiStudentUpdate = async (studentModel?: StudentModel, options?: RequestInit): Promise<putApiStudentUpdateResponse> => {
-
-  return customInstance<putApiStudentUpdateResponse>(getPutApiStudentUpdateUrl(),
-  {
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(studentModel)
-  }
-);}
-
-
-
-
-export const getPutApiStudentUpdateMutationOptions = <TError = ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiStudentUpdate>>, TError,{data?: StudentModel}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof putApiStudentUpdate>>, TError,{data?: StudentModel}, TContext> => {
-
-const mutationKey = ['putApiStudentUpdate'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof putApiStudentUpdate>>, {data?: StudentModel}> = (props) => {
-          const {data} = props ?? {};
-
-          return  putApiStudentUpdate(data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type PutApiStudentUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof putApiStudentUpdate>>>
-    export type PutApiStudentUpdateMutationBody = StudentModel | undefined
-    export type PutApiStudentUpdateMutationError = ProblemDetails
-
-    export const usePutApiStudentUpdate = <TError = ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiStudentUpdate>>, TError,{data?: StudentModel}, TContext>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof putApiStudentUpdate>>,
-        TError,
-        {data?: StudentModel},
-        TContext
-      > => {
-      return useMutation(getPutApiStudentUpdateMutationOptions(options), queryClient);
-    }

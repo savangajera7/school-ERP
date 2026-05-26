@@ -79,12 +79,6 @@ export default function AdminParentManagementScreen() {
         actions={
           <View className="flex-row gap-2 ml-auto">
             <TouchableOpacity 
-              onPress={() => router.push(`/(admin)/parent-form?id=${item.parentID}`)}
-              className="bg-blue-50 p-2 rounded-lg"
-            >
-              <AppIcon name="edit" size={18} color="#3B82F6" />
-            </TouchableOpacity>
-            <TouchableOpacity 
               onPress={() => handleDelete(item)}
               className="bg-red-50 p-2 rounded-lg"
             >
@@ -102,15 +96,6 @@ export default function AdminParentManagementScreen() {
       subtitle="Manage guardian records"
       scrollable={false}
       flatHeader
-      rightAction={
-        canManageStudents ? (
-          <HeaderActionButton
-            label="+ New Parent"
-            shortLabel="+ New"
-            onPress={() => router.push("/(admin)/parent-form")}
-          />
-        ) : undefined
-      }
     >
       <PremiumSearchField
         value={searchQuery}

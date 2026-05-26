@@ -32,6 +32,7 @@ export default function ParentDashboardScreen() {
   const QUICK: QuickActionItem[] = [
     { title: t.homework, route: "/(parent)/homework", icon: "homework" },
     { title: t.attendance, route: "/(parent)/attendance", icon: "attendance" },
+    { title: "Fees", route: "/(parent)/fees", icon: "fees" },
     { title: t.exams, route: "/(parent)/exam", icon: "exams" },
     { title: t.examMarks, route: "/(parent)/exam-marks", icon: "exams" },
     { title: t.results, route: "/(parent)/result", icon: "results" },
