@@ -14,6 +14,8 @@ import { useResponsive } from "@/hooks/useResponsive";
 import { parseApiData } from "@/utils/apiResponse";
 import { useAuthStore } from "@/store/authStore";
 
+import { PremiumDatePicker } from "@/components/ui/PremiumDatePicker";
+
 export default function AttendanceFormScreen() {
   const { id } = useLocalSearchParams();
   const attendanceID = id ? parseInt(typeof id === "string" ? id : id[0]) : null;
@@ -135,15 +137,11 @@ export default function AttendanceFormScreen() {
               </View>
             </View>
 
-            <View>
-              <Text style={styles.label}>Attendance Date</Text>
-              <TextInput
-                value={attendanceDate}
-                onChangeText={setAttendanceDate}
-                placeholder="YYYY-MM-DD"
-                className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
-              />
-            </View>
+            <PremiumDatePicker
+              label="Attendance Date"
+              value={attendanceDate}
+              onChange={setAttendanceDate}
+            />
 
             <View>
               <Text style={styles.label}>Status *</Text>

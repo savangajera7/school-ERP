@@ -32,6 +32,7 @@ import { recordLabel } from "@/utils/recordHelpers";
 import { useToast } from "@/components/ui/Toast";
 import { useAuthStore } from "@/store/authStore";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
+import { PremiumDatePicker } from "@/components/ui/PremiumDatePicker";
 
 type Tab = "list" | "marks" | "ranks";
 
@@ -208,11 +209,10 @@ export default function ExamsManagementScreen() {
                     onChangeText={setExamName}
                     className="border border-gray-200 rounded-xl px-4 py-3"
                   />
-                  <TextInput
-                    placeholder="Date (YYYY-MM-DD)"
+                  <PremiumDatePicker
+                    label="Exam Date"
                     value={examDate}
-                    onChangeText={setExamDate}
-                    className="border border-gray-200 rounded-xl px-4 py-3"
+                    onChange={setExamDate}
                   />
                   <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                     <View className="flex-row gap-2">

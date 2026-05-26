@@ -15,6 +15,8 @@ import { useAuthStore } from "@/store/authStore";
 import { Colors } from "@/constants/colors";
 import { Button } from "@/components/ui/Button";
 import { usePermissions } from "@/hooks/usePermissions";
+import { PremiumDatePicker } from "@/components/ui/PremiumDatePicker";
+import { formatDisplayDate } from "@/utils/dateHelpers";
 
 export default function LeaveScreen() {
   const { showToast } = useToast();
@@ -71,24 +73,23 @@ export default function LeaveScreen() {
       scrollable={false}
       bodyStyle={{ flex: 1, paddingHorizontal: 0, marginTop: -16 }}
     >
-      <PremiumCard noAccent style={{ marginHorizontal: 16, marginBottom: 12, padding: 16, gap: 8 }}>
-        <TextInput
-          placeholder="From date (YYYY-MM-DD)"
+      <PremiumCard noAccent style={{ marginHorizontal: 16, marginBottom: 12, padding: 16, gap: 4 }}>
+        <PremiumDatePicker
+          label="From Date"
           value={fromDate}
-          onChangeText={setFromDate}
-          className="border border-gray-200 rounded-xl px-4 py-2 mb-2"
+          onChange={setFromDate}
         />
-        <TextInput
-          placeholder="To date (optional)"
+        <PremiumDatePicker
+          label="To Date"
           value={toDate}
-          onChangeText={setToDate}
-          className="border border-gray-200 rounded-xl px-4 py-2 mb-2"
+          onChange={setToDate}
         />
+        <Text style={{ fontSize: 10, fontWeight: "900", color: "#6B7280", marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.5 }}>Reason</Text>
         <TextInput
-          placeholder="Reason"
+          placeholder="Reason for leave..."
           value={reason}
           onChangeText={setReason}
-          className="border border-gray-200 rounded-xl px-4 py-2 mb-3"
+          className="border border-gray-200 rounded-xl px-4 py-3 mb-3 text-sm font-semibold text-gray-800 bg-gray-50"
         />
         <Button label="Apply Leave" onPress={handleApply} loading={insertMutation.isPending} />
       </PremiumCard>
@@ -106,10 +107,10 @@ export default function LeaveScreen() {
           contentContainerStyle={{ padding: 16 }}
           onRefresh={refetch}
           refreshing={isLoading}
-          renderItem={({ item }: { item: Record<string, unknown> }) => (
+          renderItem={({ item }: { item: any }) => (
             <MobileDataCard
               title={String(item.leaveReason ?? "Leave")}
-              subtitle={`${item.fromDate ?? ""} → ${item.toDate ?? ""}`}
+              subtitle={`${formatDisplayDate(item.fromDate)} → ${formatDisplayDate(item.toDate)}`}
               fields={[
                 { label: "Status", value: String(item.leaveStatus ?? "Pending") },
               ]}

@@ -13,6 +13,7 @@ import {
 import { useResponsive } from "@/hooks/useResponsive";
 import { parseApiData } from "@/utils/apiResponse";
 import { useAuthStore } from "@/store/authStore";
+import { PremiumDatePicker } from "@/components/ui/PremiumDatePicker";
 
 export default function NoticeFormScreen() {
   const { id } = useLocalSearchParams();
@@ -129,12 +130,10 @@ export default function NoticeFormScreen() {
                 />
               </View>
               <View className="flex-1">
-                <Text style={styles.label}>Date</Text>
-                <TextInput
+                <PremiumDatePicker
+                  label="Date"
                   value={noticeDate}
-                  onChangeText={setNoticeDate}
-                  placeholder="YYYY-MM-DD"
-                  className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
+                  onChange={setNoticeDate}
                 />
               </View>
             </View>

@@ -23,6 +23,7 @@ import { usePermissions } from "@/hooks/usePermissions";
 import { AccessDenied } from "@/components/auth/AccessDenied";
 import { useResponsive } from "@/hooks/useResponsive";
 import { parseApiData, parseApiList } from "@/utils/apiResponse";
+import { PremiumDatePicker } from "@/components/ui/PremiumDatePicker";
 
 export default function AdmissionFormScreen() {
   const { id } = useLocalSearchParams();
@@ -379,7 +380,7 @@ export default function AdmissionFormScreen() {
 
   const renderTextInput = (label: string, value: string, onChange: (t: string) => void, placeholder: string, options?: { multiline?: boolean, keyboard?: any, maxLength?: number, editable?: boolean }) => (
     <View className="flex-1 min-w-[280px]">
-      <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">{label}</Text>
+      <Text className="text-[12px] font-black text-gray-455 mb-1.5 uppercase">{label}</Text>
       <TextInput
         value={value}
         onChangeText={onChange}
@@ -389,6 +390,16 @@ export default function AdmissionFormScreen() {
         maxLength={options?.maxLength}
         editable={options?.editable}
         className={`${options?.multiline ? "min-h-[80px] py-2" : "h-[48px]"} bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800`}
+      />
+    </View>
+  );
+
+  const renderDatePicker = (label: string, value: string, onChange: (t: string) => void) => (
+    <View className="flex-1 min-w-[280px]">
+      <PremiumDatePicker
+        label={label}
+        value={value}
+        onChange={onChange}
       />
     </View>
   );
@@ -487,7 +498,7 @@ export default function AdmissionFormScreen() {
             <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>
               {renderTextInput("Student Display Name", studentDisplayName, setStudentDisplayName, "Full Name for Records")}
               {renderToggle("Gender *", gender, ["Male", "Female", "Other"], setGender)}
-              {renderTextInput("Date of Birth *", dob, setDob, "YYYY-MM-DD")}
+              {renderDatePicker("Date of Birth *", dob, setDob)}
               {renderTextInput("Age", age, setAge, "Calculated Age", { keyboard: "number-pad" })}
             </View>
             <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>
@@ -516,7 +527,7 @@ export default function AdmissionFormScreen() {
             <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>
               {renderTextInput("Weight (KG)", weight, setWeight, "0.00", { keyboard: "decimal-pad" })}
               {renderTextInput("Height (CM)", height, setHeight, "0.00", { keyboard: "decimal-pad" })}
-              {renderTextInput("Height/Weight Date", heightWeightDate, setHeightWeightDate, "YYYY-MM-DD")}
+              {renderDatePicker("Height/Weight Date", heightWeightDate, setHeightWeightDate)}
               {renderToggle("EWS", ews, ["Yes", "No"], setEws)}
             </View>
           </View>
@@ -610,11 +621,11 @@ export default function AdmissionFormScreen() {
             <View className={`flex-row flex-wrap gap-5 ${isMobile ? "flex-col" : ""}`}>
               {renderToggle("Right to Education (RTE)", rte, ["Yes", "No"], setRte)}
               {renderToggle("Student Type", studentType, ["New", "Old"], setStudentType)}
-              {renderTextInput("Student Fees Date", studentFeesDate, setStudentFeesDate, "YYYY-MM-DD")}
+              {renderDatePicker("Student Fees Date", studentFeesDate, setStudentFeesDate)}
             </View>
             <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>
-              {renderTextInput("Created Date", createdDate, setCreatedDate, "YYYY-MM-DD")}
-              {renderTextInput("Admission Date", admissionDate, setAdmissionDate, "YYYY-MM-DD")}
+              {renderDatePicker("Created Date", createdDate, setCreatedDate)}
+              {renderDatePicker("Admission Date", admissionDate, setAdmissionDate)}
               {renderDropdown("Admission Standard", (classes.find(c => (c as any).className === admissionStandard) as any)?.classID, classes, (id) => {
                 const cls = classes.find(c => (c as any).classID === id) as any;
                 if (cls) setAdmissionStandard(cls.className);

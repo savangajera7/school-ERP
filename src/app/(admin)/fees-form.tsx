@@ -13,6 +13,7 @@ import {
 import { useResponsive } from "@/hooks/useResponsive";
 import { parseApiData } from "@/utils/apiResponse";
 import { useAuthStore } from "@/store/authStore";
+import { PremiumDatePicker } from "@/components/ui/PremiumDatePicker";
 
 export default function FeesFormScreen() {
   const { id } = useLocalSearchParams();
@@ -163,15 +164,11 @@ export default function FeesFormScreen() {
               </View>
             </View>
 
-            <View>
-              <Text style={styles.label}>Payment Date</Text>
-              <TextInput
-                value={paymentDate}
-                onChangeText={setPaymentDate}
-                placeholder="YYYY-MM-DD"
-                className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
-              />
-            </View>
+            <PremiumDatePicker
+              label="Payment Date"
+              value={paymentDate}
+              onChange={setPaymentDate}
+            />
 
             <View>
               <Text style={styles.label}>Remarks / Note</Text>

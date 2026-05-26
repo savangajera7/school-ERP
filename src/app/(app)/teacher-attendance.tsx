@@ -18,6 +18,7 @@ import { useAuthStore } from "@/store/authStore";
 import { Colors } from "@/constants/colors";
 import { usePermissions } from "@/hooks/usePermissions";
 import { AccessDenied } from "@/components/auth/AccessDenied";
+import { PremiumDatePicker } from "@/components/ui/PremiumDatePicker";
 
 export default function TeacherAttendanceScreen() {
   const { canManageStaffAttendance } = usePermissions();
@@ -67,10 +68,14 @@ export default function TeacherAttendanceScreen() {
       scrollable={false}
       bodyStyle={{ flex: 1, paddingHorizontal: 0, marginTop: -16 }}
     >
-      <PremiumCard noAccent style={{ padding: 16, marginHorizontal: 16, marginBottom: 12, gap: 8 }}>
-        <TextInput placeholder="Teacher ID" value={teacherId} onChangeText={setTeacherId} keyboardType="number-pad" className="border border-gray-200 rounded-xl px-4 py-2" />
-        <TextInput placeholder="Date YYYY-MM-DD" value={date} onChangeText={setDate} className="border border-gray-200 rounded-xl px-4 py-2" />
-        <TextInput placeholder="Status (Present/Absent)" value={status} onChangeText={setStatus} className="border border-gray-200 rounded-xl px-4 py-2" />
+      <PremiumCard noAccent style={{ padding: 16, marginHorizontal: 16, marginBottom: 12, gap: 4 }}>
+        <TextInput placeholder="Teacher ID" value={teacherId} onChangeText={setTeacherId} keyboardType="number-pad" className="border border-gray-200 rounded-xl px-4 py-3 mb-2 text-sm font-semibold text-gray-800 bg-gray-50" />
+        <PremiumDatePicker
+          label="Attendance Date"
+          value={date}
+          onChange={setDate}
+        />
+        <TextInput placeholder="Status (Present/Absent)" value={status} onChangeText={setStatus} className="border border-gray-200 rounded-xl px-4 py-3 mb-4 text-sm font-semibold text-gray-800 bg-gray-50" />
         <Button label="Mark attendance" onPress={handleMark} loading={insertMutation.isPending} />
       </PremiumCard>
       {isLoading ? (

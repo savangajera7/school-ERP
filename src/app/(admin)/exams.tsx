@@ -12,6 +12,7 @@ import { PremiumSearchField } from "@/components/ui/premium";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { AppIcon, IconCircle } from "@/components/icons/AppIcon";
 import { EmptyState, ErrorState } from "@/components/ui/EmptyState";
+import { formatDisplayDate } from "@/utils/dateHelpers";
 
 export default function AdminExamsManagementScreen() {
   const { isMobile } = useResponsive();
@@ -70,7 +71,7 @@ export default function AdminExamsManagementScreen() {
         icon={<IconCircle name="exams" size={44} iconSize={22} />}
         fields={[
           { label: "Class", value: item.className || "All Classes" },
-          { label: "Date", value: item.examDate ? String(item.examDate).slice(0, 10) : "TBA" },
+          { label: "Date", value: formatDisplayDate(item.examDate) },
           { label: "Status", value: item.status || "Upcoming", highlight: "accent" },
         ]}
         actions={

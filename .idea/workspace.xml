@@ -6,17 +6,16 @@
   <component name="ChangeListManager">
     <list default="true" id="973b64d6-6094-46c3-ae9b-d54eff11ffd3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/dashboard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/masters/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/masters/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/dashboard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(parent)/dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(parent)/dashboard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(super-admin)/dashboard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(teacher)/dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(teacher)/dashboard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/dashboard/ActionListRow.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/dashboard/ActionListRow.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/layout/ParentMenuScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/layout/ParentMenuScreen.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/layout/PremiumScreenLayout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/layout/PremiumScreenLayout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/layout/TeacherMenuScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/layout/TeacherMenuScreen.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/ui/ScreenHeader.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/ScreenHeader.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/attendance-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/attendance-form.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/exam-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/exam-form.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/fees-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/fees-form.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/notice-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/notice-form.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/admission-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/admission-form.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/exams.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/exams.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/leave.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/leave.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/teacher-attendance.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/teacher-attendance.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -117,7 +116,7 @@
       <workItem from="1779702281848" duration="3101000" />
       <workItem from="1779710067304" duration="8892000" />
       <workItem from="1779730502344" duration="4990000" />
-      <workItem from="1779787664053" duration="3119000" />
+      <workItem from="1779787664053" duration="4192000" />
     </task>
     <servers />
   </component>

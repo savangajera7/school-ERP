@@ -13,6 +13,7 @@ import {
 import { useResponsive } from "@/hooks/useResponsive";
 import { parseApiData } from "@/utils/apiResponse";
 import { useAuthStore } from "@/store/authStore";
+import { PremiumDatePicker } from "@/components/ui/PremiumDatePicker";
 
 export default function ExamFormScreen() {
   const { id } = useLocalSearchParams();
@@ -145,12 +146,10 @@ export default function ExamFormScreen() {
 
             <View className="flex-row gap-4">
               <View className="flex-1">
-                <Text style={styles.label}>Start Date</Text>
-                <TextInput
+                <PremiumDatePicker
+                  label="Start Date"
                   value={examDate}
-                  onChangeText={setExamDate}
-                  placeholder="YYYY-MM-DD"
-                  className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
+                  onChange={setExamDate}
                 />
               </View>
               <View className="flex-1">

@@ -12,6 +12,7 @@ import { PremiumSearchField } from "@/components/ui/premium";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { AppIcon, IconCircle } from "@/components/icons/AppIcon";
 import { EmptyState, ErrorState } from "@/components/ui/EmptyState";
+import { formatDisplayDate } from "@/utils/dateHelpers";
 
 export default function AdminNoticesManagementScreen() {
   const { isMobile } = useResponsive();
@@ -68,7 +69,7 @@ export default function AdminNoticesManagementScreen() {
         accentColor={Colors.primary}
         icon={<IconCircle name="notices" size={44} iconSize={22} />}
         fields={[
-          { label: "Date", value: item.noticeDate ? String(item.noticeDate).slice(0, 10) : "N/A" },
+          { label: "Date", value: formatDisplayDate(item.noticeDate) },
           { label: "Target", value: item.targetAudience || "Everyone" },
           { label: "Status", value: item.isActive ? "Active" : "Expired", highlight: item.isActive ? "success" : "muted" },
         ]}

@@ -12,6 +12,7 @@ import { PremiumSearchField } from "@/components/ui/premium";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { AppIcon, IconCircle } from "@/components/icons/AppIcon";
 import { EmptyState, ErrorState } from "@/components/ui/EmptyState";
+import { formatDisplayDate } from "@/utils/dateHelpers";
 
 export default function AdminFeesManagementScreen() {
   const { isMobile } = useResponsive();
@@ -76,7 +77,7 @@ export default function AdminFeesManagementScreen() {
           </View>
         }
         fields={[
-          { label: "Date", value: item.paymentDate ? String(item.paymentDate).slice(0, 10) : "N/A" },
+          { label: "Date", value: formatDisplayDate(item.paymentDate) },
           { label: "Method", value: item.paymentMethod || "N/A" },
           { label: "Status", value: item.status || "Paid", highlight: "success" },
         ]}

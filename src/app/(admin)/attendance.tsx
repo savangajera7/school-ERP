@@ -16,6 +16,8 @@ import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { AppIcon, IconCircle } from "@/components/icons/AppIcon";
 import { EmptyState, ErrorState } from "@/components/ui/EmptyState";
 
+import { formatDisplayDate } from "@/utils/dateHelpers";
+
 export default function AdminAttendanceManagementScreen() {
   const { isMobile } = useResponsive();
   const [searchQuery, setSearchQuery] = useState("");
@@ -82,7 +84,7 @@ export default function AdminAttendanceManagementScreen() {
           </View>
         }
         fields={[
-          { label: "Date", value: item.attendanceDate ? String(item.attendanceDate).slice(0, 10) : "N/A" },
+          { label: "Date", value: formatDisplayDate(item.attendanceDate) },
           { label: "Marked By", value: item.markedBy || "Teacher" },
         ]}
         actions={
