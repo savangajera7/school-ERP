@@ -32,6 +32,7 @@ type Props = {
   flatHeader?: boolean;
   refreshControl?: React.ReactElement<RefreshControlProps>;
   showTopBar?: boolean;
+  fullWidth?: boolean;
 };
 
 /**
@@ -52,6 +53,7 @@ export function PremiumScreenLayout({
   flatHeader = false,
   refreshControl,
   showTopBar = false,
+  fullWidth = false,
 }: Props) {
   const { isMobile } = useResponsive();
 
@@ -61,7 +63,12 @@ export function PremiumScreenLayout({
   };
 
   const body = (
-    <View style={[styles.body, flatHeader && { marginTop: 0 }, bodyStyle]}>
+    <View style={[
+      styles.body, 
+      flatHeader && { marginTop: 0 }, 
+      fullWidth && { maxWidth: '100%', paddingHorizontal: isMobile ? 16 : 32 },
+      bodyStyle
+    ]}>
       {headerSlot}
       {children}
     </View>

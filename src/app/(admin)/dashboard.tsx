@@ -27,6 +27,7 @@ const QUICK_ACTIONS: {
 }[] = [
   { title: "Admission", icon: "admission", route: "/(app)/admission-form" as any },
   { title: "Students", icon: "students", route: "/(admin)/students" as any },
+  { title: "Masters", icon: "masters", route: "/(admin)/masters" as any },
   { title: "Teachers", icon: "teachers", route: "/(admin)/teachers" as any },
   { title: "Parents", icon: "parents", route: "/(admin)/parents" as any },
   { title: "Attendance", icon: "attendance", route: "/(admin)/attendance" as any },

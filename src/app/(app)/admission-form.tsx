@@ -17,6 +17,8 @@ import { useGetApiReligionGet } from "@/api/generated/2-master-religion/2-master
 import { useGetApiCategoryGet } from "@/api/generated/2-master-category/2-master-category";
 import { useGetApiBatchGet } from "@/api/generated/2-master-batch/2-master-batch";
 import { useGetApiClassGet } from "@/api/generated/master-class/master-class";
+import { useGetApiAcademicYearGet } from "@/api/generated/2-master-academicyear/2-master-academicyear";
+import { useGetApiSectionGet } from "@/api/generated/master-section/master-section";
 import { usePermissions } from "@/hooks/usePermissions";
 import { AccessDenied } from "@/components/auth/AccessDenied";
 import { useResponsive } from "@/hooks/useResponsive";
@@ -37,49 +39,102 @@ export default function AdmissionFormScreen() {
 
   // --- Form State ---
   
-  // 1. Personal Details
+  // 1. Academic Details
+  const [academicYearId, setAcademicYearId] = useState<number | undefined>();
+  const [classId, setClassId] = useState<number | undefined>();
+  const [batchId, setBatchId] = useState<number | undefined>();
+  const [sectionId, setSectionId] = useState<number | undefined>();
+  const [studentGRNo, setStudentGRNo] = useState("");
+  const [uidNo, setUidNo] = useState("");
+  const [rollNo, setRollNo] = useState("");
+
+  // 2. Personal Details
   const [firstName, setFirstName] = useState("");
   const [middleName, setMiddleName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [firstNameSecondary, setFirstNameSecondary] = useState("");
+  const [middleNameSecondary, setMiddleNameSecondary] = useState("");
+  const [lastNameSecondary, setLastNameSecondary] = useState("");
+  const [studentDisplayName, setStudentDisplayName] = useState("");
   const [gender, setGender] = useState("Male");
+  const [studentNumber, setStudentNumber] = useState("");
+  const [studentWhatsappNo, setStudentWhatsappNo] = useState("");
+  const [studentEmail, setStudentEmail] = useState("");
   const [dob, setDob] = useState("");
+  const [age, setAge] = useState("");
   const [bloodGroupId, setBloodGroupId] = useState<number | undefined>();
+  const [birthPlace, setBirthPlace] = useState("");
+  const [birthPlaceTaluka, setBirthPlaceTaluka] = useState("");
+  const [birthPlaceDistrict, setBirthPlaceDistrict] = useState("");
   const [religionId, setReligionId] = useState<number | undefined>();
+  const [nationality, setNationality] = useState("Indian");
   const [categoryId, setCategoryId] = useState<number | undefined>();
-  
-  // 2. Identification
+  const [caste, setCaste] = useState("");
+  const [subCaste, setSubCaste] = useState("");
   const [aadhaarNo, setAadhaarNo] = useState("");
-  const [penNo, setPenNo] = useState("");
   const [aparID, setAparID] = useState("");
+  const [penNo, setPenNo] = useState("");
+  const [weight, setWeight] = useState("");
+  const [height, setHeight] = useState("");
+  const [heightWeightDate, setHeightWeightDate] = useState("");
+  const [ews, setEws] = useState(false);
 
-  // 3. Contact & Address
-  const [mobile, setMobile] = useState("");
-  const [email, setEmail] = useState("");
-  const [currentAddress, setCurrentAddress] = useState("");
-  const [currentCity, setCurrentCity] = useState("");
-  const [permanentAddress, setPermanentAddress] = useState("");
-  const [permanentCity, setPermanentCity] = useState("");
-
-  // 4. Guardian Details
+  // 3. Guardian Details
   const [fatherName, setFatherName] = useState("");
   const [fatherNumber, setFatherNumber] = useState("");
   const [fatherOccupation, setFatherOccupation] = useState("");
   const [fatherEducation, setFatherEducation] = useState("");
+  const [fatherEmail, setFatherEmail] = useState("");
   const [motherName, setMotherName] = useState("");
   const [motherNumber, setMotherNumber] = useState("");
   const [motherOccupation, setMotherOccupation] = useState("");
   const [motherEducation, setMotherEducation] = useState("");
+  const [motherEmail, setMotherEmail] = useState("");
+  const [whatsappNumber, setWhatsappNumber] = useState("");
+  const [sendSMSNotification, setSendSMSNotification] = useState(false);
 
-  // 5. Academic & Others
-  const [formNo, setFormNo] = useState("");
-  const [classId, setClassId] = useState<number | undefined>();
-  const [batchId, setBatchId] = useState<number | undefined>();
+  // 4. Address Details
+  const [currentAddress, setCurrentAddress] = useState("");
+  const [currentCity, setCurrentCity] = useState("");
+  const [sameAsCurrentAddress, setSameAsCurrentAddress] = useState(false);
+  const [permanentAddress, setPermanentAddress] = useState("");
+  const [permanentCity, setPermanentCity] = useState("");
+  const [transportFacility, setTransportFacility] = useState(false);
+
+  // 5. Admission Details
+  const [rte, setRte] = useState(false);
+  const [studentType, setStudentType] = useState("New");
+  const [studentFeesDate, setStudentFeesDate] = useState("");
+  const [createdDate, setCreatedDate] = useState(new Date().toISOString().split("T")[0]);
   const [admissionDate, setAdmissionDate] = useState(new Date().toISOString().split("T")[0]);
-  const [previousSchool, setPreviousSchool] = useState("");
+  const [admissionStandard, setAdmissionStandard] = useState("");
+  const [admissionYear, setAdmissionYear] = useState("");
+  const [previousSchoolName, setPreviousSchoolName] = useState("");
+  const [previousSchoolCategory, setPreviousSchoolCategory] = useState("");
+  const [previousSchoolCityVillage, setPreviousSchoolCityVillage] = useState("");
+  const [lastSchoolType, setLastSchoolType] = useState("");
+  const [previousSchoolType, setPreviousSchoolType] = useState("");
   const [lastPercentage, setLastPercentage] = useState("");
-  const [reference, setReference] = useState("");
-  const [remarks, setRemarks] = useState("");
   const [status, setStatus] = useState("Active");
+  const [reference, setReference] = useState("");
+  const [siblingInfo, setSiblingInfo] = useState("");
+  const [remarks, setRemarks] = useState("");
+
+  // --- Accordion State ---
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
+    academic: true,
+    personal: false,
+    guardian: false,
+    address: false,
+    admission: false,
+  });
+
+  const toggleSection = (section: string) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
 
   // --- API Hooks ---
   const studentAddMutation = usePostApiAdmissionAdd();
@@ -95,96 +150,175 @@ export default function AdmissionFormScreen() {
   const { data: categoriesData } = useGetApiCategoryGet();
   const { data: batchesData } = useGetApiBatchGet();
   const { data: classesData } = useGetApiClassGet();
+  const { data: academicYearsData } = useGetApiAcademicYearGet();
+  const { data: sectionsData } = useGetApiSectionGet();
 
   const bloodGroups = parseApiList(bloodGroupsData?.data);
   const religions = parseApiList(religionsData?.data);
   const categories = parseApiList(categoriesData?.data);
   const batches = parseApiList(batchesData?.data);
   const classes = parseApiList(classesData?.data);
+  const academicYears = parseApiList(academicYearsData?.data);
+  const sections = parseApiList(sectionsData?.data);
 
   useEffect(() => {
     if (studentResponse?.data) {
       const s = parseApiData(studentResponse.data) as any;
+      setAcademicYearId(s.academicYearID);
+      setClassId(s.classID);
+      setBatchId(s.batchID);
+      setSectionId(s.sectionID);
+      setStudentGRNo(s.studentGRNo || "");
+      setUidNo(s.uidNo || "");
+      setRollNo(s.rollNo || "");
+
       setFirstName(s.firstName || "");
       setMiddleName(s.middleName || "");
       setLastName(s.lastName || "");
+      setFirstNameSecondary(s.firstNameSecondary || "");
+      setMiddleNameSecondary(s.middleNameSecondary || "");
+      setLastNameSecondary(s.lastNameSecondary || "");
+      setStudentDisplayName(s.studentDisplayName || "");
       setGender(s.gender || "Male");
+      setStudentNumber(s.studentNumber || "");
+      setStudentWhatsappNo(s.studentWhatsappNo || "");
+      setStudentEmail(s.studentEmail || "");
       setDob(s.dob ? String(s.dob).slice(0, 10) : "");
+      setAge(String(s.age || ""));
       setBloodGroupId(s.bloodGroupID);
+      setBirthPlace(s.birthPlace || "");
+      setBirthPlaceTaluka(s.birthPlaceTaluka || "");
+      setBirthPlaceDistrict(s.birthPlaceDistrict || "");
       setReligionId(s.religionID);
+      setNationality(s.nationality || "Indian");
       setCategoryId(s.categoryID);
-      
+      setCaste(s.caste || "");
+      setSubCaste(s.subCaste || "");
       setAadhaarNo(s.aadhaarNo || "");
-      setPenNo(s.penNo || "");
       setAparID(s.aparID || "");
-
-      setMobile(s.studentNumber || "");
-      setEmail(s.studentEmail || "");
-      setCurrentAddress(s.currentAddress || "");
-      setCurrentCity(s.currentCity || "");
-      setPermanentAddress(s.permanentAddress || "");
-      setPermanentCity(s.permanentCity || "");
+      setPenNo(s.penNo || "");
+      setWeight(String(s.weight || ""));
+      setHeight(String(s.height || ""));
+      setHeightWeightDate(s.heightWeightDate ? String(s.heightWeightDate).slice(0, 10) : "");
+      setEws(!!s.ews);
 
       setFatherName(s.fatherName || "");
       setFatherNumber(s.fatherNumber || "");
       setFatherOccupation(s.fatherOccupation || "");
       setFatherEducation(s.fatherEducation || "");
+      setFatherEmail(s.fatherEmail || "");
       setMotherName(s.motherName || "");
       setMotherNumber(s.motherNumber || "");
       setMotherOccupation(s.motherOccupation || "");
       setMotherEducation(s.motherEducation || "");
+      setMotherEmail(s.motherEmail || "");
+      setWhatsappNumber(s.whatsappNumber || "");
+      setSendSMSNotification(!!s.sendSMSNotification);
 
-      setFormNo(s.studentGRNo || "");
-      setClassId(s.classID);
-      setBatchId(s.batchID);
+      setCurrentAddress(s.currentAddress || "");
+      setCurrentCity(s.currentCity || "");
+      setSameAsCurrentAddress(!!s.sameAsCurrentAddress);
+      setPermanentAddress(s.permanentAddress || "");
+      setPermanentCity(s.permanentCity || "");
+      setTransportFacility(!!s.transportFacility);
+
+      setRte(!!s.rte);
+      setStudentType(s.studentType || "New");
+      setStudentFeesDate(s.studentFeesDate ? String(s.studentFeesDate).slice(0, 10) : "");
+      setCreatedDate(s.createdDate ? String(s.createdDate).slice(0, 10) : "");
       setAdmissionDate(s.admissionDate ? String(s.admissionDate).slice(0, 10) : "");
-      setPreviousSchool(s.previousSchoolName || "");
+      setAdmissionStandard(s.admissionStandard || "");
+      setAdmissionYear(s.admissionYear || "");
+      setPreviousSchoolName(s.previousSchoolName || "");
+      setPreviousSchoolCategory(s.previousSchoolCategory || "");
+      setPreviousSchoolCityVillage(s.previousSchoolCityVillage || "");
+      setLastSchoolType(s.lastSchoolType || "");
+      setPreviousSchoolType(s.previousSchoolType || "");
       setLastPercentage(String(s.lastSemesterYearPercentage || ""));
+      setStatus(s.status || "Active");
       setReference(s.referenceSource || "");
+      setSiblingInfo(s.siblingInfo || "");
       setRemarks(s.remarks || "");
-      setStatus(s.isActive ? "Active" : "In-Active");
     }
   }, [studentResponse]);
 
   const handleSubmit = async () => {
-    if (!firstName || !lastName || !fatherName || !mobile) {
+    if (!firstName || !lastName || !fatherName || !studentNumber) {
       Alert.alert("Missing Fields", "Please complete all required fields (*).");
       return;
     }
 
     const payload = {
+      academicYearID: academicYearId,
+      classID: classId,
+      batchID: batchId,
+      sectionID: sectionId,
+      studentGRNo,
+      uidNo,
+      rollNo,
       firstName,
       middleName,
       lastName,
+      firstNameSecondary,
+      middleNameSecondary,
+      lastNameSecondary,
+      studentDisplayName,
       gender,
+      studentNumber,
+      studentWhatsappNo,
+      studentEmail: studentEmail || `${firstName.toLowerCase()}${lastName.toLowerCase()}@school.com`,
       dob,
+      age: parseInt(age) || 0,
       bloodGroupID: bloodGroupId,
+      birthPlace,
+      birthPlaceTaluka,
+      birthPlaceDistrict,
       religionID: religionId,
+      nationality,
       categoryID: categoryId,
+      caste,
+      subCaste,
       aadhaarNo,
-      penNo,
       aparID,
-      studentNumber: mobile,
-      studentEmail: email || `${firstName.toLowerCase()}${lastName.toLowerCase()}@school.com`,
-      currentAddress,
-      currentCity,
-      permanentAddress,
-      permanentCity,
+      penNo,
+      weight: parseFloat(weight) || 0,
+      height: parseFloat(height) || 0,
+      heightWeightDate,
+      ews,
       fatherName,
       fatherNumber,
       fatherOccupation,
       fatherEducation,
+      fatherEmail,
       motherName,
       motherNumber,
       motherOccupation,
       motherEducation,
-      studentGRNo: formNo,
-      classID: classId,
-      batchID: batchId,
+      motherEmail,
+      whatsappNumber,
+      sendSMSNotification,
+      currentAddress,
+      currentCity,
+      sameAsCurrentAddress,
+      permanentAddress,
+      permanentCity,
+      transportFacility,
+      rte,
+      studentType,
+      studentFeesDate,
+      createdDate,
       admissionDate,
-      previousSchoolName: previousSchool,
+      admissionStandard,
+      admissionYear,
+      previousSchoolName,
+      previousSchoolCategory,
+      previousSchoolCityVillage,
+      lastSchoolType,
+      previousSchoolType,
       lastSemesterYearPercentage: parseFloat(lastPercentage) || 0,
+      status,
       referenceSource: reference,
+      siblingInfo,
       remarks,
       isActive: status === "Active",
     };
@@ -219,13 +353,13 @@ export default function AdmissionFormScreen() {
   }
 
   const renderDropdown = (label: string, value: number | undefined, options: any[], onSelect: (id: number) => void, placeholder: string) => (
-    <View className="flex-1 min-w-[200px]">
+    <View className="flex-1 min-w-[280px]">
       <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">{label}</Text>
       <View className="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden h-[48px]">
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ alignItems: 'center', paddingHorizontal: 10 }}>
           {options.map((opt) => {
-            const id = opt.bloodGroupID || opt.religionID || opt.categoryID || opt.batchID || opt.classID;
-            const name = opt.bloodGroupName || opt.religionName || opt.categoryName || opt.batchName || opt.className;
+            const id = opt.bloodGroupID || opt.religionID || opt.categoryID || opt.batchID || opt.classID || opt.academicYearID || opt.sectionID;
+            const name = opt.bloodGroupName || opt.religionName || opt.categoryName || opt.batchName || opt.className || opt.academicYearName || opt.sectionName;
             return (
               <TouchableOpacity
                 key={id}
@@ -243,386 +377,275 @@ export default function AdmissionFormScreen() {
     </View>
   );
 
+  const renderTextInput = (label: string, value: string, onChange: (t: string) => void, placeholder: string, options?: { multiline?: boolean, keyboard?: any, maxLength?: number, editable?: boolean }) => (
+    <View className="flex-1 min-w-[280px]">
+      <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">{label}</Text>
+      <TextInput
+        value={value}
+        onChangeText={onChange}
+        placeholder={placeholder}
+        multiline={options?.multiline}
+        keyboardType={options?.keyboard || "default"}
+        maxLength={options?.maxLength}
+        editable={options?.editable}
+        className={`${options?.multiline ? "min-h-[80px] py-2" : "h-[48px]"} bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800`}
+      />
+    </View>
+  );
+
+  const renderToggle = (label: string, value: string | boolean, options: string[], onSelect: (v: any) => void) => (
+    <View className="flex-1 min-w-[280px]">
+      <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">{label}</Text>
+      <View className="flex-row bg-gray-50 border border-gray-200 rounded-xl overflow-hidden h-[48px] p-0.5">
+        {options.map((opt) => {
+          const isActive = typeof value === 'boolean' ? (opt === 'Yes' ? value === true : value === false) : value === opt;
+          return (
+            <TouchableOpacity
+              key={opt}
+              onPress={() => onSelect(opt === 'Yes' ? true : opt === 'No' ? false : opt)}
+              className={`flex-1 items-center justify-center rounded-lg ${isActive ? "bg-[#1A3C6E]" : ""}`}
+            >
+              <Text className={`text-xs font-black uppercase ${isActive ? "text-white" : "text-gray-500"}`}>
+                {opt}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    </View>
+  );
+
+  const SectionHeader = ({ title, icon, color, bgColor, borderColor, sectionKey }: { title: string, icon: any, color: string, bgColor: string, borderColor: string, sectionKey: string }) => (
+    <TouchableOpacity 
+      onPress={() => toggleSection(sectionKey)}
+      activeOpacity={0.7}
+      className="flex-row items-center justify-between py-2"
+    >
+      <View className="flex-row items-center gap-3">
+        <View className={`w-10 h-10 ${bgColor} rounded-xl items-center justify-center border ${borderColor}`}>
+          <AppIcon name={icon} size={22} color={color} active />
+        </View>
+        <Text className="text-[16px] font-black text-gray-900 uppercase tracking-wide">{title}</Text>
+      </View>
+      <View className={`transform ${expandedSections[sectionKey] ? "rotate-180" : "rotate-0"}`}>
+        <AppIcon name="chevronDown" size={20} color="#9CA3AF" />
+      </View>
+    </TouchableOpacity>
+  );
+
   const formContent = (
-    <>
-      {/* SECTION 1: Personal Details */}
-      <Card className="bg-white border border-gray-150 p-6 mb-6">
-        <View className="flex-row items-center gap-3 mb-5 border-b border-gray-100 pb-4">
-          <View className="w-10 h-10 bg-blue-50 rounded-xl items-center justify-center border border-blue-100">
-            <AppIcon name={gender.toLowerCase() === "female" ? "female" : "male"} size={22} color="#0369A1" active />
-          </View>
-          <Text className="text-[16px] font-black text-gray-900 uppercase tracking-wide">Personal Details</Text>
-        </View>
-
-        <View className={`flex-row flex-wrap gap-4 ${isMobile ? "flex-col" : ""}`}>
-          <View className="flex-1 min-w-[150px]">
-            <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">First Name *</Text>
-            <TextInput
-              value={firstName}
-              onChangeText={setFirstName}
-              placeholder="First Name"
-              className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
-            />
-          </View>
-          <View className="flex-1 min-w-[150px]">
-            <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">Middle Name</Text>
-            <TextInput
-              value={middleName}
-              onChangeText={setMiddleName}
-              placeholder="Middle Name"
-              className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
-            />
-          </View>
-          <View className="flex-1 min-w-[150px]">
-            <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">Last Name *</Text>
-            <TextInput
-              value={lastName}
-              onChangeText={setLastName}
-              placeholder="Last Name"
-              className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
-            />
-          </View>
-        </View>
-
-        <View className={`flex-row flex-wrap gap-4 mt-4 ${isMobile ? "flex-col" : ""}`}>
-          <View className="flex-1 min-w-[150px]">
-            <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">Gender *</Text>
-            <View className="flex-row bg-gray-50 border border-gray-200 rounded-xl overflow-hidden h-[48px] p-0.5">
-              {["Male", "Female"].map((g) => (
-                <TouchableOpacity
-                  key={g}
-                  onPress={() => setGender(g)}
-                  className={`flex-1 items-center justify-center rounded-lg ${gender === g ? "bg-[#1A3C6E]" : ""}`}
-                >
-                  <Text className={`text-xs font-black uppercase ${gender === g ? "text-white" : "text-gray-500"}`}>
-                    {g}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+    <View className="flex-1 w-full max-w-full">
+      {/* SECTION 1: Academic Details */}
+      <Card className="bg-white border border-gray-150 p-6 mb-4 overflow-hidden">
+        <SectionHeader 
+          title="Academic Details" 
+          icon="subjects" 
+          color="#15803D" 
+          bgColor="bg-emerald-50" 
+          borderColor="border-emerald-100"
+          sectionKey="academic"
+        />
+        {expandedSections.academic && (
+          <View className="mt-6 pt-6 border-t border-gray-100">
+            <View className={`flex-row flex-wrap gap-5 ${isMobile ? "flex-col" : ""}`}>
+              {renderDropdown("Academic Year", academicYearId, academicYears, setAcademicYearId, "Select Year")}
+              {renderDropdown("Class", classId, classes, setClassId, "Select Class")}
+              {renderDropdown("Batch", batchId, batches, setBatchId, "Select Batch")}
+              {renderDropdown("Section", sectionId, sections, setSectionId, "Select Section")}
+            </View>
+            <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>
+              {renderTextInput("Student Id / GR No.", studentGRNo, setStudentGRNo, "GR Number", { editable: !isEditing })}
+              {renderTextInput("UID No", uidNo, setUidNo, "UID Number")}
+              {renderTextInput("Roll No", rollNo, setRollNo, "Roll Number")}
             </View>
           </View>
-          <View className="flex-1 min-w-[150px]">
-            <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">Date of Birth *</Text>
-            <TextInput
-              value={dob}
-              onChangeText={setDob}
-              placeholder="YYYY-MM-DD"
-              className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
-            />
-          </View>
-        </View>
-
-        <View className={`flex-row flex-wrap gap-4 mt-4 ${isMobile ? "flex-col" : ""}`}>
-          {renderDropdown("Blood Group", bloodGroupId, bloodGroups, setBloodGroupId, "Select Blood Group")}
-          {renderDropdown("Religion", religionId, religions, setReligionId, "Select Religion")}
-          {renderDropdown("Category", categoryId, categories, setCategoryId, "Select Category")}
-        </View>
+        )}
       </Card>
 
-      {/* SECTION 2: Identification & Documents */}
-      <Card className="bg-white border border-gray-150 p-6 mb-6">
-        <View className="flex-row items-center gap-3 mb-5 border-b border-gray-100 pb-4">
-          <View className="w-10 h-10 bg-purple-50 rounded-xl items-center justify-center border border-purple-100">
-            <AppIcon name="profile" size={22} color="#7C3AED" active />
-          </View>
-          <Text className="text-[16px] font-black text-gray-900 uppercase tracking-wide">Identification Details</Text>
-        </View>
-
-        <View className={`flex-row flex-wrap gap-4 ${isMobile ? "flex-col" : ""}`}>
-          <View className="flex-1 min-w-[200px]">
-            <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">Aadhaar Number</Text>
-            <TextInput
-              value={aadhaarNo}
-              onChangeText={setAadhaarNo}
-              placeholder="12 Digit Aadhaar"
-              keyboardType="number-pad"
-              maxLength={12}
-              className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
-            />
-          </View>
-          <View className="flex-1 min-w-[200px]">
-            <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">PEN Number</Text>
-            <TextInput
-              value={penNo}
-              onChangeText={setPenNo}
-              placeholder="Enter PEN No"
-              className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
-            />
-          </View>
-          <View className="flex-1 min-w-[200px]">
-            <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">APAR ID</Text>
-            <TextInput
-              value={aparID}
-              onChangeText={setAparID}
-              placeholder="Enter APAR ID"
-              className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
-            />
-          </View>
-        </View>
-      </Card>
-
-      {/* SECTION 3: Contact & Address */}
-      <Card className="bg-white border border-gray-150 p-6 mb-6">
-        <View className="flex-row items-center gap-3 mb-5 border-b border-gray-100 pb-4">
-          <View className="w-10 h-10 bg-emerald-50 rounded-xl items-center justify-center border border-emerald-100">
-            <AppIcon name="notifications" size={22} color="#059669" active />
-          </View>
-          <Text className="text-[16px] font-black text-gray-900 uppercase tracking-wide">Contact & Address</Text>
-        </View>
-
-        <View className={`flex-row flex-wrap gap-4 ${isMobile ? "flex-col" : ""}`}>
-          <View className="flex-1 min-w-[200px]">
-            <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">Mobile Number *</Text>
-            <TextInput
-              value={mobile}
-              onChangeText={setMobile}
-              placeholder="10 Digit Mobile"
-              keyboardType="phone-pad"
-              maxLength={10}
-              className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
-            />
-          </View>
-          <View className="flex-1 min-w-[250px]">
-            <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">Email Address</Text>
-            <TextInput
-              value={email}
-              onChangeText={setEmail}
-              placeholder="email@example.com"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
-            />
-          </View>
-        </View>
-
-        <View className="mt-4">
-          <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">Current Address</Text>
-          <TextInput
-            value={currentAddress}
-            onChangeText={setCurrentAddress}
-            placeholder="Full Address"
-            multiline
-            className="min-h-[80px] bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm font-semibold text-gray-800"
-          />
-        </View>
-        
-        <View className="mt-4">
-          <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">Permanent Address</Text>
-          <TextInput
-            value={permanentAddress}
-            onChangeText={setPermanentAddress}
-            placeholder="Full Address"
-            multiline
-            className="min-h-[80px] bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-sm font-semibold text-gray-800"
-          />
-        </View>
-      </Card>
-
-      {/* SECTION 4: Guardian Details */}
-      <Card className="bg-white border border-gray-150 p-6 mb-6">
-        <View className="flex-row items-center gap-3 mb-5 border-b border-gray-100 pb-4">
-          <View className="w-10 h-10 bg-amber-50 rounded-xl items-center justify-center border border-amber-100">
-            <AppIcon name="parents" size={22} color="#B45309" active />
-          </View>
-          <Text className="text-[16px] font-black text-gray-900 uppercase tracking-wide">Guardian Details</Text>
-        </View>
-
-        {/* Father's Info */}
-        <Text className="text-[14px] font-bold text-gray-700 mb-3">Father's Information</Text>
-        <View className={`flex-row flex-wrap gap-4 ${isMobile ? "flex-col" : ""}`}>
-          <View className="flex-1 min-w-[200px]">
-            <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">Father Name *</Text>
-            <TextInput
-              value={fatherName}
-              onChangeText={setFatherName}
-              placeholder="Father's Full Name"
-              className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
-            />
-          </View>
-          <View className="flex-1 min-w-[200px]">
-            <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">Father Phone</Text>
-            <TextInput
-              value={fatherNumber}
-              onChangeText={setFatherNumber}
-              placeholder="Father's Mobile"
-              keyboardType="phone-pad"
-              className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
-            />
-          </View>
-        </View>
-        <View className={`flex-row flex-wrap gap-4 mt-4 ${isMobile ? "flex-col" : ""}`}>
-          <View className="flex-1 min-w-[200px]">
-            <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">Father Occupation</Text>
-            <TextInput
-              value={fatherOccupation}
-              onChangeText={setFatherOccupation}
-              placeholder="Occupation"
-              className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
-            />
-          </View>
-          <View className="flex-1 min-w-[200px]">
-            <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">Father Education</Text>
-            <TextInput
-              value={fatherEducation}
-              onChangeText={setFatherEducation}
-              placeholder="Education"
-              className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
-            />
-          </View>
-        </View>
-
-        {/* Mother's Info */}
-        <Text className="text-[14px] font-bold text-gray-700 mt-6 mb-3">Mother's Information</Text>
-        <View className={`flex-row flex-wrap gap-4 ${isMobile ? "flex-col" : ""}`}>
-          <View className="flex-1 min-w-[200px]">
-            <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">Mother Name</Text>
-            <TextInput
-              value={motherName}
-              onChangeText={setMotherName}
-              placeholder="Mother's Full Name"
-              className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
-            />
-          </View>
-          <View className="flex-1 min-w-[200px]">
-            <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">Mother Phone</Text>
-            <TextInput
-              value={motherNumber}
-              onChangeText={setMotherNumber}
-              placeholder="Mother's Mobile"
-              keyboardType="phone-pad"
-              className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
-            />
-          </View>
-        </View>
-        <View className={`flex-row flex-wrap gap-4 mt-4 ${isMobile ? "flex-col" : ""}`}>
-          <View className="flex-1 min-w-[200px]">
-            <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">Mother Occupation</Text>
-            <TextInput
-              value={motherOccupation}
-              onChangeText={setMotherOccupation}
-              placeholder="Occupation"
-              className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
-            />
-          </View>
-          <View className="flex-1 min-w-[200px]">
-            <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">Mother Education</Text>
-            <TextInput
-              value={motherEducation}
-              onChangeText={setMotherEducation}
-              placeholder="Education"
-              className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
-            />
-          </View>
-        </View>
-      </Card>
-
-      {/* SECTION 5: Academic History & Reference */}
-      <Card className="bg-white border border-gray-150 p-6 mb-6">
-        <View className="flex-row items-center gap-3 mb-5 border-b border-gray-100 pb-4">
-          <View className="w-10 h-10 bg-pink-50 rounded-xl items-center justify-center border border-pink-100">
-            <AppIcon name="reports" size={22} color="#DB2777" active />
-          </View>
-          <Text className="text-[16px] font-black text-gray-900 uppercase tracking-wide">Academic History</Text>
-        </View>
-
-        <View className={`flex-row flex-wrap gap-4 ${isMobile ? "flex-col" : ""}`}>
-          <View className="flex-1 min-w-[250px]">
-            <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">Previous School Name</Text>
-            <TextInput
-              value={previousSchool}
-              onChangeText={setPreviousSchool}
-              placeholder="Last School Attended"
-              className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
-            />
-          </View>
-          <View className="flex-1 min-w-[150px]">
-            <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">Last Year %</Text>
-            <TextInput
-              value={lastPercentage}
-              onChangeText={setLastPercentage}
-              placeholder="e.g. 85.5"
-              keyboardType="decimal-pad"
-              className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
-            />
-          </View>
-        </View>
-
-        <View className={`flex-row flex-wrap gap-4 mt-4 ${isMobile ? "flex-col" : ""}`}>
-          <View className="flex-1 min-w-[200px]">
-            <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">Reference / Source</Text>
-            <TextInput
-              value={reference}
-              onChangeText={setReference}
-              placeholder="How did you hear about us?"
-              className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
-            />
-          </View>
-          <View className="flex-1 min-w-[200px]">
-            <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">Admission Status</Text>
-            <View className="flex-row bg-gray-50 border border-gray-200 rounded-xl overflow-hidden h-[48px] p-0.5">
-              {["Active", "In-Active"].map((s) => (
-                <TouchableOpacity
-                  key={s}
-                  onPress={() => setStatus(s)}
-                  className={`flex-1 items-center justify-center rounded-lg ${status === s ? "bg-[#1A3C6E]" : ""}`}
-                >
-                  <Text className={`text-xs font-black uppercase ${status === s ? "text-white" : "text-gray-500"}`}>
-                    {s}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+      {/* SECTION 2: Personal Details */}
+      <Card className="bg-white border border-gray-150 p-6 mb-4 overflow-hidden">
+        <SectionHeader 
+          title="Personal Details" 
+          icon={gender.toLowerCase() === "female" ? "female" : "male"} 
+          color="#0369A1" 
+          bgColor="bg-blue-50" 
+          borderColor="border-blue-100"
+          sectionKey="personal"
+        />
+        {expandedSections.personal && (
+          <View className="mt-6 pt-6 border-t border-gray-100">
+            <View className={`flex-row flex-wrap gap-5 ${isMobile ? "flex-col" : ""}`}>
+              {renderTextInput("First Name *", firstName, setFirstName, "Student Name")}
+              {renderTextInput("Middle Name", middleName, setMiddleName, "Father's Name")}
+              {renderTextInput("Last Name *", lastName, setLastName, "Surname")}
+            </View>
+            <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>
+              {renderTextInput("First Name (Secondary)", firstNameSecondary, setFirstNameSecondary, "Secondary Language")}
+              {renderTextInput("Middle Name (Secondary)", middleNameSecondary, setMiddleNameSecondary, "Secondary Language")}
+              {renderTextInput("Last Name (Secondary)", lastNameSecondary, setLastNameSecondary, "Secondary Language")}
+            </View>
+            <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>
+              {renderTextInput("Student Display Name", studentDisplayName, setStudentDisplayName, "Full Name for Records")}
+              {renderToggle("Gender *", gender, ["Male", "Female", "Other"], setGender)}
+              {renderTextInput("Date of Birth *", dob, setDob, "YYYY-MM-DD")}
+              {renderTextInput("Age", age, setAge, "Calculated Age", { keyboard: "number-pad" })}
+            </View>
+            <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>
+              {renderTextInput("Phone Number *", studentNumber, setStudentNumber, "10 Digit Mobile", { keyboard: "phone-pad", maxLength: 10 })}
+              {renderTextInput("Whatsapp No", studentWhatsappNo, setStudentWhatsappNo, "Whatsapp Number", { keyboard: "phone-pad", maxLength: 10 })}
+              {renderTextInput("Student Email", studentEmail, setStudentEmail, "email@example.com", { keyboard: "email-address" })}
+            </View>
+            <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>
+              {renderDropdown("Blood Group", bloodGroupId, bloodGroups, setBloodGroupId, "Select")}
+              {renderTextInput("Birth Place", birthPlace, setBirthPlace, "City/Village")}
+              {renderTextInput("Birth Place Taluka", birthPlaceTaluka, setBirthPlaceTaluka, "Taluka")}
+              {renderTextInput("Birth Place District", birthPlaceDistrict, setBirthPlaceDistrict, "District")}
+            </View>
+            <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>
+              {renderDropdown("Religion", religionId, religions, setReligionId, "Select")}
+              {renderTextInput("Nationality", nationality, setNationality, "e.g. Indian")}
+              {renderDropdown("Category", categoryId, categories, setCategoryId, "Select")}
+              {renderTextInput("Caste", caste, setCaste, "Caste Name")}
+              {renderTextInput("Sub Caste", subCaste, setSubCaste, "Sub Caste Name")}
+            </View>
+            <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>
+              {renderTextInput("Aadhaar Number", aadhaarNo, setAadhaarNo, "12 Digit Aadhaar", { keyboard: "number-pad", maxLength: 12 })}
+              {renderTextInput("Apaar ID", aparID, setAparID, "APAAR ID")}
+              {renderTextInput("PEN Number", penNo, setPenNo, "PEN ID")}
+            </View>
+            <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>
+              {renderTextInput("Weight (KG)", weight, setWeight, "0.00", { keyboard: "decimal-pad" })}
+              {renderTextInput("Height (CM)", height, setHeight, "0.00", { keyboard: "decimal-pad" })}
+              {renderTextInput("Height/Weight Date", heightWeightDate, setHeightWeightDate, "YYYY-MM-DD")}
+              {renderToggle("EWS", ews, ["Yes", "No"], setEws)}
             </View>
           </View>
-        </View>
-
-        <View className="mt-4">
-          <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">Remarks</Text>
-          <TextInput
-            value={remarks}
-            onChangeText={setRemarks}
-            placeholder="Any additional notes"
-            className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
-          />
-        </View>
+        )}
       </Card>
 
-      {/* SECTION 6: Academic Registration */}
-      <Card className="bg-white border border-gray-150 p-6 mb-10">
-        <View className="flex-row items-center gap-3 mb-5 border-b border-gray-100 pb-4">
-          <View className="w-10 h-10 bg-emerald-50 rounded-xl items-center justify-center border border-emerald-100">
-            <AppIcon name="subjects" size={22} color="#15803D" active />
+      {/* SECTION 3: Guardian Details */}
+      <Card className="bg-white border border-gray-150 p-6 mb-4 overflow-hidden">
+        <SectionHeader 
+          title="Guardian Details" 
+          icon="parents" 
+          color="#B45309" 
+          bgColor="bg-amber-50" 
+          borderColor="border-amber-100"
+          sectionKey="guardian"
+        />
+        {expandedSections.guardian && (
+          <View className="mt-6 pt-6 border-t border-gray-100">
+            <Text className="text-[14px] font-bold text-gray-700 mb-3">Father's Information</Text>
+            <View className={`flex-row flex-wrap gap-5 ${isMobile ? "flex-col" : ""}`}>
+              {renderTextInput("Father Name *", fatherName, setFatherName, "Full Name")}
+              {renderTextInput("Father Phone", fatherNumber, setFatherNumber, "Mobile No", { keyboard: "phone-pad" })}
+              {renderTextInput("Father Occupation", fatherOccupation, setFatherOccupation, "Occupation")}
+              {renderTextInput("Father Education", fatherEducation, setFatherEducation, "Education")}
+              {renderTextInput("Father Email", fatherEmail, setFatherEmail, "email@example.com", { keyboard: "email-address" })}
+            </View>
+            <Text className="text-[14px] font-bold text-gray-700 mt-8 mb-3">Mother's Information</Text>
+            <View className={`flex-row flex-wrap gap-5 ${isMobile ? "flex-col" : ""}`}>
+              {renderTextInput("Mother Name", motherName, setMotherName, "Full Name")}
+              {renderTextInput("Mother Phone", motherNumber, setMotherNumber, "Mobile No", { keyboard: "phone-pad" })}
+              {renderTextInput("Mother Occupation", motherOccupation, setMotherOccupation, "Occupation")}
+              {renderTextInput("Mother Education", motherEducation, setMotherEducation, "Education")}
+              {renderTextInput("Mother Email", motherEmail, setMotherEmail, "email@example.com", { keyboard: "email-address" })}
+            </View>
+            <View className={`flex-row flex-wrap gap-5 mt-8 ${isMobile ? "flex-col" : ""}`}>
+              {renderToggle("Send SMS Notification", sendSMSNotification, ["Yes", "No"], setSendSMSNotification)}
+              {renderTextInput("Whatsapp Number", whatsappNumber, setWhatsappNumber, "Default for Whatsapp", { keyboard: "phone-pad" })}
+            </View>
           </View>
-          <Text className="text-[16px] font-black text-gray-900 uppercase tracking-wide">School Registration</Text>
-        </View>
-
-        <View className={`flex-row flex-wrap gap-4 ${isMobile ? "flex-col" : ""}`}>
-          <View className="flex-1 min-w-[150px]">
-            <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">Form / GR No.</Text>
-            <TextInput
-              value={formNo}
-              onChangeText={setFormNo}
-              placeholder="LAES-2026-XXX"
-              className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-bold text-gray-800"
-              editable={!isEditing}
-            />
-          </View>
-          <View className="flex-1 min-w-[150px]">
-            <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">Admission Date</Text>
-            <TextInput
-              value={admissionDate}
-              onChangeText={setAdmissionDate}
-              placeholder="YYYY-MM-DD"
-              className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
-            />
-          </View>
-        </View>
-
-        <View className={`flex-row flex-wrap gap-4 mt-4 ${isMobile ? "flex-col" : ""}`}>
-          {renderDropdown("Assign Class", classId, classes, setClassId, "Select Class")}
-          {renderDropdown("Assign Batch", batchId, batches, setBatchId, "Select Batch")}
-        </View>
+        )}
       </Card>
-    </>
+
+      {/* SECTION 4: Address Details */}
+      <Card className="bg-white border border-gray-150 p-6 mb-4 overflow-hidden">
+        <SectionHeader 
+          title="Address Details" 
+          icon="notifications" 
+          color="#059669" 
+          bgColor="bg-emerald-50" 
+          borderColor="border-emerald-100"
+          sectionKey="address"
+        />
+        {expandedSections.address && (
+          <View className="mt-6 pt-6 border-t border-gray-100">
+            <View className={`flex-row flex-wrap gap-5 ${isMobile ? "flex-col" : ""}`}>
+              {renderTextInput("Current Address", currentAddress, setCurrentAddress, "Full Address", { multiline: true })}
+              {renderTextInput("Current City", currentCity, setCurrentCity, "City/Village")}
+            </View>
+            <View className="mt-5 mb-5">
+              {renderToggle("Permanent Address Same As Current?", sameAsCurrentAddress, ["Yes", "No"], (v) => {
+                setSameAsCurrentAddress(v);
+                if (v) {
+                  setPermanentAddress(currentAddress);
+                  setPermanentCity(currentCity);
+                }
+              })}
+            </View>
+            <View className={`flex-row flex-wrap gap-5 ${isMobile ? "flex-col" : ""}`}>
+              {renderTextInput("Permanent Address", permanentAddress, setPermanentAddress, "Full Address", { multiline: true, editable: !sameAsCurrentAddress })}
+              {renderTextInput("Permanent City", permanentCity, setPermanentCity, "City/Village", { editable: !sameAsCurrentAddress })}
+            </View>
+            <View className="mt-5">
+              {renderToggle("Transport Facility", transportFacility, ["Yes", "No"], setTransportFacility)}
+            </View>
+          </View>
+        )}
+      </Card>
+
+      {/* SECTION 5: Admission Details */}
+      <Card className="bg-white border border-gray-150 p-6 mb-10 overflow-hidden">
+        <SectionHeader 
+          title="Admission Details" 
+          icon="reports" 
+          color="#DB2777" 
+          bgColor="bg-pink-50" 
+          borderColor="border-pink-100"
+          sectionKey="admission"
+        />
+        {expandedSections.admission && (
+          <View className="mt-6 pt-6 border-t border-gray-100">
+            <View className={`flex-row flex-wrap gap-5 ${isMobile ? "flex-col" : ""}`}>
+              {renderToggle("Right to Education (RTE)", rte, ["Yes", "No"], setRte)}
+              {renderToggle("Student Type", studentType, ["New", "Old"], setStudentType)}
+              {renderTextInput("Student Fees Date", studentFeesDate, setStudentFeesDate, "YYYY-MM-DD")}
+            </View>
+            <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>
+              {renderTextInput("Created Date", createdDate, setCreatedDate, "YYYY-MM-DD")}
+              {renderTextInput("Admission Date", admissionDate, setAdmissionDate, "YYYY-MM-DD")}
+              {renderDropdown("Admission Standard", (classes.find(c => (c as any).className === admissionStandard) as any)?.classID, classes, (id) => {
+                const cls = classes.find(c => (c as any).classID === id) as any;
+                if (cls) setAdmissionStandard(cls.className);
+              }, "Select Standard")}
+              {renderDropdown("Admission Year", (academicYears.find(y => (y as any).academicYearName === admissionYear) as any)?.academicYearID, academicYears, (id) => {
+                const yr = academicYears.find(y => (y as any).academicYearID === id) as any;
+                if (yr) setAdmissionYear(yr.academicYearName);
+              }, "Select Year")}
+            </View>
+            <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>
+              {renderTextInput("Previous School Name", previousSchoolName, setPreviousSchoolName, "School Name")}
+              {renderTextInput("Previous School Category", previousSchoolCategory, setPreviousSchoolCategory, "Category")}
+              {renderTextInput("Previous School City/Village", previousSchoolCityVillage, setPreviousSchoolCityVillage, "City/Village")}
+            </View>
+            <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>
+              {renderTextInput("Type Of Last School", lastSchoolType, setLastSchoolType, "e.g. Private")}
+              {renderTextInput("Previous School Type", previousSchoolType, setPreviousSchoolType, "e.g. Co-Ed")}
+              {renderTextInput("Last Semester/Year %", lastPercentage, setLastPercentage, "0.00", { keyboard: "decimal-pad" })}
+            </View>
+            <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>
+              {renderToggle("Status", status, ["Active", "In-Active"], setStatus)}
+              {renderTextInput("Reference / Source", reference, setReference, "How did you hear about us?")}
+              {renderTextInput("Sibling Info", siblingInfo, setSiblingInfo, "Sibling Details")}
+            </View>
+            <View className="mt-5">
+              {renderTextInput("Remarks", remarks, setRemarks, "Additional Notes", { multiline: true })}
+            </View>
+          </View>
+        )}
+      </Card>
+    </View>
   );
 
   return (
@@ -631,6 +654,7 @@ export default function AdmissionFormScreen() {
       subtitle={isEditing ? "Modify existing student records" : "Register a new student into the school ledger"}
       onBack={() => router.back()}
       keyboard
+      fullWidth
       rightAction={
         !isMobile ? (
           <TouchableOpacity
