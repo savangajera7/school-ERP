@@ -2,7 +2,7 @@ name: Deploy Web (Teacher & Admin)
 
 on:
   push:
-    branches: [main]
+    branches: [production]
     paths:
       - "src/**"
       - "app.json"
