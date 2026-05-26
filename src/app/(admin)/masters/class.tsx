@@ -31,7 +31,7 @@ export default function ClassScreen() {
     if (!newName.trim()) return;
     try {
       await addMutation.mutateAsync({
-        data: { className: newName, isActive: true }
+        data: { className: newName, isActive: true, createdBy: 1 }
       });
       setNewName("");
       refetch();
@@ -46,7 +46,8 @@ export default function ClassScreen() {
       await updateMutation.mutateAsync({
         data: { 
           ...editingItem,
-          className: newName 
+          className: newName,
+          updatedBy: 1
         }
       });
       setNewName("");

@@ -31,7 +31,7 @@ export default function BloodGroupScreen() {
     if (!newName.trim()) return;
     try {
       await addMutation.mutateAsync({
-        data: { bloodGroupName: newName, isActive: true }
+        data: { bloodGroupName: newName, isActive: true, createdBy: 1 }
       });
       setNewName("");
       refetch();
@@ -46,7 +46,8 @@ export default function BloodGroupScreen() {
       await updateMutation.mutateAsync({
         data: { 
           ...editingItem,
-          bloodGroupName: newName 
+          bloodGroupName: newName,
+          updatedBy: 1
         }
       });
       setNewName("");

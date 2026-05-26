@@ -31,7 +31,7 @@ export default function SubjectScreen() {
     if (!newName.trim()) return;
     try {
       await addMutation.mutateAsync({
-        data: { subjectName: newName }
+        data: { subjectName: newName, createdBy: 1 }
       });
       setNewName("");
       refetch();
@@ -46,7 +46,8 @@ export default function SubjectScreen() {
       await updateMutation.mutateAsync({
         data: { 
           ...editingItem,
-          subjectName: newName 
+          subjectName: newName,
+          updatedBy: 1
         }
       });
       setNewName("");
@@ -76,7 +77,7 @@ export default function SubjectScreen() {
         onPress: async () => {
           try {
             await deleteMutation.mutateAsync({ 
-              data: { subjectID: item.subjectID } 
+              data: { subjectID: item.subjectID, updatedBy: 1 } 
             });
             refetch();
           } catch (error: any) {

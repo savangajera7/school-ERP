@@ -31,7 +31,7 @@ export default function CategoryScreen() {
     if (!newName.trim()) return;
     try {
       await addMutation.mutateAsync({
-        data: { categoryName: newName, isActive: true }
+        data: { categoryName: newName, isActive: true, createdBy: 1 }
       });
       setNewName("");
       refetch();
@@ -46,7 +46,8 @@ export default function CategoryScreen() {
       await updateMutation.mutateAsync({
         data: { 
           ...editingItem,
-          categoryName: newName 
+          categoryName: newName,
+          updatedBy: 1
         }
       });
       setNewName("");

@@ -31,7 +31,7 @@ export default function SectionScreen() {
     if (!newName.trim()) return;
     try {
       await addMutation.mutateAsync({
-        data: { sectionName: newName, isActive: true }
+        data: { sectionName: newName, isActive: true, createdBy: 1 }
       });
       setNewName("");
       refetch();
@@ -46,7 +46,8 @@ export default function SectionScreen() {
       await updateMutation.mutateAsync({
         data: { 
           ...editingItem,
-          sectionName: newName 
+          sectionName: newName,
+          updatedBy: 1
         }
       });
       setNewName("");

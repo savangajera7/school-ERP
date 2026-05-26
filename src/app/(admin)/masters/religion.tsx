@@ -31,7 +31,7 @@ export default function ReligionScreen() {
     if (!newName.trim()) return;
     try {
       await addMutation.mutateAsync({
-        data: { religionName: newName, isActive: true }
+        data: { religionName: newName, isActive: true, createdBy: 1 }
       });
       setNewName("");
       refetch();
@@ -46,7 +46,8 @@ export default function ReligionScreen() {
       await updateMutation.mutateAsync({
         data: { 
           ...editingItem,
-          religionName: newName 
+          religionName: newName,
+          updatedBy: 1
         }
       });
       setNewName("");

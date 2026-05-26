@@ -31,7 +31,7 @@ export default function AcademicYearScreen() {
     if (!newYear.trim()) return;
     try {
       await addYear.mutateAsync({
-        data: { academicYearName: newYear, isActive: true }
+        data: { academicYearName: newYear, isActive: true, createdBy: 1 }
       });
       setNewYear("");
       refetch();
@@ -46,7 +46,8 @@ export default function AcademicYearScreen() {
       await updateYear.mutateAsync({
         data: { 
           ...editingItem,
-          academicYearName: newYear 
+          academicYearName: newYear,
+          updatedBy: 1
         }
       });
       setNewYear("");

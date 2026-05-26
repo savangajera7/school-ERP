@@ -31,7 +31,7 @@ export default function BatchScreen() {
     if (!newName.trim()) return;
     try {
       await addMutation.mutateAsync({
-        data: { batchName: newName, isActive: true }
+        data: { batchName: newName, isActive: true, createdBy: 1 }
       });
       setNewName("");
       refetch();
@@ -46,7 +46,8 @@ export default function BatchScreen() {
       await updateMutation.mutateAsync({
         data: { 
           ...editingItem,
-          batchName: newName 
+          batchName: newName,
+          updatedBy: 1
         }
       });
       setNewName("");
