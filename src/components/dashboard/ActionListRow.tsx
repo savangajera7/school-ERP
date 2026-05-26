@@ -25,28 +25,28 @@ export function ActionListRow({
     <TouchableOpacity 
       onPress={onPress} 
       activeOpacity={0.7}
-      className="bg-white border border-gray-100 rounded-2xl p-4 flex-row items-center mb-3"
+      className="bg-white border border-gray-200 rounded-2xl p-4 flex-row items-center"
       style={premiumCardShadow}
     >
       <IconCircle
         name={icon}
-        size={44}
-        iconSize={22}
+        size={48}
+        iconSize={24}
         color={accentColor}
-        backgroundColor={iconBackground ?? `${accentColor}10`}
+        backgroundColor={iconBackground ?? `${accentColor}15`}
       />
       <View className="flex-1 ml-4 mr-2">
-        <Text className="text-[15px] font-black text-gray-800">
+        <Text className="text-[16px] font-bold text-gray-800">
           {label}
         </Text>
         {description && (
-          <Text className="text-[11px] font-semibold text-gray-400 mt-0.5">
+          <Text className="text-[12px] font-medium text-gray-500 mt-1">
             {description}
           </Text>
         )}
       </View>
       <View className="w-8 items-center justify-center">
-        <AppIcon name="chevronRight" size={18} color="#D1D5DB" />
+        <AppIcon name="chevronRight" size={20} color="#9CA3AF" />
       </View>
     </TouchableOpacity>
   );

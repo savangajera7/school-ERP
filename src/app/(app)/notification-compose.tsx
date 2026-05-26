@@ -26,7 +26,6 @@ export default function NotificationComposeScreen() {
 
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
-  const [screenName, setScreenName] = useState("/(app)/dashboard");
   const [notificationType, setNotificationType] = useState("General");
 
   const handleSend = async () => {
@@ -40,11 +39,12 @@ export default function NotificationComposeScreen() {
         data: {
           title,
           message,
-          screenName,
           notificationType,
           deviceType: "All",
           isSent: false,
           createdBy,
+          roleID: userData?.roleId || 2,
+          userID: createdBy,
         },
       });
       showToast("Notification queued. Backend will deliver push to devices.", "success");
@@ -79,13 +79,6 @@ export default function NotificationComposeScreen() {
           numberOfLines={4}
           className="border border-gray-200 rounded-xl px-4 py-3 min-h-[100px]"
           placeholder="Message body"
-        />
-        <Text className="text-sm font-semibold text-gray-600 mt-2">Deep link route</Text>
-        <TextInput
-          value={screenName}
-          onChangeText={setScreenName}
-          className="border border-gray-200 rounded-xl px-4 py-3"
-          placeholder="/(app)/dashboard"
         />
         <Text className="text-sm font-semibold text-gray-600 mt-2">Type</Text>
         <TextInput

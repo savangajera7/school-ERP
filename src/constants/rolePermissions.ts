@@ -57,7 +57,9 @@ export type AppRoute =
   | "/(parent)/homework"
   | "/(parent)/syllabus"
   | "/(parent)/attendance"
-  | "/(parent)/fees";
+  | "/(parent)/fees"
+  | "/(admin)/notices"
+  | "/(admin)/notifications";
 
 export type Permission =
   | "viewDashboard"
@@ -239,10 +241,8 @@ export const ROUTE_ACCESS: Record<Role, AppRoute[]> = {
     "/(app)/subjects",
     "/(app)/teachers",
     "/(app)/parents",
-    "/(app)/notices",
-    "/(app)/notice-compose",
-    "/(app)/notifications",
-    "/(app)/notification-compose",
+    "/(admin)/notices",
+    "/(admin)/notifications",
     "/(app)/timetable",
     "/(app)/inquiries",
     "/(app)/reports",
@@ -270,10 +270,8 @@ export const ROUTE_ACCESS: Record<Role, AppRoute[]> = {
     "/(app)/subjects",
     "/(app)/teachers",
     "/(app)/parents",
-    "/(app)/notices",
-    "/(app)/notice-compose",
-    "/(app)/notifications",
-    "/(app)/notification-compose",
+    "/(admin)/notices",
+    "/(admin)/notifications",
     "/(app)/timetable",
     "/(app)/inquiries",
     "/(app)/reports",
@@ -357,10 +355,8 @@ export const NAV_MENU: NavMenuItem[] = [
   { label: "Subjects", route: "/(app)/subjects", icon: "subjects", permission: "viewSubjects" },
   { label: "Teachers", route: "/(app)/teachers", icon: "teachers", permission: "viewTeachers" },
   { label: "Parents", route: "/(app)/parents", icon: "parents", permission: "viewParents" },
-  { label: "Notices", route: "/(app)/notices", icon: "notices", permission: "viewNotices" },
-  { label: "Post Notice", route: "/(app)/notice-compose", icon: "compose", permission: "publishNotices" },
-  { label: "Alerts", route: "/(app)/notifications", icon: "notifications", permission: "viewNotifications" },
-  { label: "Send Alert", route: "/(app)/notification-compose", icon: "broadcast", permission: "sendBroadcast" },
+  { label: "Notices", route: "/(admin)/notices", icon: "notices", permission: "viewNotices", desc: "School announcements" },
+  { label: "Notifications", route: "/(admin)/notifications", icon: "notifications", permission: "viewNotifications", desc: "Push & in-app alerts" },
   { label: "Leave", route: "/(app)/leave", icon: "leave", permission: "applyLeave" },
   { label: "Timetable", route: "/(app)/timetable", icon: "timetable", permission: "viewTimetable" },
   { label: "Inquiries", route: "/(app)/inquiries", icon: "inquiries", permission: "manageInquiries" },

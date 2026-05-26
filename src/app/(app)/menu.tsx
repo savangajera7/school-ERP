@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, TextInput, ScrollView } from "react-native";
+import React from "react";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { router } from "expo-router";
 import { usePermissions } from "@/hooks/usePermissions";
 import { useNotifications } from "@/contexts/NotificationContext";
@@ -7,16 +7,15 @@ import { ROLE_LABELS } from "@/constants/rolePermissions";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { useResponsive } from "@/hooks/useResponsive";
 import { useTranslation } from "@/hooks/useTranslation";
-import { ActionListRow } from "@/components/dashboard/ActionListRow";
 import { Colors } from "@/constants/colors";
-import { AppIcon } from "@/components/icons/AppIcon";
+import { AppIcon, IconCircle } from "@/components/icons/AppIcon";
+import { premiumCardShadow } from "@/constants/premiumStyles";
 
 export default function MenuScreen() {
   const { isMobile } = useResponsive();
   const { role, roleLabel, navItems } = usePermissions();
   const { unreadCount } = useNotifications();
   const { t } = useTranslation();
-  const [searchQuery, setSearchQuery] = useState("");
 
   const translateLabel = (label: string): string => {
     switch (label) {
@@ -80,19 +79,6 @@ export default function MenuScreen() {
     ),
   };
 
-  // Filter items based on search query
-  const filteredGroups = Object.entries(groupedItems).reduce((acc, [category, items]) => {
-    const filtered = items.filter(item => {
-      const translatedLabel = translateLabel(item.label).toLowerCase();
-      const query = searchQuery.toLowerCase();
-      return translatedLabel.includes(query);
-    });
-    if (filtered.length > 0) {
-      acc[category] = filtered;
-    }
-    return acc;
-  }, {} as Record<string, typeof items>);
-
   const categoryTitles: Record<string, string> = {
     main: t.dashboard || "Main",
     academic: t.academic || "Academic",
@@ -105,68 +91,54 @@ export default function MenuScreen() {
 
   return (
     <PremiumScreenLayout
-      title={t.portalMenu}
-      subtitle={`${roleLabel} · ${t.schoolName}`}
-      hideBack={true}
-      flatHeader
+      title=""
+      subtitle=""
+      showTopBar
+      hideBack
     >
-      <View className="pb-10">
-        {/* Search Bar */}
-        <View className="bg-white border border-gray-200 rounded-2xl px-4 py-3 flex-row items-center mb-6">
-          <AppIcon name="search" size={20} color="#9CA3AF" />
-          <TextInput
-            placeholder={t.search || "Search menu..."}
-            placeholderTextColor="#9CA3AF"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            className="flex-1 ml-3 text-gray-800 text-[15px]"
-          />
-          {searchQuery.length > 0 && (
-            <TouchableOpacity onPress={() => setSearchQuery("")}>
-              <AppIcon name="close" size={18} color="#9CA3AF" />
-            </TouchableOpacity>
-          )}
-        </View>
-
+      <View className="pb-20">
         <ScrollView showsVerticalScrollIndicator={false}>
-          {Object.entries(filteredGroups).map(([category, categoryItems]) => (
+          {Object.entries(groupedItems).map(([category, categoryItems]) => (
             <View key={category} className="mb-6">
-              <Text className="text-[13px] font-bold text-gray-500 uppercase mb-3 ml-1">
-                {categoryTitles[category]}
-              </Text>
-              <View className={`flex-row flex-wrap gap-4 ${isMobile ? "flex-col" : ""}`}>
-                {categoryItems.map((item) => (
-                  <View 
-                    key={item.route} 
-                    style={{ width: isMobile ? "100%" : "48%" }}
-                  >
-                    <ActionListRow
-                      label={translateLabel(item.label)}
-                      description={item.desc}
-                      icon={item.icon as any}
-                      accentColor={Colors.primary}
+              <View className="bg-white border border-gray-100 rounded-2xl p-5 overflow-hidden" style={premiumCardShadow}>
+                <View className="flex-row items-center gap-2 mb-4">
+                  <AppIcon name="menu" size={20} color="#134A8C" />
+                  <Text className="text-gray-900 font-black text-[14px] uppercase tracking-wide flex-1">
+                    {categoryTitles[category]}
+                  </Text>
+                  <View className="w-1 h-4 bg-[#F5921E] rounded-full" />
+                </View>
+                <View className="flex-row flex-wrap">
+                  {categoryItems.map((item) => (
+                    <TouchableOpacity
+                      key={item.route}
                       onPress={() => router.push(item.route as any)}
-                    />
-                    {/* Optional Badge for notifications */}
-                    {"badge" in item && typeof item.badge === "number" && item.badge > 0 && (
-                      <View className="absolute top-2 right-2 bg-rose-500 rounded-full min-w-[20px] h-[20px] items-center justify-center px-1.5 border-2 border-white">
-                        <Text className="text-white text-[10px] font-black">{item.badge}</Text>
+                      activeOpacity={0.75}
+                      style={{ width: isMobile ? "25%" : "12.5%" }}
+                      className="items-center mb-6"
+                    >
+                      <View className="mb-2 relative">
+                        <IconCircle name={item.icon as any} size={52} iconSize={24} color={Colors.primary} />
+                        {/* Optional Badge for notifications */}
+                        {"badge" in item && typeof item.badge === "number" && item.badge > 0 && (
+                          <View className="absolute -top-1 -right-1 bg-rose-500 rounded-full min-w-[18px] h-[18px] items-center justify-center px-1 border-2 border-white">
+                            <Text className="text-white text-[9px] font-black">{item.badge}</Text>
+                          </View>
+                        )}
                       </View>
-                    )}
-                  </View>
-                ))}
+                      <Text
+                        className="text-gray-700 font-bold text-[10px] text-center"
+                        style={{ lineHeight: 13 }}
+                        numberOfLines={2}
+                      >
+                        {translateLabel(item.label)}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
               </View>
             </View>
           ))}
-          
-          {Object.keys(filteredGroups).length === 0 && (
-            <View className="items-center py-10">
-              <AppIcon name="search" size={48} color="#D1D5DB" />
-              <Text className="text-gray-400 mt-3 text-[15px] font-semibold">
-                No results found
-              </Text>
-            </View>
-          )}
         </ScrollView>
       </View>
     </PremiumScreenLayout>
