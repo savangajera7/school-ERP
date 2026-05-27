@@ -3,9 +3,14 @@ import { FlatList, Text, View, StyleSheet } from "react-native";
 import { useResponsive } from "@/hooks/useResponsive";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { SchoolTheme } from "@/constants/theme";
-import { parseContentNotice } from "@/services/classroom/contentService";
-
-type Item = ReturnType<typeof parseContentNotice>;
+type Item = {
+  id: string;
+  kind: "HOMEWORK" | "CLASSWORK" | "NOTEBOOK";
+  title: string;
+  body: string;
+  date: string;
+  raw?: any;
+};
 
 type Props = {
   items: Item[];

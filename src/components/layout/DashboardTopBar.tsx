@@ -14,7 +14,6 @@ type Props = {
 
 function notificationsRouteForRole(role: ReturnType<typeof useAuthStore.getState>["role"]): string {
   const group = roleToRouteGroup(role);
-  if (group === "(admin)") return "/(admin)/notifications";
   if (group === "(teacher)") return "/(teacher)/notice";
   if (group === "(parent)") return "/(parent)/notices";
   return "/(app)/notifications";

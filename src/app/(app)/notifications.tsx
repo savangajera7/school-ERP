@@ -11,10 +11,21 @@ import { useAuthStore } from "@/store/authStore";
 import { AppIcon, IconCircle } from "@/components/icons/AppIcon";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { HeaderActionButton } from "@/components/ui/HeaderActionButton";
+import { markNotificationRead } from "@/services/notifications/notificationApi";
 
 export default function NotificationsScreen() {
   const { role } = useAuthStore();
   const { notifications, isLoading, openNotification, refetch } = useNotifications();
+
+  React.useEffect(() => {
+    if (isLoading) return;
+    const unread = notifications.filter(n => !n.isRead && n.notificationID);
+    if (unread.length > 0) {
+      Promise.allSettled(unread.map(n => markNotificationRead(n.notificationID!))).then(() => {
+        refetch();
+      });
+    }
+  }, [isLoading, notifications.length]);
 
   return (
     <PremiumScreenLayout

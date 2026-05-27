@@ -36,7 +36,7 @@ export default function ClassroomContentScreen({
   iconName,
 }: ClassroomContentScreenProps) {
   const { items, isLoading, refetch } = useClassroomContentList(kind);
-  const insertContent = useInsertClassroomContent();
+  const insertContent = useInsertClassroomContent(kind);
   const { userData } = useAuthStore();
   const { showToast } = useToast();
 

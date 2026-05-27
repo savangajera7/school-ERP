@@ -26,7 +26,7 @@ type Props = { kind: ContentKind };
 
 export default function TeacherContentScreen({ kind }: Props) {
   const { items, isLoading, isError, refetch, error } = useClassroomContentList(kind);
-  const insert = useInsertClassroomContent();
+  const insert = useInsertClassroomContent(kind);
   const { showToast } = useToast();
   const userId = useAuthStore((s) => s.userData?.id);
   const [submitting, setSubmitting] = useState(false);

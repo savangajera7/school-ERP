@@ -31,3 +31,4 @@ export function getAttendanceTodayVal(attendance: any[]) {
     ? `${Math.round((presentToday / attendance.length) * 100)}%`
     : "—";
 }
+export default function DummyRoute() { return null; }

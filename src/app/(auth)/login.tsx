@@ -35,6 +35,7 @@ export default function LoginScreen() {
   const { t, language, setLanguage } = useTranslation();
   const { signInWithApi, apiLoginMutation } = useAuth();
   const [loginError, setLoginError] = React.useState<string | null>(null);
+  const [rememberMe, setRememberMe] = React.useState(false);
   const { isMobile } = useResponsive();
 
   React.useEffect(() => {
@@ -95,8 +96,10 @@ export default function LoginScreen() {
       />
 
       <View style={styles.formOptions}>
-        <TouchableOpacity style={styles.rememberMe} activeOpacity={0.7}>
-          <View style={styles.checkbox} />
+        <TouchableOpacity style={styles.rememberMe} activeOpacity={0.7} onPress={() => setRememberMe(!rememberMe)}>
+          <View style={[styles.checkbox, rememberMe && { backgroundColor: Colors.primary, borderColor: Colors.primary }]}>
+            {rememberMe && <AppIcon name="check" size={12} color="#fff" />}
+          </View>
           <Text style={styles.rememberMeText}>{t.rememberMe}</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => router.push("/(auth)/forgot-password")} activeOpacity={0.7}>

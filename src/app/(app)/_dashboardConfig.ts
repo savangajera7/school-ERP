@@ -107,3 +107,4 @@ export const getOperationalIndicators = (
     rowBgClass: "bg-gray-50/10",
   },
 ];
+export default function DummyRoute() { return null; }

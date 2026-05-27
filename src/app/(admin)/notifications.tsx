@@ -16,7 +16,7 @@ import { Card } from "@/components/ui/Card";
 
 export default function AdminNotificationsManagementScreen() {
   const { isMobile } = useResponsive();
-  const { userData } = useAuthStore();
+  const { userData, role } = useAuthStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -34,17 +34,26 @@ export default function AdminNotificationsManagementScreen() {
     return parseApiList<any>(data?.data);
   }, [data]);
 
+  const isSuperAdmin = role === "super_admin";
+
   const filteredNotifications = useMemo(() => {
     const q = searchQuery.toLowerCase().trim();
-    if (!q) return notifications;
-    return notifications.filter((n) => {
+    let base = notifications;
+    if (isSuperAdmin) {
+      base = base.filter((n) => n.notificationType === "App Update" || n.notificationType === "System");
+    } else {
+      base = base.filter((n) => n.notificationType !== "App Update" && n.notificationType !== "System");
+    }
+
+    if (!q) return base;
+    return base.filter((n) => {
       const title = (n.title || "").toLowerCase();
       return (
         title.includes(q) ||
         (n.notificationType || "").toLowerCase().includes(q)
       );
     });
-  }, [notifications, searchQuery]);
+  }, [notifications, searchQuery, isSuperAdmin]);
 
   const handleDelete = (notification: any) => {
     Alert.alert(
@@ -137,7 +146,7 @@ export default function AdminNotificationsManagementScreen() {
       scrollable={false}
       flatHeader
     >
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
         {/* Toggle Form Button */}
         <TouchableOpacity
           onPress={() => setShowForm(!showForm)}
@@ -185,13 +194,32 @@ export default function AdminNotificationsManagementScreen() {
               </View>
 
               <View>
-                <Text className="text-[10px] font-black text-gray-600 uppercase mb-1.5">Type</Text>
-                <TextInput
-                  value={notificationType}
-                  onChangeText={setNotificationType}
-                  placeholder="General"
-                  className="h-[44px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
-                />
+                <Text className="text-[10px] font-black text-gray-600 uppercase mb-1.5">Type *</Text>
+                {isSuperAdmin ? (
+                  <View className="flex-row gap-2">
+                    {["App Update", "System"].map(type => (
+                      <TouchableOpacity
+                        key={type}
+                        onPress={() => setNotificationType(type)}
+                        className={`flex-1 items-center justify-center h-[44px] rounded-xl border ${notificationType === type ? 'border-primary bg-[#134A8C]/10' : 'border-gray-200 bg-gray-50'}`}
+                      >
+                        <Text className={`text-xs font-bold ${notificationType === type ? 'text-primary' : 'text-gray-600'}`}>{type}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                ) : (
+                  <View className="flex-row gap-2">
+                    {["General", "Event", "Alert"].map(type => (
+                      <TouchableOpacity
+                        key={type}
+                        onPress={() => setNotificationType(type)}
+                        className={`flex-1 items-center justify-center h-[44px] rounded-xl border ${notificationType === type ? 'border-primary bg-[#134A8C]/10' : 'border-gray-200 bg-gray-50'}`}
+                      >
+                        <Text className={`text-xs font-bold ${notificationType === type ? 'text-primary' : 'text-gray-600'}`}>{type}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                )}
               </View>
 
               <TouchableOpacity

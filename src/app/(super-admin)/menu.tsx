@@ -15,6 +15,7 @@ export default function SuperAdminMenuScreen() {
 
   const items = [
     { label: "Dashboard", icon: "home", route: "/(super-admin)/dashboard", desc: "Overview of platform metrics" },
+    { label: "All Schools", icon: "school", route: "/(super-admin)/schools", desc: "Manage registered schools" },
     { label: "User Management", icon: "users", route: "/(super-admin)/users", desc: "Manage platform administrators" },
     { label: "Role Definitions", icon: "roles", route: "/(super-admin)/roles", desc: "Define system access levels" },
     { label: "Global Settings", icon: "settings", route: "/(super-admin)/settings", desc: "Configure system parameters" },
