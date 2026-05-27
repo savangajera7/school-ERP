@@ -4365,6 +4365,34 @@
         ]
       }
     },
+    "/api/School/GetRoleCounts/{id}": {
+      "get": {
+        "tags": [
+          "0. Schools (Super Admin)"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
     "/api/Section/Add": {
       "post": {
         "tags": [
@@ -8490,6 +8518,20 @@
           "adminPassword": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SchoolRoleCount": {
+        "type": "object",
+        "properties": {
+          "roleName": {
+            "type": "string",
+            "nullable": true
+          },
+          "userCount": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false

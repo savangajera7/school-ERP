@@ -639,3 +639,109 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       > => {
       return useMutation(getPutApiSchoolUpdateMutationOptions(options), queryClient);
     }
+    export type getApiSchoolGetRoleCountsIdResponse200 = {
+  data: void
+  status: 200
+}
+
+export type getApiSchoolGetRoleCountsIdResponseSuccess = (getApiSchoolGetRoleCountsIdResponse200) & {
+  headers: Headers;
+};
+;
+
+export type getApiSchoolGetRoleCountsIdResponse = (getApiSchoolGetRoleCountsIdResponseSuccess)
+
+export const getGetApiSchoolGetRoleCountsIdUrl = (id: number,) => {
+
+
+
+
+  return `/api/School/GetRoleCounts/${id}`
+}
+
+export const getApiSchoolGetRoleCountsId = async (id: number, options?: RequestInit): Promise<getApiSchoolGetRoleCountsIdResponse> => {
+
+  return customInstance<getApiSchoolGetRoleCountsIdResponse>(getGetApiSchoolGetRoleCountsIdUrl(id),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetApiSchoolGetRoleCountsIdQueryKey = (id: number,) => {
+    return [
+    `/api/School/GetRoleCounts/${id}`
+    ] as const;
+    }
+
+
+export const getGetApiSchoolGetRoleCountsIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>, TError = unknown>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiSchoolGetRoleCountsIdQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>> = ({ signal }) => getApiSchoolGetRoleCountsId(id, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiSchoolGetRoleCountsIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>>
+export type GetApiSchoolGetRoleCountsIdQueryError = unknown
+
+
+export function useGetApiSchoolGetRoleCountsId<TData = Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>, TError = unknown>(
+ id: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiSchoolGetRoleCountsId<TData = Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>, TError = unknown>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiSchoolGetRoleCountsId<TData = Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>, TError = unknown>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetApiSchoolGetRoleCountsId<TData = Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>, TError = unknown>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiSchoolGetRoleCountsIdQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+

@@ -85,6 +85,7 @@ export * from './roleRightsInsertRequest';
 export * from './roleRightsUpdateRequest';
 export * from './roleUpdateRequest';
 export * from './schoolInsertRequest';
+export * from './schoolRoleCount';
 export * from './schoolStatusChangeRequest';
 export * from './schoolUpdateRequest';
 export * from './sectionModel';

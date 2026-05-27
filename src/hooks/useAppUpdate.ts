@@ -16,24 +16,10 @@ export function useAppUpdate() {
       const update = await Updates.checkForUpdateAsync();
       
       if (update.isAvailable) {
-        Alert.alert(
-          "Update Available",
-          "A new version of the app is available. Would you like to update now?",
-          [
-            { text: "Later", style: "cancel" },
-            { 
-              text: "Update", 
-              onPress: async () => {
-                try {
-                  await Updates.fetchUpdateAsync();
-                  await Updates.reloadAsync();
-                } catch (e) {
-                  Alert.alert("Update Error", "Failed to apply update.");
-                }
-              }
-            }
-          ]
-        );
+        // Amazon/Instagram style: Silent background download
+        await Updates.fetchUpdateAsync();
+        // The update is now downloaded and waiting. 
+        // It will automatically apply the NEXT time the user fully closes and reopens the app!
       }
     } catch (error) {
       console.log("Error checking for EAS updates:", error);

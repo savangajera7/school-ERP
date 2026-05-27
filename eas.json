@@ -41,7 +41,7 @@
       "env": {
         "EXPO_PUBLIC_API_URL": "https://schoolmanagement.mahispark.com"
       },
-      "channel": "production-apk"
+      "channel": "production"
     }
   },
   "submit": {
