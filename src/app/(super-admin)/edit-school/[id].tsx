@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useGetApiSchoolGetByIdId, usePutApiSchoolUpdate } from "@/api/generated/0-schools-super-admin/0-schools-super-admin";
+import { useGetApiSchoolGetByIDId, usePutApiSchoolUpdate } from "@/api/generated/0-schools-super-admin/0-schools-super-admin";
 import { useQueryClient } from "@tanstack/react-query";
 import { router, useLocalSearchParams } from "expo-router";
 import { Card } from "@/components/ui/Card";
@@ -34,7 +34,7 @@ export default function EditSchoolScreen() {
   const schoolId = parseInt(id, 10);
   const queryClient = useQueryClient();
   
-  const { data, isLoading } = useGetApiSchoolGetByIdId(schoolId);
+  const { data, isLoading } = useGetApiSchoolGetByIDId(schoolId);
   const updateSchoolMutation = usePutApiSchoolUpdate();
 
   const { control, handleSubmit, reset, formState: { errors } } = useForm<EditSchoolFormValues>({
