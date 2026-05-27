@@ -1,32 +1,43 @@
 import { useEffect, useState, useCallback } from "react";
-import { Platform, AppState } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  checkForAppUpdate,
-  type DownloadManifest,
-} from "@/services/updates/appUpdateService";
-
-const DISMISS_KEY = "app_update_dismissed_version";
+import { AppState, Alert, Platform } from "react-native";
+import * as Updates from 'expo-updates';
 
 export function useAppUpdate() {
   const [visible, setVisible] = useState(false);
-  const [manifest, setManifest] = useState<DownloadManifest | null>(null);
+  const [manifest, setManifest] = useState<any>(null);
   const [apkUrl, setApkUrl] = useState<string | null>(null);
   const [installedVersion, setInstalledVersion] = useState("1.0.0");
 
   const runCheck = useCallback(async () => {
-    if (Platform.OS !== "android") return;
-    const result = await checkForAppUpdate();
-    setInstalledVersion(result.installedVersion);
-    if (!result.hasUpdate || !result.manifest?.version) {
-      setVisible(false);
-      return;
+    // Skip in development
+    if (__DEV__) return;
+    
+    try {
+      const update = await Updates.checkForUpdateAsync();
+      
+      if (update.isAvailable) {
+        Alert.alert(
+          "Update Available",
+          "A new version of the app is available. Would you like to update now?",
+          [
+            { text: "Later", style: "cancel" },
+            { 
+              text: "Update", 
+              onPress: async () => {
+                try {
+                  await Updates.fetchUpdateAsync();
+                  await Updates.reloadAsync();
+                } catch (e) {
+                  Alert.alert("Update Error", "Failed to apply update.");
+                }
+              }
+            }
+          ]
+        );
+      }
+    } catch (error) {
+      console.log("Error checking for EAS updates:", error);
     }
-    const dismissed = await AsyncStorage.getItem(DISMISS_KEY);
-    if (dismissed === result.manifest.version) return;
-    setManifest(result.manifest);
-    setApkUrl(result.apkUrl);
-    setVisible(true);
   }, []);
 
   useEffect(() => {
@@ -38,11 +49,8 @@ export function useAppUpdate() {
   }, [runCheck]);
 
   const dismiss = useCallback(async () => {
-    if (manifest?.version) {
-      await AsyncStorage.setItem(DISMISS_KEY, manifest.version);
-    }
     setVisible(false);
-  }, [manifest?.version]);
+  }, []);
 
   return { visible, manifest, apkUrl, installedVersion, dismiss };
 };

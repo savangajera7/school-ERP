@@ -26,7 +26,10 @@
       "package": "com.schoolerp.app",
       "googleServicesFile": "./google-services.json",
       "permissions": [
-        "REQUEST_INSTALL_PACKAGES"
+        "android.permission.REQUEST_INSTALL_PACKAGES",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.REQUEST_INSTALL_PACKAGES",
+        "android.permission.RECORD_AUDIO"
       ]
     },
     "web": {
@@ -64,6 +67,12 @@
         "projectId": "9ca804c0-0888-4be4-a31f-9845aaae4a99"
       }
     },
-    "owner": "savangajera"
+    "owner": "savangajera",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/9ca804c0-0888-4be4-a31f-9845aaae4a99"
+    }
   }
 }
