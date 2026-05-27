@@ -1,19 +1,15 @@
 import React, { useState, useMemo } from "react";
-import { View, Text, FlatList } from "react-native";
-import { useResponsive } from "@/hooks/useResponsive";
+import { View, Text } from "react-native";
 import { Colors } from "@/constants/colors";
 import { useGetApiNoticeGetNoticeList } from "@/api/generated/notice/notice";
 import { parseApiList } from "@/utils/apiResponse";
-import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
-import { PremiumSearchField } from "@/components/ui/premium";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
-import { AppIcon, IconCircle } from "@/components/icons/AppIcon";
-import { EmptyState, ErrorState } from "@/components/ui/EmptyState";
+import { IconCircle } from "@/components/icons/AppIcon";
 import { formatDisplayDate } from "@/utils/dateHelpers";
+import { ResponsiveDataList, type TableColumn } from "@/components/shared";
 
 export default function ParentNoticesScreen() {
-  const { isMobile } = useResponsive();
   const [searchQuery, setSearchQuery] = useState("");
 
   const { data, isLoading, isError, error, refetch } = useGetApiNoticeGetNoticeList();
@@ -34,7 +30,30 @@ export default function ParentNoticesScreen() {
     });
   }, [notices, searchQuery]);
 
-  const renderNoticeItem = ({ item }: { item: any }) => {
+  const tableColumns: TableColumn<any>[] = [
+    { key: "noticeTitle", header: "Title", flex: 2 },
+    { key: "noticeType", header: "Type", flex: 1 },
+    { 
+      key: "noticeDate", 
+      header: "Date", 
+      width: 100,
+      render: (n) => <Text className="text-sm text-gray-600">{formatDisplayDate(n.noticeDate)}</Text>
+    },
+    { key: "targetAudience", header: "Target", width: 100 },
+    { 
+      key: "isActive", 
+      header: "Status", 
+      width: 100,
+      align: "center",
+      render: (n) => (
+        <View className={`px-2 py-1 rounded-md border ${n.isActive ? "bg-green-50 border-green-100" : "bg-gray-100 border-gray-200"}`}>
+          <Text className={`text-[10px] font-bold ${n.isActive ? "text-green-700" : "text-gray-500"}`}>{n.isActive ? "Active" : "Expired"}</Text>
+        </View>
+      )
+    }
+  ];
+
+  const renderNoticeItem = (item: any) => {
     return (
       <MobileDataCard
         title={item.noticeTitle || "Untitled Notice"}
@@ -57,37 +76,22 @@ export default function ParentNoticesScreen() {
       scrollable={false}
       flatHeader
     >
-      <PremiumSearchField
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-        placeholder="Search notices..."
-        onClear={() => setSearchQuery("")}
+      <ResponsiveDataList
+        data={filteredNotices}
+        isLoading={isLoading}
+        isError={isError}
+        error={error}
+        onRefresh={refetch}
+        renderCard={renderNoticeItem}
+        tableColumns={tableColumns}
+        keyExtractor={(item) => String(item.noticeID)}
+        emptyIcon="notices"
+        emptyTitle="No notices found"
+        emptyMessage={searchQuery ? "Try a different search" : "No school announcements yet"}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="Search notices..."
       />
-
-      {isLoading ? (
-        <SkeletonLoader rows={5} />
-      ) : isError ? (
-        <ErrorState
-          message={error instanceof Error ? error.message : "Could not load notices"}
-        />
-      ) : (
-        <FlatList
-          data={filteredNotices}
-          renderItem={renderNoticeItem}
-          keyExtractor={(item) => String(item.noticeID)}
-          contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 100, paddingTop: 10 }}
-          ListEmptyComponent={
-            <EmptyState
-              icon="notices"
-              title="No notices found"
-              message={searchQuery ? "Try a different search" : "No school announcements yet"}
-            />
-          }
-          onRefresh={refetch}
-          refreshing={isLoading}
-          showsVerticalScrollIndicator={false}
-        />
-      )}
     </PremiumScreenLayout>
   );
 }

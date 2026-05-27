@@ -1,24 +1,18 @@
 import React, { useState, useMemo } from "react";
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, Alert } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { router } from "expo-router";
-import { useResponsive } from "@/hooks/useResponsive";
 import { Colors } from "@/constants/colors";
 import type { StudentModel } from "@/api/model/studentModel";
 import { useGetApiStudentGet, useDeleteApiStudentDeleteId } from "@/api/generated/3-student-crud/3-student-crud";
 import { parseApiList } from "@/utils/apiResponse";
 import { normalizeStudent, getStudentDisplayName, formatOptional } from "@/utils/studentUtils";
-import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
-import { HeaderActionButton } from "@/components/ui/HeaderActionButton";
-import { PremiumSearchField } from "@/components/ui/premium";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
-import { Card } from "@/components/ui/Card";
-import { AppIcon, GenderIcon } from "@/components/icons/AppIcon";
-import { EmptyState, ErrorState } from "@/components/ui/EmptyState";
+import { GenderIcon } from "@/components/icons/AppIcon";
 import { usePermissions } from "@/hooks/usePermissions";
+import { ResponsiveDataList, EntityActionButtons, type TableColumn } from "@/components/shared";
 
 export default function AdminStudentManagementScreen() {
-  const { isMobile } = useResponsive();
   const { canManageStudents } = usePermissions();
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -75,7 +69,56 @@ export default function AdminStudentManagementScreen() {
     );
   };
 
-  const renderStudentItemMobile = ({ item }: { item: StudentModel }) => {
+  const tableColumns: TableColumn<StudentModel>[] = [
+    { key: "studentGRNo", header: "GR No", width: 80 },
+    { key: "rollNo", header: "Roll", width: 60, align: "center" },
+    { 
+      key: "name", 
+      header: "Student Name", 
+      flex: 2, 
+      render: (s) => (
+        <View className="flex-row items-center gap-2">
+          <GenderIcon gender={s.gender} size={16} />
+          <Text className="text-sm font-bold text-gray-800">{getStudentDisplayName(s)}</Text>
+        </View>
+      )
+    },
+    { 
+      key: "class", 
+      header: "Class", 
+      flex: 1, 
+      render: (s) => (
+        <Text className="text-sm font-semibold text-gray-600">
+          {formatOptional(s.classID)} - {formatOptional(s.sectionID)}
+        </Text>
+      )
+    },
+    { 
+      key: "status", 
+      header: "Status", 
+      width: 80, 
+      align: "center", 
+      render: (s) => (
+        <View className="px-2 py-1 bg-green-50 rounded-md border border-green-100">
+          <Text className="text-[10px] font-bold text-green-700">{formatOptional(s.status, "Active")}</Text>
+        </View>
+      )
+    },
+    { 
+      key: "actions", 
+      header: "Actions", 
+      width: 100, 
+      align: "right", 
+      render: (s) => (
+        <EntityActionButtons 
+          onEdit={() => router.push(`/(app)/admission-form?id=${s.studentID}`)}
+          onDelete={() => handleDelete(s)}
+        />
+      )
+    }
+  ];
+
+  const renderStudentItemMobile = (item: StudentModel) => {
     const fullName = getStudentDisplayName(item);
     const studentId = item.studentID;
     return (
@@ -108,20 +151,10 @@ export default function AdminStudentManagementScreen() {
           });
         }}
         actions={
-          <View className="flex-row gap-2 ml-auto">
-            <TouchableOpacity 
-              onPress={() => router.push(`/(app)/admission-form?id=${studentId}`)}
-              className="bg-blue-50 p-2 rounded-lg"
-            >
-              <AppIcon name="edit" size={18} color="#3B82F6" />
-            </TouchableOpacity>
-            <TouchableOpacity 
-              onPress={() => handleDelete(item)}
-              className="bg-red-50 p-2 rounded-lg"
-            >
-              <AppIcon name="delete" size={18} color="#EF4444" />
-            </TouchableOpacity>
-          </View>
+          <EntityActionButtons 
+            onEdit={() => router.push(`/(app)/admission-form?id=${studentId}`)}
+            onDelete={() => handleDelete(item)}
+          />
         }
       />
     );
@@ -134,36 +167,22 @@ export default function AdminStudentManagementScreen() {
       scrollable={false}
       flatHeader
     >
-      <PremiumSearchField
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-        placeholder="Search students..."
-        onClear={() => setSearchQuery("")}
+      <ResponsiveDataList
+        data={filteredStudents}
+        isLoading={isLoading}
+        isError={isError}
+        error={error}
+        onRefresh={refetch}
+        renderCard={renderStudentItemMobile}
+        tableColumns={tableColumns}
+        keyExtractor={(item) => String(item.studentID)}
+        emptyIcon="students"
+        emptyTitle="No students found"
+        emptyMessage={searchQuery ? "Try a different search" : "Register your first student"}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="Search by name, GR No, or Roll..."
       />
-
-      {isLoading ? (
-        <SkeletonLoader rows={5} />
-      ) : isError ? (
-        <ErrorState
-          message={error instanceof Error ? error.message : "Could not load students"}
-        />
-      ) : (
-        <FlatList
-          data={filteredStudents}
-          renderItem={renderStudentItemMobile}
-          keyExtractor={(item, index) => String(item.studentID ?? index)}
-          contentContainerStyle={{ paddingBottom: 100 }}
-          ListEmptyComponent={
-            <EmptyState
-              icon="students"
-              title="No students found"
-              message={searchQuery ? "Try a different search" : "Register your first student"}
-            />
-          }
-          onRefresh={refetch}
-          refreshing={isLoading}
-        />
-      )}
     </PremiumScreenLayout>
   );
 }

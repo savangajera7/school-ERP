@@ -1,21 +1,16 @@
 import React, { useState, useMemo } from "react";
-import { View, Text, TouchableOpacity, FlatList, Alert } from "react-native";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { router } from "expo-router";
-import { useResponsive } from "@/hooks/useResponsive";
 import { Colors } from "@/constants/colors";
 import { useGetApiParentGetParentList, useDeleteApiParentDeleteParent } from "@/api/generated/parent/parent";
 import { parseApiList } from "@/utils/apiResponse";
-import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
-import { HeaderActionButton } from "@/components/ui/HeaderActionButton";
-import { PremiumSearchField } from "@/components/ui/premium";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { AppIcon, IconCircle } from "@/components/icons/AppIcon";
-import { EmptyState, ErrorState } from "@/components/ui/EmptyState";
 import { usePermissions } from "@/hooks/usePermissions";
+import { ResponsiveDataList, EntityActionButtons, type TableColumn } from "@/components/shared";
 
 export default function AdminParentManagementScreen() {
-  const { isMobile } = useResponsive();
   const { canManageStudents } = usePermissions(); // Assuming parents are managed with students
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -63,7 +58,37 @@ export default function AdminParentManagementScreen() {
     );
   };
 
-  const renderParentItem = ({ item }: { item: any }) => {
+  const tableColumns: TableColumn<any>[] = [
+    { 
+      key: "name", 
+      header: "Parent Name", 
+      flex: 2, 
+      render: (p) => (
+        <View className="flex-row items-center gap-2">
+          <IconCircle name="parents" size={24} iconSize={14} />
+          <Text className="text-sm font-bold text-gray-800">{`${p.firstName} ${p.lastName}`}</Text>
+        </View>
+      )
+    },
+    { key: "mobileNo", header: "Phone", width: 120 },
+    { key: "email", header: "Email", flex: 2 },
+    { key: "occupation", header: "Occupation", flex: 1 },
+    { key: "relation", header: "Relation", width: 100 },
+    { 
+      key: "actions", 
+      header: "Actions", 
+      width: 80, 
+      align: "right", 
+      render: (p) => (
+        <EntityActionButtons 
+          onDelete={() => handleDelete(p)}
+          showEdit={false} // There was no edit button on the original screen either
+        />
+      )
+    }
+  ];
+
+  const renderParentItem = (item: any) => {
     const fullName = `${item.firstName} ${item.lastName}`;
     return (
       <MobileDataCard
@@ -77,14 +102,10 @@ export default function AdminParentManagementScreen() {
           { label: "Relation", value: item.relation || "Parent" },
         ]}
         actions={
-          <View className="flex-row gap-2 ml-auto">
-            <TouchableOpacity 
-              onPress={() => handleDelete(item)}
-              className="bg-red-50 p-2 rounded-lg"
-            >
-              <AppIcon name="delete" size={18} color="#EF4444" />
-            </TouchableOpacity>
-          </View>
+          <EntityActionButtons 
+            onDelete={() => handleDelete(item)}
+            showEdit={false}
+          />
         }
       />
     );
@@ -97,36 +118,22 @@ export default function AdminParentManagementScreen() {
       scrollable={false}
       flatHeader
     >
-      <PremiumSearchField
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-        placeholder="Search parents..."
-        onClear={() => setSearchQuery("")}
+      <ResponsiveDataList
+        data={filteredParents}
+        isLoading={isLoading}
+        isError={isError}
+        error={error}
+        onRefresh={refetch}
+        renderCard={renderParentItem}
+        tableColumns={tableColumns}
+        keyExtractor={(item) => String(item.parentID)}
+        emptyIcon="parents"
+        emptyTitle="No parents found"
+        emptyMessage={searchQuery ? "Try a different search" : "Add your first parent record"}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="Search by name, phone, or email..."
       />
-
-      {isLoading ? (
-        <SkeletonLoader rows={5} />
-      ) : isError ? (
-        <ErrorState
-          message={error instanceof Error ? error.message : "Could not load parents"}
-        />
-      ) : (
-        <FlatList
-          data={filteredParents}
-          renderItem={renderParentItem}
-          keyExtractor={(item) => String(item.parentID)}
-          contentContainerStyle={{ paddingBottom: 100 }}
-          ListEmptyComponent={
-            <EmptyState
-              icon="parents"
-              title="No parents found"
-              message={searchQuery ? "Try a different search" : "Add your first parent record"}
-            />
-          }
-          onRefresh={refetch}
-          refreshing={isLoading}
-        />
-      )}
     </PremiumScreenLayout>
   );
 }

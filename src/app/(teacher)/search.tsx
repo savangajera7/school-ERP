@@ -1,1 +1,2 @@
-export { default } from "@/app/(app)/search";
+import SearchScreen from "../(app)/search";
+export default SearchScreen;

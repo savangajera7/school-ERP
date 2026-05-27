@@ -1,1 +1,2 @@
-export { default } from "@/app/(app)/attendance-reports";
+import ReportsScreen from "../(app)/reports";
+export default ReportsScreen;

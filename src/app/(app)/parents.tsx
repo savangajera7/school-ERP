@@ -6,11 +6,10 @@ import { PremiumCard } from "@/components/ui/premium";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
-import { Button } from "@/components/ui/Button";
 import {
   useGetApiParentGetParentList,
-  usePostApiParentInsertParent,
 } from "@/api/generated/parent/parent";
+import { customInstance } from "@/services/api/axiosInstance";
 import { parseApiList } from "@/utils/apiResponse";
 import { recordLabel } from "@/utils/recordHelpers";
 import { useToast } from "@/components/ui/Toast";
@@ -33,9 +32,9 @@ export default function ParentsScreen() {
   const [motherName, setMotherName] = useState("");
   const [fatherMobile, setFatherMobile] = useState("");
   const [address, setAddress] = useState("");
+  const [isAdding, setIsAdding] = useState(false);
 
   const { data, isLoading, refetch, isRefetching } = useGetApiParentGetParentList();
-  const insertMutation = usePostApiParentInsertParent();
   const parents = useMemo(() => parseApiList<Record<string, unknown>>(data?.data), [data]);
 
   const handleAdd = async () => {
@@ -43,15 +42,18 @@ export default function ParentsScreen() {
       showToast("Father name is required.", "error");
       return;
     }
+    setIsAdding(true);
     try {
-      await insertMutation.mutateAsync({
-        data: {
+      await customInstance("/api/Parent/InsertParent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
           fatherName: fatherName.trim(),
           motherName: motherName.trim() || undefined,
           fatherMobileNo: fatherMobile.trim() || undefined,
           address: address.trim() || undefined,
           createdBy: parseInt(userData?.id ?? "0", 10) || 0,
-        },
+        }),
       });
       showToast("Parent added.", "success");
       setFatherName("");
@@ -61,6 +63,8 @@ export default function ParentsScreen() {
       refetch();
     } catch {
       showToast("Failed to add parent.", "error");
+    } finally {
+      setIsAdding(false);
     }
   };
 
@@ -108,12 +112,12 @@ export default function ParentsScreen() {
         />
         <TouchableOpacity
           onPress={handleAdd}
-          disabled={insertMutation.isPending}
+          disabled={isAdding}
           className="h-[52px] rounded-xl justify-center items-center mt-2 shadow-lg"
           style={{ backgroundColor: Colors.accent }}
           activeOpacity={0.8}
         >
-          {insertMutation.isPending ? (
+          {isAdding ? (
             <ActivityIndicator size="small" color="white" />
           ) : (
             <Text className="text-white font-black text-xs uppercase tracking-widest">Add Parent</Text>

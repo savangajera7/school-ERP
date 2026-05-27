@@ -1,1 +1,2 @@
-export { default } from "@/app/(app)/timetable";
+import TimetableScreen from "../(app)/timetable";
+export default TimetableScreen;

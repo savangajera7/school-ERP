@@ -45,7 +45,7 @@ export function DashboardGreeting({ name, role }: Props) {
       <Text style={[styles.sub, { fontSize: bodySize }]}>{ROLE_SUBTITLE[r]}</Text>
       <View style={styles.badge}>
         <Text style={styles.badgeText}>
-          {r === "superadmin" || r === "admin" ? "Administrator" : r === "teacher" ? "Teacher" : "Parent Portal"}
+          {r === "super_admin" || r === "admin" ? "Administrator" : r === "teacher" ? "Teacher" : "Parent Portal"}
         </Text>
       </View>
     </LinearGradient>

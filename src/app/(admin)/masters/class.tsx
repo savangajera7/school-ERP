@@ -1,165 +1,26 @@
-import React, { useState } from "react";
-import { View, Text, FlatList, TextInput, TouchableOpacity, Alert } from "react-native";
-import { router } from "expo-router";
-import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
+import React from "react";
+import { MasterCrudScreen } from "@/components/shared";
 import { 
   useGetApiClassGet, 
   usePostApiClassAdd,
   usePutApiClassUpdate,
   useDeleteApiClassDeleteId 
 } from "@/api/generated/master-class/master-class";
-import { parseApiList } from "@/utils/apiResponse";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { AppIcon, IconCircle } from "@/components/icons/AppIcon";
-import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
-import { premiumCardShadow } from "@/constants/premiumStyles";
-import { MobileDataCard } from "@/components/ui/MobileDataCard";
 
 export default function ClassScreen() {
-  const [newName, setNewName] = useState("");
-  const [editingItem, setEditingItem] = useState<any>(null);
-
-  const { data, isLoading, refetch } = useGetApiClassGet();
-  const addMutation = usePostApiClassAdd();
-  const updateMutation = usePutApiClassUpdate();
-  const deleteMutation = useDeleteApiClassDeleteId();
-
-  const items = parseApiList(data?.data);
-
-  const handleAdd = async () => {
-    if (!newName.trim()) return;
-    try {
-      await addMutation.mutateAsync({
-        data: { className: newName, isActive: true, createdBy: 1 }
-      });
-      setNewName("");
-      refetch();
-    } catch (error: any) {
-      Alert.alert("Error", error.message || "Failed to add class");
-    }
-  };
-
-  const handleUpdate = async () => {
-    if (!newName.trim() || !editingItem) return;
-    try {
-      await updateMutation.mutateAsync({
-        data: { 
-          ...editingItem,
-          className: newName,
-          updatedBy: 1
-        }
-      });
-      setNewName("");
-      setEditingItem(null);
-      refetch();
-    } catch (error: any) {
-      Alert.alert("Error", error.message || "Failed to update class");
-    }
-  };
-
-  const startEdit = (item: any) => {
-    setEditingItem(item);
-    setNewName(item.className);
-  };
-
-  const cancelEdit = () => {
-    setEditingItem(null);
-    setNewName("");
-  };
-
-  const handleDelete = (id: number) => {
-    Alert.alert("Delete", "Are you sure?", [
-      { text: "Cancel", style: "cancel" },
-      { 
-        text: "Delete", 
-        style: "destructive", 
-        onPress: async () => {
-          try {
-            await deleteMutation.mutateAsync({ id });
-            refetch();
-          } catch (error: any) {
-            Alert.alert("Error", error.message || "Failed to delete");
-          }
-        }
-      }
-    ]);
-  };
-
   return (
-    <PremiumScreenLayout
+    <MasterCrudScreen
       title="Classes"
       subtitle="Manage school classes"
-      onBack={() => router.back()}
-      scrollable={false}
-      flatHeader
-    >
-      <Card className="p-4 mb-6" style={premiumCardShadow}>
-        <View className="flex-row gap-3">
-          <TextInput
-            value={newName}
-            onChangeText={setNewName}
-            placeholder="e.g. Class 10"
-            className="flex-1 h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
-          />
-          {editingItem ? (
-            <View className="flex-row gap-2">
-              <Button
-                label="Save"
-                onPress={handleUpdate}
-                loading={updateMutation.isPending}
-                style={{ width: 70 }}
-              />
-              <TouchableOpacity 
-                onPress={cancelEdit}
-                className="bg-gray-100 h-[48px] w-[48px] items-center justify-center rounded-xl"
-              >
-                <AppIcon name="close" size={20} color="#6B7280" />
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <Button
-              label="Add"
-              onPress={handleAdd}
-              loading={addMutation.isPending}
-              style={{ width: 80 }}
-            />
-          )}
-        </View>
-      </Card>
-
-      {isLoading ? (
-        <SkeletonLoader rows={5} />
-      ) : (
-        <FlatList
-          data={items}
-          keyExtractor={(item: any) => String(item.classID)}
-          renderItem={({ item }: { item: any }) => (
-            <MobileDataCard
-              title={item.className}
-              subtitle={item.isActive ? "Active" : "Inactive"}
-              icon={<IconCircle name="school" size={40} iconSize={20} />}
-              actions={
-                <View className="flex-row gap-2 ml-auto">
-                  <TouchableOpacity 
-                    onPress={() => startEdit(item)}
-                    className="bg-blue-50 p-2 rounded-lg"
-                  >
-                    <AppIcon name="edit" size={18} color="#3B82F6" />
-                  </TouchableOpacity>
-                  <TouchableOpacity 
-                    onPress={() => handleDelete(item.classID)}
-                    className="bg-red-50 p-2 rounded-lg"
-                  >
-                    <AppIcon name="delete" size={18} color="#EF4444" />
-                  </TouchableOpacity>
-                </View>
-              }
-            />
-          )}
-          contentContainerStyle={{ paddingBottom: 20 }}
-        />
-      )}
-    </PremiumScreenLayout>
+      entityName="class"
+      idField="classID"
+      nameField="className"
+      placeholder="e.g. Class 10"
+      iconName="school"
+      useGetList={useGetApiClassGet}
+      useAdd={usePostApiClassAdd}
+      useUpdate={usePutApiClassUpdate}
+      useDelete={useDeleteApiClassDeleteId}
+    />
   );
 }

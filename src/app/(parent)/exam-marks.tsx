@@ -1,1 +1,2 @@
-export { default } from "@/app/(app)/exams";
+import ResultScreen from "./result";
+export default ResultScreen;

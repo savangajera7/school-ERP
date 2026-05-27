@@ -1,25 +1,20 @@
 import React, { useState, useMemo } from "react";
-import { View, Text, TouchableOpacity, FlatList, Alert } from "react-native";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { router } from "expo-router";
-import { useResponsive } from "@/hooks/useResponsive";
 import { Colors } from "@/constants/colors";
 import { 
   useGetApiStudentAttendanceGetStudentAttendanceList, 
   useDeleteApiStudentAttendanceDeleteStudentAttendance 
 } from "@/api/generated/student-attendance/student-attendance";
 import { parseApiList } from "@/utils/apiResponse";
-import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { HeaderActionButton } from "@/components/ui/HeaderActionButton";
-import { PremiumSearchField } from "@/components/ui/premium";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
-import { AppIcon, IconCircle } from "@/components/icons/AppIcon";
-import { EmptyState, ErrorState } from "@/components/ui/EmptyState";
-
+import { IconCircle } from "@/components/icons/AppIcon";
 import { formatDisplayDate } from "@/utils/dateHelpers";
+import { ResponsiveDataList, EntityActionButtons, type TableColumn } from "@/components/shared";
 
 export default function AdminAttendanceManagementScreen() {
-  const { isMobile } = useResponsive();
   const [searchQuery, setSearchQuery] = useState("");
 
   const { data, isLoading, isError, error, refetch } = useGetApiStudentAttendanceGetStudentAttendanceList();
@@ -66,7 +61,39 @@ export default function AdminAttendanceManagementScreen() {
     );
   };
 
-  const renderAttendanceItem = ({ item }: { item: any }) => {
+  const tableColumns: TableColumn<any>[] = [
+    { key: "studentName", header: "Student Name", flex: 2 },
+    { key: "className", header: "Class", flex: 1, render: (a) => <Text className="text-sm font-semibold text-gray-700">{a.className} - {a.sectionName}</Text> },
+    { key: "attendanceDate", header: "Date", width: 120, render: (a) => <Text className="text-sm font-semibold text-gray-700">{formatDisplayDate(a.attendanceDate)}</Text> },
+    { 
+      key: "status", 
+      header: "Status", 
+      width: 100, 
+      align: "center", 
+      render: (a) => {
+        const isPresent = (a.attendanceStatus || "").toLowerCase() === "present";
+        return (
+          <View className={`px-2 py-1 rounded-md border ${isPresent ? "bg-green-50 border-green-100" : "bg-red-50 border-red-100"}`}>
+            <Text className={`text-[10px] font-bold ${isPresent ? "text-green-700" : "text-red-700"}`}>{a.attendanceStatus || "N/A"}</Text>
+          </View>
+        );
+      }
+    },
+    { 
+      key: "actions", 
+      header: "Actions", 
+      width: 100, 
+      align: "right", 
+      render: (a) => (
+        <EntityActionButtons 
+          onEdit={() => router.push(`/(admin)/attendance-form?id=${a.studentAttendanceID}`)}
+          onDelete={() => handleDelete(a)}
+        />
+      )
+    }
+  ];
+
+  const renderAttendanceItem = (item: any) => {
     const status = (item.attendanceStatus || "Present").toLowerCase();
     const isPresent = status === "present";
     
@@ -88,20 +115,10 @@ export default function AdminAttendanceManagementScreen() {
           { label: "Marked By", value: item.markedBy || "Teacher" },
         ]}
         actions={
-          <View className="flex-row gap-2 ml-auto">
-            <TouchableOpacity 
-              onPress={() => router.push(`/(admin)/attendance-form?id=${item.studentAttendanceID}`)}
-              className="bg-blue-50 p-2 rounded-lg"
-            >
-              <AppIcon name="edit" size={18} color="#3B82F6" />
-            </TouchableOpacity>
-            <TouchableOpacity 
-              onPress={() => handleDelete(item)}
-              className="bg-red-50 p-2 rounded-lg"
-            >
-              <AppIcon name="delete" size={18} color="#EF4444" />
-            </TouchableOpacity>
-          </View>
+          <EntityActionButtons 
+            onEdit={() => router.push(`/(admin)/attendance-form?id=${item.studentAttendanceID}`)}
+            onDelete={() => handleDelete(item)}
+          />
         }
       />
     );
@@ -121,36 +138,22 @@ export default function AdminAttendanceManagementScreen() {
         />
       }
     >
-      <PremiumSearchField
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-        placeholder="Search student or status..."
-        onClear={() => setSearchQuery("")}
+      <ResponsiveDataList
+        data={filteredAttendance}
+        isLoading={isLoading}
+        isError={isError}
+        error={error}
+        onRefresh={refetch}
+        renderCard={renderAttendanceItem}
+        tableColumns={tableColumns}
+        keyExtractor={(item) => String(item.studentAttendanceID)}
+        emptyIcon="attendance"
+        emptyTitle="No records found"
+        emptyMessage={searchQuery ? "Try a different search" : "No attendance marked for today"}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="Search student or status..."
       />
-
-      {isLoading ? (
-        <SkeletonLoader rows={5} />
-      ) : isError ? (
-        <ErrorState
-          message={error instanceof Error ? error.message : "Could not load attendance"}
-        />
-      ) : (
-        <FlatList
-          data={filteredAttendance}
-          renderItem={renderAttendanceItem}
-          keyExtractor={(item) => String(item.studentAttendanceID)}
-          contentContainerStyle={{ paddingBottom: 100 }}
-          ListEmptyComponent={
-            <EmptyState
-              icon="attendance"
-              title="No records found"
-              message={searchQuery ? "Try a different search" : "No attendance marked for today"}
-            />
-          }
-          onRefresh={refetch}
-          refreshing={isLoading}
-        />
-      )}
     </PremiumScreenLayout>
   );
 }

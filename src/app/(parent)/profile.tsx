@@ -1,1 +1,2 @@
-export { default } from "@/app/(app)/profile";
+import ProfileScreen from "../(app)/profile";
+export default ProfileScreen;

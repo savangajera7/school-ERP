@@ -6,13 +6,38 @@
   <component name="ChangeListManager">
     <list default="true" id="973b64d6-6094-46c3-ae9b-d54eff11ffd3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/attendance.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/attendance.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/dashboard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/exams.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/exams.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/fees.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/fees.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/masters/academic-year.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/masters/academic-year.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/masters/batch.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/masters/batch.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/masters/blood-group.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/masters/blood-group.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/masters/category.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/masters/category.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/masters/class.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/masters/class.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/masters/religion.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/masters/religion.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/masters/section.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/masters/section.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/masters/subject.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/masters/subject.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/(admin)/notices.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/notices.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/notifications.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/notifications.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/menu.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/menu.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/dashboard/ActionListRow.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/dashboard/ActionListRow.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/layout/ParentMenuScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/layout/ParentMenuScreen.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/layout/TeacherMenuScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/layout/TeacherMenuScreen.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/constants/rolePermissions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/constants/rolePermissions.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/parents.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/parents.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/students.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/students.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/teachers.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/teachers.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/dashboard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/notifications.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/notifications.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/parents.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/parents.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/profile.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(parent)/dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(parent)/dashboard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(parent)/notices.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(parent)/notices.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(super-admin)/dashboard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(teacher)/classwork.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(teacher)/classwork.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(teacher)/dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(teacher)/dashboard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(teacher)/homework.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(teacher)/homework.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(teacher)/notebook.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(teacher)/notebook.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(teacher)/notice.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(teacher)/notice.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/auth/RoleSelector.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/auth/RoleSelector.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/dashboard/DashboardGreeting.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/dashboard/DashboardGreeting.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hooks/usePermissions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/usePermissions.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hooks/useResponsive.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/useResponsive.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,33 +71,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "React Native.Unnamed.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "main",
-    "junie.onboarding.icon.badge.shown": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/savan/IdeaProjects",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "npm.Expo LAN.executor": "Run",
-    "npm.Expo Start (Clear Cache).executor": "Debug",
-    "npm.Expo Start.executor": "Run",
-    "npm.Expo Tunnel (For Mobile).executor": "Run",
-    "npm.Run Android.executor": "Run",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;React Native.Unnamed.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/savan/IdeaProjects&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;npm.Expo LAN.executor&quot;: &quot;Run&quot;,
+    &quot;npm.Expo Start (Clear Cache).executor&quot;: &quot;Debug&quot;,
+    &quot;npm.Expo Start.executor&quot;: &quot;Run&quot;,
+    &quot;npm.Expo Tunnel (For Mobile).executor&quot;: &quot;Run&quot;,
+    &quot;npm.Run Android.executor&quot;: &quot;Run&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="npm.Expo LAN">
     <configuration name="Unnamed" type="ReactNative" factoryName="React Native" nameIsGenerated="true">
       <node-interpreter value="project" />
@@ -114,7 +139,8 @@
       <workItem from="1779710067304" duration="8892000" />
       <workItem from="1779730502344" duration="4990000" />
       <workItem from="1779787664053" duration="4797000" />
-      <workItem from="1779801266900" duration="3025000" />
+      <workItem from="1779801266900" duration="4098000" />
+      <workItem from="1779876532117" duration="637000" />
     </task>
     <servers />
   </component>

@@ -426,7 +426,7 @@ export default function AdmissionFormScreen() {
     </View>
   );
 
-  const SectionHeader = ({ title, icon, color, bgColor, borderColor, sectionKey }: { title: string, icon: any, color: string, bgColor: string, borderColor: string, sectionKey: string }) => (
+  const renderSectionHeader = (title: string, icon: any, color: string, bgColor: string, borderColor: string, sectionKey: string) => (
     <TouchableOpacity 
       onPress={() => toggleSection(sectionKey)}
       activeOpacity={0.7}
@@ -448,14 +448,7 @@ export default function AdmissionFormScreen() {
     <View className="flex-1 w-full max-w-full">
       {/* SECTION 1: Academic Details */}
       <Card className="bg-white border border-gray-150 p-6 mb-4 overflow-hidden">
-        <SectionHeader 
-          title="Academic Details" 
-          icon="subjects" 
-          color="#15803D" 
-          bgColor="bg-emerald-50" 
-          borderColor="border-emerald-100"
-          sectionKey="academic"
-        />
+        {renderSectionHeader("Academic Details", "subjects", "#15803D", "bg-emerald-50", "border-emerald-100", "academic")}
         {expandedSections.academic && (
           <View className="mt-6 pt-6 border-t border-gray-100">
             <View className={`flex-row flex-wrap gap-5 ${isMobile ? "flex-col" : ""}`}>
@@ -475,14 +468,7 @@ export default function AdmissionFormScreen() {
 
       {/* SECTION 2: Personal Details */}
       <Card className="bg-white border border-gray-150 p-6 mb-4 overflow-hidden">
-        <SectionHeader 
-          title="Personal Details" 
-          icon={gender.toLowerCase() === "female" ? "female" : "male"} 
-          color="#0369A1" 
-          bgColor="bg-blue-50" 
-          borderColor="border-blue-100"
-          sectionKey="personal"
-        />
+        {renderSectionHeader("Personal Details", gender.toLowerCase() === "female" ? "female" : "male", "#0369A1", "bg-blue-50", "border-blue-100", "personal")}
         {expandedSections.personal && (
           <View className="mt-6 pt-6 border-t border-gray-100">
             <View className={`flex-row flex-wrap gap-5 ${isMobile ? "flex-col" : ""}`}>
@@ -536,14 +522,7 @@ export default function AdmissionFormScreen() {
 
       {/* SECTION 3: Guardian Details */}
       <Card className="bg-white border border-gray-150 p-6 mb-4 overflow-hidden">
-        <SectionHeader 
-          title="Guardian Details" 
-          icon="parents" 
-          color="#B45309" 
-          bgColor="bg-amber-50" 
-          borderColor="border-amber-100"
-          sectionKey="guardian"
-        />
+        {renderSectionHeader("Guardian Details", "parents", "#B45309", "bg-amber-50", "border-amber-100", "guardian")}
         {expandedSections.guardian && (
           <View className="mt-6 pt-6 border-t border-gray-100">
             <Text className="text-[14px] font-bold text-gray-700 mb-3">Father's Information</Text>
@@ -572,14 +551,7 @@ export default function AdmissionFormScreen() {
 
       {/* SECTION 4: Address Details */}
       <Card className="bg-white border border-gray-150 p-6 mb-4 overflow-hidden">
-        <SectionHeader 
-          title="Address Details" 
-          icon="notifications" 
-          color="#059669" 
-          bgColor="bg-emerald-50" 
-          borderColor="border-emerald-100"
-          sectionKey="address"
-        />
+        {renderSectionHeader("Address Details", "notifications", "#059669", "bg-emerald-50", "border-emerald-100", "address")}
         {expandedSections.address && (
           <View className="mt-6 pt-6 border-t border-gray-100">
             <View className={`flex-row flex-wrap gap-5 ${isMobile ? "flex-col" : ""}`}>
@@ -608,14 +580,7 @@ export default function AdmissionFormScreen() {
 
       {/* SECTION 5: Admission Details */}
       <Card className="bg-white border border-gray-150 p-6 mb-10 overflow-hidden">
-        <SectionHeader 
-          title="Admission Details" 
-          icon="reports" 
-          color="#DB2777" 
-          bgColor="bg-pink-50" 
-          borderColor="border-pink-100"
-          sectionKey="admission"
-        />
+        {renderSectionHeader("Admission Details", "reports", "#DB2777", "bg-pink-50", "border-pink-100", "admission")}
         {expandedSections.admission && (
           <View className="mt-6 pt-6 border-t border-gray-100">
             <View className={`flex-row flex-wrap gap-5 ${isMobile ? "flex-col" : ""}`}>

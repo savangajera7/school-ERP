@@ -24,7 +24,8 @@ export function usePermissions() {
     isTeacher: role === "teacher",
     isParent: role === "parent",
     isStudent: role === "student",
-    isPlatformAdmin: role === "superadmin",
+    isPlatformAdmin: role === "super_admin",
+    isAdmin: role === "admin",
 
     can: (permission: Permission) => hasPermission(role, permission),
     canAccessRoute: (route: string) => canAccessRoute(role, route),

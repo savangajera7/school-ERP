@@ -73,7 +73,7 @@ export default function ProfileScreen() {
       title="My Account"
       subtitle={displayRole}
       hideBack={true}
-      headerContent={
+      headerSlot={
         <View className="mt-4">
           <ProfileAvatarPicker
             name={userData?.name || "User"}

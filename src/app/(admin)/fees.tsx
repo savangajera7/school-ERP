@@ -1,21 +1,17 @@
 import React, { useState, useMemo } from "react";
-import { View, Text, TouchableOpacity, FlatList, Alert } from "react-native";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { router } from "expo-router";
-import { useResponsive } from "@/hooks/useResponsive";
 import { Colors } from "@/constants/colors";
 import { useGetApiFeesGetFeesList, useDeleteApiFeesDeleteFees } from "@/api/generated/fees/fees";
 import { parseApiList } from "@/utils/apiResponse";
-import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { HeaderActionButton } from "@/components/ui/HeaderActionButton";
-import { PremiumSearchField } from "@/components/ui/premium";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
-import { AppIcon, IconCircle } from "@/components/icons/AppIcon";
-import { EmptyState, ErrorState } from "@/components/ui/EmptyState";
+import { IconCircle } from "@/components/icons/AppIcon";
 import { formatDisplayDate } from "@/utils/dateHelpers";
+import { ResponsiveDataList, EntityActionButtons, type TableColumn } from "@/components/shared";
 
 export default function AdminFeesManagementScreen() {
-  const { isMobile } = useResponsive();
   const [searchQuery, setSearchQuery] = useState("");
 
   const { data, isLoading, isError, error, refetch } = useGetApiFeesGetFeesList();
@@ -62,7 +58,49 @@ export default function AdminFeesManagementScreen() {
     );
   };
 
-  const renderFeeItem = ({ item }: { item: any }) => {
+  const tableColumns: TableColumn<any>[] = [
+    { key: "invoiceNo", header: "Invoice", width: 90 },
+    { key: "studentName", header: "Student Name", flex: 2 },
+    { key: "feesType", header: "Fee Type", flex: 1 },
+    { 
+      key: "amount", 
+      header: "Amount", 
+      width: 90, 
+      align: "right",
+      render: (f) => <Text className="text-sm font-bold text-gray-800">₹{f.amount || 0}</Text>
+    },
+    { 
+      key: "paymentDate", 
+      header: "Date", 
+      width: 100, 
+      render: (f) => <Text className="text-sm text-gray-600">{formatDisplayDate(f.paymentDate)}</Text>
+    },
+    { 
+      key: "status", 
+      header: "Status", 
+      width: 90, 
+      align: "center",
+      render: (f) => (
+        <View className="px-2 py-1 bg-green-50 rounded-md border border-green-100">
+          <Text className="text-[10px] font-bold text-green-700">{f.status || "Paid"}</Text>
+        </View>
+      )
+    },
+    { 
+      key: "actions", 
+      header: "Actions", 
+      width: 100, 
+      align: "right", 
+      render: (f) => (
+        <EntityActionButtons 
+          onEdit={() => router.push(`/(admin)/fees-form?id=${f.feesID}`)}
+          onDelete={() => handleDelete(f)}
+        />
+      )
+    }
+  ];
+
+  const renderFeeItem = (item: any) => {
     return (
       <MobileDataCard
         title={item.studentName || "Unknown Student"}
@@ -82,20 +120,10 @@ export default function AdminFeesManagementScreen() {
           { label: "Status", value: item.status || "Paid", highlight: "success" },
         ]}
         actions={
-          <View className="flex-row gap-2 ml-auto">
-            <TouchableOpacity 
-              onPress={() => router.push(`/(admin)/fees-form?id=${item.feesID}`)}
-              className="bg-blue-50 p-2 rounded-lg"
-            >
-              <AppIcon name="edit" size={18} color="#3B82F6" />
-            </TouchableOpacity>
-            <TouchableOpacity 
-              onPress={() => handleDelete(item)}
-              className="bg-red-50 p-2 rounded-lg"
-            >
-              <AppIcon name="delete" size={18} color="#EF4444" />
-            </TouchableOpacity>
-          </View>
+          <EntityActionButtons 
+            onEdit={() => router.push(`/(admin)/fees-form?id=${item.feesID}`)}
+            onDelete={() => handleDelete(item)}
+          />
         }
       />
     );
@@ -115,36 +143,22 @@ export default function AdminFeesManagementScreen() {
         />
       }
     >
-      <PremiumSearchField
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-        placeholder="Search student or invoice..."
-        onClear={() => setSearchQuery("")}
+      <ResponsiveDataList
+        data={filteredFees}
+        isLoading={isLoading}
+        isError={isError}
+        error={error}
+        onRefresh={refetch}
+        renderCard={renderFeeItem}
+        tableColumns={tableColumns}
+        keyExtractor={(item) => String(item.feesID)}
+        emptyIcon="fees"
+        emptyTitle="No records found"
+        emptyMessage={searchQuery ? "Try a different search" : "No fee payments recorded yet"}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="Search student or invoice..."
       />
-
-      {isLoading ? (
-        <SkeletonLoader rows={5} />
-      ) : isError ? (
-        <ErrorState
-          message={error instanceof Error ? error.message : "Could not load fee records"}
-        />
-      ) : (
-        <FlatList
-          data={filteredFees}
-          renderItem={renderFeeItem}
-          keyExtractor={(item) => String(item.feesID)}
-          contentContainerStyle={{ paddingBottom: 100 }}
-          ListEmptyComponent={
-            <EmptyState
-              icon="fees"
-              title="No records found"
-              message={searchQuery ? "Try a different search" : "No fee payments recorded yet"}
-            />
-          }
-          onRefresh={refetch}
-          refreshing={isLoading}
-        />
-      )}
     </PremiumScreenLayout>
   );
 }

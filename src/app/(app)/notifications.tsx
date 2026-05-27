@@ -78,7 +78,7 @@ export default function NotificationsScreen() {
                 }
                 fields={[
                   { label: "Category", value: item.notificationType || "General" },
-                  { label: "Action", value: item.screenName ? "View Details" : "Dismiss", highlight: item.screenName ? "info" : "muted" },
+                  { label: "Action", value: item.screenName ? "View Details" : "Dismiss", highlight: item.screenName ? "primary" : "muted" },
                 ]}
               />
             </TouchableOpacity>

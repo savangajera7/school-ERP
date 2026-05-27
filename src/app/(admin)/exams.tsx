@@ -1,21 +1,17 @@
 import React, { useState, useMemo } from "react";
-import { View, Text, TouchableOpacity, FlatList, Alert } from "react-native";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { router } from "expo-router";
-import { useResponsive } from "@/hooks/useResponsive";
 import { Colors } from "@/constants/colors";
 import { useGetApiExamGetExamList, useDeleteApiExamDeleteExam } from "@/api/generated/exam/exam";
 import { parseApiList } from "@/utils/apiResponse";
-import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { HeaderActionButton } from "@/components/ui/HeaderActionButton";
-import { PremiumSearchField } from "@/components/ui/premium";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
-import { AppIcon, IconCircle } from "@/components/icons/AppIcon";
-import { EmptyState, ErrorState } from "@/components/ui/EmptyState";
+import { IconCircle } from "@/components/icons/AppIcon";
 import { formatDisplayDate } from "@/utils/dateHelpers";
+import { ResponsiveDataList, EntityActionButtons, type TableColumn } from "@/components/shared";
 
 export default function AdminExamsManagementScreen() {
-  const { isMobile } = useResponsive();
   const [searchQuery, setSearchQuery] = useState("");
 
   const { data, isLoading, isError, error, refetch } = useGetApiExamGetExamList();
@@ -62,7 +58,42 @@ export default function AdminExamsManagementScreen() {
     );
   };
 
-  const renderExamItem = ({ item }: { item: any }) => {
+  const tableColumns: TableColumn<any>[] = [
+    { key: "examCode", header: "Code", width: 90 },
+    { key: "examName", header: "Exam Name", flex: 2 },
+    { key: "className", header: "Class", flex: 1 },
+    { 
+      key: "examDate", 
+      header: "Date", 
+      width: 100, 
+      render: (e) => <Text className="text-sm text-gray-600">{formatDisplayDate(e.examDate)}</Text>
+    },
+    { 
+      key: "status", 
+      header: "Status", 
+      width: 100, 
+      align: "center",
+      render: (e) => (
+        <View className="px-2 py-1 bg-blue-50 rounded-md border border-blue-100">
+          <Text className="text-[10px] font-bold text-blue-700">{e.status || "Upcoming"}</Text>
+        </View>
+      )
+    },
+    { 
+      key: "actions", 
+      header: "Actions", 
+      width: 100, 
+      align: "right", 
+      render: (e) => (
+        <EntityActionButtons 
+          onEdit={() => router.push(`/(admin)/exam-form?id=${e.examID}`)}
+          onDelete={() => handleDelete(e)}
+        />
+      )
+    }
+  ];
+
+  const renderExamItem = (item: any) => {
     return (
       <MobileDataCard
         title={item.examName || "Untitled Exam"}
@@ -75,20 +106,10 @@ export default function AdminExamsManagementScreen() {
           { label: "Status", value: item.status || "Upcoming", highlight: "accent" },
         ]}
         actions={
-          <View className="flex-row gap-2 ml-auto">
-            <TouchableOpacity 
-              onPress={() => router.push(`/(admin)/exam-form?id=${item.examID}`)}
-              className="bg-blue-50 p-2 rounded-lg"
-            >
-              <AppIcon name="edit" size={18} color="#3B82F6" />
-            </TouchableOpacity>
-            <TouchableOpacity 
-              onPress={() => handleDelete(item)}
-              className="bg-red-50 p-2 rounded-lg"
-            >
-              <AppIcon name="delete" size={18} color="#EF4444" />
-            </TouchableOpacity>
-          </View>
+          <EntityActionButtons 
+            onEdit={() => router.push(`/(admin)/exam-form?id=${item.examID}`)}
+            onDelete={() => handleDelete(item)}
+          />
         }
       />
     );
@@ -108,36 +129,22 @@ export default function AdminExamsManagementScreen() {
         />
       }
     >
-      <PremiumSearchField
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-        placeholder="Search exam name or code..."
-        onClear={() => setSearchQuery("")}
+      <ResponsiveDataList
+        data={filteredExams}
+        isLoading={isLoading}
+        isError={isError}
+        error={error}
+        onRefresh={refetch}
+        renderCard={renderExamItem}
+        tableColumns={tableColumns}
+        keyExtractor={(item) => String(item.examID)}
+        emptyIcon="exams"
+        emptyTitle="No exams found"
+        emptyMessage={searchQuery ? "Try a different search" : "No exams scheduled yet"}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="Search exam name or code..."
       />
-
-      {isLoading ? (
-        <SkeletonLoader rows={5} />
-      ) : isError ? (
-        <ErrorState
-          message={error instanceof Error ? error.message : "Could not load exams"}
-        />
-      ) : (
-        <FlatList
-          data={filteredExams}
-          renderItem={renderExamItem}
-          keyExtractor={(item) => String(item.examID)}
-          contentContainerStyle={{ paddingBottom: 100 }}
-          ListEmptyComponent={
-            <EmptyState
-              icon="exams"
-              title="No exams found"
-              message={searchQuery ? "Try a different search" : "No exams scheduled yet"}
-            />
-          }
-          onRefresh={refetch}
-          refreshing={isLoading}
-        />
-      )}
     </PremiumScreenLayout>
   );
 }

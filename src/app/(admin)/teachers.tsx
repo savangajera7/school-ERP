@@ -1,21 +1,17 @@
 import React, { useState, useMemo } from "react";
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, Alert } from "react-native";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { router } from "expo-router";
-import { useResponsive } from "@/hooks/useResponsive";
 import { Colors } from "@/constants/colors";
 import { useGetApiTeacherGetTeacherList, useDeleteApiTeacherDeleteTeacher } from "@/api/generated/teacher/teacher";
 import { parseApiList } from "@/utils/apiResponse";
-import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { HeaderActionButton } from "@/components/ui/HeaderActionButton";
-import { PremiumSearchField } from "@/components/ui/premium";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
-import { AppIcon, IconCircle } from "@/components/icons/AppIcon";
-import { EmptyState, ErrorState } from "@/components/ui/EmptyState";
+import { IconCircle } from "@/components/icons/AppIcon";
 import { usePermissions } from "@/hooks/usePermissions";
+import { ResponsiveDataList, EntityActionButtons, type TableColumn } from "@/components/shared";
 
 export default function AdminTeacherManagementScreen() {
-  const { isMobile } = useResponsive();
   const { canManageTeachers } = usePermissions();
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -63,7 +59,43 @@ export default function AdminTeacherManagementScreen() {
     );
   };
 
-  const renderTeacherItem = ({ item }: { item: any }) => {
+  const tableColumns: TableColumn<any>[] = [
+    { key: "teacherCode", header: "Code", width: 80 },
+    { 
+      key: "name", 
+      header: "Teacher Name", 
+      flex: 2, 
+      render: (t) => (
+        <View className="flex-row items-center gap-2">
+          <IconCircle name="teachers" size={24} iconSize={14} />
+          <Text className="text-sm font-bold text-gray-800">{`${t.firstName} ${t.lastName}`}</Text>
+        </View>
+      )
+    },
+    { key: "subjectName", header: "Subject", flex: 1 },
+    { key: "mobileNo", header: "Phone", width: 120 },
+    { 
+      key: "experienceYear", 
+      header: "Experience", 
+      width: 100, 
+      align: "center",
+      render: (t) => <Text className="text-sm text-gray-600">{t.experienceYear || 0} yrs</Text>
+    },
+    { 
+      key: "actions", 
+      header: "Actions", 
+      width: 100, 
+      align: "right", 
+      render: (t) => (
+        <EntityActionButtons 
+          onEdit={() => router.push(`/(admin)/teacher-form?id=${t.teacherID}`)}
+          onDelete={() => handleDelete(t)}
+        />
+      )
+    }
+  ];
+
+  const renderTeacherItem = (item: any) => {
     const fullName = `${item.firstName} ${item.lastName}`;
     return (
       <MobileDataCard
@@ -77,20 +109,10 @@ export default function AdminTeacherManagementScreen() {
           { label: "Experience", value: `${item.experienceYear || 0} yrs` },
         ]}
         actions={
-          <View className="flex-row gap-2 ml-auto">
-            <TouchableOpacity 
-              onPress={() => router.push(`/(admin)/teacher-form?id=${item.teacherID}`)}
-              className="bg-blue-50 p-2 rounded-lg"
-            >
-              <AppIcon name="edit" size={18} color="#3B82F6" />
-            </TouchableOpacity>
-            <TouchableOpacity 
-              onPress={() => handleDelete(item)}
-              className="bg-red-50 p-2 rounded-lg"
-            >
-              <AppIcon name="delete" size={18} color="#EF4444" />
-            </TouchableOpacity>
-          </View>
+          <EntityActionButtons 
+            onEdit={() => router.push(`/(admin)/teacher-form?id=${item.teacherID}`)}
+            onDelete={() => handleDelete(item)}
+          />
         }
       />
     );
@@ -112,36 +134,22 @@ export default function AdminTeacherManagementScreen() {
         ) : undefined
       }
     >
-      <PremiumSearchField
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-        placeholder="Search teachers..."
-        onClear={() => setSearchQuery("")}
+      <ResponsiveDataList
+        data={filteredTeachers}
+        isLoading={isLoading}
+        isError={isError}
+        error={error}
+        onRefresh={refetch}
+        renderCard={renderTeacherItem}
+        tableColumns={tableColumns}
+        keyExtractor={(item) => String(item.teacherID)}
+        emptyIcon="teachers"
+        emptyTitle="No teachers found"
+        emptyMessage={searchQuery ? "Try a different search" : "Register your first teacher"}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="Search by name, code, or subject..."
       />
-
-      {isLoading ? (
-        <SkeletonLoader rows={5} />
-      ) : isError ? (
-        <ErrorState
-          message={error instanceof Error ? error.message : "Could not load teachers"}
-        />
-      ) : (
-        <FlatList
-          data={filteredTeachers}
-          renderItem={renderTeacherItem}
-          keyExtractor={(item) => String(item.teacherID)}
-          contentContainerStyle={{ paddingBottom: 100 }}
-          ListEmptyComponent={
-            <EmptyState
-              icon="teachers"
-              title="No teachers found"
-              message={searchQuery ? "Try a different search" : "Register your first teacher"}
-            />
-          }
-          onRefresh={refetch}
-          refreshing={isLoading}
-        />
-      )}
     </PremiumScreenLayout>
   );
 }
