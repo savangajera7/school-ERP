@@ -2,47 +2,24 @@ import React from "react";
 import { View, Text, StyleSheet, Alert, TouchableOpacity } from "react-native";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { Colors } from "@/constants/colors";
-import { useGetApiSchoolGet, usePostApiSchoolAdd, useDeleteApiSchoolDeleteId } from "@/api/generated/0-schools-super-admin/0-schools-super-admin";
+import { useGetApiSchoolGet, useDeleteApiSchoolDeleteId } from "@/api/generated/0-schools-super-admin/0-schools-super-admin";
 import { parseApiList } from "@/utils/apiResponse";
 import { useQueryClient } from "@tanstack/react-query";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Card } from "@/components/ui/Card";
 import { IconCircle } from "@/components/icons/AppIcon";
+import { router } from "expo-router";
 
 export default function SchoolsManagementScreen() {
   const { data, isLoading } = useGetApiSchoolGet();
   const queryClient = useQueryClient();
-  const addSchoolMutation = usePostApiSchoolAdd();
   const deleteSchoolMutation = useDeleteApiSchoolDeleteId();
 
   const schools = React.useMemo(() => parseApiList<any>(data?.data), [data]);
 
   const handleAddSchool = () => {
-    addSchoolMutation.mutate(
-      { 
-        data: { 
-          schoolCode: "TEST-" + Math.floor(Math.random() * 10000),
-          schoolName: "New School", 
-          email: "info@newschool.com",
-          phone: "1234567890",
-          adminFirstName: "Admin",
-          adminLastName: "User",
-          adminEmail: "admin@newschool.com",
-          adminPhone: "1234567890",
-          adminPassword: "Password@123"
-        } 
-      },
-      {
-        onSuccess: () => {
-          Alert.alert("Success", "School added successfully.");
-          queryClient.invalidateQueries({ queryKey: ["/api/School/Get"] });
-        },
-        onError: () => {
-          Alert.alert("Error", "Failed to add school.");
-        }
-      }
-    );
+    router.push("/(super-admin)/add-school");
   };
 
   const handleDeleteSchool = (id: number) => {
