@@ -40,6 +40,7 @@ import type {
 import type {
   GetApiSchoolGetParams,
   ProblemDetails,
+  SchoolInsertRequest,
   SchoolStatusChangeRequest,
   SchoolUpdateRequest
 } from '../../model';
@@ -259,14 +260,14 @@ export const getPostApiSchoolAddUrl = () => {
   return `/api/School/Add`
 }
 
-export const postApiSchoolAdd = async (schoolUpdateRequest?: SchoolUpdateRequest, options?: RequestInit): Promise<postApiSchoolAddResponse> => {
+export const postApiSchoolAdd = async (schoolInsertRequest?: SchoolInsertRequest, options?: RequestInit): Promise<postApiSchoolAddResponse> => {
 
   return customInstance<postApiSchoolAddResponse>(getPostApiSchoolAddUrl(),
   {
     ...options,
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(schoolUpdateRequest)
+    body: JSON.stringify(schoolInsertRequest)
   }
 );}
 
@@ -274,8 +275,8 @@ export const postApiSchoolAdd = async (schoolUpdateRequest?: SchoolUpdateRequest
 
 
 export const getPostApiSchoolAddMutationOptions = <TError = ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiSchoolAdd>>, TError,{data?: SchoolUpdateRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof postApiSchoolAdd>>, TError,{data?: SchoolUpdateRequest}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiSchoolAdd>>, TError,{data?: SchoolInsertRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof postApiSchoolAdd>>, TError,{data?: SchoolInsertRequest}, TContext> => {
 
 const mutationKey = ['postApiSchoolAdd'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -287,7 +288,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiSchoolAdd>>, {data?: SchoolUpdateRequest}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiSchoolAdd>>, {data?: SchoolInsertRequest}> = (props) => {
           const {data} = props ?? {};
 
           return  postApiSchoolAdd(data,requestOptions)
@@ -301,15 +302,15 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type PostApiSchoolAddMutationResult = NonNullable<Awaited<ReturnType<typeof postApiSchoolAdd>>>
-    export type PostApiSchoolAddMutationBody = SchoolUpdateRequest | undefined
+    export type PostApiSchoolAddMutationBody = SchoolInsertRequest | undefined
     export type PostApiSchoolAddMutationError = ProblemDetails
 
     export const usePostApiSchoolAdd = <TError = ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiSchoolAdd>>, TError,{data?: SchoolUpdateRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiSchoolAdd>>, TError,{data?: SchoolInsertRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postApiSchoolAdd>>,
         TError,
-        {data?: SchoolUpdateRequest},
+        {data?: SchoolInsertRequest},
         TContext
       > => {
       return useMutation(getPostApiSchoolAddMutationOptions(options), queryClient);

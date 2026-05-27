@@ -20,7 +20,19 @@ export default function SchoolsManagementScreen() {
 
   const handleAddSchool = () => {
     addSchoolMutation.mutate(
-      { data: { schoolName: "New School", email: "info@newschool.com" } },
+      { 
+        data: { 
+          schoolCode: "TEST-" + Math.floor(Math.random() * 10000),
+          schoolName: "New School", 
+          email: "info@newschool.com",
+          phone: "1234567890",
+          adminFirstName: "Admin",
+          adminLastName: "User",
+          adminEmail: "admin@newschool.com",
+          adminPhone: "1234567890",
+          adminPassword: "Password@123"
+        } 
+      },
       {
         onSuccess: () => {
           Alert.alert("Success", "School added successfully.");

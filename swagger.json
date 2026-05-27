@@ -4154,17 +4154,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SchoolUpdateRequest"
+                "$ref": "#/components/schemas/SchoolInsertRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/SchoolUpdateRequest"
+                "$ref": "#/components/schemas/SchoolInsertRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/SchoolUpdateRequest"
+                "$ref": "#/components/schemas/SchoolInsertRequest"
               }
             }
           }
@@ -8414,6 +8414,80 @@
             "nullable": true
           },
           "adminPhone": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SchoolInsertRequest": {
+        "type": "object",
+        "properties": {
+          "schoolCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "schoolName": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "website": {
+            "type": "string",
+            "nullable": true
+          },
+          "logoUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "line1": {
+            "type": "string",
+            "nullable": true
+          },
+          "line2": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "state": {
+            "type": "string",
+            "nullable": true
+          },
+          "postalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "country": {
+            "type": "string",
+            "nullable": true
+          },
+          "adminFirstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "adminLastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "adminEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "adminPhone": {
+            "type": "string",
+            "nullable": true
+          },
+          "adminPassword": {
             "type": "string",
             "nullable": true
           }
