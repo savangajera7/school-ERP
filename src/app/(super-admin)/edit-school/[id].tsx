@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { View, ScrollView, Alert, KeyboardAvoidingView, Platform, Text } from "react-native";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { Input } from "@/components/ui/Input";
+import { PasswordInput } from "@/components/ui/PasswordInput";
 import { Button } from "@/components/ui/Button";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -25,6 +26,7 @@ const editSchoolSchema = z.object({
   adminFirstName: z.string().optional().nullable(),
   adminLastName: z.string().optional().nullable(),
   adminPhone: z.string().optional().nullable(),
+  adminPassword: z.string().optional().nullable(),
 });
 
 type EditSchoolFormValues = z.infer<typeof editSchoolSchema>;
@@ -42,7 +44,7 @@ export default function EditSchoolScreen() {
     defaultValues: {
       schoolID: schoolId, schoolName: "", email: "", phone: "",
       line1: "", city: "", state: "", postalCode: "", country: "",
-      adminFirstName: "", adminLastName: "", adminPhone: ""
+      adminFirstName: "", adminLastName: "", adminPhone: "", adminPassword: ""
     }
   });
 
@@ -185,6 +187,13 @@ export default function EditSchoolScreen() {
                 name="adminPhone"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <Input label="Admin Phone" placeholder="+1234567890" keyboardType="phone-pad" onBlur={onBlur} onChangeText={onChange} value={value} error={errors.adminPhone?.message} />
+                )}
+              />
+              <Controller
+                control={control}
+                name="adminPassword"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <PasswordInput label="Admin Password (leave blank to keep current)" placeholder="••••••••" onBlur={onBlur} onChangeText={onChange} value={value} error={errors.adminPassword?.message} />
                 )}
               />
             </Card>
