@@ -6,7 +6,7 @@ import { PremiumStatPills } from "@/components/ui/premium";
 import { Card } from "@/components/ui/Card";
 import { useGetApiStudentGet } from "@/api/generated/3-student-crud/3-student-crud";
 import { useGetApiFeesGetFeesList } from "@/api/generated/fees/fees";
-import { useGetApiStudentAttendanceGetStudentAttendanceList } from "@/api/generated/student-attendance/student-attendance";
+import { useGetApiAttendanceGet } from "@/api/generated/9-attendance/9-attendance";
 import { useGetApiResultGetResultList } from "@/api/generated/result/result";
 import { parseApiList } from "@/utils/apiResponse";
 import { Colors } from "@/constants/colors";
@@ -16,7 +16,7 @@ import { IconCircle } from "@/components/icons/AppIcon";
 export default function ReportsScreen() {
   const { data: studentsData } = useGetApiStudentGet();
   const { data: feesData } = useGetApiFeesGetFeesList();
-  const { data: attendanceData } = useGetApiStudentAttendanceGetStudentAttendanceList();
+  const { data: attendanceData } = useGetApiAttendanceGet();
   const { data: resultsData } = useGetApiResultGetResultList();
 
   const stats = useMemo(() => {

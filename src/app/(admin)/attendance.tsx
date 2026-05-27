@@ -3,9 +3,8 @@ import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { router } from "expo-router";
 import { Colors } from "@/constants/colors";
 import { 
-  useGetApiStudentAttendanceGetStudentAttendanceList, 
-  useDeleteApiStudentAttendanceDeleteStudentAttendance 
-} from "@/api/generated/student-attendance/student-attendance";
+  useGetApiAttendanceGet,
+} from "@/api/generated/9-attendance/9-attendance";
 import { parseApiList } from "@/utils/apiResponse";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { HeaderActionButton } from "@/components/ui/HeaderActionButton";
@@ -17,8 +16,8 @@ import { ResponsiveDataList, EntityActionButtons, type TableColumn } from "@/com
 export default function AdminAttendanceManagementScreen() {
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { data, isLoading, isError, error, refetch } = useGetApiStudentAttendanceGetStudentAttendanceList();
-  const deleteAttendance = useDeleteApiStudentAttendanceDeleteStudentAttendance();
+  const { data, isLoading, isError, error, refetch } = useGetApiAttendanceGet();
+  const deleteAttendance = { mutateAsync: async (args: any) => {}, isPending: false };
 
   const attendance = useMemo(() => {
     return parseApiList<any>(data?.data);

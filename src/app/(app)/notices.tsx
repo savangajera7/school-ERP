@@ -7,7 +7,7 @@ import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { PremiumTabSwitcher } from "@/components/ui/premium";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { IconCircle } from "@/components/icons/AppIcon";
-import { useGetApiNoticeGetNoticeList } from "@/api/generated/notice/notice";
+import { useGetApiNoticeGet } from "@/api/generated/8-notice/8-notice";
 import { parseApiList } from "@/utils/apiResponse";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
@@ -22,7 +22,7 @@ export default function StudentNoticeHistoryScreen() {
   const [activeTab, setActiveTab] = useState<"school" | "class">("school");
   const [expandedNoticeId, setExpandedNoticeId] = useState<string | null>(null);
   
-  const { data: noticesData, isLoading, refetch } = useGetApiNoticeGetNoticeList();
+  const { data: noticesData, isLoading, refetch } = useGetApiNoticeGet();
 
   const noticeList = useMemo(() => {
     const list = parseApiList(noticesData?.data);

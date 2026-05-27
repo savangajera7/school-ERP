@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { View, Text } from "react-native";
 import { Colors } from "@/constants/colors";
-import { useGetApiNoticeGetNoticeList } from "@/api/generated/notice/notice";
+import { useGetApiNoticeGet } from "@/api/generated/8-notice/8-notice";
 import { parseApiList } from "@/utils/apiResponse";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
@@ -12,7 +12,7 @@ import { ResponsiveDataList, type TableColumn } from "@/components/shared";
 export default function ParentNoticesScreen() {
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { data, isLoading, isError, error, refetch } = useGetApiNoticeGetNoticeList();
+  const { data, isLoading, isError, error, refetch } = useGetApiNoticeGet();
 
   const notices = useMemo(() => {
     return parseApiList<any>(data?.data);

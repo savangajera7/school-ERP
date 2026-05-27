@@ -3,9 +3,9 @@
  * Title prefix: [HOMEWORK], [CLASSWORK], [NOTEBOOK]
  */
 import {
-  useGetApiNoticeGetNoticeList,
-  usePostApiNoticeInsertNotice,
-} from "@/api/generated/notice/notice";
+  useGetApiNoticeGet,
+  usePostApiNoticeAdd,
+} from "@/api/generated/8-notice/8-notice";
 import { parseApiList } from "@/utils/apiResponse";
 
 export type ContentKind = "HOMEWORK" | "CLASSWORK" | "NOTEBOOK";
@@ -43,7 +43,7 @@ export function buildContentTitle(kind: ContentKind, title: string) {
 }
 
 export function useClassroomContentList(kind?: ContentKind) {
-  const q = useGetApiNoticeGetNoticeList();
+  const q = useGetApiNoticeGet();
   const items = parseApiList<Record<string, unknown>>(q.data?.data)
     .map(parseContentNotice)
     .filter((x) => (kind ? x.kind === kind : !!x.kind));
@@ -51,5 +51,5 @@ export function useClassroomContentList(kind?: ContentKind) {
 }
 
 export function useInsertClassroomContent() {
-  return usePostApiNoticeInsertNotice();
+  return usePostApiNoticeAdd();
 }

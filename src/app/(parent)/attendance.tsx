@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { View, Text } from "react-native";
 import { Colors } from "@/constants/colors";
-import { useGetApiStudentAttendanceGetStudentAttendanceList } from "@/api/generated/student-attendance/student-attendance";
+import { useGetApiAttendanceGet } from "@/api/generated/9-attendance/9-attendance";
 import { parseApiList } from "@/utils/apiResponse";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
@@ -12,7 +12,7 @@ import { ResponsiveDataList, type TableColumn } from "@/components/shared";
 export default function ParentAttendanceScreen() {
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { data, isLoading, isError, error, refetch } = useGetApiStudentAttendanceGetStudentAttendanceList();
+  const { data, isLoading, isError, error, refetch } = useGetApiAttendanceGet();
 
   const attendance = useMemo(() => {
     return parseApiList<any>(data?.data);

@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, FlatList, Alert, ScrollView } from "react
 import { router } from "expo-router";
 import { useResponsive } from "@/hooks/useResponsive";
 import { Colors } from "@/constants/colors";
-import { useGetApiNoticeGetNoticeList, useDeleteApiNoticeDeleteNotice } from "@/api/generated/notice/notice";
+import { useGetApiNoticeGet, usePostApiNoticeDelete } from "@/api/generated/8-notice/8-notice";
 import { parseApiList } from "@/utils/apiResponse";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
@@ -19,8 +19,8 @@ export default function AdminNoticesManagementScreen() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showForm, setShowForm] = useState(false);
 
-  const { data, isLoading, isError, error, refetch } = useGetApiNoticeGetNoticeList();
-  const deleteNotice = useDeleteApiNoticeDeleteNotice();
+  const { data, isLoading, isError, error, refetch } = useGetApiNoticeGet();
+  const deleteNotice = usePostApiNoticeDelete();
 
   const notices = useMemo(() => {
     return parseApiList<any>(data?.data);

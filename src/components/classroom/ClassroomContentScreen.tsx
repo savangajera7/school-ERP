@@ -55,7 +55,7 @@ export default function ClassroomContentScreen({
         data: {
           noticeTitle: buildContentTitle(kind, title),
           noticeDescription: description,
-          noticeFor: "Class",
+          noticeType: "Class",
           addedBy: parseInt(userData?.id ?? "0"),
         },
       });

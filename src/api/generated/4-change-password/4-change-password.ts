@@ -62,10 +62,25 @@ export type postApiChangePasswordParentResponse400TextJson = {
   status: 400
 }
 
+export type postApiChangePasswordParentResponse403TextPlain = {
+  data: ProblemDetails
+  status: 403
+}
+
+export type postApiChangePasswordParentResponse403ApplicationJson = {
+  data: ProblemDetails
+  status: 403
+}
+
+export type postApiChangePasswordParentResponse403TextJson = {
+  data: ProblemDetails
+  status: 403
+}
+
 export type postApiChangePasswordParentResponseSuccess = (postApiChangePasswordParentResponse200) & {
   headers: Headers;
 };
-export type postApiChangePasswordParentResponseError = (postApiChangePasswordParentResponse400TextPlain | postApiChangePasswordParentResponse400ApplicationJson | postApiChangePasswordParentResponse400TextJson) & {
+export type postApiChangePasswordParentResponseError = (postApiChangePasswordParentResponse400TextPlain | postApiChangePasswordParentResponse400ApplicationJson | postApiChangePasswordParentResponse400TextJson | postApiChangePasswordParentResponse403TextPlain | postApiChangePasswordParentResponse403ApplicationJson | postApiChangePasswordParentResponse403TextJson) & {
   headers: Headers;
 };
 
@@ -154,10 +169,25 @@ export type postApiChangePasswordStudentResponse400TextJson = {
   status: 400
 }
 
+export type postApiChangePasswordStudentResponse403TextPlain = {
+  data: ProblemDetails
+  status: 403
+}
+
+export type postApiChangePasswordStudentResponse403ApplicationJson = {
+  data: ProblemDetails
+  status: 403
+}
+
+export type postApiChangePasswordStudentResponse403TextJson = {
+  data: ProblemDetails
+  status: 403
+}
+
 export type postApiChangePasswordStudentResponseSuccess = (postApiChangePasswordStudentResponse200) & {
   headers: Headers;
 };
-export type postApiChangePasswordStudentResponseError = (postApiChangePasswordStudentResponse400TextPlain | postApiChangePasswordStudentResponse400ApplicationJson | postApiChangePasswordStudentResponse400TextJson) & {
+export type postApiChangePasswordStudentResponseError = (postApiChangePasswordStudentResponse400TextPlain | postApiChangePasswordStudentResponse400ApplicationJson | postApiChangePasswordStudentResponse400TextJson | postApiChangePasswordStudentResponse403TextPlain | postApiChangePasswordStudentResponse403ApplicationJson | postApiChangePasswordStudentResponse403TextJson) & {
   headers: Headers;
 };
 
@@ -246,10 +276,25 @@ export type postApiChangePasswordTeacherResponse400TextJson = {
   status: 400
 }
 
+export type postApiChangePasswordTeacherResponse403TextPlain = {
+  data: ProblemDetails
+  status: 403
+}
+
+export type postApiChangePasswordTeacherResponse403ApplicationJson = {
+  data: ProblemDetails
+  status: 403
+}
+
+export type postApiChangePasswordTeacherResponse403TextJson = {
+  data: ProblemDetails
+  status: 403
+}
+
 export type postApiChangePasswordTeacherResponseSuccess = (postApiChangePasswordTeacherResponse200) & {
   headers: Headers;
 };
-export type postApiChangePasswordTeacherResponseError = (postApiChangePasswordTeacherResponse400TextPlain | postApiChangePasswordTeacherResponse400ApplicationJson | postApiChangePasswordTeacherResponse400TextJson) & {
+export type postApiChangePasswordTeacherResponseError = (postApiChangePasswordTeacherResponse400TextPlain | postApiChangePasswordTeacherResponse400ApplicationJson | postApiChangePasswordTeacherResponse400TextJson | postApiChangePasswordTeacherResponse403TextPlain | postApiChangePasswordTeacherResponse403ApplicationJson | postApiChangePasswordTeacherResponse403TextJson) & {
   headers: Headers;
 };
 

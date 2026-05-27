@@ -21,6 +21,7 @@
 
 export interface StudentModel {
   studentID?: number;
+  schoolID?: number;
   academicYearID?: number;
   classID?: number;
   /** @nullable */
@@ -133,6 +134,8 @@ export interface StudentModel {
   /** @nullable */
   referenceSource?: string | null;
   /** @nullable */
+  siblingInfo?: string | null;
+  /** @nullable */
   remarks?: string | null;
   /** @nullable */
   studentType?: string | null;
@@ -144,6 +147,8 @@ export interface StudentModel {
   rte?: boolean | null;
   /** @nullable */
   status?: string | null;
+  /** @nullable */
+  createdDate?: string | null;
   /** @nullable */
   fatherName?: string | null;
   /** @nullable */
@@ -180,4 +185,10 @@ export interface StudentModel {
   createdBy?: number | null;
   /** @nullable */
   updatedBy?: number | null;
+  /** @nullable */
+  blacklistReason?: string | null;
+  /** @nullable */
+  blacklistedOn?: string | null;
+  /** @nullable */
+  blacklistedBy?: number | null;
 }

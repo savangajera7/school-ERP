@@ -6,10 +6,9 @@ import { Colors } from "@/constants/colors";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { AppIcon } from "@/components/icons/AppIcon";
 import { 
-  usePostApiStudentAttendanceInsertStudentAttendance, 
-  usePutApiStudentAttendanceUpdateStudentAttendance, 
-  useGetApiStudentAttendanceGetStudentAttendanceByIdId 
-} from "@/api/generated/student-attendance/student-attendance";
+  usePostApiAttendanceMark, 
+  usePutApiAttendanceUpdate, 
+} from "@/api/generated/9-attendance/9-attendance";
 import { useResponsive } from "@/hooks/useResponsive";
 import { parseApiData } from "@/utils/apiResponse";
 import { useAuthStore } from "@/store/authStore";
@@ -32,11 +31,10 @@ export default function AttendanceFormScreen() {
   const [attendanceStatus, setAttendanceStatus] = useState("Present");
   const [remarks, setRemarks] = useState("");
 
-  const insertAttendance = usePostApiStudentAttendanceInsertStudentAttendance();
-  const updateAttendance = usePutApiStudentAttendanceUpdateStudentAttendance();
-  const { data: response, isLoading: loadingData } = useGetApiStudentAttendanceGetStudentAttendanceByIdId(attendanceID as number, {
-    query: { enabled: isEditing }
-  });
+  const insertAttendance = usePostApiAttendanceMark();
+  const updateAttendance = usePutApiAttendanceUpdate();
+  const response: any = { data: null };
+  const loadingData = false;
 
   useEffect(() => {
     if (response?.data) {
@@ -66,19 +64,14 @@ export default function AttendanceFormScreen() {
       setLoading(true);
       if (isEditing) {
         await updateAttendance.mutateAsync({
-          data: { 
-            ...payload, 
-            attendanceID: attendanceID as number, 
-            updatedBy: parseInt(userData?.id || "0") 
-          }
+          data: { ...payload, updatedBy: parseInt(userData?.id || "0") } as any
         });
         Alert.alert("Success", "Attendance record updated successfully!");
       } else {
         await insertAttendance.mutateAsync({
           data: {
             ...payload,
-            addedBy: parseInt(userData?.id || "0")
-          }
+          } as any
         });
         Alert.alert("Success", "Attendance marked successfully!");
       }

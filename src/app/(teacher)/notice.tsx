@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { Colors } from "@/constants/colors";
-import { useGetApiNoticeGetNoticeList } from "@/api/generated/notice/notice";
+import { useGetApiNoticeGet } from "@/api/generated/8-notice/8-notice";
 import { parseApiList } from "@/utils/apiResponse";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
@@ -13,7 +13,7 @@ export default function TeacherNoticeScreen() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showForm, setShowForm] = useState(false);
 
-  const { data, isLoading, isError, error, refetch } = useGetApiNoticeGetNoticeList();
+  const { data, isLoading, isError, error, refetch } = useGetApiNoticeGet();
 
   const notices = useMemo(() => {
     return parseApiList<any>(data?.data);

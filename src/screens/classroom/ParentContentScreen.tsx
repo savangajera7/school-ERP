@@ -32,7 +32,7 @@ export default function ParentContentScreen({ kind }: Props) {
         ) : isError ? (
           <View style={styles.errorBox}>
             <Text style={styles.errorText}>
-              {(error as Error)?.message ?? "Could not load content"}
+              {(error as any)?.message ?? "Could not load content"}
             </Text>
           </View>
         ) : (

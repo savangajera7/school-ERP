@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/Card";
 import { AppIcon } from "@/components/icons/AppIcon";
 import { Colors } from "@/constants/colors";
 import { useAuthStore } from "@/store/authStore";
-import { usePostApiNoticeInsertNotice } from "@/api/generated/notice/notice";
+import { usePostApiNoticeAdd } from "@/api/generated/8-notice/8-notice";
 import { usePostApiNotificationInsertNotification } from "@/api/generated/notification/notification";
 
 export interface NoticeFormProps {
@@ -38,7 +38,7 @@ export function NoticeForm({
   const [targetAudience, setTargetAudience] = useState(defaultTarget);
   const [noticeDescription, setNoticeDescription] = useState("");
 
-  const insertNotice = usePostApiNoticeInsertNotice();
+  const insertNotice = usePostApiNoticeAdd();
   const insertNotification = usePostApiNotificationInsertNotification();
 
   const handleSubmit = async () => {

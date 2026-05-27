@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { useGetApiClassGetClassList } from "@/api/generated/master-class/master-class";
 import { useGetApiSectionGetSectionList } from "@/api/generated/master-section/master-section";
 import { useGetApiStudentGet } from "@/api/generated/3-student-crud/3-student-crud";
-import { usePostApiStudentAttendanceInsertStudentAttendance } from "@/api/generated/student-attendance/student-attendance";
+import { usePostApiAttendanceMark } from "@/api/generated/9-attendance/9-attendance";
 import { parseApiList } from "@/utils/apiResponse";
 import { useToast } from "@/components/ui/Toast";
 import { useAuthStore } from "@/store/authStore";
@@ -33,7 +33,7 @@ export default function AttendanceScreen() {
   const { data: classesData, isLoading: loadingClasses } = useGetApiClassGetClassList();
   const { data: sectionsData, isLoading: loadingSections } = useGetApiSectionGetSectionList();
   const { data: studentsData, isLoading: loadingStudents } = useGetApiStudentGet();
-  const markAttendance = usePostApiStudentAttendanceInsertStudentAttendance();
+  const markAttendance = usePostApiAttendanceMark();
 
   const classes = useMemo(() => parseApiList(classesData?.data), [classesData]);
   const sections = useMemo(() => parseApiList(sectionsData?.data), [sectionsData]);
@@ -73,21 +73,21 @@ export default function AttendanceScreen() {
     }
 
     try {
-      const addedBy = parseInt(userData?.id ?? "0", 10) || 0;
-      const promises = filteredStudents.map((student) => {
-        if (!student.studentID) return Promise.resolve();
-        return markAttendance.mutateAsync({
-          data: {
-            studentID: student.studentID,
-            attendanceDate: date,
-            attendanceStatus: attendanceMap[student.studentID] || "Present",
-            remark: "",
-            addedBy,
-          },
-        });
-      });
+      const studentsPayload = filteredStudents
+        .filter(s => s.studentID)
+        .map(s => ({
+          studentID: s.studentID!,
+          attendanceStatus: attendanceMap[s.studentID!] || "Present",
+          remark: ""
+        }));
 
-      await Promise.all(promises);
+      await markAttendance.mutateAsync({
+        data: {
+          classID: selectedClassId,
+          attendanceDate: date,
+          students: studentsPayload
+        }
+      });
 
       const absentCount = filteredStudents.filter(
         (s) => attendanceMap[s.studentID!] === "Absent"

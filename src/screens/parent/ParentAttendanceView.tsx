@@ -3,7 +3,7 @@ import { View, Text, FlatList, RefreshControl } from "react-native";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { Colors } from "@/constants/colors";
-import { useGetApiStudentAttendanceGetStudentAttendanceList } from "@/api/generated/student-attendance/student-attendance";
+import { useGetApiAttendanceGet } from "@/api/generated/9-attendance/9-attendance";
 import { useAuthStore } from "@/store/authStore";
 import { parseApiList } from "@/utils/apiResponse";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
@@ -15,7 +15,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 export default function ParentAttendanceView() {
   const refId = useAuthStore((s) => s.userData?.referenceID);
   const { data, isLoading, refetch, isError } =
-    useGetApiStudentAttendanceGetStudentAttendanceList();
+    useGetApiAttendanceGet();
   const { isMobile } = useResponsive();
   const { t } = useTranslation();
 

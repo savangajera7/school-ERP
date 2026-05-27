@@ -8,7 +8,7 @@ import { useAuthStore } from "@/store/authStore";
 import { useResponsive } from "@/hooks/useResponsive";
 import { useGetApiStudentGet } from "@/api/generated/3-student-crud/3-student-crud";
 import { useGetApiTeacherGetTeacherList } from "@/api/generated/teacher/teacher";
-import { useGetApiStudentAttendanceGetStudentAttendanceList } from "@/api/generated/student-attendance/student-attendance";
+import { useGetApiAttendanceGet } from "@/api/generated/9-attendance/9-attendance";
 import { useGetApiTeacherAttendanceGetTeacherAttendanceList } from "@/api/generated/teacher-attendance/teacher-attendance";
 import { parseApiList } from "@/utils/apiResponse";
 import { usePermissions } from "@/hooks/usePermissions";
@@ -40,7 +40,7 @@ export default function DashboardScreen() {
 
   const { data: studentsData, isLoading: loadingStudents, refetch: refetchStudents } = useGetApiStudentGet();
   const { data: teachersData, isLoading: loadingTeachers, refetch: refetchTeachers } = useGetApiTeacherGetTeacherList();
-  const { data: attendanceData, isLoading: loadingAttendance, refetch: refetchAttendance } = useGetApiStudentAttendanceGetStudentAttendanceList();
+  const { data: attendanceData, isLoading: loadingAttendance, refetch: refetchAttendance } = useGetApiAttendanceGet();
   const { data: staffAttendanceData, isLoading: loadingStaffAttendance, refetch: refetchStaffAttendance } = useGetApiTeacherAttendanceGetTeacherAttendanceList();
 
   const isLoading = loadingStudents || loadingTeachers || loadingAttendance || loadingStaffAttendance;

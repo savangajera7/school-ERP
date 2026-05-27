@@ -74,12 +74,12 @@ export default function ProfileScreen() {
       subtitle={displayRole}
       hideBack={true}
       headerSlot={
-        <View className="mt-4">
+        <View className="mt-4 items-center w-full">
           <ProfileAvatarPicker
             name={userData?.name || "User"}
             avatarUri={userData?.avatar}
             initials={initials}
-            size={76}
+            size={96}
           />
         </View>
       }
@@ -104,22 +104,6 @@ export default function ProfileScreen() {
           <InfoRow label="User ID" value={userData?.id || "—"} />
           <InfoRow label="Language" value={language === "gu" ? "ગુજરાતી" : "English"} />
           
-          <TouchableOpacity
-            onPress={() => router.push("/(app)/notifications")}
-            className="mt-6 flex-row items-center justify-between bg-blue-50/50 border border-blue-100/50 rounded-2xl px-5 py-4"
-          >
-            <View className="flex-row items-center gap-3">
-              <AppIcon name="bell" size={20} color={Colors.primary} active />
-              <Text className="font-black text-gray-800">Notifications</Text>
-            </View>
-            {unreadCount > 0 ? (
-              <View className="bg-rose-500 min-w-[24px] h-[24px] rounded-full items-center justify-center px-1.5 border-2 border-white">
-                <Text className="text-white text-[10px] font-black">{unreadCount}</Text>
-              </View>
-            ) : (
-              <Text className="text-gray-400 text-xs font-bold uppercase">None</Text>
-            )}
-          </TouchableOpacity>
         </View>
 
         {/* Parent: linked children */}

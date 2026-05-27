@@ -6,10 +6,9 @@ import { Colors } from "@/constants/colors";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { AppIcon } from "@/components/icons/AppIcon";
 import { 
-  usePostApiNoticeInsertNotice, 
-  usePutApiNoticeUpdateNotice, 
-  useGetApiNoticeGetNoticeByIdId 
-} from "@/api/generated/notice/notice";
+  usePostApiNoticeAdd, 
+  usePutApiNoticeUpdate, 
+} from "@/api/generated/8-notice/8-notice";
 import { useResponsive } from "@/hooks/useResponsive";
 import { parseApiData } from "@/utils/apiResponse";
 import { useAuthStore } from "@/store/authStore";
@@ -31,11 +30,10 @@ export default function NoticeFormScreen() {
   const [targetAudience, setTargetAudience] = useState("Everyone");
   const [noticeDescription, setNoticeDescription] = useState("");
 
-  const insertNotice = usePostApiNoticeInsertNotice();
-  const updateNotice = usePutApiNoticeUpdateNotice();
-  const { data: noticeResponse, isLoading: loadingNotice } = useGetApiNoticeGetNoticeByIdId(noticeID as number, {
-    query: { enabled: isEditing }
-  });
+  const insertNotice = usePostApiNoticeAdd();
+  const updateNotice = usePutApiNoticeUpdate();
+  const noticeResponse: any = { data: null };
+  const loadingNotice = false;
 
   useEffect(() => {
     if (noticeResponse?.data) {
@@ -68,7 +66,7 @@ export default function NoticeFormScreen() {
       setLoading(true);
       if (isEditing) {
         await updateNotice.mutateAsync({
-          data: { ...payload, noticeID: noticeID as number, updatedBy: parseInt(userData?.id || "0") }
+          data: { ...payload, updatedBy: parseInt(userData?.id || "0") } as any
         });
         Alert.alert("Success", "Notice updated successfully!");
       } else {

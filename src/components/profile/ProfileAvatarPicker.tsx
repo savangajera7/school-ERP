@@ -75,7 +75,7 @@ export function ProfileAvatarPicker({
 }
 
 const styles = StyleSheet.create({
-  wrap: { flexDirection: "row", alignItems: "center", gap: 14 },
+  wrap: { flexDirection: "column", alignItems: "center", gap: 12 },
   avatarBtn: {
     borderWidth: 2,
     borderColor: "rgba(255,255,255,0.35)",
@@ -110,9 +110,9 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "#fff",
   },
-  nameCol: { flex: 1 },
-  name: { fontSize: 18, fontWeight: "900", color: SchoolTheme.text },
+  nameCol: { alignItems: "center" },
+  name: { fontSize: 20, fontWeight: "900", color: SchoolTheme.text, textAlign: "center" },
   nameLight: { color: "#fff" },
-  hint: { fontSize: 11, fontWeight: "600", color: SchoolTheme.textSecondary, marginTop: 4 },
+  hint: { fontSize: 12, fontWeight: "600", color: SchoolTheme.textSecondary, marginTop: 4, textAlign: "center" },
   hintLight: { color: "rgba(255,255,255,0.7)" },
 });

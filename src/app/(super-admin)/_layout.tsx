@@ -8,10 +8,10 @@ const SUPER_ADMIN_TABS: TabDef[] = [
   { name: "users", title: "Users", icon: "users", href: "/(super-admin)/users" },
   { name: "dashboard", title: "Home", icon: "home", href: "/(super-admin)/dashboard", center: true },
   { name: "roles", title: "Roles", icon: "roles", href: "/(super-admin)/roles" },
-  { name: "settings", title: "Settings", icon: "settings", href: "/(super-admin)/settings" },
+  { name: "profile", title: "Profile", icon: "profile", href: "/(super-admin)/profile" },
 ];
 
-const TAB_ROUTES = ["menu", "dashboard", "users", "roles", "settings"];
+const TAB_ROUTES = ["menu", "dashboard", "users", "roles", "profile"];
 
 export default function SuperAdminLayout() {
   return (

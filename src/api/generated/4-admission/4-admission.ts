@@ -29,6 +29,8 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  ProblemDetails,
+  StudentBlacklistRequest,
   StudentModel
 } from '../../model';
 
@@ -39,24 +41,34 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
 
-export type postApiAdmissionAddResponse200 = {
-  data: void
-  status: 200
+export type postApiAdmissionAddResponse401TextPlain = {
+  data: ProblemDetails
+  status: 401
 }
 
-export type postApiAdmissionAddResponseSuccess = (postApiAdmissionAddResponse200) & {
+export type postApiAdmissionAddResponse401ApplicationJson = {
+  data: ProblemDetails
+  status: 401
+}
+
+export type postApiAdmissionAddResponse401TextJson = {
+  data: ProblemDetails
+  status: 401
+}
+
+;
+export type postApiAdmissionAddResponseError = (postApiAdmissionAddResponse401TextPlain | postApiAdmissionAddResponse401ApplicationJson | postApiAdmissionAddResponse401TextJson) & {
   headers: Headers;
 };
-;
 
-export type postApiAdmissionAddResponse = (postApiAdmissionAddResponseSuccess)
+export type postApiAdmissionAddResponse = (postApiAdmissionAddResponseError)
 
 export const getPostApiAdmissionAddUrl = () => {
 
 
 
 
-  return `/api/Admission/Add`
+  return `/api/Admission/add`
 }
 
 export const postApiAdmissionAdd = async (studentModel?: StudentModel, options?: RequestInit): Promise<postApiAdmissionAddResponse> => {
@@ -73,7 +85,7 @@ export const postApiAdmissionAdd = async (studentModel?: StudentModel, options?:
 
 
 
-export const getPostApiAdmissionAddMutationOptions = <TError = unknown,
+export const getPostApiAdmissionAddMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiAdmissionAdd>>, TError,{data?: StudentModel}, TContext>, request?: SecondParameter<typeof customInstance>}
 ): UseMutationOptions<Awaited<ReturnType<typeof postApiAdmissionAdd>>, TError,{data?: StudentModel}, TContext> => {
 
@@ -102,9 +114,9 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type PostApiAdmissionAddMutationResult = NonNullable<Awaited<ReturnType<typeof postApiAdmissionAdd>>>
     export type PostApiAdmissionAddMutationBody = StudentModel | undefined
-    export type PostApiAdmissionAddMutationError = unknown
+    export type PostApiAdmissionAddMutationError = ProblemDetails
 
-    export const usePostApiAdmissionAdd = <TError = unknown,
+    export const usePostApiAdmissionAdd = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiAdmissionAdd>>, TError,{data?: StudentModel}, TContext>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof postApiAdmissionAdd>>,
@@ -114,24 +126,119 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       > => {
       return useMutation(getPostApiAdmissionAddMutationOptions(options), queryClient);
     }
-    export type putApiAdmissionUpdateResponse200 = {
-  data: void
-  status: 200
+    export type postApiAdmissionBlacklistResponse401TextPlain = {
+  data: ProblemDetails
+  status: 401
 }
 
-export type putApiAdmissionUpdateResponseSuccess = (putApiAdmissionUpdateResponse200) & {
+export type postApiAdmissionBlacklistResponse401ApplicationJson = {
+  data: ProblemDetails
+  status: 401
+}
+
+export type postApiAdmissionBlacklistResponse401TextJson = {
+  data: ProblemDetails
+  status: 401
+}
+
+;
+export type postApiAdmissionBlacklistResponseError = (postApiAdmissionBlacklistResponse401TextPlain | postApiAdmissionBlacklistResponse401ApplicationJson | postApiAdmissionBlacklistResponse401TextJson) & {
   headers: Headers;
 };
-;
 
-export type putApiAdmissionUpdateResponse = (putApiAdmissionUpdateResponseSuccess)
+export type postApiAdmissionBlacklistResponse = (postApiAdmissionBlacklistResponseError)
+
+export const getPostApiAdmissionBlacklistUrl = () => {
+
+
+
+
+  return `/api/Admission/blacklist`
+}
+
+export const postApiAdmissionBlacklist = async (studentBlacklistRequest?: StudentBlacklistRequest, options?: RequestInit): Promise<postApiAdmissionBlacklistResponse> => {
+
+  return customInstance<postApiAdmissionBlacklistResponse>(getPostApiAdmissionBlacklistUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(studentBlacklistRequest)
+  }
+);}
+
+
+
+
+export const getPostApiAdmissionBlacklistMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiAdmissionBlacklist>>, TError,{data?: StudentBlacklistRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof postApiAdmissionBlacklist>>, TError,{data?: StudentBlacklistRequest}, TContext> => {
+
+const mutationKey = ['postApiAdmissionBlacklist'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiAdmissionBlacklist>>, {data?: StudentBlacklistRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  postApiAdmissionBlacklist(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiAdmissionBlacklistMutationResult = NonNullable<Awaited<ReturnType<typeof postApiAdmissionBlacklist>>>
+    export type PostApiAdmissionBlacklistMutationBody = StudentBlacklistRequest | undefined
+    export type PostApiAdmissionBlacklistMutationError = ProblemDetails
+
+    export const usePostApiAdmissionBlacklist = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiAdmissionBlacklist>>, TError,{data?: StudentBlacklistRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postApiAdmissionBlacklist>>,
+        TError,
+        {data?: StudentBlacklistRequest},
+        TContext
+      > => {
+      return useMutation(getPostApiAdmissionBlacklistMutationOptions(options), queryClient);
+    }
+    export type putApiAdmissionUpdateResponse401TextPlain = {
+  data: ProblemDetails
+  status: 401
+}
+
+export type putApiAdmissionUpdateResponse401ApplicationJson = {
+  data: ProblemDetails
+  status: 401
+}
+
+export type putApiAdmissionUpdateResponse401TextJson = {
+  data: ProblemDetails
+  status: 401
+}
+
+;
+export type putApiAdmissionUpdateResponseError = (putApiAdmissionUpdateResponse401TextPlain | putApiAdmissionUpdateResponse401ApplicationJson | putApiAdmissionUpdateResponse401TextJson) & {
+  headers: Headers;
+};
+
+export type putApiAdmissionUpdateResponse = (putApiAdmissionUpdateResponseError)
 
 export const getPutApiAdmissionUpdateUrl = () => {
 
 
 
 
-  return `/api/Admission/Update`
+  return `/api/Admission/update`
 }
 
 export const putApiAdmissionUpdate = async (studentModel?: StudentModel, options?: RequestInit): Promise<putApiAdmissionUpdateResponse> => {
@@ -148,7 +255,7 @@ export const putApiAdmissionUpdate = async (studentModel?: StudentModel, options
 
 
 
-export const getPutApiAdmissionUpdateMutationOptions = <TError = unknown,
+export const getPutApiAdmissionUpdateMutationOptions = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiAdmissionUpdate>>, TError,{data?: StudentModel}, TContext>, request?: SecondParameter<typeof customInstance>}
 ): UseMutationOptions<Awaited<ReturnType<typeof putApiAdmissionUpdate>>, TError,{data?: StudentModel}, TContext> => {
 
@@ -177,9 +284,9 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type PutApiAdmissionUpdateMutationResult = NonNullable<Awaited<ReturnType<typeof putApiAdmissionUpdate>>>
     export type PutApiAdmissionUpdateMutationBody = StudentModel | undefined
-    export type PutApiAdmissionUpdateMutationError = unknown
+    export type PutApiAdmissionUpdateMutationError = ProblemDetails
 
-    export const usePutApiAdmissionUpdate = <TError = unknown,
+    export const usePutApiAdmissionUpdate = <TError = ProblemDetails,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof putApiAdmissionUpdate>>, TError,{data?: StudentModel}, TContext>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof putApiAdmissionUpdate>>,

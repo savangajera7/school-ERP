@@ -8,7 +8,7 @@ import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { PremiumStatPills } from "@/components/ui/premium";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
-import { useGetApiStudentAttendanceGetStudentAttendanceList } from "@/api/generated/student-attendance/student-attendance";
+import { useGetApiAttendanceGet } from "@/api/generated/9-attendance/9-attendance";
 import { useGetApiClassGetClassList } from "@/api/generated/master-class/master-class";
 import { parseApiList } from "@/utils/apiResponse";
 
@@ -22,7 +22,7 @@ export default function AttendanceReportsScreen() {
 
   const { data: classesData } = useGetApiClassGetClassList();
   const { data: attendanceData, isLoading } =
-    useGetApiStudentAttendanceGetStudentAttendanceList();
+    useGetApiAttendanceGet();
 
   const classes = parseApiList(classesData?.data);
 

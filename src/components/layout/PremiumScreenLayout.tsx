@@ -69,7 +69,6 @@ export function PremiumScreenLayout({
       fullWidth && { maxWidth: '100%', paddingHorizontal: isMobile ? 16 : 32 },
       bodyStyle
     ]}>
-      {headerSlot}
       {children}
     </View>
   );

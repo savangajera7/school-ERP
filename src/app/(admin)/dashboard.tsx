@@ -6,7 +6,7 @@ import { useResponsive } from "@/hooks/useResponsive";
 import { useGetApiStudentGet } from "@/api/generated/3-student-crud/3-student-crud";
 import { useGetApiTeacherGetTeacherList } from "@/api/generated/teacher/teacher";
 import { useGetApiClassGetClassList } from "@/api/generated/master-class/master-class";
-import { useGetApiStudentAttendanceGetStudentAttendanceList } from "@/api/generated/student-attendance/student-attendance";
+import { useGetApiAttendanceGet } from "@/api/generated/9-attendance/9-attendance";
 import { parseApiList } from "@/utils/apiResponse";
 import { usePermissions } from "@/hooks/usePermissions";
 import type { AppRoute } from "@/constants/rolePermissions";
@@ -30,7 +30,7 @@ export default function AdminDashboard() {
   const { data: studentsData, isLoading: loadingStudents, refetch: refetchStudents } = useGetApiStudentGet();
   const { data: teachersData, isLoading: loadingTeachers, refetch: refetchTeachers } = useGetApiTeacherGetTeacherList();
   const { data: classesData, isLoading: loadingClasses, refetch: refetchClasses } = useGetApiClassGetClassList();
-  const { data: attendanceData, isLoading: loadingAttendance, refetch: refetchAttendance } = useGetApiStudentAttendanceGetStudentAttendanceList();
+  const { data: attendanceData, isLoading: loadingAttendance, refetch: refetchAttendance } = useGetApiAttendanceGet();
 
   const isLoading = loadingStudents || loadingTeachers || loadingClasses || loadingAttendance;
 

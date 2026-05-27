@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { View, Text } from "react-native";
-import { useGetApiSubjectGetSubjectList } from "@/api/generated/subject/subject";
+import { useGetApiSyllabusGet } from "@/api/generated/11-syllabus/11-syllabus";
 import { parseApiList } from "@/utils/apiResponse";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
@@ -10,7 +10,7 @@ import { ResponsiveDataList, type TableColumn } from "@/components/shared";
 export default function ParentSyllabusScreen() {
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { data, isLoading, isError, error, refetch } = useGetApiSubjectGetSubjectList();
+  const { data, isLoading, isError, error, refetch } = useGetApiSyllabusGet();
 
   const subjects = useMemo(() => {
     return parseApiList<any>(data?.data);

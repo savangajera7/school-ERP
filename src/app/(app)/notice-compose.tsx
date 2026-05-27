@@ -4,14 +4,14 @@ import { router } from "expo-router";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { PremiumCard, PremiumTabSwitcher } from "@/components/ui/premium";
 import { Button } from "@/components/ui/Button";
-import { usePostApiNoticeInsertNotice } from "@/api/generated/notice/notice";
+import { usePostApiNoticeAdd } from "@/api/generated/8-notice/8-notice";
 import { useToast } from "@/components/ui/Toast";
 import { useAuthStore } from "@/store/authStore";
 
 export default function NoticeComposeScreen() {
   const { showToast } = useToast();
   const { userData } = useAuthStore();
-  const insertMutation = usePostApiNoticeInsertNotice();
+  const insertMutation = usePostApiNoticeAdd();
 
   const [noticeTitle, setNoticeTitle] = useState("");
   const [noticeDescription, setNoticeDescription] = useState("");
@@ -27,7 +27,7 @@ export default function NoticeComposeScreen() {
         data: {
           noticeTitle,
           noticeDescription,
-          noticeFor,
+          noticeType: noticeFor,
           addedBy: parseInt(userData?.id ?? "0", 10) || 0,
         },
       });
