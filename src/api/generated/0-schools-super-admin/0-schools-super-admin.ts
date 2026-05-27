@@ -222,6 +222,98 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       > => {
       return useMutation(getDeleteApiSchoolDeleteIdMutationOptions(options), queryClient);
     }
+    export type postApiSchoolAddResponse200 = {
+  data: void
+  status: 200
+}
+
+export type postApiSchoolAddResponse401TextPlain = {
+  data: ProblemDetails
+  status: 401
+}
+
+export type postApiSchoolAddResponse401ApplicationJson = {
+  data: ProblemDetails
+  status: 401
+}
+
+export type postApiSchoolAddResponse401TextJson = {
+  data: ProblemDetails
+  status: 401
+}
+
+export type postApiSchoolAddResponseSuccess = (postApiSchoolAddResponse200) & {
+  headers: Headers;
+};
+export type postApiSchoolAddResponseError = (postApiSchoolAddResponse401TextPlain | postApiSchoolAddResponse401ApplicationJson | postApiSchoolAddResponse401TextJson) & {
+  headers: Headers;
+};
+
+export type postApiSchoolAddResponse = (postApiSchoolAddResponseSuccess | postApiSchoolAddResponseError)
+
+export const getPostApiSchoolAddUrl = () => {
+
+
+
+
+  return `/api/School/Add`
+}
+
+export const postApiSchoolAdd = async (schoolUpdateRequest?: SchoolUpdateRequest, options?: RequestInit): Promise<postApiSchoolAddResponse> => {
+
+  return customInstance<postApiSchoolAddResponse>(getPostApiSchoolAddUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(schoolUpdateRequest)
+  }
+);}
+
+
+
+
+export const getPostApiSchoolAddMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiSchoolAdd>>, TError,{data?: SchoolUpdateRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof postApiSchoolAdd>>, TError,{data?: SchoolUpdateRequest}, TContext> => {
+
+const mutationKey = ['postApiSchoolAdd'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiSchoolAdd>>, {data?: SchoolUpdateRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  postApiSchoolAdd(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiSchoolAddMutationResult = NonNullable<Awaited<ReturnType<typeof postApiSchoolAdd>>>
+    export type PostApiSchoolAddMutationBody = SchoolUpdateRequest | undefined
+    export type PostApiSchoolAddMutationError = ProblemDetails
+
+    export const usePostApiSchoolAdd = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiSchoolAdd>>, TError,{data?: SchoolUpdateRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postApiSchoolAdd>>,
+        TError,
+        {data?: SchoolUpdateRequest},
+        TContext
+      > => {
+      return useMutation(getPostApiSchoolAddMutationOptions(options), queryClient);
+    }
     export type getApiSchoolGetResponse401TextPlain = {
   data: ProblemDetails
   status: 401
