@@ -5,54 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="973b64d6-6094-46c3-ae9b-d54eff11ffd3" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/api/generated/10-teacher-attendance-admin-only/10-teacher-attendance-admin-only.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/api/generated/6-teacher-permissions-admin-assigns-module-access-per-class/6-teacher-permissions-admin-assigns-module-access-per-class.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/api/generated/9-student-attendance/9-student-attendance.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/api/model/deleteApiMediumDeleteIdParams.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/api/model/deleteApiTeacherAttendanceDeleteIdParams.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/api/model/deleteApiTeacherPermissionsRemoveParams.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/api/model/getApiStudentGetParams.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/api/model/getApiTeacherAttendanceGetIdParams.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/api/model/getApiTeacherAttendanceGetParams.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/api/model/getApiTeacherAttendanceGetTeacherAttendanceByIdIdParams.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/api/model/getApiTeacherAttendanceGetTeacherAttendanceListParams.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/api/model/teacherAttendanceItemDto.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/api/model/teacherAttendanceMarkRequest.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/api/model/teacherClassPermissionsRequest.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/(parent)/_dashboardConfig.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/(teacher)/_dashboardConfig.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/3-student-crud/3-student-crud.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/3-student-crud/3-student-crud.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/master-medium/master-medium.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/master-medium/master-medium.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/attendanceMarkRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/attendanceMarkRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/getApiAttendanceGetParams.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/getApiAttendanceGetParams.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/getApiHomeworkGetParams.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/getApiHomeworkGetParams.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/getApiTimetableGetParams.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/getApiTimetableGetParams.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/mediumModel.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/mediumModel.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/studentModel.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/studentModel.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/studentSearchRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/studentSearchRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/teacherAttendanceDeleteRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/teacherAttendanceDeleteRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/teacherAttendanceInsertRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/teacherAttendanceInsertRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/teacherAttendanceUpdateRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/teacherAttendanceUpdateRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/dashboard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/students.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/students.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/teacher-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/teacher-form.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/teachers.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/teachers.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/admission-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/admission-form.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/profile.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/student-profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/student-profile.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/students.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/students.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/add-school.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(super-admin)/add-school.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/edit-school/[id].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(super-admin)/edit-school/[id].tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/schools.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(super-admin)/schools.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/layout/AdminSidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/layout/AdminSidebar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/layout/PremiumScreenLayout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/layout/PremiumScreenLayout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/layout/SuperAdminSidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/layout/SuperAdminSidebar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/shared/DataTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/shared/DataTable.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/shared/EntityActionButtons.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/shared/EntityActionButtons.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/shared/ResponsiveDataList.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/shared/ResponsiveDataList.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/apiResponse.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/apiResponse.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/studentUtils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/studentUtils.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/swagger.json" beforeDir="false" afterPath="$PROJECT_DIR$/swagger.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/_dashboardConfig.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/_dashboardConfig.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/timetable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/timetable.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/_dashboardConfig.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/_dashboardConfig.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(parent)/timetable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(parent)/timetable.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(teacher)/timetable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(teacher)/timetable.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -158,7 +118,7 @@
       <workItem from="1779876532117" duration="10247000" />
       <workItem from="1779893064587" duration="612000" />
       <workItem from="1779944396095" duration="18866000" />
-      <workItem from="1779974923867" duration="11440000" />
+      <workItem from="1779974923867" duration="16880000" />
     </task>
     <servers />
   </component>

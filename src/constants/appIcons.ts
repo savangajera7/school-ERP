@@ -76,7 +76,9 @@ export type AppIconName =
   | "edit"
   | "delete"
   | "bell"
-  | "camera";
+  | "camera"
+  | "eye"
+  | "eyeOff";
 
 type IconPair = { outline: IoniconsName; filled: IoniconsName };
 
@@ -156,6 +158,8 @@ export const APP_ICONS: Record<AppIconName, IconPair> = {
   delete: { outline: "trash-outline", filled: "trash" },
   bell: { outline: "notifications-outline", filled: "notifications" },
   camera: { outline: "camera-outline", filled: "camera" },
+  eye: { outline: "eye-outline", filled: "eye" },
+  eyeOff: { outline: "eye-off-outline", filled: "eye-off" },
 };
 
 export function resolveIconName(
@@ -163,6 +167,10 @@ export function resolveIconName(
   active = false
 ): IoniconsName {
   const pair = APP_ICONS[name];
+  if (!pair) {
+    console.warn(`AppIcon: missing icon mapping for '${name}'`);
+    return active ? APP_ICONS["empty"].filled : APP_ICONS["empty"].outline;
+  }
   return active ? pair.filled : pair.outline;
 }
 

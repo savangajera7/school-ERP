@@ -756,6 +756,7 @@ export default function AdmissionFormScreen() {
       onBack={() => router.back()}
       keyboard
       fullWidth
+      hideBack
       scrollable={false}
       rightAction={
         !isMobile ? (

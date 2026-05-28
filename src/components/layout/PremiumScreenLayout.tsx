@@ -66,8 +66,8 @@ export function PremiumScreenLayout({
     <View style={[
       styles.body,
       !scrollable && { flex: 1 },
-      flatHeader && { marginTop: 24 },
-      fullWidth && { maxWidth: '100%', paddingHorizontal: isMobile ? 16 : 24 },
+      flatHeader && { marginTop: 0, paddingTop: 32 },
+      fullWidth && { maxWidth: '100%', paddingHorizontal: isMobile ? 16 : 32 },
       bodyStyle
     ]}>
       {children}

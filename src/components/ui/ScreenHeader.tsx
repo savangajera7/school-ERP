@@ -53,7 +53,7 @@ export function ScreenHeader({
       <View
         className="bg-white border-b border-gray-100 justify-center z-10"
         style={{
-          paddingHorizontal: isMobile ? 16 : 24,
+          paddingHorizontal: isMobile ? 16 : 32,
           paddingTop: (insets.top || 0) + (isMobile ? 14 : 18),
           paddingBottom: isMobile ? 14 : 18,
         }}
@@ -101,7 +101,7 @@ export function ScreenHeader({
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={{
-        paddingHorizontal: isMobile ? 16 : 24,
+        paddingHorizontal: isMobile ? 16 : 32,
         paddingTop: (insets.top || 0) + (isMobile ? 14 : 20),
         paddingBottom: isMobile ? (showTopBar ? 64 : 40) : 64,
         borderBottomLeftRadius: isMobile ? 32 : 0,

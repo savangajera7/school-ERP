@@ -1,2 +1,2 @@
-import TimetableScreen from "../(app)/timetable";
+import TimetableScreen from "../(admin)/timetable";
 export default TimetableScreen;

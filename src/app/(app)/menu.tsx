@@ -63,7 +63,7 @@ export default function MenuScreen() {
       ["Attendance", "Att. Reports", "Staff Attend.", "Exams", "Subjects", "Timetable"].includes(item.label)
     ),
     people: items.filter(item => 
-      ["Teachers", "Parents", "Leave"].includes(item.label)
+      ["Teachers", "Leave"].includes(item.label)
     ),
     communication: items.filter(item => 
       ["Notices", "Post Notice", "Alerts", "Send Alert"].includes(item.label)
