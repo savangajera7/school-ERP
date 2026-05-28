@@ -25,10 +25,10 @@ export default function NoticeFormScreen() {
 
   // Form State
   const [noticeTitle, setNoticeTitle] = useState("");
-  const [noticeType, setNoticeType] = useState("General");
+  const [noticeType, setNoticeType] = useState("School Notice");
   const [noticeDate, setNoticeDate] = useState(new Date().toISOString().split("T")[0]);
-  const [targetAudience, setTargetAudience] = useState("Everyone");
   const [noticeDescription, setNoticeDescription] = useState("");
+  const [classIDs, setClassIDs] = useState("");
 
   const insertNotice = usePostApiNoticeAdd();
   const updateNotice = usePutApiNoticeUpdate();
@@ -39,9 +39,8 @@ export default function NoticeFormScreen() {
     if (noticeResponse?.data) {
       const n = parseApiData(noticeResponse.data) as any;
       setNoticeTitle(n.noticeTitle || "");
-      setNoticeType(n.noticeType || "General");
-      setNoticeDate(n.noticeDate ? String(n.noticeDate).slice(0, 10) : "");
-      setTargetAudience(n.targetAudience || "Everyone");
+      setNoticeType(n.noticeType || "School Notice");
+      setNoticeDate(n.startDate ? String(n.startDate).slice(0, 10) : "");
       setNoticeDescription(n.noticeDescription || "");
     }
   }, [noticeResponse]);
@@ -55,11 +54,14 @@ export default function NoticeFormScreen() {
     const payload = {
       noticeTitle,
       noticeType,
-      noticeDate,
-      targetAudience,
+      startDate: noticeDate,
+      endDate: noticeDate,
       noticeDescription,
-      isActive: true,
-      createdBy: parseInt(userData?.id || "0"),
+      classIDs: noticeType === "Class Notice" && classIDs ? classIDs.split(",").map(id => parseInt(id.trim())).filter(id => !isNaN(id)) : [],
+      addedBy: parseInt(userData?.id || "0"),
+      schoolID: parseInt(userData?.schoolID || "1"),
+      assignedByRole: userData?.role || "Admin",
+      assignedByName: userData?.name || "Admin",
     };
 
     try {
@@ -119,15 +121,6 @@ export default function NoticeFormScreen() {
 
             <View className="flex-row gap-4">
               <View className="flex-1">
-                <Text style={styles.label}>Type</Text>
-                <TextInput
-                  value={noticeType}
-                  onChangeText={setNoticeType}
-                  placeholder="General"
-                  className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
-                />
-              </View>
-              <View className="flex-1">
                 <PremiumDatePicker
                   label="Date"
                   value={noticeDate}
@@ -137,19 +130,31 @@ export default function NoticeFormScreen() {
             </View>
 
             <View>
-              <Text style={styles.label}>Target Audience</Text>
+              <Text style={styles.label}>Notice Category</Text>
               <View className="flex-row flex-wrap gap-2">
-                {["Everyone", "Students", "Teachers", "Parents"].map((t) => (
+                {["School Notice", "Student Notice", "Teacher Notice", "Class Notice"].map((t) => (
                   <TouchableOpacity
                     key={t}
-                    onPress={() => setTargetAudience(t)}
-                    className={`px-4 py-2 rounded-lg border ${targetAudience === t ? "bg-blue-50 border-blue-200" : "bg-gray-50 border-gray-200"}`}
+                    onPress={() => setNoticeType(t)}
+                    className={`px-4 py-2 rounded-lg border ${noticeType === t ? "bg-blue-50 border-blue-200" : "bg-gray-50 border-gray-200"}`}
                   >
-                    <Text className={`text-xs font-bold ${targetAudience === t ? "text-blue-700" : "text-gray-500"}`}>{t}</Text>
+                    <Text className={`text-xs font-bold ${noticeType === t ? "text-blue-700" : "text-gray-500"}`}>{t}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
             </View>
+
+            {noticeType === "Class Notice" && (
+              <View>
+                <Text style={styles.label}>Target Class IDs (comma-separated) *</Text>
+                <TextInput
+                  value={classIDs}
+                  onChangeText={setClassIDs}
+                  placeholder="e.g. 10, 12"
+                  className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
+                />
+              </View>
+            )}
 
             <View>
               <Text style={styles.label}>Notice Description *</Text>
