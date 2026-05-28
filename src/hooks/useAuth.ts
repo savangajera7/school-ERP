@@ -42,6 +42,7 @@ export function useAuth() {
         const token = String(envelope.token ?? "");
         const u = (envelope.data ?? envelope) as {
           userID?: number;
+          schoolID?: number;
           fullName?: string;
           userName?: string;
           email?: string;
@@ -56,6 +57,7 @@ export function useAuth() {
         }
 
         const userRole = roleFromRoleId(u.roleID);
+        const schoolID = Number(u.schoolID ?? (u as { SchoolID?: number }).SchoolID) || undefined;
 
         login(
           token,
@@ -68,6 +70,7 @@ export function useAuth() {
             role: userRole,
             roleID: u.roleID,
             referenceID: u.referenceID,
+            schoolID,
             schoolName: "Little Angel's English School",
             avatar: resolveMediaUrl(u.profilePhoto) ?? u.profilePhoto,
           },

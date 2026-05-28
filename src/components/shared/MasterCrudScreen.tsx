@@ -61,6 +61,11 @@ export function MasterCrudScreen({
   const [inputValue, setInputValue] = useState("");
   const [editingItem, setEditingItem] = useState<any>(null);
   const { userData } = useAuthStore();
+  const currentUserId =
+    Number(userData?.id ?? (userData as any)?.userID ?? (userData as any)?.UserID) || 1;
+  const currentSchoolId =
+    Number(userData?.schoolID ?? (userData as any)?.schoolId ?? (userData as any)?.SchoolID) ||
+    undefined;
 
   const { data, isLoading, refetch } = useGetList();
   const addMutation = useAdd();
@@ -69,17 +74,25 @@ export function MasterCrudScreen({
 
   const items = parseApiList(data?.data);
 
+  const assertSuccessfulMutation = (response: any, fallbackMessage: string) => {
+    const body = response?.data ?? response;
+    if (body?.success === false || body?.Success === false) {
+      throw new Error(body.message ?? body.Message ?? fallbackMessage);
+    }
+  };
+
   const handleAdd = async () => {
     if (!inputValue.trim()) return;
     try {
-      await addMutation.mutateAsync({
+      const response = await addMutation.mutateAsync({
         data: {
           [nameField]: inputValue,
           isActive: true,
-          createdBy: 1,
-          schoolID: userData?.schoolID,
+          createdBy: currentUserId,
+          ...(currentSchoolId ? { schoolID: currentSchoolId } : {}),
         },
       });
+      assertSuccessfulMutation(response, `Failed to add ${entityName}`);
       setInputValue("");
       refetch();
     } catch (error: any) {
@@ -90,14 +103,16 @@ export function MasterCrudScreen({
   const handleUpdate = async () => {
     if (!inputValue.trim() || !editingItem) return;
     try {
-      await updateMutation.mutateAsync({
+      const response = await updateMutation.mutateAsync({
         data: {
           ...editingItem,
           [nameField]: inputValue,
-          updatedBy: 1,
-          schoolID: userData?.schoolID,
+          createdBy: currentUserId,
+          updatedBy: currentUserId,
+          ...(currentSchoolId ? { schoolID: currentSchoolId } : {}),
         },
       });
+      assertSuccessfulMutation(response, `Failed to update ${entityName}`);
       setInputValue("");
       setEditingItem(null);
       refetch();
@@ -124,7 +139,8 @@ export function MasterCrudScreen({
         style: "destructive",
         onPress: async () => {
           try {
-            await deleteMutation.mutateAsync({ id });
+            const response = await deleteMutation.mutateAsync({ id });
+            assertSuccessfulMutation(response, `Failed to delete ${entityName}`);
             refetch();
           } catch (error: any) {
             Alert.alert("Error", error.message || `Failed to delete ${entityName}`);

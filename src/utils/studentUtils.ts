@@ -19,6 +19,24 @@ export function getStudentDisplayName(student: StudentModel): string {
   return "Unnamed student";
 }
 
+export function getParentLoginUsername(student: StudentModel): string {
+  return formatOptional((student as any).parentUserName || student.fatherNumber, "N/A");
+}
+
+export function getParentLoginPassword(student: StudentModel): string {
+  const apiPassword = formatOptional((student as any).parentPassword, "");
+  if (apiPassword) return apiPassword;
+
+  const firstName = student.firstName?.trim();
+  const birthYear = student.dob ? new Date(student.dob).getFullYear() : NaN;
+
+  if (firstName && Number.isFinite(birthYear)) {
+    return `${firstName}${birthYear}`;
+  }
+
+  return "N/A";
+}
+
 export function formatOptional(value: unknown, fallback = "—"): string {
   if (value == null) return fallback;
   const s = String(value).trim();

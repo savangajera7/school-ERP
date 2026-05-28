@@ -261,7 +261,7 @@ export default function AdmissionFormScreen() {
   }, [studentResponse]);
 
   const handleSubmit = async () => {
-    if (!firstName || !lastName || !fatherName || !studentNumber) {
+    if (!firstName || !lastName || !dob || !fatherName || !fatherNumber || !studentNumber) {
       Alert.alert("Missing Fields", "Please complete all required fields (*).");
       return;
     }

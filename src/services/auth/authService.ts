@@ -14,6 +14,7 @@ export const authService = {
 
     if (response.data.success && response.data.data) {
       const apiData = response.data.data;
+      const schoolID = Number(apiData.schoolID ?? apiData.SchoolID) || undefined;
       return {
         accessToken: String(apiData.accessToken ?? apiData.token ?? ""),
         refreshToken: String(apiData.refreshToken ?? ""),
@@ -30,6 +31,7 @@ export const authService = {
           schoolName: "Little Angel's English School",
           avatar: resolveMediaUrl(apiData.profilePhoto as string) ?? undefined,
           ...apiData,
+          schoolID,
         },
       };
     }
@@ -54,6 +56,7 @@ export const authService = {
     );
     if (response.data.success && response.data.data) {
       const apiData = response.data.data;
+      const schoolID = Number(apiData.schoolID ?? apiData.SchoolID) || undefined;
       return {
         id: apiData.studentID?.toString() ?? apiData.userID?.toString() ?? "0",
         name:
@@ -66,6 +69,7 @@ export const authService = {
         schoolName: "Little Angel's English School",
         avatar: resolveMediaUrl(apiData.profilePhoto as string) ?? undefined,
         ...apiData,
+        schoolID,
       };
     }
     throw new Error("Failed to fetch profile");

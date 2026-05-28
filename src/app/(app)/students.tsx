@@ -7,7 +7,13 @@ import { useGetApiClassGet } from "@/api/generated/master-class/master-class";
 import { useGetApiBatchGet } from "@/api/generated/2-master-batch/2-master-batch";
 import { useGetApiMediumGet } from "@/api/generated/master-medium/master-medium";
 import { parseApiList } from "@/utils/apiResponse";
-import { normalizeStudent, getStudentDisplayName, formatOptional } from "@/utils/studentUtils";
+import {
+  normalizeStudent,
+  getStudentDisplayName,
+  getParentLoginUsername,
+  getParentLoginPassword,
+  formatOptional,
+} from "@/utils/studentUtils";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { GenderIcon, AppIcon } from "@/components/icons/AppIcon";
 import { usePermissions } from "@/hooks/usePermissions";
@@ -73,8 +79,10 @@ export default function AdminStudentManagementScreen() {
         const name = getStudentDisplayName(student).toLowerCase();
         return (
           name.includes(q) ||
+          getParentLoginUsername(student).toLowerCase().includes(q) ||
+          getParentLoginPassword(student).toLowerCase().includes(q) ||
           formatOptional(student.rollNo, "").toLowerCase().includes(q) ||
-          formatOptional(student.studentGRNo, "").toLowerCase().includes(q)
+          formatOptional(student.fatherNumber, "").toLowerCase().includes(q)
         );
       });
     }
@@ -119,7 +127,6 @@ export default function AdminStudentManagementScreen() {
   };
 
   const tableColumns: TableColumn<StudentModel>[] = [
-    { key: "studentGRNo", header: "GR No", width: 80 },
     { key: "rollNo", header: "Roll", width: 60, align: "center" },
     { 
       key: "name", 
@@ -134,10 +141,22 @@ export default function AdminStudentManagementScreen() {
           )}
           <View>
             <Text className="text-sm font-bold text-gray-800">{getStudentDisplayName(s)}</Text>
-            {(s as any).parentUserName && (
-              <Text className="text-[10px] text-gray-500 font-semibold">P: {(s as any).parentUserName} / {(s as any).parentPassword}</Text>
-            )}
           </View>
+        </View>
+      )
+    },
+    {
+      key: "parentLogin",
+      header: "Parent Login",
+      flex: 1.4,
+      render: (s) => (
+        <View>
+          <Text className="text-xs font-bold text-gray-700" numberOfLines={1}>
+            U: {getParentLoginUsername(s)}
+          </Text>
+          <Text className="text-[11px] font-semibold text-gray-500" numberOfLines={1}>
+            P: {getParentLoginPassword(s)}
+          </Text>
         </View>
       )
     },
@@ -227,27 +246,18 @@ export default function AdminStudentManagementScreen() {
             </View>
             
             <View className="flex-row items-center gap-1.5 mb-1.5">
-              <AppIcon name="call" size={13} color="#059669" />
-              <Text className="text-[12px] font-bold text-emerald-600">
-                +91 {item.fatherNumber || item.studentNumber || '-'} <Text className="text-gray-400 font-semibold">(Father)</Text>
+              <AppIcon name="parents" size={13} color="#059669" />
+              <Text className="text-[12px] font-bold text-emerald-600 flex-1" numberOfLines={1}>
+                Username: {getParentLoginUsername(item)}
               </Text>
             </View>
             
             <View className="flex-row items-center gap-1.5 mb-1.5">
               <AppIcon name="lock" size={13} color="#6B7280" />
-              <Text className="text-[12px] font-bold text-gray-600">
-                Password: {(item as any).parentPassword || 'N/A'}
+              <Text className="text-[12px] font-bold text-gray-600 flex-1" numberOfLines={1}>
+                Password: {getParentLoginPassword(item)}
               </Text>
             </View>
-
-            {item.studentGRNo && (
-              <View className="flex-row items-center gap-1.5">
-                <AppIcon name="admission" size={13} color="#3B82F6" />
-                <Text className="text-[12px] font-bold text-gray-600">
-                  GR No: {item.studentGRNo}
-                </Text>
-              </View>
-            )}
           </View>
         </View>
         
@@ -327,7 +337,7 @@ export default function AdminStudentManagementScreen() {
         emptyMessage={searchQuery ? "Try a different search" : "Register your first student"}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        searchPlaceholder="Search by name, GR No, or Roll..."
+        searchPlaceholder="Search by name, username, or roll..."
         headerComponent={
           showFilters ? (
             <View 
