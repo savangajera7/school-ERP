@@ -22,6 +22,7 @@ export interface UserData extends Partial<AuthUser> {
   avatar?: string;
   roleID?: number;
   referenceID?: number;
+  schoolID?: number;
 }
 
 export interface ApiResult<T> {

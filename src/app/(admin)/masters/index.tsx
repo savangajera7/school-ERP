@@ -10,6 +10,7 @@ export default function MastersMenuScreen() {
     { label: "Classes", icon: "school", route: "/(admin)/masters/class", desc: "Manage school classes" },
     { label: "Sections", icon: "classroom", route: "/(admin)/masters/section", desc: "Manage class sections" },
     { label: "Subjects", icon: "subjects", route: "/(admin)/masters/subject", desc: "School curriculum subjects" },
+    { label: "Mediums", icon: "subjects", route: "/(admin)/masters/mediums", desc: "Gujarati, English, etc." },
     { label: "Batches", icon: "masters", route: "/(admin)/masters/batch", desc: "Student timing batches" },
     { label: "Blood Groups", icon: "warning", route: "/(admin)/masters/blood-group", desc: "Medical data options" },
     { label: "Categories", icon: "classroom", route: "/(admin)/masters/category", desc: "Student admission categories" },

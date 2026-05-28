@@ -59,7 +59,7 @@ export default function NoticeFormScreen() {
       noticeDescription,
       classIDs: noticeType === "Class Notice" && classIDs ? classIDs.split(",").map(id => parseInt(id.trim())).filter(id => !isNaN(id)) : [],
       addedBy: parseInt(userData?.id || "0"),
-      schoolID: parseInt(userData?.schoolID || "1"),
+      schoolID: parseInt((userData as any)?.schoolID || "1"),
       assignedByRole: userData?.role || "Admin",
       assignedByName: userData?.name || "Admin",
     };

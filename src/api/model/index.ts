@@ -120,3 +120,4 @@ export * from './userDeviceTokenInsertRequest';
 export * from './userDeviceTokenUpdateRequest';
 export * from './userInsertRequest';
 export * from './userUpdateRequest';
+export * from './mediumModel';

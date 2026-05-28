@@ -98,7 +98,7 @@ export interface StudentModel {
   /** @nullable */
   height?: number | null;
   /** @nullable */
-
+  heightWeightDate?: string | null;
   /** @nullable */
   ews?: boolean | null;
   /** @nullable */
