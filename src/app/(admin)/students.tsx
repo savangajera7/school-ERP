@@ -5,11 +5,11 @@ import { Colors } from "@/constants/colors";
 import type { StudentModel } from "@/api/model/studentModel";
 import { useGetApiStudentGet, useDeleteApiStudentDeleteId } from "@/api/generated/3-student-crud/3-student-crud";
 import { useGetApiClassGet } from "@/api/generated/master-class/master-class";
+import { useGetApiBatchGet } from "@/api/generated/2-master-batch/2-master-batch";
 import { parseApiList } from "@/utils/apiResponse";
 import { normalizeStudent, getStudentDisplayName, formatOptional } from "@/utils/studentUtils";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
-import { MobileDataCard } from "@/components/ui/MobileDataCard";
-import { GenderIcon } from "@/components/icons/AppIcon";
+import { GenderIcon, AppIcon } from "@/components/icons/AppIcon";
 import { usePermissions } from "@/hooks/usePermissions";
 import { ResponsiveDataList, EntityActionButtons, type TableColumn } from "@/components/shared";
 import { customInstance } from "@/services/api/axiosInstance";
@@ -18,9 +18,14 @@ export default function AdminStudentManagementScreen() {
   const { canManageStudents } = usePermissions();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
+  const [selectedBatchId, setSelectedBatchId] = useState<number | null>(null);
+  const [selectedMedium, setSelectedMedium] = useState<string | null>(null);
 
   const { data: classData } = useGetApiClassGet();
   const classes = useMemo(() => parseApiList<any>(classData?.data), [classData]);
+
+  const { data: batchData } = useGetApiBatchGet();
+  const batches = useMemo(() => parseApiList<any>(batchData?.data), [batchData]);
 
   const { data, isLoading, isError, error, refetch } = useGetApiStudentGet();
   
@@ -43,11 +48,24 @@ export default function AdminStudentManagementScreen() {
       );
   }, [data]);
 
+  const uniqueMediums = useMemo(() => {
+    const types = new Set(students.map(s => s.lastSchoolType).filter(Boolean));
+    return Array.from(types).map((name) => String(name));
+  }, [students]);
+
   const filteredStudents = useMemo(() => {
     let filtered = students;
     
     if (selectedClassId) {
       filtered = filtered.filter(s => s.classID === selectedClassId || Number(s.classID) === selectedClassId);
+    }
+
+    if (selectedBatchId) {
+      filtered = filtered.filter(s => s.batchID === selectedBatchId || Number(s.batchID) === selectedBatchId);
+    }
+
+    if (selectedMedium) {
+      filtered = filtered.filter(s => s.lastSchoolType === selectedMedium);
     }
     
     const q = searchQuery.toLowerCase().trim();
@@ -112,8 +130,8 @@ export default function AdminStudentManagementScreen() {
           )}
           <View>
             <Text className="text-sm font-bold text-gray-800">{getStudentDisplayName(s)}</Text>
-            {s.parentUserName && (
-              <Text className="text-[10px] text-gray-500 font-semibold">P: {s.parentUserName} / {s.parentPassword}</Text>
+            {(s as any).parentUserName && (
+              <Text className="text-[10px] text-gray-500 font-semibold">P: {(s as any).parentUserName} / {(s as any).parentPassword}</Text>
             )}
           </View>
         </View>
@@ -158,32 +176,7 @@ export default function AdminStudentManagementScreen() {
     const fullName = getStudentDisplayName(item);
     const studentId = item.studentID;
     return (
-      <MobileDataCard
-        title={fullName}
-        subtitle={`GR No: ${formatOptional(item.studentGRNo)}`}
-        accentColor={Colors.primary}
-        icon={
-          <View style={styles.avatarBox} className="overflow-hidden bg-gray-50 items-center justify-center">
-            {item.studentPhoto ? (
-              <Image source={{ uri: item.studentPhoto }} className="w-full h-full" />
-            ) : (
-              <GenderIcon gender={item.gender} size={22} />
-            )}
-          </View>
-        }
-        badge={
-          <View style={styles.rollBadge}>
-            <Text style={styles.rollBadgeText}>
-              Roll: {formatOptional(item.rollNo)}
-            </Text>
-          </View>
-        }
-        fields={[
-          { label: "Class", value: formatOptional(item.classID) },
-          { label: "Parent User", value: formatOptional(item.parentUserName, "N/A") },
-          { label: "Parent Pass", value: formatOptional(item.parentPassword, "N/A") },
-          { label: "Status", value: formatOptional(item.status, "Active"), highlight: "success" },
-        ]}
+      <TouchableOpacity 
         onPress={() => {
           if (studentId == null) return;
           router.push({
@@ -191,13 +184,64 @@ export default function AdminStudentManagementScreen() {
             params: { id: String(studentId) },
           });
         }}
-        actions={
-          <EntityActionButtons 
-            onEdit={() => router.push(`/(app)/admission-form?id=${studentId}`)}
-            onDelete={() => handleDeleteClick(item)}
-          />
-        }
-      />
+        activeOpacity={0.9}
+        className="bg-white rounded-xl mb-3 shadow-sm border border-gray-100 overflow-hidden"
+      >
+        <View className="p-4 border-b border-gray-50 flex-row gap-3">
+          <View className="w-12 h-12 rounded-full overflow-hidden bg-gray-100 border border-gray-200 items-center justify-center">
+            {item.studentPhoto ? (
+              <Image source={{ uri: item.studentPhoto }} className="w-full h-full" />
+            ) : (
+              <GenderIcon gender={item.gender} size={24} />
+            )}
+          </View>
+          <View className="flex-1 justify-center">
+            <Text className="text-[13px] font-black text-gray-900 mb-2 uppercase" numberOfLines={1}>
+              ({item.rollNo || '-'}) {fullName}
+            </Text>
+            
+            <View className="flex-row items-center gap-1.5 mb-1.5">
+              <AppIcon name="call" size={14} color="#059669" />
+              <Text className="text-[12px] font-bold text-emerald-600">
+                +91 {item.fatherNumber || item.studentNumber || '-'} <Text className="text-gray-400 font-medium">(Father)</Text>
+              </Text>
+            </View>
+            
+            <View className="flex-row items-center gap-1.5">
+              <AppIcon name="lock" size={14} color="#6B7280" />
+              <Text className="text-[12px] font-bold text-gray-600">
+                Password : {(item as any).parentPassword || 'N/A'}
+              </Text>
+            </View>
+          </View>
+        </View>
+        
+        <View className="flex-row justify-end items-center px-4 py-2 bg-gray-50/50 gap-2">
+          <TouchableOpacity 
+            className="w-8 h-8 rounded border border-amber-100 bg-amber-400 items-center justify-center"
+            onPress={() => router.push(`/(app)/admission-form?id=${studentId}`)}
+          >
+            <AppIcon name="admission" size={14} color="white" />
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            className="w-8 h-8 rounded border border-blue-100 bg-blue-600 items-center justify-center"
+            onPress={() => handleDeleteClick(item)}
+          >
+            <AppIcon name="warning" size={14} color="white" />
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            className="w-8 h-8 rounded border border-orange-100 bg-orange-500 items-center justify-center"
+            onPress={() => {
+              if (studentId == null) return;
+              router.push({ pathname: "/(app)/student-profile", params: { id: String(studentId) } });
+            }}
+          >
+            <AppIcon name="profile" size={14} color="white" />
+          </TouchableOpacity>
+        </View>
+      </TouchableOpacity>
     );
   };
 
@@ -209,10 +253,58 @@ export default function AdminStudentManagementScreen() {
       flatHeader
     >
       <View className="bg-white px-4 py-2 border-b border-gray-100">
+        <View className="mb-2">
+          <Text className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Select Medium</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+            <TouchableOpacity
+              onPress={() => setSelectedMedium(null)}
+              className={`px-4 py-1.5 rounded-lg border ${selectedMedium === null ? "bg-orange-50 border-orange-200" : "bg-white border-gray-200"}`}
+            >
+              <Text className={`text-[11px] font-bold ${selectedMedium === null ? "text-orange-700" : "text-gray-600"}`}>All Mediums</Text>
+            </TouchableOpacity>
+            {uniqueMediums.map((med) => (
+              <TouchableOpacity
+                key={med}
+                onPress={() => setSelectedMedium(med)}
+                className={`px-4 py-1.5 rounded-lg border flex-row items-center gap-1 ${selectedMedium === med ? "bg-orange-50 border-orange-200" : "bg-white border-gray-200"}`}
+              >
+                <Text className={`text-[11px] font-bold ${selectedMedium === med ? "text-orange-700" : "text-gray-600"}`}>
+                  {med}
+                </Text>
+                {selectedMedium === med && <AppIcon name="subjects" size={12} color="#C2410C" />}
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+
+        <View className="mb-2">
+          <Text className="text-xs font-bold text-gray-500 mb-1">Select Batch</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+            <TouchableOpacity
+              onPress={() => setSelectedBatchId(null)}
+              className={`px-4 py-1.5 rounded-lg border ${selectedBatchId === null ? "bg-blue-50 border-blue-200" : "bg-white border-gray-200"}`}
+            >
+              <Text className={`text-[11px] font-bold ${selectedBatchId === null ? "text-blue-700" : "text-gray-600"}`}>All Batches</Text>
+            </TouchableOpacity>
+            {batches.map((b) => (
+              <TouchableOpacity
+                key={b.batchID}
+                onPress={() => setSelectedBatchId(b.batchID)}
+                className={`px-4 py-1.5 rounded-lg border flex-row items-center gap-1 ${selectedBatchId === b.batchID ? "bg-blue-50 border-blue-200" : "bg-white border-gray-200"}`}
+              >
+                <Text className={`text-[11px] font-bold ${selectedBatchId === b.batchID ? "text-blue-700" : "text-gray-600"}`}>
+                  {b.batchName}
+                </Text>
+                {selectedBatchId === b.batchID && <AppIcon name="admission" size={12} color="#1D4ED8" />}
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
           <TouchableOpacity
             onPress={() => setSelectedClassId(null)}
-            className={`px-4 py-2 rounded-full border ${selectedClassId === null ? "bg-blue-600 border-blue-600" : "bg-gray-50 border-gray-200"}`}
+            className={`px-4 py-2 rounded-full border ${selectedClassId === null ? "bg-[#0d3666] border-[#0d3666]" : "bg-gray-50 border-gray-200"}`}
           >
             <Text className={`text-xs font-bold ${selectedClassId === null ? "text-white" : "text-gray-600"}`}>All Classes</Text>
           </TouchableOpacity>
@@ -220,7 +312,7 @@ export default function AdminStudentManagementScreen() {
             <TouchableOpacity
               key={cls.classID}
               onPress={() => setSelectedClassId(cls.classID)}
-              className={`px-4 py-2 rounded-full border ${selectedClassId === cls.classID ? "bg-blue-600 border-blue-600" : "bg-gray-50 border-gray-200"}`}
+              className={`px-4 py-2 rounded-full border ${selectedClassId === cls.classID ? "bg-[#0d3666] border-[#0d3666]" : "bg-gray-50 border-gray-200"}`}
             >
               <Text className={`text-xs font-bold ${selectedClassId === cls.classID ? "text-white" : "text-gray-600"}`}>
                 Class {cls.className}
