@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Alert, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Alert, ScrollView, Modal, TextInput, ActivityIndicator } from "react-native";
 import { router } from "expo-router";
 import { Colors } from "@/constants/colors";
 import type { StudentModel } from "@/api/model/studentModel";
@@ -12,6 +12,7 @@ import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { GenderIcon } from "@/components/icons/AppIcon";
 import { usePermissions } from "@/hooks/usePermissions";
 import { ResponsiveDataList, EntityActionButtons, type TableColumn } from "@/components/shared";
+import { customInstance } from "@/services/api/axiosInstance";
 
 export default function AdminStudentManagementScreen() {
   const { canManageStudents } = usePermissions();
@@ -22,7 +23,11 @@ export default function AdminStudentManagementScreen() {
   const classes = useMemo(() => parseApiList<any>(classData?.data), [classData]);
 
   const { data, isLoading, isError, error, refetch } = useGetApiStudentGet();
-  const deleteStudent = useDeleteApiStudentDeleteId();
+  
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [studentToDelete, setStudentToDelete] = useState<StudentModel | null>(null);
+  const [deleteReason, setDeleteReason] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const students = useMemo(() => {
     const raw = parseApiList<Record<string, unknown>>(data?.data);
@@ -65,27 +70,30 @@ export default function AdminStudentManagementScreen() {
     });
   }, [students, searchQuery, selectedClassId]);
 
-  const handleDelete = (student: StudentModel) => {
+  const handleDeleteClick = (student: StudentModel) => {
     if (!student.studentID) return;
-    Alert.alert(
-      "Delete Student",
-      `Are you sure you want to remove ${getStudentDisplayName(student)}?`,
-      [
-        { text: "Cancel", style: "cancel" },
-        { 
-          text: "Delete", 
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await deleteStudent.mutateAsync({ id: student.studentID! });
-              refetch();
-            } catch (err: any) {
-              Alert.alert("Error", err.message || "Failed to delete student");
-            }
-          }
-        }
-      ]
-    );
+    setStudentToDelete(student);
+    setDeleteReason("");
+    setDeleteModalVisible(true);
+  };
+
+  const executeDelete = async () => {
+    if (!studentToDelete?.studentID) return;
+    if (!deleteReason.trim()) {
+      Alert.alert("Missing Reason", "Please provide a valid reason for deleting this student.");
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      await customInstance(`/api/Student/Delete/${studentToDelete.studentID}?reason=${encodeURIComponent(deleteReason.trim())}`, { method: "DELETE" });
+      setDeleteModalVisible(false);
+      refetch();
+    } catch (err: any) {
+      Alert.alert("Error", err.message || "Failed to delete student");
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   const tableColumns: TableColumn<StudentModel>[] = [
@@ -131,7 +139,7 @@ export default function AdminStudentManagementScreen() {
       render: (s) => (
         <EntityActionButtons 
           onEdit={() => router.push(`/(app)/admission-form?id=${s.studentID}`)}
-          onDelete={() => handleDelete(s)}
+          onDelete={() => handleDeleteClick(s)}
         />
       )
     }
@@ -172,7 +180,7 @@ export default function AdminStudentManagementScreen() {
         actions={
           <EntityActionButtons 
             onEdit={() => router.push(`/(app)/admission-form?id=${studentId}`)}
-            onDelete={() => handleDelete(item)}
+            onDelete={() => handleDeleteClick(item)}
           />
         }
       />
@@ -223,6 +231,44 @@ export default function AdminStudentManagementScreen() {
         onSearchChange={setSearchQuery}
         searchPlaceholder="Search by name, GR No, or Roll..."
       />
+
+      <Modal visible={deleteModalVisible} transparent animationType="fade">
+        <View style={StyleSheet.absoluteFill} className="bg-black/50 items-center justify-center p-4">
+          <View className="bg-white w-full max-w-sm rounded-2xl p-6 shadow-xl">
+            <Text className="text-lg font-black text-gray-900 mb-2">Delete Student</Text>
+            <Text className="text-sm font-semibold text-gray-600 mb-4">
+              Are you sure you want to remove {studentToDelete ? getStudentDisplayName(studentToDelete) : ""}? Please provide a reason below.
+            </Text>
+            
+            <TextInput
+              value={deleteReason}
+              onChangeText={setDeleteReason}
+              placeholder="Reason for deletion..."
+              className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 min-h-[80px] text-sm font-semibold text-gray-800 mb-6"
+              multiline
+              textAlignVertical="top"
+            />
+            
+            <View className="flex-row gap-3">
+              <TouchableOpacity
+                className="flex-1 bg-gray-100 py-3 rounded-xl items-center justify-center"
+                onPress={() => setDeleteModalVisible(false)}
+                disabled={isDeleting}
+              >
+                <Text className="font-bold text-gray-700">Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                className="flex-1 bg-red-600 py-3 rounded-xl items-center flex-row justify-center gap-2"
+                onPress={executeDelete}
+                disabled={isDeleting}
+              >
+                {isDeleting && <ActivityIndicator size="small" color="white" />}
+                <Text className="font-bold text-white">Delete</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </PremiumScreenLayout>
   );
 }
