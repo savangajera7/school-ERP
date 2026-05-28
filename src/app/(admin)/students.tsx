@@ -6,6 +6,7 @@ import type { StudentModel } from "@/api/model/studentModel";
 import { useGetApiStudentGet, useDeleteApiStudentDeleteId } from "@/api/generated/3-student-crud/3-student-crud";
 import { useGetApiClassGet } from "@/api/generated/master-class/master-class";
 import { useGetApiBatchGet } from "@/api/generated/2-master-batch/2-master-batch";
+import { useGetApiMediumGet } from "@/api/generated/master-medium/master-medium";
 import { parseApiList } from "@/utils/apiResponse";
 import { normalizeStudent, getStudentDisplayName, formatOptional } from "@/utils/studentUtils";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
@@ -19,13 +20,16 @@ export default function AdminStudentManagementScreen() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
   const [selectedBatchId, setSelectedBatchId] = useState<number | null>(null);
-  const [selectedMedium, setSelectedMedium] = useState<string | null>(null);
+  const [selectedMediumId, setSelectedMediumId] = useState<number | null>(null);
 
   const { data: classData } = useGetApiClassGet();
   const classes = useMemo(() => parseApiList<any>(classData?.data), [classData]);
 
   const { data: batchData } = useGetApiBatchGet();
   const batches = useMemo(() => parseApiList<any>(batchData?.data), [batchData]);
+
+  const { data: mediumData } = useGetApiMediumGet();
+  const mediums = useMemo(() => parseApiList<any>(mediumData?.data), [mediumData]);
 
   const { data, isLoading, isError, error, refetch } = useGetApiStudentGet();
   
@@ -48,11 +52,6 @@ export default function AdminStudentManagementScreen() {
       );
   }, [data]);
 
-  const uniqueMediums = useMemo(() => {
-    const types = new Set(students.map(s => s.lastSchoolType).filter(Boolean));
-    return Array.from(types).map((name) => String(name));
-  }, [students]);
-
   const filteredStudents = useMemo(() => {
     let filtered = students;
     
@@ -64,8 +63,8 @@ export default function AdminStudentManagementScreen() {
       filtered = filtered.filter(s => s.batchID === selectedBatchId || Number(s.batchID) === selectedBatchId);
     }
 
-    if (selectedMedium) {
-      filtered = filtered.filter(s => s.lastSchoolType === selectedMedium);
+    if (selectedMediumId) {
+      filtered = filtered.filter(s => (s as any).mediumID === selectedMediumId || Number((s as any).mediumID) === selectedMediumId);
     }
     
     const q = searchQuery.toLowerCase().trim();
@@ -257,21 +256,21 @@ export default function AdminStudentManagementScreen() {
           <Text className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Select Medium</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
             <TouchableOpacity
-              onPress={() => setSelectedMedium(null)}
-              className={`px-4 py-1.5 rounded-lg border ${selectedMedium === null ? "bg-orange-50 border-orange-200" : "bg-white border-gray-200"}`}
+              onPress={() => setSelectedMediumId(null)}
+              className={`px-4 py-1.5 rounded-lg border ${selectedMediumId === null ? "bg-orange-50 border-orange-200" : "bg-white border-gray-200"}`}
             >
-              <Text className={`text-[11px] font-bold ${selectedMedium === null ? "text-orange-700" : "text-gray-600"}`}>All Mediums</Text>
+              <Text className={`text-[11px] font-bold ${selectedMediumId === null ? "text-orange-700" : "text-gray-600"}`}>All Mediums</Text>
             </TouchableOpacity>
-            {uniqueMediums.map((med) => (
+            {mediums.map((med: any) => (
               <TouchableOpacity
-                key={med}
-                onPress={() => setSelectedMedium(med)}
-                className={`px-4 py-1.5 rounded-lg border flex-row items-center gap-1 ${selectedMedium === med ? "bg-orange-50 border-orange-200" : "bg-white border-gray-200"}`}
+                key={med.mediumID}
+                onPress={() => setSelectedMediumId(med.mediumID)}
+                className={`px-4 py-1.5 rounded-lg border flex-row items-center gap-1 ${selectedMediumId === med.mediumID ? "bg-orange-50 border-orange-200" : "bg-white border-gray-200"}`}
               >
-                <Text className={`text-[11px] font-bold ${selectedMedium === med ? "text-orange-700" : "text-gray-600"}`}>
-                  {med}
+                <Text className={`text-[11px] font-bold ${selectedMediumId === med.mediumID ? "text-orange-700" : "text-gray-600"}`}>
+                  {med.mediumName}
                 </Text>
-                {selectedMedium === med && <AppIcon name="subjects" size={12} color="#C2410C" />}
+                {selectedMediumId === med.mediumID && <AppIcon name="subjects" size={12} color="#C2410C" />}
               </TouchableOpacity>
             ))}
           </ScrollView>

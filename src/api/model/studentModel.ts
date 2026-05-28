@@ -128,6 +128,10 @@ export interface StudentModel {
   /** @nullable */
   lastSchoolType?: string | null;
   /** @nullable */
+  mediumID?: number | null;
+  /** @nullable */
+  mediumName?: string | null;
+  /** @nullable */
   previousSchoolType?: string | null;
   /** @nullable */
   lastSemesterYearPercentage?: number | null;

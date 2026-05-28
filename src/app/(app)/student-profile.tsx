@@ -193,6 +193,7 @@ export default function StudentProfileScreen() {
             <DetailItem label="Admission Date" value={student.admissionDate ? String(student.admissionDate).slice(0, 10) : 'N/A'} />
             <DetailItem label="Assigned Class" value={student.classID?.toString() || 'N/A'} />
             <DetailItem label="Assigned Batch" value={student.batchID?.toString() || 'N/A'} />
+            <DetailItem label="Medium" value={(student as any).mediumName || 'N/A'} />
             <DetailItem label="Previous School" value={(student as any).previousSchoolName || 'N/A'} />
             <DetailItem label="Last Year %" value={`${(student as any).lastSemesterYearPercentage || '0'}%`} />
             <DetailItem label="Reference" value={(student as any).referenceSource || 'N/A'} />

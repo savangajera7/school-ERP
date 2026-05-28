@@ -19,6 +19,7 @@ import { useGetApiBatchGet } from "@/api/generated/2-master-batch/2-master-batch
 import { useGetApiClassGet } from "@/api/generated/master-class/master-class";
 import { useGetApiAcademicYearGet } from "@/api/generated/2-master-academicyear/2-master-academicyear";
 import { useGetApiSectionGet } from "@/api/generated/master-section/master-section";
+import { useGetApiMediumGet } from "@/api/generated/master-medium/master-medium";
 import { usePermissions } from "@/hooks/usePermissions";
 import { AccessDenied } from "@/components/auth/AccessDenied";
 import { useResponsive } from "@/hooks/useResponsive";
@@ -129,6 +130,7 @@ export default function AdmissionFormScreen() {
   const [studentShift, setStudentShift] = useState("Morning");
   const [hallTicketNo, setHallTicketNo] = useState("");
   const [admissionFormNo, setAdmissionFormNo] = useState("");
+  const [mediumId, setMediumId] = useState<number | undefined>(undefined);
 
   // --- Accordion State ---
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
@@ -162,6 +164,7 @@ export default function AdmissionFormScreen() {
   const { data: classesData } = useGetApiClassGet();
   const { data: academicYearsData } = useGetApiAcademicYearGet();
   const { data: sectionsData } = useGetApiSectionGet();
+  const { data: mediumsData } = useGetApiMediumGet();
 
   const bloodGroups = parseApiList(bloodGroupsData?.data);
   const religions = parseApiList(religionsData?.data);
@@ -170,6 +173,7 @@ export default function AdmissionFormScreen() {
   const classes = parseApiList(classesData?.data);
   const academicYears = parseApiList(academicYearsData?.data);
   const sections = parseApiList(sectionsData?.data);
+  const mediums = parseApiList(mediumsData?.data);
 
   useEffect(() => {
     if (studentResponse?.data) {
@@ -178,6 +182,7 @@ export default function AdmissionFormScreen() {
       setClassId(s.classID);
       setBatchId(s.batchID);
       setSectionId(s.sectionID);
+      setMediumId(s.mediumID || undefined);
       setStudentGRNo(s.studentGRNo || "");
       setUidNo(s.uidNo || "");
       setRollNo(s.rollNo || "");
@@ -269,6 +274,7 @@ export default function AdmissionFormScreen() {
       classID: classId,
       batchID: batchId,
       sectionID: sectionId,
+      mediumID: mediumId,
       studentGRNo,
       uidNo,
       rollNo,
@@ -525,6 +531,7 @@ export default function AdmissionFormScreen() {
               {renderDropdown("Class", classId, classes, setClassId, "Select Class")}
               {renderDropdown("Batch", batchId, batches, setBatchId, "Select Batch")}
               {renderDropdown("Section", sectionId, sections, setSectionId, "Select Section")}
+              {renderDropdown("Medium", mediumId, mediums, setMediumId, "Select Medium")}
             </View>
             <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>
               {renderTextInput("Student Id / GR No.", studentGRNo, setStudentGRNo, "GR Number", { editable: !isEditing })}
