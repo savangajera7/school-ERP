@@ -12,6 +12,7 @@ import { getStudentDisplayName } from "@/utils/studentUtils";
 import { Colors } from "@/constants/colors";
 import { IconCircle, AppIcon } from "@/components/icons/AppIcon";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
+import { Image } from "react-native";
 
 export default function StudentProfileScreen() {
   const { isMobile } = useResponsive();
@@ -68,12 +69,16 @@ export default function StudentProfileScreen() {
     >
       <PremiumCard noAccent style={{ padding: 20, marginBottom: 14 }}>
         <View className="flex-row items-center gap-6">
-          <View className="w-24 h-24 bg-blue-50 rounded-full items-center justify-center border-4 border-blue-100">
-            <IconCircle
-              name={student.gender === "Female" ? "female" : "male"}
-              size={72}
-              iconSize={36}
-            />
+          <View className="w-24 h-24 bg-blue-50 rounded-full items-center justify-center border-4 border-blue-100 overflow-hidden">
+            {student.studentPhoto ? (
+              <Image source={{ uri: student.studentPhoto }} className="w-full h-full" />
+            ) : (
+              <IconCircle
+                name={student.gender === "Female" ? "female" : "male"}
+                size={72}
+                iconSize={36}
+              />
+            )}
           </View>
           
           <View className="flex-1">
@@ -120,11 +125,11 @@ export default function StudentProfileScreen() {
             <View className="flex-row flex-wrap gap-x-10">
               <DetailItem label="Gender" value={student.gender || 'N/A'} />
               <DetailItem label="Date of Birth" value={student.dob ? String(student.dob).slice(0, 10) : 'N/A'} />
-              <DetailItem label="Blood Group" value={String((student as any).bloodGroupID || 'N/A')} />
+              <DetailItem label="Blood Group" value={(student as any).bloodGroupName || 'N/A'} />
             </View>
             <View className="flex-row flex-wrap gap-x-10">
-              <DetailItem label="Religion" value={String((student as any).religionID || 'N/A')} />
-              <DetailItem label="Category" value={String((student as any).categoryID || 'N/A')} />
+              <DetailItem label="Religion" value={(student as any).religionName || 'N/A'} />
+              <DetailItem label="Category" value={(student as any).categoryName || 'N/A'} />
             </View>
             <View className="h-[1px] bg-gray-50 my-2" />
             <DetailItem label="Aadhaar Number" value={(student as any).aadhaarNo || 'N/A'} />
@@ -167,6 +172,14 @@ export default function StudentProfileScreen() {
             <DetailItem label="Phone Number" value={(student as any).motherNumber || 'N/A'} />
             <DetailItem label="Occupation" value={(student as any).motherOccupation || 'N/A'} />
             <DetailItem label="Education" value={(student as any).motherEducation || 'N/A'} />
+            
+            <View className="h-[1px] bg-gray-50 my-2" />
+            
+            <Text className="text-[11px] font-black text-indigo-600 uppercase mb-1">Parent App Credentials</Text>
+            <View className="flex-row flex-wrap gap-x-10">
+              <DetailItem label="Username" value={(student as any).parentUserName || 'N/A'} />
+              <DetailItem label="Password" value={(student as any).parentPassword || 'N/A'} />
+            </View>
           </View>
         </Card>
 

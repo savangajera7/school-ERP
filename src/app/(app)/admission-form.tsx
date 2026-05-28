@@ -126,6 +126,9 @@ export default function AdmissionFormScreen() {
   const [reference, setReference] = useState("");
   const [siblingInfo, setSiblingInfo] = useState("");
   const [remarks, setRemarks] = useState("");
+  const [studentShift, setStudentShift] = useState("Morning");
+  const [hallTicketNo, setHallTicketNo] = useState("");
+  const [admissionFormNo, setAdmissionFormNo] = useState("");
 
   // --- Accordion State ---
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
@@ -248,6 +251,9 @@ export default function AdmissionFormScreen() {
       setReference(s.referenceSource || "");
       setSiblingInfo(s.siblingInfo || "");
       setRemarks(s.remarks || "");
+      setStudentShift(s.studentShift || "Morning");
+      setHallTicketNo(s.hallTicketNo || "");
+      setAdmissionFormNo(s.admissionFormNo || "");
     }
   }, [studentResponse]);
 
@@ -328,7 +334,10 @@ export default function AdmissionFormScreen() {
       lastSchoolType,
       previousSchoolType,
       lastSemesterYearPercentage: parseFloat(lastPercentage) || 0,
-      status,
+      studentShift: studentShift,
+      hallTicketNo: hallTicketNo,
+      admissionFormNo: admissionFormNo,
+      status: status,
       referenceSource: reference,
       siblingInfo,
       remarks,
@@ -370,8 +379,8 @@ export default function AdmissionFormScreen() {
       <View className="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden h-[48px]">
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ alignItems: 'center', paddingHorizontal: 10 }}>
           {options.map((opt) => {
-            const id = opt.bloodGroupID || opt.religionID || opt.categoryID || opt.batchID || opt.classID || opt.academicYearID || opt.sectionID;
-            const name = opt.bloodGroupName || opt.religionName || opt.categoryName || opt.batchName || opt.className || opt.academicYearName || opt.sectionName;
+            const id = opt.bloodGroupID || opt.religionID || opt.categoryID || opt.batchID || opt.classID || opt.academicYearID || opt.sectionID || opt.id;
+            const name = opt.bloodGroupName || opt.religionName || opt.categoryName || opt.batchName || opt.className || opt.academicYearName || opt.sectionName || opt.name;
             return (
               <TouchableOpacity
                 key={id}
@@ -650,8 +659,13 @@ export default function AdmissionFormScreen() {
         {expandedSections.admission && (
           <View className="mt-6 pt-6 border-t border-gray-100">
             <View className={`flex-row flex-wrap gap-5 ${isMobile ? "flex-col" : ""}`}>
-              {renderToggle("Right to Education (RTE)", rte, ["Yes", "No"], setRte)}
-              {renderToggle("Student Type", studentType, ["New", "Old"], setStudentType)}
+              {renderToggle("Right to Education (RTE)", rte, ["Yes", "No"], (v) => setRte(v === "Yes"))}
+              {renderToggle("Student Type", studentType, ["New", "Regular"], setStudentType)}
+              {renderDropdown("Student Shift", ["Morning", "Afternoon"].indexOf(studentShift), [{ id: 0, name: "Morning" }, { id: 1, name: "Afternoon" }], (id) => setStudentShift(id === 0 ? "Morning" : "Afternoon"), "Select Shift")}
+            </View>
+            <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>
+              {renderTextInput("Hall Ticket No", hallTicketNo, setHallTicketNo, "Hall Ticket Number")}
+              {renderTextInput("Admission Form No", admissionFormNo, setAdmissionFormNo, "Form Number")}
               {renderDatePicker("Student Fees Date", studentFeesDate, setStudentFeesDate)}
             </View>
             <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>

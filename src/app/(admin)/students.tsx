@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Alert, ScrollView, Modal, TextInput, ActivityIndicator } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Alert, ScrollView, Modal, TextInput, ActivityIndicator, Image } from "react-native";
 import { router } from "expo-router";
 import { Colors } from "@/constants/colors";
 import type { StudentModel } from "@/api/model/studentModel";
@@ -105,8 +105,17 @@ export default function AdminStudentManagementScreen() {
       flex: 2, 
       render: (s) => (
         <View className="flex-row items-center gap-2">
-          <GenderIcon gender={s.gender} size={16} />
-          <Text className="text-sm font-bold text-gray-800">{getStudentDisplayName(s)}</Text>
+          {s.studentPhoto ? (
+            <Image source={{ uri: s.studentPhoto }} className="w-6 h-6 rounded-full" />
+          ) : (
+            <GenderIcon gender={s.gender} size={16} />
+          )}
+          <View>
+            <Text className="text-sm font-bold text-gray-800">{getStudentDisplayName(s)}</Text>
+            {s.parentUserName && (
+              <Text className="text-[10px] text-gray-500 font-semibold">P: {s.parentUserName} / {s.parentPassword}</Text>
+            )}
+          </View>
         </View>
       )
     },
@@ -154,8 +163,12 @@ export default function AdminStudentManagementScreen() {
         subtitle={`GR No: ${formatOptional(item.studentGRNo)}`}
         accentColor={Colors.primary}
         icon={
-          <View style={styles.avatarBox}>
-            <GenderIcon gender={item.gender} size={22} />
+          <View style={styles.avatarBox} className="overflow-hidden bg-gray-50 items-center justify-center">
+            {item.studentPhoto ? (
+              <Image source={{ uri: item.studentPhoto }} className="w-full h-full" />
+            ) : (
+              <GenderIcon gender={item.gender} size={22} />
+            )}
           </View>
         }
         badge={
@@ -167,7 +180,8 @@ export default function AdminStudentManagementScreen() {
         }
         fields={[
           { label: "Class", value: formatOptional(item.classID) },
-          { label: "Section", value: formatOptional(item.sectionID) },
+          { label: "Parent User", value: formatOptional(item.parentUserName, "N/A") },
+          { label: "Parent Pass", value: formatOptional(item.parentPassword, "N/A") },
           { label: "Status", value: formatOptional(item.status, "Active"), highlight: "success" },
         ]}
         onPress={() => {
