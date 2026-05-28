@@ -4,6 +4,7 @@ import { router } from "expo-router";
 import { Colors } from "@/constants/colors";
 import type { StudentModel } from "@/api/model/studentModel";
 import { useGetApiStudentGet, useDeleteApiStudentDeleteId } from "@/api/generated/3-student-crud/3-student-crud";
+import { useGetApiClassGet } from "@/api/generated/master-class/master-class";
 import { parseApiList } from "@/utils/apiResponse";
 import { normalizeStudent, getStudentDisplayName, formatOptional } from "@/utils/studentUtils";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
@@ -15,6 +16,10 @@ import { ResponsiveDataList, EntityActionButtons, type TableColumn } from "@/com
 export default function AdminStudentManagementScreen() {
   const { canManageStudents } = usePermissions();
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
+
+  const { data: classData } = useGetApiClassGet();
+  const classes = useMemo(() => parseApiList<any>(classData?.data), [classData]);
 
   const { data, isLoading, isError, error, refetch } = useGetApiStudentGet();
   const deleteStudent = useDeleteApiStudentDeleteId();
@@ -34,17 +39,31 @@ export default function AdminStudentManagementScreen() {
   }, [data]);
 
   const filteredStudents = useMemo(() => {
+    let filtered = students;
+    
+    if (selectedClassId) {
+      filtered = filtered.filter(s => s.classID === selectedClassId || Number(s.classID) === selectedClassId);
+    }
+    
     const q = searchQuery.toLowerCase().trim();
-    if (!q) return students;
-    return students.filter((student) => {
-      const name = getStudentDisplayName(student).toLowerCase();
-      return (
-        name.includes(q) ||
-        formatOptional(student.rollNo, "").toLowerCase().includes(q) ||
-        formatOptional(student.studentGRNo, "").toLowerCase().includes(q)
-      );
+    if (q) {
+      filtered = filtered.filter((student) => {
+        const name = getStudentDisplayName(student).toLowerCase();
+        return (
+          name.includes(q) ||
+          formatOptional(student.rollNo, "").toLowerCase().includes(q) ||
+          formatOptional(student.studentGRNo, "").toLowerCase().includes(q)
+        );
+      });
+    }
+
+    // Sort by roll number numerically
+    return filtered.sort((a, b) => {
+      const rollA = parseInt(a.rollNo || "0") || 0;
+      const rollB = parseInt(b.rollNo || "0") || 0;
+      return rollA - rollB;
     });
-  }, [students, searchQuery]);
+  }, [students, searchQuery, selectedClassId]);
 
   const handleDelete = (student: StudentModel) => {
     if (!student.studentID) return;
@@ -167,6 +186,27 @@ export default function AdminStudentManagementScreen() {
       scrollable={false}
       flatHeader
     >
+      <View className="bg-white px-4 py-2 border-b border-gray-100">
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+          <TouchableOpacity
+            onPress={() => setSelectedClassId(null)}
+            className={`px-4 py-2 rounded-full border ${selectedClassId === null ? "bg-blue-600 border-blue-600" : "bg-gray-50 border-gray-200"}`}
+          >
+            <Text className={`text-xs font-bold ${selectedClassId === null ? "text-white" : "text-gray-600"}`}>All Classes</Text>
+          </TouchableOpacity>
+          {classes.map((cls) => (
+            <TouchableOpacity
+              key={cls.classID}
+              onPress={() => setSelectedClassId(cls.classID)}
+              className={`px-4 py-2 rounded-full border ${selectedClassId === cls.classID ? "bg-blue-600 border-blue-600" : "bg-gray-50 border-gray-200"}`}
+            >
+              <Text className={`text-xs font-bold ${selectedClassId === cls.classID ? "text-white" : "text-gray-600"}`}>
+                Class {cls.className}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
       <ResponsiveDataList
         data={filteredStudents}
         isLoading={isLoading}
