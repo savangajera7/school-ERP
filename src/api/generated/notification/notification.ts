@@ -444,6 +444,112 @@ export function useGetApiNotificationGetNotificationList<TData = Awaited<ReturnT
 
 
 
+export type getApiNotificationGetUnreadCountResponse200 = {
+  data: void
+  status: 200
+}
+
+export type getApiNotificationGetUnreadCountResponseSuccess = (getApiNotificationGetUnreadCountResponse200) & {
+  headers: Headers;
+};
+;
+
+export type getApiNotificationGetUnreadCountResponse = (getApiNotificationGetUnreadCountResponseSuccess)
+
+export const getGetApiNotificationGetUnreadCountUrl = () => {
+
+
+
+
+  return `/api/Notification/GetUnreadCount`
+}
+
+export const getApiNotificationGetUnreadCount = async ( options?: RequestInit): Promise<getApiNotificationGetUnreadCountResponse> => {
+
+  return customInstance<getApiNotificationGetUnreadCountResponse>(getGetApiNotificationGetUnreadCountUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetApiNotificationGetUnreadCountQueryKey = () => {
+    return [
+    `/api/Notification/GetUnreadCount`
+    ] as const;
+    }
+
+
+export const getGetApiNotificationGetUnreadCountQueryOptions = <TData = Awaited<ReturnType<typeof getApiNotificationGetUnreadCount>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiNotificationGetUnreadCount>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiNotificationGetUnreadCountQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiNotificationGetUnreadCount>>> = ({ signal }) => getApiNotificationGetUnreadCount({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiNotificationGetUnreadCount>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiNotificationGetUnreadCountQueryResult = NonNullable<Awaited<ReturnType<typeof getApiNotificationGetUnreadCount>>>
+export type GetApiNotificationGetUnreadCountQueryError = unknown
+
+
+export function useGetApiNotificationGetUnreadCount<TData = Awaited<ReturnType<typeof getApiNotificationGetUnreadCount>>, TError = unknown>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiNotificationGetUnreadCount>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiNotificationGetUnreadCount>>,
+          TError,
+          Awaited<ReturnType<typeof getApiNotificationGetUnreadCount>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiNotificationGetUnreadCount<TData = Awaited<ReturnType<typeof getApiNotificationGetUnreadCount>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiNotificationGetUnreadCount>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiNotificationGetUnreadCount>>,
+          TError,
+          Awaited<ReturnType<typeof getApiNotificationGetUnreadCount>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiNotificationGetUnreadCount<TData = Awaited<ReturnType<typeof getApiNotificationGetUnreadCount>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiNotificationGetUnreadCount>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetApiNotificationGetUnreadCount<TData = Awaited<ReturnType<typeof getApiNotificationGetUnreadCount>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiNotificationGetUnreadCount>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiNotificationGetUnreadCountQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
 export type postApiNotificationInsertNotificationResponse200 = {
   data: void
   status: 200

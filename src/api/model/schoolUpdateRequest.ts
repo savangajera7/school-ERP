@@ -49,4 +49,6 @@ export interface SchoolUpdateRequest {
   adminLastName?: string | null;
   /** @nullable */
   adminPhone?: string | null;
+  /** @nullable */
+  adminPassword?: string | null;
 }

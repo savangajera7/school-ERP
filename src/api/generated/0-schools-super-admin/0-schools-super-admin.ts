@@ -52,7 +52,92 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
 
-export type patchApiSchoolChangeStatusIdResponse401TextPlain = {
+export type postApiSchoolAddResponse401TextPlain = {
+  data: ProblemDetails
+  status: 401
+}
+
+export type postApiSchoolAddResponse401ApplicationJson = {
+  data: ProblemDetails
+  status: 401
+}
+
+export type postApiSchoolAddResponse401TextJson = {
+  data: ProblemDetails
+  status: 401
+}
+
+;
+export type postApiSchoolAddResponseError = (postApiSchoolAddResponse401TextPlain | postApiSchoolAddResponse401ApplicationJson | postApiSchoolAddResponse401TextJson) & {
+  headers: Headers;
+};
+
+export type postApiSchoolAddResponse = (postApiSchoolAddResponseError)
+
+export const getPostApiSchoolAddUrl = () => {
+
+
+
+
+  return `/api/School/Add`
+}
+
+export const postApiSchoolAdd = async (schoolInsertRequest?: SchoolInsertRequest, options?: RequestInit): Promise<postApiSchoolAddResponse> => {
+
+  return customInstance<postApiSchoolAddResponse>(getPostApiSchoolAddUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(schoolInsertRequest)
+  }
+);}
+
+
+
+
+export const getPostApiSchoolAddMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiSchoolAdd>>, TError,{data?: SchoolInsertRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof postApiSchoolAdd>>, TError,{data?: SchoolInsertRequest}, TContext> => {
+
+const mutationKey = ['postApiSchoolAdd'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiSchoolAdd>>, {data?: SchoolInsertRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  postApiSchoolAdd(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiSchoolAddMutationResult = NonNullable<Awaited<ReturnType<typeof postApiSchoolAdd>>>
+    export type PostApiSchoolAddMutationBody = SchoolInsertRequest | undefined
+    export type PostApiSchoolAddMutationError = ProblemDetails
+
+    export const usePostApiSchoolAdd = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiSchoolAdd>>, TError,{data?: SchoolInsertRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postApiSchoolAdd>>,
+        TError,
+        {data?: SchoolInsertRequest},
+        TContext
+      > => {
+      return useMutation(getPostApiSchoolAddMutationOptions(options), queryClient);
+    }
+    export type patchApiSchoolChangeStatusIdResponse401TextPlain = {
   data: ProblemDetails
   status: 401
 }
@@ -222,98 +307,6 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
         TContext
       > => {
       return useMutation(getDeleteApiSchoolDeleteIdMutationOptions(options), queryClient);
-    }
-    export type postApiSchoolAddResponse200 = {
-  data: void
-  status: 200
-}
-
-export type postApiSchoolAddResponse401TextPlain = {
-  data: ProblemDetails
-  status: 401
-}
-
-export type postApiSchoolAddResponse401ApplicationJson = {
-  data: ProblemDetails
-  status: 401
-}
-
-export type postApiSchoolAddResponse401TextJson = {
-  data: ProblemDetails
-  status: 401
-}
-
-export type postApiSchoolAddResponseSuccess = (postApiSchoolAddResponse200) & {
-  headers: Headers;
-};
-export type postApiSchoolAddResponseError = (postApiSchoolAddResponse401TextPlain | postApiSchoolAddResponse401ApplicationJson | postApiSchoolAddResponse401TextJson) & {
-  headers: Headers;
-};
-
-export type postApiSchoolAddResponse = (postApiSchoolAddResponseSuccess | postApiSchoolAddResponseError)
-
-export const getPostApiSchoolAddUrl = () => {
-
-
-
-
-  return `/api/School/Add`
-}
-
-export const postApiSchoolAdd = async (schoolInsertRequest?: SchoolInsertRequest, options?: RequestInit): Promise<postApiSchoolAddResponse> => {
-
-  return customInstance<postApiSchoolAddResponse>(getPostApiSchoolAddUrl(),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(schoolInsertRequest)
-  }
-);}
-
-
-
-
-export const getPostApiSchoolAddMutationOptions = <TError = ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiSchoolAdd>>, TError,{data?: SchoolInsertRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof postApiSchoolAdd>>, TError,{data?: SchoolInsertRequest}, TContext> => {
-
-const mutationKey = ['postApiSchoolAdd'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiSchoolAdd>>, {data?: SchoolInsertRequest}> = (props) => {
-          const {data} = props ?? {};
-
-          return  postApiSchoolAdd(data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type PostApiSchoolAddMutationResult = NonNullable<Awaited<ReturnType<typeof postApiSchoolAdd>>>
-    export type PostApiSchoolAddMutationBody = SchoolInsertRequest | undefined
-    export type PostApiSchoolAddMutationError = ProblemDetails
-
-    export const usePostApiSchoolAdd = <TError = ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiSchoolAdd>>, TError,{data?: SchoolInsertRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof postApiSchoolAdd>>,
-        TError,
-        {data?: SchoolInsertRequest},
-        TContext
-      > => {
-      return useMutation(getPostApiSchoolAddMutationOptions(options), queryClient);
     }
     export type getApiSchoolGetResponse401TextPlain = {
   data: ProblemDetails
@@ -554,7 +547,208 @@ export function useGetApiSchoolGetByIDId<TData = Awaited<ReturnType<typeof getAp
 
 
 
-export type putApiSchoolUpdateResponse401TextPlain = {
+export type getApiSchoolGetRoleCountsIdResponse401TextPlain = {
+  data: ProblemDetails
+  status: 401
+}
+
+export type getApiSchoolGetRoleCountsIdResponse401ApplicationJson = {
+  data: ProblemDetails
+  status: 401
+}
+
+export type getApiSchoolGetRoleCountsIdResponse401TextJson = {
+  data: ProblemDetails
+  status: 401
+}
+
+;
+export type getApiSchoolGetRoleCountsIdResponseError = (getApiSchoolGetRoleCountsIdResponse401TextPlain | getApiSchoolGetRoleCountsIdResponse401ApplicationJson | getApiSchoolGetRoleCountsIdResponse401TextJson) & {
+  headers: Headers;
+};
+
+export type getApiSchoolGetRoleCountsIdResponse = (getApiSchoolGetRoleCountsIdResponseError)
+
+export const getGetApiSchoolGetRoleCountsIdUrl = (id: number,) => {
+
+
+
+
+  return `/api/School/GetRoleCounts/${id}`
+}
+
+export const getApiSchoolGetRoleCountsId = async (id: number, options?: RequestInit): Promise<getApiSchoolGetRoleCountsIdResponse> => {
+
+  return customInstance<getApiSchoolGetRoleCountsIdResponse>(getGetApiSchoolGetRoleCountsIdUrl(id),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetApiSchoolGetRoleCountsIdQueryKey = (id: number,) => {
+    return [
+    `/api/School/GetRoleCounts/${id}`
+    ] as const;
+    }
+
+
+export const getGetApiSchoolGetRoleCountsIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>, TError = ProblemDetails>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiSchoolGetRoleCountsIdQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>> = ({ signal }) => getApiSchoolGetRoleCountsId(id, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiSchoolGetRoleCountsIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>>
+export type GetApiSchoolGetRoleCountsIdQueryError = ProblemDetails
+
+
+export function useGetApiSchoolGetRoleCountsId<TData = Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>, TError = ProblemDetails>(
+ id: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiSchoolGetRoleCountsId<TData = Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>, TError = ProblemDetails>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiSchoolGetRoleCountsId<TData = Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>, TError = ProblemDetails>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetApiSchoolGetRoleCountsId<TData = Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>, TError = ProblemDetails>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiSchoolGetRoleCountsIdQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
+export type postApiSchoolInsertResponse401TextPlain = {
+  data: ProblemDetails
+  status: 401
+}
+
+export type postApiSchoolInsertResponse401ApplicationJson = {
+  data: ProblemDetails
+  status: 401
+}
+
+export type postApiSchoolInsertResponse401TextJson = {
+  data: ProblemDetails
+  status: 401
+}
+
+;
+export type postApiSchoolInsertResponseError = (postApiSchoolInsertResponse401TextPlain | postApiSchoolInsertResponse401ApplicationJson | postApiSchoolInsertResponse401TextJson) & {
+  headers: Headers;
+};
+
+export type postApiSchoolInsertResponse = (postApiSchoolInsertResponseError)
+
+export const getPostApiSchoolInsertUrl = () => {
+
+
+
+
+  return `/api/School/Insert`
+}
+
+export const postApiSchoolInsert = async (schoolInsertRequest?: SchoolInsertRequest, options?: RequestInit): Promise<postApiSchoolInsertResponse> => {
+
+  return customInstance<postApiSchoolInsertResponse>(getPostApiSchoolInsertUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(schoolInsertRequest)
+  }
+);}
+
+
+
+
+export const getPostApiSchoolInsertMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiSchoolInsert>>, TError,{data?: SchoolInsertRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof postApiSchoolInsert>>, TError,{data?: SchoolInsertRequest}, TContext> => {
+
+const mutationKey = ['postApiSchoolInsert'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiSchoolInsert>>, {data?: SchoolInsertRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  postApiSchoolInsert(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiSchoolInsertMutationResult = NonNullable<Awaited<ReturnType<typeof postApiSchoolInsert>>>
+    export type PostApiSchoolInsertMutationBody = SchoolInsertRequest | undefined
+    export type PostApiSchoolInsertMutationError = ProblemDetails
+
+    export const usePostApiSchoolInsert = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiSchoolInsert>>, TError,{data?: SchoolInsertRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postApiSchoolInsert>>,
+        TError,
+        {data?: SchoolInsertRequest},
+        TContext
+      > => {
+      return useMutation(getPostApiSchoolInsertMutationOptions(options), queryClient);
+    }
+    export type putApiSchoolUpdateResponse401TextPlain = {
   data: ProblemDetails
   status: 401
 }
@@ -639,109 +833,3 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       > => {
       return useMutation(getPutApiSchoolUpdateMutationOptions(options), queryClient);
     }
-    export type getApiSchoolGetRoleCountsIdResponse200 = {
-  data: void
-  status: 200
-}
-
-export type getApiSchoolGetRoleCountsIdResponseSuccess = (getApiSchoolGetRoleCountsIdResponse200) & {
-  headers: Headers;
-};
-;
-
-export type getApiSchoolGetRoleCountsIdResponse = (getApiSchoolGetRoleCountsIdResponseSuccess)
-
-export const getGetApiSchoolGetRoleCountsIdUrl = (id: number,) => {
-
-
-
-
-  return `/api/School/GetRoleCounts/${id}`
-}
-
-export const getApiSchoolGetRoleCountsId = async (id: number, options?: RequestInit): Promise<getApiSchoolGetRoleCountsIdResponse> => {
-
-  return customInstance<getApiSchoolGetRoleCountsIdResponse>(getGetApiSchoolGetRoleCountsIdUrl(id),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
-
-export const getGetApiSchoolGetRoleCountsIdQueryKey = (id: number,) => {
-    return [
-    `/api/School/GetRoleCounts/${id}`
-    ] as const;
-    }
-
-
-export const getGetApiSchoolGetRoleCountsIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>, TError = unknown>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetApiSchoolGetRoleCountsIdQueryKey(id);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>> = ({ signal }) => getApiSchoolGetRoleCountsId(id, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetApiSchoolGetRoleCountsIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>>
-export type GetApiSchoolGetRoleCountsIdQueryError = unknown
-
-
-export function useGetApiSchoolGetRoleCountsId<TData = Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>, TError = unknown>(
- id: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>,
-          TError,
-          Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiSchoolGetRoleCountsId<TData = Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>,
-          TError,
-          Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiSchoolGetRoleCountsId<TData = Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-
-export function useGetApiSchoolGetRoleCountsId<TData = Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiSchoolGetRoleCountsId>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetApiSchoolGetRoleCountsIdQueryOptions(id,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return { ...query, queryKey: queryOptions.queryKey };
-}
-
-
-
-
-
-

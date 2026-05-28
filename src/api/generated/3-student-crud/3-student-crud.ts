@@ -38,6 +38,7 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  DeleteApiStudentDeleteIdParams,
   ProblemDetails
 } from '../../model';
 
@@ -70,17 +71,26 @@ export type deleteApiStudentDeleteIdResponseError = (deleteApiStudentDeleteIdRes
 
 export type deleteApiStudentDeleteIdResponse = (deleteApiStudentDeleteIdResponseError)
 
-export const getDeleteApiStudentDeleteIdUrl = (id: number,) => {
+export const getDeleteApiStudentDeleteIdUrl = (id: number,
+    params?: DeleteApiStudentDeleteIdParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/api/Student/Delete/${id}`
+  return stringifiedParams.length > 0 ? `/api/Student/Delete/${id}?${stringifiedParams}` : `/api/Student/Delete/${id}`
 }
 
-export const deleteApiStudentDeleteId = async (id: number, options?: RequestInit): Promise<deleteApiStudentDeleteIdResponse> => {
+export const deleteApiStudentDeleteId = async (id: number,
+    params?: DeleteApiStudentDeleteIdParams, options?: RequestInit): Promise<deleteApiStudentDeleteIdResponse> => {
 
-  return customInstance<deleteApiStudentDeleteIdResponse>(getDeleteApiStudentDeleteIdUrl(id),
+  return customInstance<deleteApiStudentDeleteIdResponse>(getDeleteApiStudentDeleteIdUrl(id,params),
   {
     ...options,
     method: 'DELETE'
@@ -93,8 +103,8 @@ export const deleteApiStudentDeleteId = async (id: number, options?: RequestInit
 
 
 export const getDeleteApiStudentDeleteIdMutationOptions = <TError = ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiStudentDeleteId>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof deleteApiStudentDeleteId>>, TError,{id: number}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiStudentDeleteId>>, TError,{id: number;params?: DeleteApiStudentDeleteIdParams}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteApiStudentDeleteId>>, TError,{id: number;params?: DeleteApiStudentDeleteIdParams}, TContext> => {
 
 const mutationKey = ['deleteApiStudentDeleteId'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -106,10 +116,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiStudentDeleteId>>, {id: number}> = (props) => {
-          const {id} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiStudentDeleteId>>, {id: number;params?: DeleteApiStudentDeleteIdParams}> = (props) => {
+          const {id,params} = props ?? {};
 
-          return  deleteApiStudentDeleteId(id,requestOptions)
+          return  deleteApiStudentDeleteId(id,params,requestOptions)
         }
 
 
@@ -124,11 +134,11 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type DeleteApiStudentDeleteIdMutationError = ProblemDetails
 
     export const useDeleteApiStudentDeleteId = <TError = ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiStudentDeleteId>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiStudentDeleteId>>, TError,{id: number;params?: DeleteApiStudentDeleteIdParams}, TContext>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteApiStudentDeleteId>>,
         TError,
-        {id: number},
+        {id: number;params?: DeleteApiStudentDeleteIdParams},
         TContext
       > => {
       return useMutation(getDeleteApiStudentDeleteIdMutationOptions(options), queryClient);

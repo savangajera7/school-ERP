@@ -98,8 +98,6 @@ export interface StudentModel {
   /** @nullable */
   height?: number | null;
   /** @nullable */
-  heightWeightDate?: string | null;
-  /** @nullable */
   ews?: boolean | null;
   /** @nullable */
   currentAddress?: string | null;
@@ -126,11 +124,11 @@ export interface StudentModel {
   /** @nullable */
   previousSchoolCityVillage?: string | null;
   /** @nullable */
-  lastSchoolType?: string | null;
-  /** @nullable */
   mediumID?: number | null;
   /** @nullable */
   mediumName?: string | null;
+  /** @nullable */
+  lastSchoolType?: string | null;
   /** @nullable */
   previousSchoolType?: string | null;
   /** @nullable */
@@ -149,6 +147,10 @@ export interface StudentModel {
   admissionStandard?: string | null;
   /** @nullable */
   rte?: boolean | null;
+  /** @nullable */
+  parentUserName?: string | null;
+  /** @nullable */
+  parentPassword?: string | null;
   /** @nullable */
   status?: string | null;
   /** @nullable */

@@ -19,18 +19,6 @@
  * OpenAPI spec version: v1
  */
 
-export interface MediumModel {
-  mediumID?: number;
-  /**
-     * @minLength 0
-     * @maxLength 100
-     */
-  mediumName: string;
-  /** @nullable */
-  isActive?: boolean | null;
-  /** @nullable */
-  createdBy?: number | null;
-  /** @nullable */
-  createdOn?: string | null;
-  schoolID: number;
-}
+export type DeleteApiStudentDeleteIdParams = {
+reason?: string;
+};
