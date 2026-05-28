@@ -7,6 +7,7 @@ import { router } from "expo-router";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from "expo-linear-gradient";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { Button } from "@/components/ui/Button";
 import { FormField } from "@/components/forms/FormField";
@@ -47,16 +48,42 @@ export default function LoginScreen() {
   const {
     control,
     handleSubmit,
+    setValue,
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "" },
   });
+
+  React.useEffect(() => {
+    const loadRememberedCredentials = async () => {
+      try {
+        const savedEmail = await AsyncStorage.getItem("rememberedEmail");
+        const savedPassword = await AsyncStorage.getItem("rememberedPassword");
+        if (savedEmail && savedPassword) {
+          setValue("email", savedEmail);
+          setValue("password", savedPassword);
+          setRememberMe(true);
+        }
+      } catch (error) {
+        console.error("Failed to load credentials", error);
+      }
+    };
+    loadRememberedCredentials();
+  }, [setValue]);
 
   const onSubmit = async (data: LoginFormData) => {
     setLoginError(null);
     const result = await signInWithApi(data.email, data.password);
     if (!result.ok) {
       setLoginError(result.error ?? t.loginFailed);
+    } else {
+      if (rememberMe) {
+        await AsyncStorage.setItem("rememberedEmail", data.email);
+        await AsyncStorage.setItem("rememberedPassword", data.password);
+      } else {
+        await AsyncStorage.removeItem("rememberedEmail");
+        await AsyncStorage.removeItem("rememberedPassword");
+      }
     }
   };
 
