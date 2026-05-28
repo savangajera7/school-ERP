@@ -10,10 +10,17 @@ type Props = { children: React.ReactNode };
 function normalizePath(pathname: string): string {
   const p = pathname.replace(/\/$/, "") || "/";
   if (p === "/" || p === "/index") return "/(app)/dashboard";
-  if (!p.startsWith("/(app)")) {
-    const segment = p.split("/").filter(Boolean)[0];
-    if (segment) return `/(app)/${segment}`;
+  if (
+    p.startsWith("/(admin)/") ||
+    p.startsWith("/(parent)/") ||
+    p.startsWith("/(teacher)/") ||
+    p.startsWith("/(app)/") ||
+    p.startsWith("/(super-admin)/")
+  ) {
+    return p;
   }
+  const segment = p.split("/").filter(Boolean)[0];
+  if (segment) return `/(app)/${segment}`;
   return p;
 }
 

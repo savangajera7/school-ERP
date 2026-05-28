@@ -9,8 +9,9 @@ import { PremiumLoader } from "@/components/ui/PremiumLoader";
 import { Button } from "@/components/ui/Button";
 import {
   useGetApiTeacherAttendanceGetTeacherAttendanceList,
-  usePostApiTeacherAttendanceInsertTeacherAttendance,
-} from "@/api/generated/teacher-attendance/teacher-attendance";
+  usePostApiTeacherAttendanceInsertOne,
+  buildTeacherAttendanceInsertRequest,
+} from "@/api/attendance";
 import { parseApiList } from "@/utils/apiResponse";
 import { recordLabel } from "@/utils/recordHelpers";
 import { useToast } from "@/components/ui/Toast";
@@ -35,7 +36,7 @@ export default function TeacherAttendanceScreen() {
 
   const { data, isLoading, refetch, isRefetching } =
     useGetApiTeacherAttendanceGetTeacherAttendanceList();
-  const insertMutation = usePostApiTeacherAttendanceInsertTeacherAttendance();
+  const insertMutation = usePostApiTeacherAttendanceInsertOne();
   const rows = useMemo(() => parseApiList<Record<string, unknown>>(data?.data), [data]);
 
   const handleMark = async () => {
@@ -46,12 +47,13 @@ export default function TeacherAttendanceScreen() {
     }
     try {
       await insertMutation.mutateAsync({
-        data: {
+        data: buildTeacherAttendanceInsertRequest({
           teacherID: tid,
           attendanceDate: date,
           attendanceStatus: status,
-          addedBy: parseInt(userData?.id ?? "0", 10) || 0,
-        },
+          schoolID: userData?.schoolID ?? null,
+          addedBy: parseInt(String(userData?.id ?? "0"), 10) || 0,
+        }),
       });
       showToast("Attendance saved.", "success");
       refetch();
@@ -76,7 +78,7 @@ export default function TeacherAttendanceScreen() {
           onChange={setDate}
         />
         <TextInput placeholder="Status (Present/Absent)" value={status} onChangeText={setStatus} className="border border-gray-200 rounded-xl px-4 py-3 mb-4 text-sm font-semibold text-gray-800 bg-gray-50" />
-        <Button label="Mark attendance" onPress={handleMark} loading={insertMutation.isPending} />
+        <Button label="Add attendance" onPress={handleMark} loading={insertMutation.isPending} />
       </PremiumCard>
       {isLoading ? (
         <PremiumLoader color={Colors.primary} />

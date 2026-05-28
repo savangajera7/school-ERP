@@ -57,6 +57,8 @@ export type AppRoute =
   | "/(parent)/syllabus"
   | "/(parent)/attendance"
   | "/(parent)/fees"
+  | "/(admin)/attendance"
+  | "/(admin)/attendance-form"
   | "/(admin)/notices"
   | "/(admin)/notifications";
 
@@ -65,6 +67,7 @@ export type Permission =
   | "viewStudents"
   | "manageStudents"
   | "markStudentAttendance"
+  | "viewStudentAttendance"
   | "viewAttendanceReports"
   | "manageStaffAttendance"
   | "viewFees"
@@ -107,6 +110,7 @@ const ALL_PERMISSIONS: Permission[] = [
   "viewStudents",
   "manageStudents",
   "markStudentAttendance",
+  "viewStudentAttendance",
   "viewAttendanceReports",
   "manageStaffAttendance",
   "viewFees",
@@ -180,6 +184,7 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "viewNotices",
     "viewNotifications",
     "viewOwnResults",
+    "viewStudentAttendance",
     "applyLeave",
     "viewTimetable",
     "changeOwnPassword",
@@ -194,6 +199,7 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "viewNotices",
     "viewNotifications",
     "viewOwnResults",
+    "viewStudentAttendance",
     "viewExams",
     "changeOwnPassword",
     "viewHomework",
@@ -278,6 +284,8 @@ export const ROUTE_ACCESS: Record<Role, AppRoute[]> = {
     "/(app)/leave",
     "/(app)/profile",
     "/(app)/change-password",
+    "/(admin)/attendance",
+    "/(admin)/attendance-form",
   ],
   teacher: [
     "/(app)/dashboard",
@@ -318,6 +326,7 @@ export const ROUTE_ACCESS: Record<Role, AppRoute[]> = {
   ],
   student: [
     "/(app)/dashboard",
+    "/(app)/menu",
     "/(app)/notifications",
     "/(app)/notices",
     "/(app)/fees",
@@ -326,6 +335,7 @@ export const ROUTE_ACCESS: Record<Role, AppRoute[]> = {
     "/(app)/change-password",
     "/(parent)/homework",
     "/(parent)/syllabus",
+    "/(parent)/attendance",
   ],
 };
 
@@ -376,10 +386,16 @@ export function getNavItemsForRole(role: Role | null): NavMenuItem[] {
 
 export function canAccessRoute(role: Role | null, route: string): boolean {
   if (!role) return false;
-  const normalized = route.replace(/\/$/, "") as AppRoute;
-  return ROUTE_ACCESS[role].some(
-    (r) => normalized === r || normalized.endsWith(r.replace("/(app)", ""))
-  );
+  const normalized = route.replace(/\/$/, "");
+  const allowed = ROUTE_ACCESS[role] ?? [];
+  return allowed.some((r) => {
+    if (normalized === r) return true;
+    if (normalized.startsWith(`${r}/`)) return true;
+    const rTail = r.replace(/^\([^)]+\)/, "");
+    const nTail = normalized.replace(/^\([^)]+\)/, "");
+    if (!rTail.length) return false;
+    return nTail === rTail || nTail.startsWith(`${rTail}/`);
+  });
 }
 
 export function isSchoolAdmin(role: Role | null): boolean {

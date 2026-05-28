@@ -6,7 +6,7 @@ import { useResponsive } from "@/hooks/useResponsive";
 import { usePostApiStudentSearch } from "@/api/generated/3-student-crud/3-student-crud";
 import { useGetApiTeacherGetTeacherList } from "@/api/generated/teacher/teacher";
 import { useGetApiClassGetClassList } from "@/api/generated/master-class/master-class";
-import { useGetApiAttendanceGet } from "@/api/generated/9-attendance/9-attendance";
+import { useGetApiAttendanceGet, buildAttendanceListParams, parseAttendanceList } from "@/api/attendance";
 import { parseApiList } from "@/utils/apiResponse";
 import { usePermissions } from "@/hooks/usePermissions";
 import type { AppRoute } from "@/constants/rolePermissions";
@@ -44,7 +44,9 @@ export default function AdminDashboard() {
 
   const { data: teachersData, isLoading: loadingTeachers, refetch: refetchTeachers } = useGetApiTeacherGetTeacherList();
   const { data: classesData, isLoading: loadingClasses, refetch: refetchClasses } = useGetApiClassGetClassList();
-  const { data: attendanceData, isLoading: loadingAttendance, refetch: refetchAttendance } = useGetApiAttendanceGet();
+  const schoolID = useAuthStore((s) => s.userData?.schoolID);
+  const { data: attendanceData, isLoading: loadingAttendance, refetch: refetchAttendance } =
+    useGetApiAttendanceGet(buildAttendanceListParams({ schoolID }));
 
   const isLoading = loadingTeachers || loadingClasses || loadingAttendance;
 
@@ -61,7 +63,7 @@ export default function AdminDashboard() {
 
   const teachers = parseApiList(teachersData?.data);
   const classes = parseApiList(classesData?.data);
-  const attendance = parseApiList(attendanceData?.data);
+  const attendance = parseAttendanceList(attendanceData?.data);
 
   const stats = [
     {
@@ -82,7 +84,7 @@ export default function AdminDashboard() {
     {
       icon: "check" as AppIconName, label: "Attendance", subtitle: "Today's average",
       value: isLoading ? "..." : getAttendanceTodayVal(attendance),
-      backgroundColor: "#DCFCE7", textColor: "#15803D", route: "/(admin)/attendance"
+      backgroundColor: "#DCFCE7", textColor: "#15803D", route: "/(app)/attendance"
     }
   ];
 

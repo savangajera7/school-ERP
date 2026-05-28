@@ -3,7 +3,11 @@ import { View, Text, FlatList, RefreshControl } from "react-native";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { Colors } from "@/constants/colors";
-import { useGetApiAttendanceGet } from "@/api/generated/9-attendance/9-attendance";
+import {
+  useGetApiAttendanceGet,
+  buildAttendanceListParams,
+  parseAttendanceList,
+} from "@/api/attendance";
 import { useAuthStore } from "@/store/authStore";
 import { parseApiList } from "@/utils/apiResponse";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
@@ -13,19 +17,23 @@ import { useTranslation } from "@/hooks/useTranslation";
 
 /** Read-only attendance for parent / student */
 export default function ParentAttendanceView() {
-  const refId = useAuthStore((s) => s.userData?.referenceID);
-  const { data, isLoading, refetch, isError } =
-    useGetApiAttendanceGet();
+  const userData = useAuthStore((s) => s.userData);
+  const refId = userData?.referenceID;
+  const studentId = userData?.studentID ?? refId;
+  const listParams = useMemo(
+    () =>
+      buildAttendanceListParams({
+        studentID: studentId,
+        schoolID: userData?.schoolID,
+      }),
+    [studentId, userData?.schoolID]
+  );
+  const { data, isLoading, refetch, isError } = useGetApiAttendanceGet(listParams);
   const { isMobile } = useResponsive();
   const { t } = useTranslation();
 
   const records = useMemo(() => {
-    const all = parseApiList<{
-      studentID?: number;
-      attendanceDate?: string;
-      attendanceStatus?: string;
-      remarks?: string;
-    }>(data?.data);
+    const all = parseAttendanceList(data?.data);
     
     // Filter by child ID if available
     const filtered = refId ? all.filter((r) => r.studentID === refId) : all;

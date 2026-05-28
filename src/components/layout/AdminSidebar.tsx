@@ -18,7 +18,7 @@ const PRIMARY: { label: string; route: string; icon: AppIconName }[] = [
 
 const MORE: { label: string; route: string; icon: AppIconName; perm?: string }[] = [
   { label: "Fees", route: "/(admin)/fees", icon: "fees", perm: "viewFees" },
-  { label: "Attendance", route: "/(admin)/attendance", icon: "attendance", perm: "markStudentAttendance" },
+  { label: "Attendance", route: "/(app)/attendance", icon: "attendance", perm: "markStudentAttendance" },
   { label: "Exams", route: "/(admin)/exams", icon: "exams", perm: "viewExams" },
   { label: "Reports", route: "/(admin)/reports", icon: "reports", perm: "viewReports" },
   { label: "Alerts", route: "/(admin)/notifications", icon: "notifications", perm: "viewNotifications" },
@@ -44,7 +44,10 @@ export function AdminSidebar() {
     route: string;
     icon: AppIconName;
   }) => {
-    const active = pathname.includes(route.replace("/(admin)/", ""));
+    const routeKey = route.replace(/^\([^)]+\)\//, "");
+    const active =
+      pathname.includes(routeKey) ||
+      (routeKey === "attendance" && pathname.includes("/attendance"));
     return (
       <TouchableOpacity
         onPress={() => router.push(route as never)}

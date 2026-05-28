@@ -8,8 +8,10 @@ import { useAuthStore } from "@/store/authStore";
 import { useResponsive } from "@/hooks/useResponsive";
 import { useGetApiStudentGet } from "@/api/generated/3-student-crud/3-student-crud";
 import { useGetApiTeacherGetTeacherList } from "@/api/generated/teacher/teacher";
-import { useGetApiAttendanceGet } from "@/api/generated/9-attendance/9-attendance";
-import { useGetApiTeacherAttendanceGetTeacherAttendanceList } from "@/api/generated/teacher-attendance/teacher-attendance";
+import {
+  useGetApiAttendanceGet,
+  useGetApiTeacherAttendanceGetTeacherAttendanceList,
+} from "@/api/attendance";
 import { parseApiList } from "@/utils/apiResponse";
 import { usePermissions } from "@/hooks/usePermissions";
 import type { AppRoute } from "@/constants/rolePermissions";

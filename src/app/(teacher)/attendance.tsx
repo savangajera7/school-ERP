@@ -1,2 +1,1 @@
-import AttendanceScreen from "../(app)/attendance";
-export default AttendanceScreen;
+export { default } from "../(app)/attendance/index";

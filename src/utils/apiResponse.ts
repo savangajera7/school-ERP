@@ -21,7 +21,13 @@ function collectArray<T>(value: unknown, depth = 0): T[] | null {
   if (typeof value !== "object") return null;
 
   const inner = value as Record<string, unknown>;
-  const keys = ["data", "Data", "items", "Items", "list", "List", "result", "Result", "records", "Records", "students", "Students"];
+  const keys = [
+    "data", "Data", "items", "Items", "list", "List", "result", "Result",
+    "records", "Records", "students", "Students",
+    "attendance", "Attendance", "attendanceList", "AttendanceList",
+    "studentAttendance", "StudentAttendance", "studentAttendanceList", "StudentAttendanceList",
+    "classes", "Classes",
+  ];
 
   for (const key of keys) {
     const candidate = inner[key];

@@ -36,6 +36,7 @@ export function usePermissions() {
     canManageFees: hasPermission(role, "manageFees"),
     /** Student attendance: teacher + admin mark (InsertStudentAttendance). */
     canMarkStudentAttendance: hasPermission(role, "markStudentAttendance"),
+    canViewStudentAttendance: hasPermission(role, "viewStudentAttendance"),
     /** Staff attendance register: admin only on API. */
     canManageStaffAttendance: hasPermission(role, "manageStaffAttendance"),
     canPublishNotices: hasPermission(role, "publishNotices"),

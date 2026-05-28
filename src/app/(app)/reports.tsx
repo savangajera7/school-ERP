@@ -6,7 +6,7 @@ import { PremiumStatPills } from "@/components/ui/premium";
 import { Card } from "@/components/ui/Card";
 import { useGetApiStudentGet } from "@/api/generated/3-student-crud/3-student-crud";
 import { useGetApiFeesGetFeesList } from "@/api/generated/fees/fees";
-import { useGetApiAttendanceGet } from "@/api/generated/9-attendance/9-attendance";
+import { useGetApiAttendanceGet } from "@/api/attendance";
 import { useGetApiResultGetResultList } from "@/api/generated/result/result";
 import { parseApiList } from "@/utils/apiResponse";
 import { Colors } from "@/constants/colors";
