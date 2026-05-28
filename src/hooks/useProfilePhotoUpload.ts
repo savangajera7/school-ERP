@@ -35,7 +35,10 @@ export function useProfilePhotoUpload() {
 
     const asset = result.assets[0];
     const uri = asset.uri;
-    const name = uri.split("/").pop() || `profile-${Date.now()}.jpg`;
+    let name = uri.split("/").pop() || `profile-${Date.now()}.jpg`;
+    if (!name.match(/\.(jpg|jpeg|png|gif)$/i)) {
+      name = `${name}.jpg`;
+    }
     const type = asset.mimeType || "image/jpeg";
 
     const userId = Number(userData?.id);

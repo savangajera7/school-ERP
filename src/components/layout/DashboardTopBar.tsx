@@ -16,7 +16,7 @@ function notificationsRouteForRole(role: ReturnType<typeof useAuthStore.getState
   const group = roleToRouteGroup(role);
   if (group === "(teacher)") return "/(teacher)/notice";
   if (group === "(parent)") return "/(parent)/notices";
-  return "/(app)/notifications";
+  return `/${group}/notifications`;
 }
 
 export function DashboardTopBar({ notificationsHref }: Props) {

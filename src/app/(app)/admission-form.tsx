@@ -26,6 +26,7 @@ import { parseApiData, parseApiList } from "@/utils/apiResponse";
 import { PremiumDatePicker } from "@/components/ui/PremiumDatePicker";
 import * as ImagePicker from 'expo-image-picker';
 import { useAuthStore } from "@/store/authStore";
+import { uploadProfileImage } from "@/services/upload/uploadService";
 
 export default function AdmissionFormScreen() {
   const { id } = useLocalSearchParams();
@@ -460,11 +461,25 @@ export default function AdmissionFormScreen() {
       allowsEditing: true,
       aspect: [1, 1],
       quality: 0.5,
-      base64: true,
     });
 
-    if (!result.canceled && result.assets && result.assets[0].base64) {
-      setter(`data:image/jpeg;base64,${result.assets[0].base64}`);
+    if (!result.canceled && result.assets && result.assets[0].uri) {
+      const asset = result.assets[0];
+      let name = asset.uri.split("/").pop() || `photo-${Date.now()}.jpg`;
+      if (!name.match(/\.(jpg|jpeg|png|gif)$/i)) {
+        name = `${name}.jpg`;
+      }
+      const type = asset.mimeType || "image/jpeg";
+      
+      try {
+        setLoading(true);
+        const photoUrl = await uploadProfileImage({ uri: asset.uri, name, type });
+        setter(photoUrl);
+      } catch (error: any) {
+        Alert.alert("Upload Failed", error.message || "Could not upload image");
+      } finally {
+        setLoading(false);
+      }
     }
   };
 

@@ -75,7 +75,8 @@ export type AppIconName =
   | "language"
   | "edit"
   | "delete"
-  | "bell";
+  | "bell"
+  | "camera";
 
 type IconPair = { outline: IoniconsName; filled: IoniconsName };
 
@@ -154,6 +155,7 @@ export const APP_ICONS: Record<AppIconName, IconPair> = {
   edit: { outline: "create-outline", filled: "create" },
   delete: { outline: "trash-outline", filled: "trash" },
   bell: { outline: "notifications-outline", filled: "notifications" },
+  camera: { outline: "camera-outline", filled: "camera" },
 };
 
 export function resolveIconName(
@@ -242,4 +244,5 @@ export const QUICK_ACTION_STYLES: Record<
   edit: { bg: "#DBEAFE", iconBg: "#BFDBFE", iconColor: "#1D4ED8" },
   delete: { bg: "#FEE2E2", iconBg: "#FECACA", iconColor: "#DC2626" },
   bell: { bg: "#FEE2E2", iconBg: "#FECACA", iconColor: "#DC2626" },
+  camera: { bg: "#F3F4F6", iconBg: "#E5E7EB", iconColor: "#6B7280" },
 };
