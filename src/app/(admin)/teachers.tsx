@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback } from "react";
 import {
   View, Text, TouchableOpacity, Alert, Modal,
-  ScrollView, ActivityIndicator, Image,
+  ScrollView, ActivityIndicator, Image, TextInput,
 } from "react-native";
 import { router } from "expo-router";
 import { Colors } from "@/constants/colors";
@@ -11,17 +11,15 @@ import {
 import { parseApiList } from "@/utils/apiResponse";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { HeaderActionButton } from "@/components/ui/HeaderActionButton";
-import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { AppIcon, IconCircle } from "@/components/icons/AppIcon";
 import { usePermissions } from "@/hooks/usePermissions";
-import { EntityActionButtons, type TableColumn } from "@/components/shared";
+import { ResponsiveDataList, EntityActionButtons, type TableColumn } from "@/components/shared";
 import { useGetApiClassGet } from "@/api/generated/master-class/master-class";
 import {
   usePostApiTeacherClassAssignmentAdd,
   useDeleteApiTeacherClassAssignmentRemove,
 } from "@/api/generated/6-teacher-class-assignment/6-teacher-class-assignment";
-import { customInstance } from "@/services/api/axiosInstance";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useResponsive } from "@/hooks/useResponsive";
 import {
   useGetApiTeacherPermissionsAll,
@@ -67,14 +65,23 @@ const MODULE_KEYS: { key: keyof ClassPermission; label: string; icon: string }[]
   { key: "canExam",       label: "Exam",       icon: "exams" },
 ];
 
-// ─── API helpers (not yet in generated files) ────────────────────────────────
-// Replaced with Orval hooks
+// ─── Teacher Avatar ───────────────────────────────────────────────────────────
+
+const TeacherAvatar = ({ photo, size = 44 }: { photo?: string; size?: number }) => {
+  if (photo) {
+    return (
+      <View style={{ width: size, height: size, borderRadius: size / 2, overflow: "hidden", borderWidth: 2, borderColor: "#E5E7EB" }}>
+        <Image source={{ uri: photo }} style={{ width: size, height: size }} resizeMode="cover" />
+      </View>
+    );
+  }
+  return <IconCircle name="teachers" size={size} iconSize={size * 0.5} />;
+};
 
 // ─── Main Screen ─────────────────────────────────────────────────────────────
 
 export default function AdminTeacherManagementScreen() {
   const { canManageTeachers } = usePermissions();
-  const { isMobile } = useResponsive();
   const queryClient = useQueryClient();
 
   // ── Data ──────────────────────────────────────────────────────────────────
@@ -88,6 +95,21 @@ export default function AdminTeacherManagementScreen() {
     return Array.isArray(raw) ? raw : [];
   }, [teachersRaw]);
 
+  // ── Search ────────────────────────────────────────────────────────────────
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredTeachers = useMemo(() => {
+    if (!searchQuery.trim()) return teachers;
+    const q = searchQuery.toLowerCase();
+    return teachers.filter(
+      (t) =>
+        t.teacherName?.toLowerCase().includes(q) ||
+        t.teacherCode?.toLowerCase().includes(q) ||
+        t.subjectName?.toLowerCase().includes(q) ||
+        t.mobileNo?.includes(q),
+    );
+  }, [teachers, searchQuery]);
+
   // ── Mutations ─────────────────────────────────────────────────────────────
   const deleteTeacher = useDeleteApiTeacherDeleteTeacher();
   const addClassAssignment = usePostApiTeacherClassAssignmentAdd();
@@ -97,13 +119,11 @@ export default function AdminTeacherManagementScreen() {
   // ── Permission panel state ────────────────────────────────────────────────
   const [selectedTeacher, setSelectedTeacher] = useState<TeacherWithDetails | null>(null);
   const [panelVisible, setPanelVisible] = useState(false);
-  // local edits: classID → permission flags
   const [localPerms, setLocalPerms] = useState<Record<number, ClassPermission>>({});
   const [savingClassID, setSavingClassID] = useState<number | null>(null);
 
   const openPanel = useCallback((teacher: TeacherWithDetails) => {
     setSelectedTeacher(teacher);
-    // seed local state from current data
     const seed: Record<number, ClassPermission> = {};
     teacher.classPermissions.forEach((cp) => { seed[cp.classID] = { ...cp }; });
     setLocalPerms(seed);
@@ -112,7 +132,6 @@ export default function AdminTeacherManagementScreen() {
 
   const closePanel = () => { setPanelVisible(false); setSelectedTeacher(null); };
 
-  // Toggle a module flag locally
   const toggleModule = (classID: number, key: keyof ClassPermission) => {
     setLocalPerms((prev) => ({
       ...prev,
@@ -120,7 +139,6 @@ export default function AdminTeacherManagementScreen() {
     }));
   };
 
-  // Save permissions for one class row
   const saveClassPerms = async (classID: number) => {
     if (!selectedTeacher) return;
     const p = localPerms[classID];
@@ -139,7 +157,7 @@ export default function AdminTeacherManagementScreen() {
           canExam:       !!p.canExam,
         }
       });
-              queryClient.invalidateQueries({ queryKey: getGetApiTeacherPermissionsAllQueryKey() });
+      queryClient.invalidateQueries({ queryKey: getGetApiTeacherPermissionsAllQueryKey() });
     } catch (e: any) {
       Alert.alert("Error", e.message || "Failed to save permissions");
     } finally {
@@ -147,15 +165,13 @@ export default function AdminTeacherManagementScreen() {
     }
   };
 
-  // Assign a new class to teacher
   const assignClass = async (classID: number) => {
     if (!selectedTeacher) return;
     try {
       await addClassAssignment.mutateAsync({
         data: { teacherID: selectedTeacher.teacherID, classIDs: [classID] },
       });
-              queryClient.invalidateQueries({ queryKey: getGetApiTeacherPermissionsAllQueryKey() });
-      // seed local perms for new class
+      queryClient.invalidateQueries({ queryKey: getGetApiTeacherPermissionsAllQueryKey() });
       const cls = allClasses.find((c: any) => c.classID === classID);
       setLocalPerms((prev) => ({
         ...prev,
@@ -165,7 +181,6 @@ export default function AdminTeacherManagementScreen() {
           canClasswork: false, canTimetable: false, canExam: false,
         },
       }));
-      // update selectedTeacher locally so panel refreshes
       setSelectedTeacher((prev) => prev ? {
         ...prev,
         classPermissions: [
@@ -179,7 +194,6 @@ export default function AdminTeacherManagementScreen() {
     }
   };
 
-  // Remove a class from teacher
   const removeClass = (classID: number, className: string) => {
     if (!selectedTeacher) return;
     Alert.alert(
@@ -194,7 +208,7 @@ export default function AdminTeacherManagementScreen() {
               await removeClassAssignment.mutateAsync({
                 data: { teacherID: selectedTeacher.teacherID, classID },
               });
-                      queryClient.invalidateQueries({ queryKey: getGetApiTeacherPermissionsAllQueryKey() });
+              queryClient.invalidateQueries({ queryKey: getGetApiTeacherPermissionsAllQueryKey() });
               setLocalPerms((prev) => { const n = { ...prev }; delete n[classID]; return n; });
               setSelectedTeacher((prev) => prev ? {
                 ...prev,
@@ -209,7 +223,6 @@ export default function AdminTeacherManagementScreen() {
     );
   };
 
-  // Delete teacher
   const handleDelete = (teacher: TeacherWithDetails) => {
     Alert.alert(
       "Delete Teacher",
@@ -221,7 +234,7 @@ export default function AdminTeacherManagementScreen() {
           onPress: async () => {
             try {
               await deleteTeacher.mutateAsync({ data: { teacherID: teacher.teacherID } });
-                      queryClient.invalidateQueries({ queryKey: getGetApiTeacherPermissionsAllQueryKey() });
+              queryClient.invalidateQueries({ queryKey: getGetApiTeacherPermissionsAllQueryKey() });
             } catch (e: any) {
               Alert.alert("Error", e.message || "Failed to delete teacher");
             }
@@ -231,91 +244,178 @@ export default function AdminTeacherManagementScreen() {
     );
   };
 
-  // ── Unassigned classes (for "Add Class" picker) ───────────────────────────
   const unassignedClasses = useMemo(() => {
     if (!selectedTeacher) return [];
     const assigned = new Set(selectedTeacher.classPermissions.map((c) => c.classID));
     return allClasses.filter((c: any) => !assigned.has(c.classID));
   }, [selectedTeacher, allClasses]);
 
-  // ── Teacher avatar (photo or fallback icon) ──────────────────────────────
-  const TeacherAvatar = ({ photo, size = 44 }: { photo?: string; size?: number }) => {
-    if (photo) {
-      return (
-        <View style={{ width: size, height: size, borderRadius: size / 2, overflow: "hidden", borderWidth: 2, borderColor: "#E5E7EB" }}>
-          <Image source={{ uri: photo }} style={{ width: size, height: size }} resizeMode="cover" />
-        </View>
-      );
-    }
-    return <IconCircle name="teachers" size={size} iconSize={size * 0.5} />;
-  };
-
-  // ── Render teacher card ───────────────────────────────────────────────────
+  // ── Mobile card ───────────────────────────────────────────────────────────
   const renderTeacherCard = (item: TeacherWithDetails) => (
-    <MobileDataCard
-      title={item.teacherName}
-      subtitle={item.teacherCode || "No Code"}
-      accentColor={Colors.primary}
-      icon={<TeacherAvatar photo={item.photo ?? undefined} size={44} />}
-      fields={[
-        { label: "Subject", value: item.subjectName || "N/A" },
-        { label: "Phone",   value: item.mobileNo || "N/A" },
-        { label: "Classes", value: item.classPermissions.length
-            ? item.classPermissions.map((c) => c.className).join(", ")
-            : "No classes assigned" },
-      ]}
-      actions={
-        <View className="flex-row gap-2 flex-wrap">
-          <TouchableOpacity
-            onPress={() => openPanel(item)}
-            className="flex-row items-center gap-1 px-3 py-1.5 rounded-lg bg-blue-50 border border-blue-200"
-          >
-            <AppIcon name="settings" size={13} color="#1A3C6E" />
-            <Text className="text-[11px] font-black text-[#1A3C6E] uppercase">Classes & Permissions</Text>
-          </TouchableOpacity>
-          <EntityActionButtons
-            onEdit={() => router.push(`/(admin)/teacher-form?id=${item.teacherID}`)}
-            onDelete={() => handleDelete(item)}
-          />
+    <TouchableOpacity
+      activeOpacity={0.9}
+      className="bg-white rounded-2xl mb-4 border border-gray-100"
+      style={{
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.04,
+        shadowRadius: 10,
+        elevation: 2,
+      }}
+    >
+      {/* Card header */}
+      <View className="p-4 border-b border-gray-50 flex-row gap-3 rounded-t-2xl bg-white">
+        <View className="relative">
+          <View className="w-14 h-14 rounded-2xl bg-gray-50 border border-gray-200 items-center justify-center overflow-hidden">
+            <TeacherAvatar photo={item.photo ?? undefined} size={56} />
+          </View>
+          {item.isActive && (
+            <View className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full" />
+          )}
         </View>
-      }
-    />
+
+        <View className="flex-1 justify-center">
+          <View className="flex-row items-center justify-between mb-1 gap-2">
+            <Text className="text-sm font-extrabold text-gray-900 uppercase flex-1" numberOfLines={1}>
+              {item.teacherName}
+            </Text>
+            <View className="px-2 py-0.5 bg-blue-50 border border-blue-100 rounded-lg">
+              <Text className="text-[10px] font-black text-blue-700 uppercase">{item.teacherCode || "—"}</Text>
+            </View>
+          </View>
+
+          {item.subjectName ? (
+            <View className="flex-row items-center gap-1.5 mb-1">
+              <AppIcon name="subjects" size={12} color="#7C3AED" />
+              <Text className="text-[12px] font-bold text-violet-600 flex-1" numberOfLines={1}>
+                {item.subjectName}
+              </Text>
+            </View>
+          ) : null}
+
+          <View className="flex-row items-center gap-1.5">
+            <AppIcon name="phone" size={12} color="#6B7280" />
+            <Text className="text-[12px] font-semibold text-gray-500 flex-1" numberOfLines={1}>
+              {item.mobileNo || "No phone"}
+            </Text>
+          </View>
+        </View>
+      </View>
+
+      {/* Classes row */}
+      {item.classPermissions.length > 0 && (
+        <View className="px-4 py-2.5 border-b border-gray-50 flex-row items-center gap-2 flex-wrap">
+          <AppIcon name="subjects" size={12} color="#9CA3AF" />
+          {item.classPermissions.map((cp) => (
+            <View key={cp.classID} className="px-2 py-0.5 bg-teal-50 border border-teal-100 rounded-md">
+              <Text className="text-[10px] font-black text-teal-700">{cp.className}</Text>
+            </View>
+          ))}
+        </View>
+      )}
+
+      {/* Actions */}
+      <View className="flex-row justify-end items-center px-4 py-2.5 bg-gray-50/50 gap-2 rounded-b-2xl">
+        <TouchableOpacity
+          className="flex-row items-center gap-1.5 px-3 py-1.5 bg-blue-50 border border-blue-100 rounded-xl"
+          onPress={() => openPanel(item)}
+          activeOpacity={0.7}
+        >
+          <AppIcon name="settings" size={12} color="#1A3C6E" />
+          <Text className="text-[10px] font-extrabold text-[#1A3C6E] uppercase">Permissions</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          className="flex-row items-center gap-1.5 px-3 py-1.5 bg-indigo-50 border border-indigo-100 rounded-xl"
+          onPress={() => router.push(`/(admin)/teacher-form?id=${item.teacherID}`)}
+          activeOpacity={0.7}
+        >
+          <AppIcon name="edit" size={12} color="#4F46E5" />
+          <Text className="text-[10px] font-extrabold text-indigo-700 uppercase">Edit</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          className="flex-row items-center gap-1.5 px-3 py-1.5 bg-rose-50 border border-rose-100 rounded-xl"
+          onPress={() => handleDelete(item)}
+          activeOpacity={0.7}
+        >
+          <AppIcon name="delete" size={12} color="#E11D48" />
+          <Text className="text-[10px] font-extrabold text-rose-700 uppercase">Delete</Text>
+        </TouchableOpacity>
+      </View>
+    </TouchableOpacity>
   );
 
   // ── Table columns (desktop) ───────────────────────────────────────────────
   const tableColumns: TableColumn<TeacherWithDetails>[] = [
-    { key: "teacherCode", header: "Code", width: 80 },
+    {
+      key: "rowNo", header: "#", width: 48, align: "center",
+      render: (_t, i) => (
+        <Text className="text-sm font-semibold text-gray-400">{i + 1}</Text>
+      ),
+    },
     {
       key: "teacherName", header: "Teacher Name", flex: 2,
-      render: (t, _i) => (
+      render: (t) => (
         <View className="flex-row items-center gap-2">
           <TeacherAvatar photo={t.photo ?? undefined} size={28} />
-          <Text className="text-sm font-bold text-gray-800">{t.teacherName}</Text>
+          <View className="flex-1 overflow-hidden">
+            <Text className="text-sm font-bold text-gray-800" numberOfLines={1}>{t.teacherName}</Text>
+            {t.email ? (
+              <Text className="text-[11px] text-gray-400 font-semibold" numberOfLines={1}>{t.email}</Text>
+            ) : null}
+          </View>
         </View>
       ),
     },
-    { key: "subjectName", header: "Subject", flex: 1 },
-    { key: "mobileNo",    header: "Phone",   width: 120 },
     {
-      key: "classPermissions", header: "Assigned Classes", flex: 2,
-      render: (t, _i) => (
-        <Text className="text-sm text-gray-600">
-          {t.classPermissions.length
-            ? t.classPermissions.map((c) => c.className).join(", ")
-            : "—"}
-        </Text>
+      key: "subjectName", header: "Subject", flex: 1,
+      render: (t) => (
+        <Text className="text-sm text-gray-700 font-semibold" numberOfLines={1}>{t.subjectName || "—"}</Text>
       ),
     },
     {
-      key: "actions", header: "Actions", width: 180, align: "right",
-      render: (t, _i) => (
-        <View className="flex-row gap-2 items-center justify-end">
+      key: "mobileNo", header: "Phone", width: 130,
+      render: (t) => (
+        <Text className="text-sm text-gray-600">{t.mobileNo || "—"}</Text>
+      ),
+    },
+    {
+      key: "classPermissions", header: "Assigned Classes", flex: 2,
+      render: (t) => (
+        <View className="flex-row flex-wrap gap-1">
+          {t.classPermissions.length ? (
+            t.classPermissions.map((c) => (
+              <View key={c.classID} className="px-2 py-0.5 bg-teal-50 border border-teal-100 rounded-md">
+                <Text className="text-[10px] font-black text-teal-700">{c.className}</Text>
+              </View>
+            ))
+          ) : (
+            <Text className="text-sm text-gray-400">No classes</Text>
+          )}
+        </View>
+      ),
+    },
+    {
+      key: "isActive", header: "Status", width: 80, align: "center",
+      render: (t) => (
+        <View className={`px-2 py-1 rounded-md border ${t.isActive ? "bg-green-50 border-green-100" : "bg-gray-50 border-gray-200"}`}>
+          <Text className={`text-[10px] font-bold ${t.isActive ? "text-green-700" : "text-gray-500"}`}>
+            {t.isActive ? "Active" : "Inactive"}
+          </Text>
+        </View>
+      ),
+    },
+    {
+      key: "actions", header: "Actions", width: 160, align: "right",
+      render: (t) => (
+        <View className="flex-row gap-1.5 items-center justify-end">
           <TouchableOpacity
             onPress={() => openPanel(t)}
-            className="flex-row items-center gap-1 px-2 py-1 rounded-lg bg-blue-50 border border-blue-200"
+            className="bg-indigo-50 w-[30px] h-[30px] rounded-md items-center justify-center border border-indigo-100"
+            activeOpacity={0.7}
           >
-            <AppIcon name="settings" size={12} color="#1A3C6E" />
-            <Text className="text-[10px] font-black text-[#1A3C6E] uppercase">Permissions</Text>
+            <AppIcon name="settings" size={15} color="#6366F1" />
           </TouchableOpacity>
           <EntityActionButtons
             onEdit={() => router.push(`/(admin)/teacher-form?id=${t.teacherID}`)}
@@ -350,11 +450,10 @@ export default function AdminTeacherManagementScreen() {
 
           <ScrollView className="flex-1" contentContainerStyle={{ padding: 16, paddingBottom: 40 }}>
 
-            {/* Assigned classes with permission toggles */}
             {selectedTeacher.classPermissions.length === 0 ? (
               <View className="bg-white rounded-2xl border border-gray-200 p-6 items-center mb-4">
-                <AppIcon name="subjects" size={32} color="#D1D5DB" />
-                <Text className="text-gray-400 font-bold mt-2 text-center">No classes assigned yet.</Text>
+                <IconCircle name="subjects" size={48} iconSize={24} />
+                <Text className="text-gray-500 font-bold mt-3 text-center">No classes assigned yet.</Text>
                 <Text className="text-gray-400 text-xs mt-1 text-center">Add a class below to set permissions.</Text>
               </View>
             ) : (
@@ -459,7 +558,8 @@ export default function AdminTeacherManagementScreen() {
       title="Teachers"
       subtitle="Manage faculty, classes & permissions"
       scrollable={false}
-      flatHeader
+      fullWidth
+      hideBack
       rightAction={
         canManageTeachers ? (
           <HeaderActionButton
@@ -470,66 +570,22 @@ export default function AdminTeacherManagementScreen() {
         ) : undefined
       }
     >
-      {isLoading ? (
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color={Colors.primary} />
-          <Text className="text-gray-400 mt-3 font-semibold">Loading teachers...</Text>
-        </View>
-      ) : isError ? (
-        <View className="flex-1 items-center justify-center p-8">
-          <AppIcon name="teachers" size={48} color="#E5E7EB" />
-          <Text className="text-gray-400 font-bold mt-3 text-center">Failed to load teachers</Text>
-          <TouchableOpacity onPress={() => refetch()} className="mt-4 px-5 py-2 bg-blue-50 rounded-xl border border-blue-200">
-            <Text className="text-[#1A3C6E] font-black text-xs uppercase">Retry</Text>
-          </TouchableOpacity>
-        </View>
-      ) : teachers.length === 0 ? (
-        <View className="flex-1 items-center justify-center p-8">
-          <IconCircle name="teachers" size={64} iconSize={32} />
-          <Text className="text-gray-700 font-black text-lg mt-4">No teachers yet</Text>
-          <Text className="text-gray-400 text-sm mt-1 text-center">Register your first faculty member</Text>
-          {canManageTeachers && (
-            <TouchableOpacity
-              onPress={() => router.push("/(admin)/teacher-form")}
-              className="mt-5 px-6 py-3 rounded-xl"
-              style={{ backgroundColor: Colors.primary }}
-            >
-              <Text className="text-white font-black text-xs uppercase tracking-widest">+ Add Teacher</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-      ) : isMobile ? (
-        <ScrollView className="flex-1" contentContainerStyle={{ padding: 12, paddingBottom: 40 }}>
-          {teachers.map((t) => (
-            <View key={t.teacherID} className="mb-3">
-              {renderTeacherCard(t)}
-            </View>
-          ))}
-        </ScrollView>
-      ) : (
-        // Desktop table
-        <ScrollView className="flex-1" contentContainerStyle={{ padding: 16 }}>
-          {/* Table header */}
-          <View className="flex-row bg-gray-100 rounded-xl px-4 py-3 mb-2">
-            {tableColumns.map((col) => (
-              <View key={col.key} style={{ flex: col.flex, width: col.width, minWidth: 0, alignItems: col.align === "right" ? "flex-end" : "flex-start" }}>
-                <Text className="text-[10px] font-black text-gray-500 uppercase tracking-wider">{col.header}</Text>
-              </View>
-            ))}
-          </View>
-          {teachers.map((t, rowIdx) => (
-            <View key={t.teacherID} className="flex-row bg-white rounded-xl px-4 py-3 mb-2 border border-gray-100 items-center">
-              {tableColumns.map((col) => (
-                <View key={col.key} style={{ flex: col.flex, width: col.width, minWidth: 0, alignItems: col.align === "right" ? "flex-end" : "flex-start" }}>
-                  {col.render ? col.render(t, rowIdx) : (
-                    <Text className="text-sm text-gray-700">{String((t as any)[col.key] ?? "—")}</Text>
-                  )}
-                </View>
-              ))}
-            </View>
-          ))}
-        </ScrollView>
-      )}
+      <ResponsiveDataList
+        data={filteredTeachers}
+        isLoading={isLoading}
+        isError={isError}
+        error={error}
+        onRefresh={() => refetch()}
+        renderCard={renderTeacherCard}
+        tableColumns={tableColumns}
+        keyExtractor={(item) => String(item.teacherID)}
+        emptyIcon="teachers"
+        emptyTitle="No teachers found"
+        emptyMessage={searchQuery ? "Try a different search term" : "Register your first faculty member"}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="Search by name, code, or subject..."
+      />
 
       {renderPermissionPanel()}
     </PremiumScreenLayout>

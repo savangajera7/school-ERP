@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, FlatList, RefreshControl, Text, TextInput, TouchableOpacity } from "react-native";
+import { View, FlatList, RefreshControl, Text, TextInput, TouchableOpacity, ScrollView } from "react-native";
 import { useResponsive } from "@/hooks/useResponsive";
 import { DataTable, type TableColumn } from "./DataTable";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
@@ -110,8 +110,8 @@ export function ResponsiveDataList<T>({
         placeholderTextColor="#9CA3AF"
         style={{ outlineWidth: 0 } as any}
       />
-      {searchQuery && searchQuery.length > 0 && (
-        <TouchableOpacity onPress={() => onSearchChange("")} activeOpacity={0.7} className="bg-gray-100 p-1.5 rounded-full">
+      {Boolean(searchQuery) && (
+        <TouchableOpacity onPress={() => onSearchChange && onSearchChange("")} activeOpacity={0.7} className="bg-gray-100 p-1.5 rounded-full">
           <AppIcon name="close" size={16} color="#6B7280" />
         </TouchableOpacity>
       )}
@@ -134,13 +134,15 @@ export function ResponsiveDataList<T>({
             <SkeletonLoader rows={3} />
           </View>
         ) : data && data.length > 0 ? (
-          <DataTable
-            columns={tableColumns}
-            data={data}
-            keyExtractor={keyExtractor}
-            onRowPress={onRowPress}
-            isLoading={isLoading}
-          />
+          <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
+            <DataTable
+              columns={tableColumns}
+              data={data}
+              keyExtractor={keyExtractor}
+              onRowPress={onRowPress}
+              isLoading={isLoading}
+            />
+          </ScrollView>
         ) : (
           renderEmptyState()
         )}

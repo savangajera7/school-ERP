@@ -110,7 +110,7 @@ export default function DashboardScreen() {
             subtitle="Active faculty"
             backgroundColor="#F3E8FF"
             textColor="#7E22CE"
-            onPress={() => router.push("/(app)/teachers")}
+            onPress={() => router.push("/(admin)/teachers")}
           />
           <StatCard
             icon="clock"

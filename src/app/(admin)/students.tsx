@@ -298,7 +298,7 @@ export default function AdminStudentManagementScreen() {
                 <GenderIcon gender={item.gender} size={26} />
               )}
             </View>
-            {item.rollNo && (
+            {Boolean(item.rollNo) && (
               <View className="absolute -top-1.5 -right-1.5 bg-amber-500 border border-white min-w-[20px] h-5 px-1 rounded-full items-center justify-center shadow-sm">
                 <Text className="text-[10px] font-black text-white">{item.rollNo}</Text>
               </View>
@@ -309,7 +309,7 @@ export default function AdminStudentManagementScreen() {
               <Text className="text-sm font-extrabold text-gray-900 uppercase flex-1" numberOfLines={1}>
                 {fullName}
               </Text>
-              {(item.classID || item.sectionID) && (
+              {Boolean(item.classID || item.sectionID) && (
                 <View className="px-2 py-0.5 bg-teal-50 border border-teal-100 rounded-lg">
                   <Text className="text-[10px] font-black text-teal-700 uppercase">
                     {item.classID ? `Class ${item.classID}` : ''}{item.sectionID ? `-${item.sectionID}` : ''}

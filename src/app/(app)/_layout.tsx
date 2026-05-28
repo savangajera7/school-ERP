@@ -1,7 +1,6 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { View } from "react-native";
-import { Stack, usePathname, router } from "expo-router";
-import { getHomeRoute } from "@/utils/roleRouting";
+import { Stack, usePathname } from "expo-router";
 import { useResponsive } from "@/hooks/useResponsive";
 import { DesktopSidebar } from "@/components/ui/DesktopSidebar";
 import { BottomTabBar } from "@/components/ui/BottomTabBar";
@@ -13,17 +12,13 @@ export default function AppLayout() {
   const { isMobile } = useResponsive();
   const pathname = usePathname();
   const role = useAuthStore((s) => s.role);
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const showMobileTabs = isMobile && isMobileTabRoute(pathname, role);
-
-
 
   return (
     <View style={{ flex: 1, flexDirection: "row", backgroundColor: "#F8FAFC" }}>
-      {/* Desktop: Persistent Sidebar */}
+      {/* Single unified sidebar — role-aware nav items via usePermissions */}
       {!isMobile && <DesktopSidebar />}
 
-      {/* Main Content Area */}
       <View style={{ flex: 1 }}>
         <RouteGuard>
           <Stack

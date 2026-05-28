@@ -163,6 +163,10 @@ export function resolveIconName(
   active = false
 ): IoniconsName {
   const pair = APP_ICONS[name];
+  if (!pair) {
+    console.warn(`AppIcon: missing icon mapping for '${name}'`);
+    return active ? APP_ICONS["empty"].filled : APP_ICONS["empty"].outline;
+  }
   return active ? pair.filled : pair.outline;
 }
 

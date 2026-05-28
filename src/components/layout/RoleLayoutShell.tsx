@@ -4,8 +4,7 @@ import { Stack } from "expo-router";
 import { usePathname } from "expo-router";
 import { useResponsive } from "@/hooks/useResponsive";
 import { RoleTabBar, ROLE_TAB_BAR_HEIGHT, type TabDef } from "@/components/layout/RoleTabBar";
-import { AdminSidebar } from "@/components/layout/AdminSidebar";
-import { SuperAdminSidebar } from "@/components/layout/SuperAdminSidebar";
+import { DesktopSidebar } from "@/components/ui/DesktopSidebar";
 
 type Props = {
   children?: React.ReactNode;
@@ -13,6 +12,7 @@ type Props = {
   tabAccent?: string;
   /** Paths that show bottom tabs on mobile (basename match) */
   tabRoutes?: string[];
+  /** Keep prop for backwards compat but it's no longer used — DesktopSidebar is always role-aware */
   sidebar?: "admin" | "super_admin" | "teacher" | "parent" | null;
 };
 
@@ -24,7 +24,11 @@ export function RoleLayoutShell({
 }: Props) {
   const pathname = usePathname();
   const { isMobile, isTablet, isWeb } = useResponsive();
+
+  // Show sidebar on tablet/web for roles that have one (admin, super_admin).
+  // teacher/parent/student have no desktop sidebar — sidebar prop signals intent.
   const showSidebar = (isTablet || isWeb) && sidebar !== null;
+
   const showTabs =
     isMobile &&
     tabs.length > 0 &&
@@ -32,9 +36,9 @@ export function RoleLayoutShell({
 
   return (
     <View style={styles.root}>
-      {showSidebar && (
-        sidebar === "super_admin" ? <SuperAdminSidebar /> : <AdminSidebar />
-      )}
+      {/* Single unified sidebar — nav items are role-aware inside DesktopSidebar */}
+      {showSidebar && <DesktopSidebar />}
+
       <View style={styles.main}>
         <Stack
           screenOptions={{

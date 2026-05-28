@@ -33,6 +33,9 @@ export default function TeacherFormScreen() {
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  // ── Validation errors ─────────────────────────────────────────────────────
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
   // ── Accordion sections ────────────────────────────────────────────────────
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     personal: true,
@@ -43,22 +46,22 @@ export default function TeacherFormScreen() {
     setExpandedSections((prev) => ({ ...prev, [key]: !prev[key] }));
 
   // ── Form state ────────────────────────────────────────────────────────────
-  const [teacherCode, setTeacherCode]     = useState("");
-  const [firstName, setFirstName]         = useState("");
-  const [middleName, setMiddleName]       = useState("");
-  const [lastName, setLastName]           = useState("");
-  const [gender, setGender]               = useState("Male");
-  const [mobileNo, setMobileNo]           = useState("");
-  const [email, setEmail]                 = useState("");
-  const [password, setPassword]           = useState("");
-  const [qualification, setQualification] = useState("");
+  const [teacherCode, setTeacherCode]       = useState("");
+  const [firstName, setFirstName]           = useState("");
+  const [middleName, setMiddleName]         = useState("");
+  const [lastName, setLastName]             = useState("");
+  const [gender, setGender]                 = useState("Male");
+  const [mobileNo, setMobileNo]             = useState("");
+  const [email, setEmail]                   = useState("");
+  const [password, setPassword]             = useState("");
+  const [qualification, setQualification]   = useState("");
   const [experienceYear, setExperienceYear] = useState("");
-  const [joiningDate, setJoiningDate]     = useState("");
-  const [salary, setSalary]               = useState("");
-  const [address, setAddress]             = useState("");
-  const [subjectName, setSubjectName]     = useState("");
-  const [roleID, setRoleID]               = useState<number | undefined>();
-  const [photo, setPhoto]                 = useState<string | null>(null);
+  const [joiningDate, setJoiningDate]       = useState("");
+  const [salary, setSalary]                 = useState("");
+  const [address, setAddress]               = useState("");
+  const [subjectName, setSubjectName]       = useState("");
+  const [roleID, setRoleID]                 = useState<number | undefined>();
+  const [photo, setPhoto]                   = useState<string | null>(null);
 
   // ── API hooks ─────────────────────────────────────────────────────────────
   const insertTeacher = usePostApiTeacherInsertTeacher();
@@ -120,16 +123,26 @@ export default function TeacherFormScreen() {
 
   // ── Submit ────────────────────────────────────────────────────────────────
   const handleSubmit = async () => {
-    if (!firstName || !lastName || !teacherCode || !mobileNo) {
-      Alert.alert("Missing Fields", "First Name, Last Name, Staff ID and Mobile are required (*).");
+    const newErrors: Record<string, string> = {};
+    if (!firstName.trim())    newErrors.firstName    = "Required";
+    if (!lastName.trim())     newErrors.lastName     = "Required";
+    if (!teacherCode.trim())  newErrors.teacherCode  = "Required";
+    if (!mobileNo.trim())     newErrors.mobileNo     = "Required";
+    if (!isEditing && !password.trim()) newErrors.password = "Required for new teacher";
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      // Auto-expand sections that have errors
+      setExpandedSections((prev) => ({
+        ...prev,
+        personal: prev.personal || !!(newErrors.firstName || newErrors.lastName || newErrors.teacherCode || newErrors.mobileNo),
+        account:  prev.account  || !!newErrors.password,
+      }));
+      Alert.alert("Missing Fields", "Please complete all required fields highlighted in red.");
       scrollViewRef.current?.scrollTo({ y: 0, animated: true });
       return;
     }
-    if (!isEditing && !password) {
-      Alert.alert("Missing Fields", "Password is required when adding a new teacher.");
-      scrollViewRef.current?.scrollTo({ y: 0, animated: true });
-      return;
-    }
+    setErrors({});
 
     const base = {
       teacherCode,
@@ -158,7 +171,6 @@ export default function TeacherFormScreen() {
             ...base,
             teacherID: teacherID as number,
             updatedBy: parseInt(userData?.id || "0"),
-            // only send password if user typed a new one
             ...(password ? { password } : {}),
           },
         });
@@ -206,22 +218,47 @@ export default function TeacherFormScreen() {
     value: string,
     onChange: (v: string) => void,
     placeholder: string,
-    opts?: { keyboard?: any; maxLength?: number; multiline?: boolean; secure?: boolean; required?: boolean },
-  ) => (
-    <View className="flex-1 min-w-[280px]">
-      <Text style={styles.label}>{label}{opts?.required ? " *" : ""}</Text>
-      <TextInput
-        value={value}
-        onChangeText={onChange}
-        placeholder={placeholder}
-        keyboardType={opts?.keyboard || "default"}
-        maxLength={opts?.maxLength}
-        multiline={opts?.multiline}
-        secureTextEntry={opts?.secure && !showPassword}
-        className={`${opts?.multiline ? "min-h-[80px] py-3" : "h-[48px]"} bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800`}
-      />
-    </View>
-  );
+    opts?: {
+      keyboard?: any;
+      maxLength?: number;
+      multiline?: boolean;
+      secure?: boolean;
+      required?: boolean;
+      editable?: boolean;
+    },
+    errorKey?: string,
+  ) => {
+    const hasError = errorKey ? !!errors[errorKey] : false;
+    return (
+      <View className="flex-1 min-w-[280px]">
+        <Text className={`text-[10px] font-black ${hasError ? "text-red-500" : "text-gray-500"} mb-1.5 uppercase tracking-wide`}>
+          {label}{opts?.required ? " *" : ""}
+        </Text>
+        <TextInput
+          value={value}
+          onChangeText={(v) => {
+            onChange(v);
+            if (errorKey) setErrors((prev) => ({ ...prev, [errorKey]: "" }));
+          }}
+          placeholder={placeholder}
+          keyboardType={opts?.keyboard || "default"}
+          maxLength={opts?.maxLength}
+          multiline={opts?.multiline}
+          editable={opts?.editable !== false}
+          secureTextEntry={opts?.secure && !showPassword}
+          className={`${opts?.multiline ? "min-h-[80px] py-3" : "h-[48px]"} ${
+            hasError
+              ? "bg-red-50 border-red-400 text-red-900"
+              : "bg-gray-50 border-gray-200 text-gray-800"
+          } border rounded-xl px-4 text-sm font-semibold`}
+          placeholderTextColor={hasError ? "#FCA5A5" : "#9CA3AF"}
+        />
+        {hasError && (
+          <Text className="text-red-500 text-[10px] font-bold mt-1">{errors[errorKey!]}</Text>
+        )}
+      </View>
+    );
+  };
 
   const renderToggle = (
     label: string,
@@ -278,7 +315,7 @@ export default function TeacherFormScreen() {
 
   if (loadingTeacher) {
     return (
-    <PremiumScreenLayout title="Loading..." subtitle="Fetching teacher details">
+      <PremiumScreenLayout title="Loading..." subtitle="Fetching teacher details">
         <ActivityIndicator size="large" color={Colors.primary} className="mt-20" />
       </PremiumScreenLayout>
     );
@@ -291,11 +328,31 @@ export default function TeacherFormScreen() {
       onBack={() => router.back()}
       flatHeader
       keyboard
+      scrollable={false}
+      rightAction={
+        !isMobile ? (
+          <TouchableOpacity
+            onPress={handleSubmit}
+            disabled={loading || uploadingPhoto}
+            className="px-5 py-2.5 rounded-xl flex-row gap-2 items-center"
+            style={{ backgroundColor: Colors.primary, opacity: loading || uploadingPhoto ? 0.7 : 1 }}
+            activeOpacity={0.8}
+          >
+            {loading ? (
+              <ActivityIndicator size="small" color="white" />
+            ) : (
+              <Text className="text-white font-black text-xs uppercase tracking-widest">
+                {isEditing ? "Update" : "Register"}
+              </Text>
+            )}
+          </TouchableOpacity>
+        ) : undefined
+      }
     >
-      <ScrollView 
+      <ScrollView
         ref={scrollViewRef}
-        showsVerticalScrollIndicator={false} 
-        contentContainerStyle={{ paddingBottom: 120 }}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 40 }}
         keyboardShouldPersistTaps="handled"
       >
 
@@ -335,20 +392,20 @@ export default function TeacherFormScreen() {
 
               {/* Name row */}
               <View className={`flex-row flex-wrap gap-4 mb-4 ${isMobile ? "flex-col" : ""}`}>
-                {renderField("First Name", firstName, setFirstName, "John", { required: true })}
+                {renderField("First Name", firstName, setFirstName, "John", { required: true }, "firstName")}
                 {renderField("Middle Name", middleName, setMiddleName, "Kumar")}
-                {renderField("Last Name", lastName, setLastName, "Doe", { required: true })}
+                {renderField("Last Name", lastName, setLastName, "Doe", { required: true }, "lastName")}
               </View>
 
               {/* Code + Gender */}
               <View className={`flex-row flex-wrap gap-4 mb-4 ${isMobile ? "flex-col" : ""}`}>
-                {renderField("Staff ID / Code", teacherCode, setTeacherCode, "T-001", { required: true })}
+                {renderField("Staff ID / Code", teacherCode, setTeacherCode, "T-001", { required: true }, "teacherCode")}
                 {renderToggle("Gender", gender, ["Male", "Female", "Other"], setGender)}
               </View>
 
               {/* Mobile + Email */}
               <View className={`flex-row flex-wrap gap-4 mb-4 ${isMobile ? "flex-col" : ""}`}>
-                {renderField("Mobile Number", mobileNo, setMobileNo, "9876543210", { keyboard: "phone-pad", maxLength: 10, required: true })}
+                {renderField("Mobile Number", mobileNo, setMobileNo, "9876543210", { keyboard: "phone-pad", maxLength: 10, required: true }, "mobileNo")}
                 {renderField("Email Address", email, setEmail, "john.doe@school.com", { keyboard: "email-address" })}
               </View>
 
@@ -401,14 +458,17 @@ export default function TeacherFormScreen() {
 
           {expandedSections.account && (
             <View className="mt-6 pt-6 border-t border-gray-100">
-              <Text className="text-xs text-gray-500 font-semibold mb-4">
-                {isEditing
-                  ? "Leave password blank to keep the existing password unchanged."
-                  : "Set a login password for this teacher. They can change it later."}
-              </Text>
+              <View className="flex-row items-start gap-2 bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 mb-5">
+                <AppIcon name="warning" size={14} color="#B45309" />
+                <Text className="text-xs text-amber-700 font-semibold flex-1">
+                  {isEditing
+                    ? "Leave password blank to keep the existing password unchanged."
+                    : "Set a login password for this teacher. They can change it later."}
+                </Text>
+              </View>
 
               <View className={`flex-row flex-wrap gap-4 ${isMobile ? "flex-col" : ""}`}>
-                {/* Email shown read-only here for reference */}
+                {/* Email shown read-only for reference */}
                 <View className="flex-1 min-w-[280px]">
                   <Text style={styles.label}>Login Email (same as above)</Text>
                   <View className="h-[48px] bg-gray-100 border border-gray-200 rounded-xl px-4 justify-center">
@@ -418,14 +478,20 @@ export default function TeacherFormScreen() {
 
                 {/* Password */}
                 <View className="flex-1 min-w-[280px]">
-                  <Text style={styles.label}>Password{!isEditing ? " *" : ""}</Text>
-                  <View className="flex-row items-center bg-gray-50 border border-gray-200 rounded-xl overflow-hidden h-[48px]">
+                  <Text className={`text-[10px] font-black ${errors.password ? "text-red-500" : "text-gray-500"} mb-1.5 uppercase tracking-wide`}>
+                    Password{!isEditing ? " *" : ""}
+                  </Text>
+                  <View className={`flex-row items-center ${errors.password ? "bg-red-50 border-red-400" : "bg-gray-50 border-gray-200"} border rounded-xl overflow-hidden h-[48px]`}>
                     <TextInput
                       value={password}
-                      onChangeText={setPassword}
+                      onChangeText={(v) => {
+                        setPassword(v);
+                        setErrors((prev) => ({ ...prev, password: "" }));
+                      }}
                       placeholder={isEditing ? "Leave blank to keep current" : "Min 6 characters"}
                       secureTextEntry={!showPassword}
                       className="flex-1 h-full px-4 text-sm font-semibold text-gray-800"
+                      placeholderTextColor={errors.password ? "#FCA5A5" : "#9CA3AF"}
                     />
                     <TouchableOpacity
                       onPress={() => setShowPassword((v) => !v)}
@@ -434,28 +500,35 @@ export default function TeacherFormScreen() {
                       <AppIcon name={(showPassword ? "eyeOff" : "eye") as any} size={18} color="#9CA3AF" />
                     </TouchableOpacity>
                   </View>
+                  {errors.password && (
+                    <Text className="text-red-500 text-[10px] font-bold mt-1">{errors.password}</Text>
+                  )}
                 </View>
               </View>
             </View>
           )}
         </Card>
 
-        {/* ── Submit ── */}
-        <TouchableOpacity
-          onPress={handleSubmit}
-          disabled={loading || uploadingPhoto}
-          className="h-[52px] rounded-xl items-center justify-center shadow-lg flex-row gap-2 mx-0 mb-4"
-          style={{ backgroundColor: Colors.primary, opacity: loading || uploadingPhoto ? 0.7 : 1 }}
-          activeOpacity={0.8}
-        >
-          {loading ? (
-            <ActivityIndicator size="small" color="white" />
-          ) : (
-            <Text className="text-white font-black text-xs uppercase tracking-widest">
-              {isEditing ? "Update Teacher" : "Register Teacher"}
-            </Text>
-          )}
-        </TouchableOpacity>
+        {/* ── Mobile submit button ── */}
+        {isMobile && (
+          <View className="mb-10 mt-2">
+            <TouchableOpacity
+              onPress={handleSubmit}
+              disabled={loading || uploadingPhoto}
+              className="h-[52px] rounded-xl items-center justify-center shadow-lg flex-row gap-2"
+              style={{ backgroundColor: Colors.primary, opacity: loading || uploadingPhoto ? 0.7 : 1 }}
+              activeOpacity={0.8}
+            >
+              {loading ? (
+                <ActivityIndicator size="small" color="white" />
+              ) : (
+                <Text className="text-white font-black text-xs uppercase tracking-widest">
+                  {isEditing ? "Update Teacher" : "Register Teacher"}
+                </Text>
+              )}
+            </TouchableOpacity>
+          </View>
+        )}
 
       </ScrollView>
     </PremiumScreenLayout>
