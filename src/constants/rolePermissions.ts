@@ -369,7 +369,6 @@ export const NAV_MENU: NavMenuItem[] = [
   { label: "Students",     route: "/(app)/students",           icon: "students",        permission: "viewStudents" },
   { label: "Admission",    route: "/(app)/admission-form",     icon: "admission",       permission: "manageStudents" },
   { label: "Teachers",     route: "/(admin)/teachers",         icon: "teachers",        permission: "viewTeachers" },
-  { label: "Parents",      route: "/(admin)/parents",          icon: "parents",         permission: "viewParents" },
   { label: "Attendance",   route: "/(app)/attendance",         icon: "attendance",      permission: "markStudentAttendance" },
   { label: "Att. Reports", route: "/(app)/attendance-reports", icon: "attendanceReport",permission: "viewAttendanceReports" },
   { label: "Staff Attend.",route: "/(app)/teacher-attendance", icon: "staffAttendance", permission: "manageStaffAttendance" },

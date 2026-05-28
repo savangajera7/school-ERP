@@ -7,7 +7,6 @@ export const QUICK_ACTIONS: (QuickAction & { route: AppRoute })[] = [
   { title: "Students", icon: "students", route: "/(app)/students" as any },
   { title: "Masters", icon: "masters", route: "/(admin)/masters" as any },
   { title: "Teachers", icon: "teachers", route: "/(admin)/teachers" as any },
-  { title: "Parents", icon: "parents", route: "/(admin)/parents" as any },
   { title: "Attendance", icon: "attendance", route: "/(admin)/attendance" as any },
   { title: "Exams", icon: "exams", route: "/(admin)/exams" as any },
   { title: "Fees", icon: "fees", route: "/(admin)/fees" as any },
