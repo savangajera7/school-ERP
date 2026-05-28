@@ -137,7 +137,7 @@ export default function MastersScreen() {
       subtitle="Academic year, batch, blood group..."
       onBack={() => router.back()}
       scrollable={false}
-      bodyStyle={{ flex: 1, paddingHorizontal: 0, marginTop: -16 }}
+      bodyStyle={{ flex: 1, paddingHorizontal: 0, marginTop: 12 }}
       headerSlot={
         <PremiumTabSwitcher
           tabs={[

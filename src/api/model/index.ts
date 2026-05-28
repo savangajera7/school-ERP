@@ -93,6 +93,8 @@ export * from './sectionModel';
 export * from './studentBlacklistRequest';
 export * from './studentChangePasswordRequest';
 export * from './studentModel';
+export * from './studentSearchRequest';
+export * from './studentSearchResponse';
 export * from './subjectDeleteRequest';
 export * from './subjectInsertRequest';
 export * from './subjectUpdateRequest';

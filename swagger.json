@@ -42,6 +42,59 @@
         ]
       }
     },
+    "/api/Student/Search": {
+      "post": {
+        "tags": [
+          "3. Student (CRUD)"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudentSearchRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudentSearchRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/StudentSearchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentSearchResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
     "/api/AcademicYear/Delete/{id}": {
       "delete": {
         "tags": [
@@ -10217,6 +10270,107 @@
           "updatedBy": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "StudentSearchRequest": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "format": "int32",
+            "default": 1
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32",
+            "default": 10
+          },
+          "search": {
+            "type": "string",
+            "nullable": true
+          },
+          "classID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "batchID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "mediumID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "sectionID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "academicYearID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "gender": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "sortBy": {
+            "type": "string",
+            "nullable": true,
+            "default": "FirstName"
+          },
+          "sortOrder": {
+            "type": "string",
+            "nullable": true,
+            "default": "ASC"
+          }
+        },
+        "additionalProperties": false
+      },
+      "StudentSearchResponse": {
+        "type": "object",
+        "properties": {
+          "students": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StudentModel"
+            },
+            "nullable": true
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "hasNextPage": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "hasPreviousPage": {
+            "type": "boolean",
+            "readOnly": true
           }
         },
         "additionalProperties": false

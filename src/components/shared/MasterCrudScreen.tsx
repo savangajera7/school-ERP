@@ -157,6 +157,7 @@ export function MasterCrudScreen({
       onBack={() => router.back()}
       scrollable={false}
       flatHeader
+      bodyStyle={{ marginTop: 12 }}
     >
       <Card className="p-4 mb-6" style={premiumCardShadow}>
         <View className="flex-row gap-3">

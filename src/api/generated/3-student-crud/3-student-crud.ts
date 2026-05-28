@@ -39,7 +39,9 @@ import type {
 
 import type {
   DeleteApiStudentDeleteIdParams,
-  ProblemDetails
+  ProblemDetails,
+  StudentSearchRequest,
+  StudentSearchResponse
 } from '../../model';
 
 import { customInstance } from '../../../services/api/axiosInstance';
@@ -49,7 +51,89 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
 
-export type deleteApiStudentDeleteIdResponse401TextPlain = {
+export type postApiStudentSearchResponse200 = {
+  data: StudentSearchResponse
+  status: 200
+}
+
+export type postApiStudentSearchResponse401 = {
+  data: ProblemDetails
+  status: 401
+}
+
+export type postApiStudentSearchResponseSuccess = (postApiStudentSearchResponse200) & {
+  headers: Headers;
+};
+export type postApiStudentSearchResponseError = (postApiStudentSearchResponse401) & {
+  headers: Headers;
+};
+
+export type postApiStudentSearchResponse = (postApiStudentSearchResponseSuccess | postApiStudentSearchResponseError)
+
+export const getPostApiStudentSearchUrl = () => {
+
+
+
+
+  return `/api/Student/Search`
+}
+
+export const postApiStudentSearch = async (studentSearchRequest?: StudentSearchRequest, options?: RequestInit): Promise<postApiStudentSearchResponse> => {
+
+  return customInstance<postApiStudentSearchResponse>(getPostApiStudentSearchUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(studentSearchRequest)
+  }
+);}
+
+
+
+
+export const getPostApiStudentSearchMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiStudentSearch>>, TError,{data?: StudentSearchRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof postApiStudentSearch>>, TError,{data?: StudentSearchRequest}, TContext> => {
+
+const mutationKey = ['postApiStudentSearch'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiStudentSearch>>, {data?: StudentSearchRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  postApiStudentSearch(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiStudentSearchMutationResult = NonNullable<Awaited<ReturnType<typeof postApiStudentSearch>>>
+    export type PostApiStudentSearchMutationBody = StudentSearchRequest | undefined
+    export type PostApiStudentSearchMutationError = ProblemDetails
+
+    export const usePostApiStudentSearch = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiStudentSearch>>, TError,{data?: StudentSearchRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postApiStudentSearch>>,
+        TError,
+        {data?: StudentSearchRequest},
+        TContext
+      > => {
+      return useMutation(getPostApiStudentSearchMutationOptions(options), queryClient);
+    }
+    export type deleteApiStudentDeleteIdResponse401TextPlain = {
   data: ProblemDetails
   status: 401
 }

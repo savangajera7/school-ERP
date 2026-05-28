@@ -23,6 +23,7 @@ export default function MastersMenuScreen() {
       subtitle="Configure school-wide parameters"
       hideBack={false}
       onBack={() => router.back()}
+      bodyStyle={{ marginTop: 12 }}
     >
       <View className="pb-10">
         {masterItems.map((item) => (

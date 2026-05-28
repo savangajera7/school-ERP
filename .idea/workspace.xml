@@ -6,11 +6,14 @@
   <component name="ChangeListManager">
     <list default="true" id="973b64d6-6094-46c3-ae9b-d54eff11ffd3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/teacher-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/teacher-form.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/teachers.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/teachers.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/api/generated/3-student-crud/3-student-crud.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/3-student-crud/3-student-crud.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/api/model/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/masters/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/masters/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/students.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/students.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/(app)/admission-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/admission-form.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/hooks/useAuth.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/useAuth.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/types/auth.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/auth.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/masters.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/masters.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/shared/MasterCrudScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/shared/MasterCrudScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/swagger.json" beforeDir="false" afterPath="$PROJECT_DIR$/swagger.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -116,7 +119,7 @@
       <workItem from="1779876532117" duration="10247000" />
       <workItem from="1779893064587" duration="612000" />
       <workItem from="1779944396095" duration="18866000" />
-      <workItem from="1779974923867" duration="2821000" />
+      <workItem from="1779974923867" duration="7267000" />
     </task>
     <servers />
   </component>

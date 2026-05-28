@@ -43,6 +43,8 @@ export default function AdmissionFormScreen() {
   const [loading, setLoading] = useState(false);
   const { userData } = useAuthStore();
 
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
   // --- Form State ---
   
   // 1. Academic Details
@@ -115,8 +117,6 @@ export default function AdmissionFormScreen() {
   const [studentFeesDate, setStudentFeesDate] = useState("");
   const [createdDate, setCreatedDate] = useState(new Date().toISOString().split("T")[0]);
   const [admissionDate, setAdmissionDate] = useState(new Date().toISOString().split("T")[0]);
-  const [admissionStandard, setAdmissionStandard] = useState("");
-  const [admissionYear, setAdmissionYear] = useState("");
   const [previousSchoolName, setPreviousSchoolName] = useState("");
   const [previousSchoolCategory, setPreviousSchoolCategory] = useState("");
   const [previousSchoolCityVillage, setPreviousSchoolCityVillage] = useState("");
@@ -243,8 +243,6 @@ export default function AdmissionFormScreen() {
       setStudentFeesDate(s.studentFeesDate ? String(s.studentFeesDate).slice(0, 10) : "");
       setCreatedDate(s.createdDate ? String(s.createdDate).slice(0, 10) : "");
       setAdmissionDate(s.admissionDate ? String(s.admissionDate).slice(0, 10) : "");
-      setAdmissionStandard(s.admissionStandard || "");
-      setAdmissionYear(s.admissionYear || "");
       setPreviousSchoolName(s.previousSchoolName || "");
       setPreviousSchoolCategory(s.previousSchoolCategory || "");
       setPreviousSchoolCityVillage(s.previousSchoolCityVillage || "");
@@ -261,10 +259,29 @@ export default function AdmissionFormScreen() {
   }, [studentResponse]);
 
   const handleSubmit = async () => {
-    if (!firstName || !lastName || !dob || !fatherName || !fatherNumber || !studentNumber) {
-      Alert.alert("Missing Fields", "Please complete all required fields (*).");
+    const newErrors: Record<string, string> = {};
+    if (!academicYearId) newErrors.academicYearId = "Required";
+    if (!classId) newErrors.classId = "Required";
+    if (!firstName) newErrors.firstName = "Required";
+    if (!lastName) newErrors.lastName = "Required";
+    if (!dob) newErrors.dob = "Required";
+    if (!gender) newErrors.gender = "Required";
+    if (!studentNumber) newErrors.studentNumber = "Required";
+    if (!fatherName) newErrors.fatherName = "Required";
+    if (!fatherNumber) newErrors.fatherNumber = "Required";
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      setExpandedSections(prev => ({
+        ...prev,
+        academic: prev.academic || !!newErrors.academicYearId || !!newErrors.classId,
+        personal: prev.personal || !!newErrors.firstName || !!newErrors.lastName || !!newErrors.dob || !!newErrors.gender || !!newErrors.studentNumber,
+        guardian: prev.guardian || !!newErrors.fatherName || !!newErrors.fatherNumber,
+      }));
+      Alert.alert("Missing Fields", "Please complete all required fields highlighted in red.");
       return;
     }
+    setErrors({});
 
     const payload = {
       schoolID: userData?.schoolID,
@@ -330,8 +347,6 @@ export default function AdmissionFormScreen() {
       studentFeesDate: studentFeesDate || null,
       createdDate: createdDate || null,
       admissionDate: admissionDate || null,
-      admissionStandard,
-      admissionYear,
       previousSchoolName,
       previousSchoolCategory,
       previousSchoolCityVillage,
@@ -376,10 +391,12 @@ export default function AdmissionFormScreen() {
     );
   }
 
-  const renderDropdown = (label: string, value: number | undefined, options: any[], onSelect: (id: number) => void, placeholder: string) => (
+  const renderDropdown = (label: string, value: number | undefined, options: any[], onSelect: (id: number) => void, placeholder: string, errorKey?: string) => {
+    const hasError = errorKey ? !!errors[errorKey] : false;
+    return (
     <View className="flex-1 min-w-[280px]">
-      <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">{label}</Text>
-      <View className="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden h-[48px]">
+      <Text className={`text-[12px] font-black ${hasError ? 'text-red-500' : 'text-gray-450'} mb-1.5 uppercase`}>{label}</Text>
+      <View className={`${hasError ? 'bg-red-50 border-red-400' : 'bg-gray-50 border-gray-200'} border rounded-xl overflow-hidden h-[48px]`}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ alignItems: 'center', paddingHorizontal: 10 }}>
           {options.map((opt) => {
             const id =
@@ -416,12 +433,16 @@ export default function AdmissionFormScreen() {
           })}
         </ScrollView>
       </View>
+      {hasError && <Text className="text-red-500 text-[10px] font-bold mt-1">{errors[errorKey!]}</Text>}
     </View>
   );
+  };
 
-  const renderTextInput = (label: string, value: string, onChange: (t: string) => void, placeholder: string, options?: { multiline?: boolean, keyboard?: any, maxLength?: number, editable?: boolean }) => (
+  const renderTextInput = (label: string, value: string, onChange: (t: string) => void, placeholder: string, options?: { multiline?: boolean, keyboard?: any, maxLength?: number, editable?: boolean }, errorKey?: string) => {
+    const hasError = errorKey ? !!errors[errorKey] : false;
+    return (
     <View className="flex-1 min-w-[280px]">
-      <Text className="text-[12px] font-black text-gray-455 mb-1.5 uppercase">{label}</Text>
+      <Text className={`text-[12px] font-black ${hasError ? 'text-red-500' : 'text-gray-455'} mb-1.5 uppercase`}>{label}</Text>
       <TextInput
         value={value}
         onChangeText={onChange}
@@ -430,25 +451,33 @@ export default function AdmissionFormScreen() {
         keyboardType={options?.keyboard || "default"}
         maxLength={options?.maxLength}
         editable={options?.editable}
-        className={`${options?.multiline ? "min-h-[80px] py-2" : "h-[48px]"} bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800`}
+        className={`${options?.multiline ? "min-h-[80px] py-2" : "h-[48px]"} ${hasError ? 'bg-red-50 border-red-400 text-red-900' : 'bg-gray-50 border-gray-200 text-gray-800'} border rounded-xl px-4 text-sm font-semibold`}
       />
+      {hasError && <Text className="text-red-500 text-[10px] font-bold mt-1">{errors[errorKey!]}</Text>}
     </View>
   );
+  };
 
-  const renderDatePicker = (label: string, value: string, onChange: (t: string) => void) => (
-    <View className="flex-1 min-w-[280px]">
+  const renderDatePicker = (label: string, value: string, onChange: (t: string) => void, errorKey?: string) => {
+    const hasError = errorKey ? !!errors[errorKey] : false;
+    return (
+    <View className={`flex-1 min-w-[280px] ${hasError ? 'border border-red-500 rounded-xl p-2 bg-red-50' : ''}`}>
       <PremiumDatePicker
         label={label}
         value={value}
         onChange={onChange}
       />
+      {hasError && <Text className="text-red-500 text-[10px] font-bold mt-[-10px] ml-1">{errors[errorKey!]}</Text>}
     </View>
   );
+  };
 
-  const renderToggle = (label: string, value: string | boolean, options: string[], onSelect: (v: any) => void) => (
+  const renderToggle = (label: string, value: string | boolean, options: string[], onSelect: (v: any) => void, errorKey?: string) => {
+    const hasError = errorKey ? !!errors[errorKey] : false;
+    return (
     <View className="flex-1 min-w-[280px]">
-      <Text className="text-[12px] font-black text-gray-450 mb-1.5 uppercase">{label}</Text>
-      <View className="flex-row bg-gray-50 border border-gray-200 rounded-xl overflow-hidden h-[48px] p-0.5">
+      <Text className={`text-[12px] font-black ${hasError ? 'text-red-500' : 'text-gray-450'} mb-1.5 uppercase`}>{label}</Text>
+      <View className={`flex-row ${hasError ? 'bg-red-50 border-red-400' : 'bg-gray-50 border-gray-200'} border rounded-xl overflow-hidden h-[48px] p-0.5`}>
         {options.map((opt) => {
           const isActive = typeof value === 'boolean' ? (opt === 'Yes' ? value === true : value === false) : value === opt;
           return (
@@ -464,8 +493,10 @@ export default function AdmissionFormScreen() {
           );
         })}
       </View>
+      {hasError && <Text className="text-red-500 text-[10px] font-bold mt-1">{errors[errorKey!]}</Text>}
     </View>
   );
+  };
 
   const renderSectionHeader = (title: string, icon: any, color: string, bgColor: string, borderColor: string, sectionKey: string) => (
     <TouchableOpacity 
@@ -542,8 +573,8 @@ export default function AdmissionFormScreen() {
         {expandedSections.academic && (
           <View className="mt-6 pt-6 border-t border-gray-100">
             <View className={`flex-row flex-wrap gap-5 ${isMobile ? "flex-col" : ""}`}>
-              {renderDropdown("Academic Year", academicYearId, academicYears, setAcademicYearId, "Select Year")}
-              {renderDropdown("Class", classId, classes, setClassId, "Select Class")}
+              {renderDropdown("Academic Year *", academicYearId, academicYears, (val) => { setAcademicYearId(val); setErrors(prev => ({...prev, academicYearId: ""})); }, "Select Year", "academicYearId")}
+              {renderDropdown("Class *", classId, classes, (val) => { setClassId(val); setErrors(prev => ({...prev, classId: ""})); }, "Select Class", "classId")}
               {renderDropdown("Batch", batchId, batches, setBatchId, "Select Batch")}
               {renderDropdown("Section", sectionId, sections, setSectionId, "Select Section")}
               {renderDropdown("Medium", mediumId, mediums, setMediumId, "Select Medium")}
@@ -563,9 +594,9 @@ export default function AdmissionFormScreen() {
         {expandedSections.personal && (
           <View className="mt-6 pt-6 border-t border-gray-100">
             <View className={`flex-row flex-wrap gap-5 ${isMobile ? "flex-col" : ""}`}>
-              {renderTextInput("First Name *", firstName, setFirstName, "Student Name")}
+              {renderTextInput("First Name *", firstName, (val) => { setFirstName(val); setErrors(prev => ({...prev, firstName: ""})); }, "Student Name", undefined, "firstName")}
               {renderTextInput("Middle Name", middleName, setMiddleName, "Father's Name")}
-              {renderTextInput("Last Name *", lastName, setLastName, "Surname")}
+              {renderTextInput("Last Name *", lastName, (val) => { setLastName(val); setErrors(prev => ({...prev, lastName: ""})); }, "Surname", undefined, "lastName")}
             </View>
             <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>
               {renderTextInput("First Name (Secondary)", firstNameSecondary, setFirstNameSecondary, "Secondary Language")}
@@ -574,12 +605,12 @@ export default function AdmissionFormScreen() {
             </View>
             <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>
               {renderTextInput("Student Display Name", studentDisplayName, setStudentDisplayName, "Full Name for Records")}
-              {renderToggle("Gender *", gender, ["Male", "Female", "Other"], setGender)}
-              {renderDatePicker("Date of Birth *", dob, setDob)}
+              {renderToggle("Gender *", gender, ["Male", "Female", "Other"], (val) => { setGender(val); setErrors(prev => ({...prev, gender: ""})); }, "gender")}
+              {renderDatePicker("Date of Birth *", dob, (val) => { setDob(val); setErrors(prev => ({...prev, dob: ""})); }, "dob")}
               {renderTextInput("Age", age, setAge, "Calculated Age", { keyboard: "number-pad" })}
             </View>
             <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>
-              {renderTextInput("Phone Number *", studentNumber, setStudentNumber, "10 Digit Mobile", { keyboard: "phone-pad", maxLength: 10 })}
+              {renderTextInput("Phone Number *", studentNumber, (val) => { setStudentNumber(val); setErrors(prev => ({...prev, studentNumber: ""})); }, "10 Digit Mobile", { keyboard: "phone-pad", maxLength: 10 }, "studentNumber")}
               {renderTextInput("Whatsapp No", studentWhatsappNo, setStudentWhatsappNo, "Whatsapp Number", { keyboard: "phone-pad", maxLength: 10 })}
               {renderTextInput("Student Email", studentEmail, setStudentEmail, "email@example.com", { keyboard: "email-address" })}
             </View>
@@ -620,8 +651,8 @@ export default function AdmissionFormScreen() {
           <View className="mt-6 pt-6 border-t border-gray-100">
             <Text className="text-[14px] font-bold text-gray-700 mb-3">Father's Information</Text>
             <View className={`flex-row flex-wrap gap-5 ${isMobile ? "flex-col" : ""}`}>
-              {renderTextInput("Father Name *", fatherName, setFatherName, "Full Name")}
-              {renderTextInput("Father Phone", fatherNumber, setFatherNumber, "Mobile No", { keyboard: "phone-pad" })}
+              {renderTextInput("Father Name *", fatherName, (val) => { setFatherName(val); setErrors(prev => ({...prev, fatherName: ""})); }, "Full Name", undefined, "fatherName")}
+              {renderTextInput("Father Phone *", fatherNumber, (val) => { setFatherNumber(val); setErrors(prev => ({...prev, fatherNumber: ""})); }, "Mobile No", { keyboard: "phone-pad" }, "fatherNumber")}
               {renderTextInput("Father Occupation", fatherOccupation, setFatherOccupation, "Occupation")}
               {renderTextInput("Father Education", fatherEducation, setFatherEducation, "Education")}
               {renderTextInput("Father Email", fatherEmail, setFatherEmail, "email@example.com", { keyboard: "email-address" })}
@@ -681,9 +712,8 @@ export default function AdmissionFormScreen() {
         {expandedSections.admission && (
           <View className="mt-6 pt-6 border-t border-gray-100">
             <View className={`flex-row flex-wrap gap-5 ${isMobile ? "flex-col" : ""}`}>
-              {renderToggle("Right to Education (RTE)", rte, ["Yes", "No"], (v) => setRte(v === "Yes"))}
+              {renderToggle("Right to Education (RTE)", rte, ["Yes", "No"], setRte)}
               {renderToggle("Student Type", studentType, ["New", "Regular"], setStudentType)}
-              {renderDropdown("Student Shift", ["Morning", "Afternoon"].indexOf(studentShift), [{ id: 0, name: "Morning" }, { id: 1, name: "Afternoon" }], (id) => setStudentShift(id === 0 ? "Morning" : "Afternoon"), "Select Shift")}
             </View>
             <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>
               {renderTextInput("Hall Ticket No", hallTicketNo, setHallTicketNo, "Hall Ticket Number")}
@@ -691,16 +721,7 @@ export default function AdmissionFormScreen() {
               {renderDatePicker("Student Fees Date", studentFeesDate, setStudentFeesDate)}
             </View>
             <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>
-              {renderDatePicker("Created Date", createdDate, setCreatedDate)}
               {renderDatePicker("Admission Date", admissionDate, setAdmissionDate)}
-              {renderDropdown("Admission Standard", (classes.find(c => (c as any).className === admissionStandard) as any)?.classID, classes, (id) => {
-                const cls = classes.find(c => (c as any).classID === id) as any;
-                if (cls) setAdmissionStandard(cls.className);
-              }, "Select Standard")}
-              {renderDropdown("Admission Year", (academicYears.find(y => (y as any).academicYearName === admissionYear) as any)?.academicYearID, academicYears, (id) => {
-                const yr = academicYears.find(y => (y as any).academicYearID === id) as any;
-                if (yr) setAdmissionYear(yr.academicYearName);
-              }, "Select Year")}
             </View>
             <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>
               {renderTextInput("Previous School Name", previousSchoolName, setPreviousSchoolName, "School Name")}

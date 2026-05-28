@@ -1,13 +1,23 @@
-import React, { useState, useMemo } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Alert, ScrollView, Modal, TextInput, ActivityIndicator, Image } from "react-native";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
+import {
+  View, Text, TouchableOpacity, Alert, Modal,
+  ScrollView, ActivityIndicator, TextInput,
+} from "react-native";
 import { router } from "expo-router";
-import { Colors } from "@/constants/colors";
+import { 
+  useDeleteApiStudentDeleteId,
+  usePostApiStudentSearch 
+} from "@/api/generated/3-student-crud/3-student-crud";
+import { parseApiList } from "@/utils/apiResponse";
 import type { StudentModel } from "@/api/model/studentModel";
-import { useGetApiStudentGet, useDeleteApiStudentDeleteId } from "@/api/generated/3-student-crud/3-student-crud";
+import type { StudentSearchRequest } from "@/api/model/studentSearchRequest";
+import type { StudentSearchResponse } from "@/api/model/studentSearchResponse";
+import type { ClassModel } from "@/api/model/classModel";
+import type { BatchModel } from "@/api/model/batchModel";
+import type { MediumModel } from "@/api/model/mediumModel";
 import { useGetApiClassGet } from "@/api/generated/master-class/master-class";
 import { useGetApiBatchGet } from "@/api/generated/2-master-batch/2-master-batch";
 import { useGetApiMediumGet } from "@/api/generated/master-medium/master-medium";
-import { parseApiList } from "@/utils/apiResponse";
 import {
   normalizeStudent,
   getStudentDisplayName,
@@ -19,81 +29,106 @@ import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { GenderIcon, AppIcon } from "@/components/icons/AppIcon";
 import { usePermissions } from "@/hooks/usePermissions";
 import { ResponsiveDataList, EntityActionButtons, type TableColumn } from "@/components/shared";
-import { customInstance } from "@/services/api/axiosInstance";
+import { Image } from "react-native";
 
 export default function AdminStudentManagementScreen() {
   const { canManageStudents } = usePermissions();
+  const { mutateAsync: searchMutate } = usePostApiStudentSearch();
+  const deleteMutation = useDeleteApiStudentDeleteId();
+  
+  // Search and filter state
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
   const [selectedBatchId, setSelectedBatchId] = useState<number | null>(null);
   const [selectedMediumId, setSelectedMediumId] = useState<number | null>(null);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(20);
+  
+  // Data state
+  const [searchResponse, setSearchResponse] = useState<StudentSearchResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [error, setError] = useState<any>(null);
 
-  const { data: classData } = useGetApiClassGet();
-  const classes = useMemo(() => parseApiList<any>(classData?.data), [classData]);
-
-  const { data: batchData } = useGetApiBatchGet();
-  const batches = useMemo(() => parseApiList<any>(batchData?.data), [batchData]);
-
-  const { data: mediumData } = useGetApiMediumGet();
-  const mediums = useMemo(() => parseApiList<any>(mediumData?.data), [mediumData]);
-
-  const { data, isLoading, isError, error, refetch } = useGetApiStudentGet();
-
+  // Delete modal state
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [studentToDelete, setStudentToDelete] = useState<StudentModel | null>(null);
   const [deleteReason, setDeleteReason] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
 
+  // Master data
+  const { data: classData } = useGetApiClassGet();
+  const classes = useMemo(() => parseApiList<ClassModel>(classData?.data), [classData]);
+
+  const { data: batchData } = useGetApiBatchGet();
+  const batches = useMemo(() => parseApiList<BatchModel>(batchData?.data), [batchData]);
+
+  const { data: mediumData } = useGetApiMediumGet();
+  const mediums = useMemo(() => parseApiList<MediumModel>(mediumData?.data), [mediumData]);
+
+  // Search function using the new POST API
+  const searchStudents = useCallback(async (searchRequest: StudentSearchRequest) => {
+    setIsLoading(true);
+    setIsError(false);
+    setError(null);
+    
+    try {
+      const response = await searchMutate({ data: searchRequest });
+      
+      // The response structure is { data: { success, message, data: searchData }, status, headers }
+      const apiBody = (response as any).data;
+      
+      if (apiBody?.success && apiBody?.data) {
+        const searchData = apiBody.data as StudentSearchResponse;
+        setSearchResponse(searchData);
+      } else {
+        setSearchResponse({
+          students: [],
+          totalCount: 0,
+          page: searchRequest.page || 1,
+          pageSize: searchRequest.pageSize || 20,
+          totalPages: 0,
+          hasNextPage: false,
+          hasPreviousPage: false
+        });
+      }
+    } catch (err: any) {
+      console.error('Search error:', err);
+      setIsError(true);
+      setError(err);
+      setSearchResponse(null);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [searchMutate]);
+
+  // Effect to trigger search when filters or pagination change
+  useEffect(() => {
+    const searchRequest: StudentSearchRequest = {
+      page: currentPage,
+      pageSize: pageSize,
+      search: searchQuery.trim() || undefined,
+      classID: selectedClassId || undefined,
+      batchID: selectedBatchId || undefined,
+      mediumID: selectedMediumId || undefined,
+      sortBy: "Name",
+      sortOrder: "ASC"
+    };
+
+    searchStudents(searchRequest);
+  }, [searchQuery, selectedClassId, selectedBatchId, selectedMediumId, currentPage, pageSize, searchStudents]);
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedClassId, selectedBatchId, selectedMediumId]);
+
   const students = useMemo(() => {
-    const raw = parseApiList<Record<string, unknown>>(data?.data);
-    return raw
-      .map(normalizeStudent)
-      .filter(
-        (s) =>
-          s.studentID != null ||
-          s.studentGRNo ||
-          s.rollNo ||
-          s.firstName ||
-          s.studentDisplayName
-      );
-  }, [data]);
-
-  const filteredStudents = useMemo(() => {
-    let filtered = students;
-
-    if (selectedClassId) {
-      filtered = filtered.filter(s => s.classID === selectedClassId || Number(s.classID) === selectedClassId);
-    }
-
-    if (selectedBatchId) {
-      filtered = filtered.filter(s => s.batchID === selectedBatchId || Number(s.batchID) === selectedBatchId);
-    }
-
-    if (selectedMediumId) {
-      filtered = filtered.filter(s => (s as any).mediumID === selectedMediumId || Number((s as any).mediumID) === selectedMediumId);
-    }
-
-    const q = searchQuery.toLowerCase().trim();
-    if (q) {
-      filtered = filtered.filter((student) => {
-        const name = getStudentDisplayName(student).toLowerCase();
-        return (
-          name.includes(q) ||
-          getParentLoginUsername(student).toLowerCase().includes(q) ||
-          getParentLoginPassword(student).toLowerCase().includes(q) ||
-          formatOptional(student.rollNo, "").toLowerCase().includes(q) ||
-          formatOptional(student.fatherNumber, "").toLowerCase().includes(q)
-        );
-      });
-    }
-
-    // Sort by roll number numerically
-    return [...filtered].sort((a, b) => {
-      const rollA = parseInt(a.rollNo || "0") || 0;
-      const rollB = parseInt(b.rollNo || "0") || 0;
-      return rollA - rollB;
-    });
-  }, [students, searchQuery, selectedClassId, selectedBatchId, selectedMediumId]);
+    if (!searchResponse?.students) return [];
+    return searchResponse.students.map((s) => normalizeStudent(s as any));
+  }, [searchResponse]);
 
   const handleDeleteClick = (student: StudentModel) => {
     if (!student.studentID) return;
@@ -111,14 +146,42 @@ export default function AdminStudentManagementScreen() {
 
     setIsDeleting(true);
     try {
-      await customInstance(`/api/Student/Delete/${studentToDelete.studentID}?reason=${encodeURIComponent(deleteReason.trim())}`, { method: "DELETE" });
+      await deleteMutation.mutateAsync({
+        id: studentToDelete.studentID,
+        params: { reason: deleteReason.trim() }
+      });
       setDeleteModalVisible(false);
-      refetch();
+      // Refresh the current search
+      const searchRequest: StudentSearchRequest = {
+        page: currentPage,
+        pageSize: pageSize,
+        search: searchQuery.trim() || undefined,
+        classID: selectedClassId || undefined,
+        batchID: selectedBatchId || undefined,
+        mediumID: selectedMediumId || undefined,
+        sortBy: "Name",
+        sortOrder: "ASC"
+      };
+      searchStudents(searchRequest);
     } catch (err: any) {
       Alert.alert("Error", err.message || "Failed to delete student");
     } finally {
       setIsDeleting(false);
     }
+  };
+
+  const handleRefresh = () => {
+    const searchRequest: StudentSearchRequest = {
+      page: currentPage,
+      pageSize: pageSize,
+      search: searchQuery.trim() || undefined,
+      classID: selectedClassId || undefined,
+      batchID: selectedBatchId || undefined,
+      mediumID: selectedMediumId || undefined,
+      sortBy: "Name",
+      sortOrder: "ASC"
+    };
+    searchStudents(searchRequest);
   };
 
   const tableColumns: TableColumn<StudentModel>[] = [
@@ -292,6 +355,44 @@ export default function AdminStudentManagementScreen() {
     );
   };
 
+  // Pagination component
+  const renderPagination = () => {
+    if (!searchResponse || (searchResponse.totalPages || 0) <= 1) return null;
+
+    return (
+      <View className="flex-row items-center justify-between px-4 py-3 bg-white border-t border-gray-200">
+        <TouchableOpacity
+          onPress={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+          disabled={!searchResponse.hasPreviousPage}
+          className={`px-4 py-2 rounded-lg ${searchResponse.hasPreviousPage ? 'bg-blue-500' : 'bg-gray-300'}`}
+        >
+          <Text className={`font-bold ${searchResponse.hasPreviousPage ? 'text-white' : 'text-gray-500'}`}>
+            Previous
+          </Text>
+        </TouchableOpacity>
+
+        <View className="flex-row items-center gap-2">
+          <Text className="text-sm font-semibold text-gray-700">
+            Page {searchResponse?.page || 1} of {searchResponse?.totalPages || 1}
+          </Text>
+          <Text className="text-xs text-gray-500">
+            ({searchResponse.totalCount} total)
+          </Text>
+        </View>
+
+        <TouchableOpacity
+          onPress={() => setCurrentPage((p) => Math.min(searchResponse?.totalPages || 1, p + 1))}
+          disabled={!searchResponse?.hasNextPage}
+          className={`px-4 py-2 rounded-lg ${searchResponse.hasNextPage ? 'bg-blue-500' : 'bg-gray-300'}`}
+        >
+          <Text className={`font-bold ${searchResponse.hasNextPage ? 'text-white' : 'text-gray-500'}`}>
+            Next
+          </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
   return (
     <PremiumScreenLayout
       title="Students"
@@ -345,7 +446,7 @@ export default function AdminStudentManagementScreen() {
             {batches.map((b) => (
               <TouchableOpacity
                 key={b.batchID}
-                onPress={() => setSelectedBatchId(b.batchID)}
+                onPress={() => setSelectedBatchId(b.batchID || null)}
                 className={`px-4 py-1.5 rounded-xl border flex-row items-center gap-1 ${selectedBatchId === b.batchID ? "bg-blue-50 border-blue-200" : "bg-white border-gray-200"}`}
               >
                 <Text className={`text-[11px] font-bold ${selectedBatchId === b.batchID ? "text-blue-700" : "text-gray-600"}`}>
@@ -369,7 +470,7 @@ export default function AdminStudentManagementScreen() {
             {classes.map((cls) => (
               <TouchableOpacity
                 key={cls.classID}
-                onPress={() => setSelectedClassId(cls.classID)}
+                onPress={() => setSelectedClassId(cls.classID || null)}
                 className={`px-4 py-2 rounded-xl border ${selectedClassId === cls.classID ? "bg-teal-50 border-teal-200" : "bg-white border-gray-200"}`}
               >
                 <Text className={`text-[11px] font-bold ${selectedClassId === cls.classID ? "text-teal-700" : "text-gray-600"}`}>
@@ -380,12 +481,13 @@ export default function AdminStudentManagementScreen() {
           </ScrollView>
         </View>
       </View>
+
       <ResponsiveDataList
-        data={filteredStudents}
+        data={students}
         isLoading={isLoading}
         isError={isError}
         error={error}
-        onRefresh={refetch}
+        onRefresh={handleRefresh}
         renderCard={renderStudentItemMobile}
         tableColumns={tableColumns}
         keyExtractor={(item) => String(item.studentID)}
@@ -397,8 +499,10 @@ export default function AdminStudentManagementScreen() {
         searchPlaceholder="Search by name, username, or roll..."
       />
 
+      {renderPagination()}
+
       <Modal visible={deleteModalVisible} transparent animationType="fade">
-        <View style={StyleSheet.absoluteFill} className="bg-black/50 items-center justify-center p-4">
+        <View className="flex-1 bg-black/50 items-center justify-center p-4">
           <View className="bg-white w-full max-w-sm rounded-2xl p-6 shadow-xl">
             <Text className="text-lg font-black text-gray-900 mb-2">Delete Student</Text>
             <Text className="text-sm font-semibold text-gray-600 mb-4">
@@ -437,29 +541,3 @@ export default function AdminStudentManagementScreen() {
     </PremiumScreenLayout>
   );
 }
-
-const styles = StyleSheet.create({
-  avatarBox: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#EFF6FF",
-    borderWidth: 1,
-    borderColor: "#DBEAFE",
-  },
-  rollBadge: {
-    backgroundColor: "#FFF7ED",
-    borderWidth: 1,
-    borderColor: "#FFEDD5",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 8,
-  },
-  rollBadgeText: {
-    fontSize: 10,
-    fontWeight: "800",
-    color: "#9A3412",
-  },
-});
