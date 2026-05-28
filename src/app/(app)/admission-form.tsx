@@ -382,8 +382,26 @@ export default function AdmissionFormScreen() {
       <View className="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden h-[48px]">
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ alignItems: 'center', paddingHorizontal: 10 }}>
           {options.map((opt) => {
-            const id = opt.bloodGroupID || opt.religionID || opt.categoryID || opt.batchID || opt.classID || opt.academicYearID || opt.sectionID || opt.id;
-            const name = opt.bloodGroupName || opt.religionName || opt.categoryName || opt.batchName || opt.className || opt.academicYearName || opt.sectionName || opt.name;
+            const id =
+              opt.mediumID ??
+              opt.bloodGroupID ??
+              opt.religionID ??
+              opt.categoryID ??
+              opt.batchID ??
+              opt.classID ??
+              opt.academicYearID ??
+              opt.sectionID ??
+              opt.id;
+            const name =
+              opt.mediumName ??
+              opt.bloodGroupName ??
+              opt.religionName ??
+              opt.categoryName ??
+              opt.batchName ??
+              opt.className ??
+              opt.academicYearName ??
+              opt.sectionName ??
+              opt.name;
             return (
               <TouchableOpacity
                 key={id}
