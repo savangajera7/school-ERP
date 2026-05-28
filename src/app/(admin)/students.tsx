@@ -8,7 +8,7 @@ import {
   useDeleteApiStudentDeleteId,
   usePostApiStudentSearch 
 } from "@/api/generated/3-student-crud/3-student-crud";
-import { parseApiList } from "@/utils/apiResponse";
+import { parseApiList, toCamelCaseRow } from "@/utils/apiResponse";
 import type { StudentModel } from "@/api/model/studentModel";
 import type { StudentSearchRequest } from "@/api/model/studentSearchRequest";
 import type { StudentSearchResponse } from "@/api/model/studentSearchResponse";
@@ -81,7 +81,15 @@ export default function AdminStudentManagementScreen() {
       const apiBody = (response as any).data;
       
       if (apiBody?.success && apiBody?.data) {
-        const searchData = apiBody.data as StudentSearchResponse;
+        // Ensure properties are camelCase (in case backend returns PascalCase)
+        const rawData = apiBody.data as Record<string, unknown>;
+        const searchData = toCamelCaseRow<any>(rawData) as StudentSearchResponse;
+        
+        // Also ensure the students array inside is handled if it came as 'Students'
+        if (!searchData.students && (rawData as any).Students) {
+          searchData.students = (rawData as any).Students;
+        }
+        
         setSearchResponse(searchData);
       } else {
         setSearchResponse({
