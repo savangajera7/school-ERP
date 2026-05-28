@@ -66,8 +66,8 @@ export function PremiumScreenLayout({
     <View style={[
       styles.body,
       !scrollable && { flex: 1 },
-      flatHeader && { marginTop: 0 },
-      fullWidth && { maxWidth: '100%', paddingHorizontal: isMobile ? 16 : 32 },
+      flatHeader && { marginTop: 24 },
+      fullWidth && { maxWidth: '100%', paddingHorizontal: isMobile ? 16 : 24 },
       bodyStyle
     ]}>
       {children}
@@ -105,7 +105,9 @@ export function PremiumScreenLayout({
         rightAction={rightAction}
         flat={flatHeader}
         showTopBar={showTopBar}
-      />
+      >
+        {headerSlot}
+      </ScreenHeader>
       <View style={styles.flex}>{body}</View>
     </View>
   );

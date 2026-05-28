@@ -51,43 +51,46 @@ export function ScreenHeader({
   if (flat) {
     return (
       <View
-        className="bg-white border-b border-gray-100 flex-row justify-between items-center z-10"
+        className="bg-white border-b border-gray-100 justify-center z-10"
         style={{
           paddingHorizontal: isMobile ? 16 : 24,
           paddingTop: (insets.top || 0) + (isMobile ? 14 : 18),
           paddingBottom: isMobile ? 14 : 18,
         }}
       >
-        <View className="flex-row items-center gap-3 flex-1">
-          {!hideBack && (
-            <TouchableOpacity
-              onPress={handleBack}
-              className="w-10 h-10 bg-gray-50 rounded-xl items-center justify-center"
-              activeOpacity={0.7}
-            >
-              <AppIcon name="chevronBack" size={22} color="#374151" />
-            </TouchableOpacity>
-          )}
-          <View className="flex-1">
-            <Text
-              className="font-black text-gray-900"
-              style={{ fontSize: isMobile ? 16 : 18 }}
-              numberOfLines={1}
-            >
-              {title}
-            </Text>
-            {subtitle && (
+        <View className="flex-row justify-between items-center">
+          <View className="flex-row items-center gap-3 flex-1">
+            {!hideBack && (
+              <TouchableOpacity
+                onPress={handleBack}
+                className="w-10 h-10 bg-gray-50 rounded-xl items-center justify-center border border-gray-200"
+                activeOpacity={0.7}
+              >
+                <AppIcon name="chevronBack" size={22} color="#374151" />
+              </TouchableOpacity>
+            )}
+            <View className="flex-1">
               <Text
-                className="text-gray-400 font-semibold mt-0.5"
-                style={{ fontSize: isMobile ? 11 : 12 }}
+                className="font-black text-gray-900"
+                style={{ fontSize: isMobile ? 20 : 24 }}
                 numberOfLines={1}
               >
-                {subtitle}
+                {title}
               </Text>
-            )}
+              {subtitle && (
+                <Text
+                  className="text-gray-400 font-semibold mt-0.5"
+                  style={{ fontSize: isMobile ? 11 : 13 }}
+                  numberOfLines={1}
+                >
+                  {subtitle}
+                </Text>
+              )}
+            </View>
           </View>
+          {rightAction && <View className="ml-3">{rightAction}</View>}
         </View>
-        {rightAction && <View className="ml-3">{rightAction}</View>}
+        {children && <View className="mt-4">{children}</View>}
       </View>
     );
   }

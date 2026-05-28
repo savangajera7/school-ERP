@@ -364,7 +364,6 @@ export default function AdminStudentManagementScreen() {
       title="Students"
       subtitle="Manage school enrollment"
       scrollable={false}
-      flatHeader
       fullWidth
       hideBack
       rightAction={

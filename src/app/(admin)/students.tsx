@@ -416,7 +416,7 @@ export default function AdminStudentManagementScreen() {
       hideBack
     >
       <View
-        className="bg-white px-4 py-3 border-b border-gray-200 z-20"
+        className="bg-white px-5 py-4 mb-4 rounded-2xl border border-gray-100 z-20"
         style={{
           shadowColor: "#000",
           shadowOffset: { width: 0, height: 2 },

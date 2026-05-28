@@ -94,19 +94,25 @@ export function ResponsiveDataList<T>({
   };
 
   const searchBar = onSearchChange !== undefined ? (
-    <View className="bg-white border border-gray-100 rounded-xl flex-row items-center h-12 px-4 mt-2 mb-4 shadow-sm">
+    <View className="bg-white border border-gray-100 rounded-2xl flex-row items-center h-[52px] px-4 mb-4" style={{
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.04,
+      shadowRadius: 6,
+      elevation: 3,
+    }}>
       <AppIcon name="search" size={20} color="#9CA3AF" />
       <TextInput
         value={searchQuery}
         onChangeText={onSearchChange}
         placeholder={searchPlaceholder || t.searchPlaceholder || "Search..."}
-        className="flex-1 ml-2 text-[15px] text-gray-800 font-semibold h-full"
+        className="flex-1 ml-3 text-[15px] text-gray-800 font-semibold h-full"
         placeholderTextColor="#9CA3AF"
         style={{ outlineWidth: 0 } as any}
       />
       {searchQuery && searchQuery.length > 0 && (
-        <TouchableOpacity onPress={() => onSearchChange("")} activeOpacity={0.7}>
-          <AppIcon name="close" size={20} color="#9CA3AF" />
+        <TouchableOpacity onPress={() => onSearchChange("")} activeOpacity={0.7} className="bg-gray-100 p-1.5 rounded-full">
+          <AppIcon name="close" size={16} color="#6B7280" />
         </TouchableOpacity>
       )}
     </View>
