@@ -10,6 +10,7 @@ import { premiumCardShadow } from "@/constants/premiumStyles";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { parseApiList } from "@/utils/apiResponse";
 import type { AppIconName } from "@/constants/appIcons";
+import { useAuthStore } from "@/store/authStore";
 
 export interface MasterCrudScreenProps {
   /** Page title (e.g. "Classes") */
@@ -59,6 +60,7 @@ export function MasterCrudScreen({
 }: MasterCrudScreenProps) {
   const [inputValue, setInputValue] = useState("");
   const [editingItem, setEditingItem] = useState<any>(null);
+  const { userData } = useAuthStore();
 
   const { data, isLoading, refetch } = useGetList();
   const addMutation = useAdd();
@@ -75,6 +77,7 @@ export function MasterCrudScreen({
           [nameField]: inputValue,
           isActive: true,
           createdBy: 1,
+          schoolID: userData?.schoolID,
         },
       });
       setInputValue("");
@@ -92,6 +95,7 @@ export function MasterCrudScreen({
           ...editingItem,
           [nameField]: inputValue,
           updatedBy: 1,
+          schoolID: userData?.schoolID,
         },
       });
       setInputValue("");
