@@ -61,13 +61,13 @@ export default function AdminNotificationsManagementScreen() {
       `Are you sure you want to remove "${notification.title}"?`,
       [
         { text: "Cancel", style: "cancel" },
-        { 
-          text: "Delete", 
+        {
+          text: "Delete",
           style: "destructive",
           onPress: async () => {
             try {
-              await deleteNotification.mutateAsync({ 
-                data: { notificationID: notification.notificationID } 
+              await deleteNotification.mutateAsync({
+                data: { notificationID: notification.notificationID }
               });
               refetch();
             } catch (err: any) {
@@ -127,7 +127,7 @@ export default function AdminNotificationsManagementScreen() {
         ]}
         actions={
           <View className="flex-row gap-2 ml-auto">
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => handleDelete(item)}
               className="bg-red-50 p-2 rounded-lg"
             >
