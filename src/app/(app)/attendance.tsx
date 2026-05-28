@@ -8,6 +8,7 @@ import { useGetApiClassGetClassList } from "@/api/generated/master-class/master-
 import { useGetApiSectionGetSectionList } from "@/api/generated/master-section/master-section";
 import { useGetApiStudentGet } from "@/api/generated/3-student-crud/3-student-crud";
 import { usePostApiAttendanceMark } from "@/api/generated/9-attendance/9-attendance";
+import { useGetApiTeacherPermissionsTeacherId } from "@/api/generated/6-teacher-permissions-admin-assigns-module-access-per-class/6-teacher-permissions-admin-assigns-module-access-per-class";
 import { parseApiList } from "@/utils/apiResponse";
 import { useToast } from "@/components/ui/Toast";
 import { useAuthStore } from "@/store/authStore";
@@ -35,7 +36,22 @@ export default function AttendanceScreen() {
   const { data: studentsData, isLoading: loadingStudents } = useGetApiStudentGet();
   const markAttendance = usePostApiAttendanceMark();
 
-  const classes = useMemo(() => parseApiList(classesData?.data), [classesData]);
+  const { data: teacherPermissionsData } = useGetApiTeacherPermissionsTeacherId(
+    Number(userData?.userId || 0),
+    { query: { enabled: isTeacher } }
+  );
+
+  const classes = useMemo(() => {
+    const allCls = parseApiList(classesData?.data);
+    if (!isTeacher) return allCls;
+
+    const perms = parseApiList<any>(teacherPermissionsData?.data);
+    const allowedClassIds = new Set(
+      perms.filter(p => p.canAttendance).map(p => p.classID)
+    );
+    return allCls.filter((c: any) => allowedClassIds.has(c.classID));
+  }, [classesData, isTeacher, teacherPermissionsData]);
+
   const sections = useMemo(() => parseApiList(sectionsData?.data), [sectionsData]);
   
   // Local state for attendance statuses (studentID -> status)
@@ -211,8 +227,18 @@ export default function AttendanceScreen() {
         </TouchableOpacity>
       }
     >
-        <PremiumCard noAccent style={{ padding: 16, marginBottom: 14 }}>
-          <View className={`flex-row gap-6 ${isMobile ? "flex-col" : "items-center justify-between"}`}>
+      {isTeacher && classes.length === 0 ? (
+        <View className="flex-1 items-center justify-center p-8 bg-white m-4 rounded-3xl border border-gray-150">
+          <EmptyState
+            icon="attendance"
+            title="No Attendance Access"
+            message="You have not been assigned permission to take attendance for any class. Please contact the administrator."
+          />
+        </View>
+      ) : (
+        <>
+          <PremiumCard noAccent style={{ padding: 16, marginBottom: 14 }}>
+            <View className={`flex-row gap-6 ${isMobile ? "flex-col" : "items-center justify-between"}`}>
             
             <View className="flex-row gap-4 flex-1">
               <View className="flex-1">
@@ -416,6 +442,8 @@ export default function AttendanceScreen() {
             )}
           </Card>
         )}
+        </>
+      )}
     </PremiumScreenLayout>
   );
 }

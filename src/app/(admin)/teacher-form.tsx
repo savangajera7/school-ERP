@@ -15,7 +15,7 @@ import {
   useGetApiTeacherGetTeacherByIdId,
 } from "@/api/generated/teacher/teacher";
 import { useGetApiRoleGetRoleList } from "@/api/generated/role/role";
-import { parseApiData, parseApiList } from "@/utils/apiResponse";
+import { parseApiData, parseApiList, toCamelCaseRow } from "@/utils/apiResponse";
 import { useAuthStore } from "@/store/authStore";
 import { uploadProfileImage, resolveMediaUrl } from "@/services/upload/uploadService";
 import { useResponsive } from "@/hooks/useResponsive";
@@ -28,6 +28,7 @@ export default function TeacherFormScreen() {
 
   const { userData } = useAuthStore();
   const { isMobile } = useResponsive();
+  const scrollViewRef = React.useRef<ScrollView>(null);
   const [loading, setLoading] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -72,7 +73,8 @@ export default function TeacherFormScreen() {
 
   useEffect(() => {
     if (teacherResponse?.data) {
-      const t = parseApiData(teacherResponse.data) as any;
+      const parsed = parseApiData(teacherResponse.data) as any;
+      const t = parsed ? toCamelCaseRow(parsed) as any : {};
       setTeacherCode(t.teacherCode || "");
       setFirstName(t.firstName || "");
       setMiddleName(t.middleName || "");
@@ -120,10 +122,12 @@ export default function TeacherFormScreen() {
   const handleSubmit = async () => {
     if (!firstName || !lastName || !teacherCode || !mobileNo) {
       Alert.alert("Missing Fields", "First Name, Last Name, Staff ID and Mobile are required (*).");
+      scrollViewRef.current?.scrollTo({ y: 0, animated: true });
       return;
     }
     if (!isEditing && !password) {
       Alert.alert("Missing Fields", "Password is required when adding a new teacher.");
+      scrollViewRef.current?.scrollTo({ y: 0, animated: true });
       return;
     }
 
@@ -288,7 +292,12 @@ export default function TeacherFormScreen() {
       flatHeader
       keyboard
     >
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120 }}>
+      <ScrollView 
+        ref={scrollViewRef}
+        showsVerticalScrollIndicator={false} 
+        contentContainerStyle={{ paddingBottom: 120 }}
+        keyboardShouldPersistTaps="handled"
+      >
 
         {/* ── SECTION 1: Personal Details ── */}
         <Card className="bg-white border border-gray-150 p-6 mb-4 overflow-hidden">

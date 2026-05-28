@@ -23,6 +23,11 @@ import {
 import { customInstance } from "@/services/api/axiosInstance";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useResponsive } from "@/hooks/useResponsive";
+import {
+  useGetApiTeacherPermissionsAll,
+  usePostApiTeacherPermissionsSet,
+  getGetApiTeacherPermissionsAllQueryKey,
+} from "@/api/generated/6-teacher-permissions-admin-assigns-module-access-per-class/6-teacher-permissions-admin-assigns-module-access-per-class";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -63,20 +68,7 @@ const MODULE_KEYS: { key: keyof ClassPermission; label: string; icon: string }[]
 ];
 
 // ─── API helpers (not yet in generated files) ────────────────────────────────
-
-const fetchTeachersWithDetails = (schoolID?: number) =>
-  customInstance<any>(`/api/teacher/permissions/all`, { method: "GET" });
-
-const setClassPermission = (body: {
-  teacherID: number; classID: number;
-  canNotice: boolean; canAttendance: boolean; canHomework: boolean;
-  canClasswork: boolean; canTimetable: boolean; canExam: boolean;
-}) =>
-  customInstance<any>(`/api/teacher/permissions/set`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
+// Replaced with Orval hooks
 
 // ─── Main Screen ─────────────────────────────────────────────────────────────
 
@@ -86,10 +78,7 @@ export default function AdminTeacherManagementScreen() {
   const queryClient = useQueryClient();
 
   // ── Data ──────────────────────────────────────────────────────────────────
-  const { data: teachersRaw, isLoading, isError, error, refetch } = useQuery({
-    queryKey: ["teachers-with-details"],
-    queryFn: () => fetchTeachersWithDetails(),
-  });
+  const { data: teachersRaw, isLoading, isError, error, refetch } = useGetApiTeacherPermissionsAll();
 
   const { data: classesRaw } = useGetApiClassGet();
   const allClasses = useMemo(() => parseApiList<any>(classesRaw?.data), [classesRaw]);
@@ -103,7 +92,7 @@ export default function AdminTeacherManagementScreen() {
   const deleteTeacher = useDeleteApiTeacherDeleteTeacher();
   const addClassAssignment = usePostApiTeacherClassAssignmentAdd();
   const removeClassAssignment = useDeleteApiTeacherClassAssignmentRemove();
-  const permissionMutation = useMutation({ mutationFn: setClassPermission });
+  const permissionMutation = usePostApiTeacherPermissionsSet();
 
   // ── Permission panel state ────────────────────────────────────────────────
   const [selectedTeacher, setSelectedTeacher] = useState<TeacherWithDetails | null>(null);
@@ -139,16 +128,18 @@ export default function AdminTeacherManagementScreen() {
     setSavingClassID(classID);
     try {
       await permissionMutation.mutateAsync({
-        teacherID: selectedTeacher.teacherID,
-        classID,
-        canNotice:     !!p.canNotice,
-        canAttendance: !!p.canAttendance,
-        canHomework:   !!p.canHomework,
-        canClasswork:  !!p.canClasswork,
-        canTimetable:  !!p.canTimetable,
-        canExam:       !!p.canExam,
+        data: {
+          teacherID: selectedTeacher.teacherID,
+          classID,
+          canNotice:     !!p.canNotice,
+          canAttendance: !!p.canAttendance,
+          canHomework:   !!p.canHomework,
+          canClasswork:  !!p.canClasswork,
+          canTimetable:  !!p.canTimetable,
+          canExam:       !!p.canExam,
+        }
       });
-      queryClient.invalidateQueries({ queryKey: ["teachers-with-details"] });
+              queryClient.invalidateQueries({ queryKey: getGetApiTeacherPermissionsAllQueryKey() });
     } catch (e: any) {
       Alert.alert("Error", e.message || "Failed to save permissions");
     } finally {
@@ -163,7 +154,7 @@ export default function AdminTeacherManagementScreen() {
       await addClassAssignment.mutateAsync({
         data: { teacherID: selectedTeacher.teacherID, classIDs: [classID] },
       });
-      queryClient.invalidateQueries({ queryKey: ["teachers-with-details"] });
+              queryClient.invalidateQueries({ queryKey: getGetApiTeacherPermissionsAllQueryKey() });
       // seed local perms for new class
       const cls = allClasses.find((c: any) => c.classID === classID);
       setLocalPerms((prev) => ({
@@ -203,7 +194,7 @@ export default function AdminTeacherManagementScreen() {
               await removeClassAssignment.mutateAsync({
                 data: { teacherID: selectedTeacher.teacherID, classID },
               });
-              queryClient.invalidateQueries({ queryKey: ["teachers-with-details"] });
+                      queryClient.invalidateQueries({ queryKey: getGetApiTeacherPermissionsAllQueryKey() });
               setLocalPerms((prev) => { const n = { ...prev }; delete n[classID]; return n; });
               setSelectedTeacher((prev) => prev ? {
                 ...prev,
@@ -230,7 +221,7 @@ export default function AdminTeacherManagementScreen() {
           onPress: async () => {
             try {
               await deleteTeacher.mutateAsync({ data: { teacherID: teacher.teacherID } });
-              queryClient.invalidateQueries({ queryKey: ["teachers-with-details"] });
+                      queryClient.invalidateQueries({ queryKey: getGetApiTeacherPermissionsAllQueryKey() });
             } catch (e: any) {
               Alert.alert("Error", e.message || "Failed to delete teacher");
             }
