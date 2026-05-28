@@ -73,6 +73,7 @@ export function useAuth() {
             schoolID,
             schoolName: "Little Angel's English School",
             avatar: resolveMediaUrl(u.profilePhoto) ?? u.profilePhoto,
+            teacherPermissions: (envelope as any).teacherPermissions ?? [],
           },
           userRole
         );

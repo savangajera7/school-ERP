@@ -1,11 +1,23 @@
 export type Role = 'super_admin' | 'admin' | 'teacher' | 'parent' | 'student';
 
+export interface TeacherClassPermission {
+  teacherID: number;
+  classID: number;
+  className: string;
+  canNotice: boolean;
+  canAttendance: boolean;
+  canHomework: boolean;
+  canClasswork: boolean;
+  canTimetable: boolean;
+  canExam: boolean;
+}
+
 export interface AuthUser {
   id: number;
   name: string;
   email: string;
   role: Role;
-  roleId: number;       // from RoleRights
+  roleId: number;
   token: string;
 }
 
@@ -23,6 +35,8 @@ export interface UserData extends Partial<AuthUser> {
   roleID?: number;
   referenceID?: number;
   schoolID?: number;
+  // Teacher per-class module permissions (only set when role = teacher)
+  teacherPermissions?: TeacherClassPermission[];
 }
 
 export interface ApiResult<T> {
