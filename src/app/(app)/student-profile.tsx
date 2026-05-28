@@ -9,6 +9,8 @@ import { useGetApiStudentGetByIDId } from "@/api/generated/3-student-crud/3-stud
 import { StudentModel } from "@/api/model/studentModel";
 import { parseApiData, toCamelCaseRow } from "@/utils/apiResponse";
 import { getStudentDisplayName } from "@/utils/studentUtils";
+import { useGetApiClassGet } from "@/api/generated/master-class/master-class";
+import { parseApiList } from "@/utils/apiResponse";
 import { Colors } from "@/constants/colors";
 import { IconCircle, AppIcon } from "@/components/icons/AppIcon";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
@@ -23,6 +25,10 @@ export default function StudentProfileScreen() {
   });
   const raw = parseApiData<Record<string, unknown>>(data);
   const student = raw ? (toCamelCaseRow(raw) as StudentModel) : null;
+  
+  const { data: classData } = useGetApiClassGet();
+  const classes = React.useMemo(() => parseApiList<any>(classData?.data), [classData]);
+  const className = classes.find((c: any) => c.classID === student?.classID)?.className || student?.classID;
 
   const handleCall = () => {
     if (Platform.OS !== 'web' && student?.studentNumber) {
@@ -191,7 +197,7 @@ export default function StudentProfileScreen() {
           </View>
           <View className="gap-4">
             <DetailItem label="Admission Date" value={student.admissionDate ? String(student.admissionDate).slice(0, 10) : 'N/A'} />
-            <DetailItem label="Assigned Class" value={student.classID?.toString() || 'N/A'} />
+            <DetailItem label="Assigned Class" value={className?.toString() || 'N/A'} />
             <DetailItem label="Assigned Batch" value={student.batchID?.toString() || 'N/A'} />
             <DetailItem label="Medium" value={(student as any).mediumName || 'N/A'} />
             <DetailItem label="Previous School" value={(student as any).previousSchoolName || 'N/A'} />

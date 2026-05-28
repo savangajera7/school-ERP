@@ -10,7 +10,7 @@ import { AppIcon } from "@/components/icons/AppIcon";
 
 const PRIMARY: { label: string; route: string; icon: AppIconName }[] = [
   { label: "Dashboard", route: "/(admin)/dashboard", icon: "home" },
-  { label: "Students", route: "/(admin)/students", icon: "students" },
+  { label: "Students", route: "/(app)/students", icon: "students" },
   { label: "Teachers", route: "/(admin)/teachers", icon: "teachers" },
   { label: "Notices", route: "/(admin)/notices", icon: "notices" },
   { label: "Settings", route: "/(admin)/settings", icon: "settings" },

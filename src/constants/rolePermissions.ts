@@ -22,7 +22,6 @@ export const ROLE_IDS = {
 export type AppRoute =
   | "/(app)/dashboard"
   | "/(app)/menu"
-  | "/(app)/search"
   | "/(app)/students"
   | "/(app)/student-profile"
   | "/(app)/attendance"
@@ -229,7 +228,6 @@ export const ROUTE_ACCESS: Record<Role, AppRoute[]> = {
   super_admin: [
     "/(app)/dashboard",
     "/(app)/menu",
-    "/(app)/search",
     "/(app)/students",
     "/(app)/student-profile",
     "/(app)/attendance",
@@ -258,7 +256,6 @@ export const ROUTE_ACCESS: Record<Role, AppRoute[]> = {
   admin: [
     "/(app)/dashboard",
     "/(app)/menu",
-    "/(app)/search",
     "/(app)/students",
     "/(app)/student-profile",
     "/(app)/attendance",
@@ -285,7 +282,6 @@ export const ROUTE_ACCESS: Record<Role, AppRoute[]> = {
   teacher: [
     "/(app)/dashboard",
     "/(app)/menu",
-    "/(app)/search",
     "/(app)/students",
     "/(app)/student-profile",
     "/(app)/attendance",
@@ -398,28 +394,27 @@ export const ROLE_LABELS: Record<Role, string> = {
   student: "Student",
 };
 
-/** Mobile bottom tabs per role */
 export const MOBILE_TABS_BY_ROLE: Record<
   Role,
   { label: string; icon: AppIconName; route: AppRoute }[]
 > = {
   super_admin: [
     { label: "Menu", icon: "menu", route: "/(app)/menu" },
-    { label: "Search", icon: "search", route: "/(app)/search" },
+    { label: "Search", icon: "search", route: "/(app)/students" },
     { label: "Home", icon: "home", route: "/(app)/dashboard" },
     { label: "Time Table", icon: "timetable", route: "/(app)/timetable" },
     { label: "Profile", icon: "profile", route: "/(app)/profile" },
   ],
   admin: [
     { label: "Menu", icon: "menu", route: "/(app)/menu" },
-    { label: "Search", icon: "search", route: "/(app)/search" },
+    { label: "Search", icon: "search", route: "/(app)/students" },
     { label: "Home", icon: "home", route: "/(app)/dashboard" },
     { label: "Time Table", icon: "timetable", route: "/(app)/timetable" },
     { label: "Profile", icon: "profile", route: "/(app)/profile" },
   ],
   teacher: [
     { label: "Menu", icon: "menu", route: "/(app)/menu" },
-    { label: "Search", icon: "search", route: "/(app)/search" },
+    { label: "Search", icon: "search", route: "/(app)/students" },
     { label: "Home", icon: "home", route: "/(app)/dashboard" },
     { label: "Time Table", icon: "timetable", route: "/(app)/timetable" },
     { label: "Profile", icon: "profile", route: "/(app)/profile" },

@@ -50,7 +50,7 @@ export default function AdminDashboard() {
     {
       icon: "students" as AppIconName, label: "Total Students", subtitle: "Active enrollment",
       value: isLoading ? "..." : students.length.toString(),
-      backgroundColor: "#E0F2FE", textColor: "#0369A1", route: "/(admin)/students"
+      backgroundColor: "#E0F2FE", textColor: "#0369A1", route: "/(app)/students"
     },
     {
       icon: "teachers" as AppIconName, label: "Total Staff", subtitle: "Active faculty",

@@ -57,13 +57,26 @@ export function parseApiData<T = Record<string, unknown>>(
   response: unknown
 ): T | null {
   const body = unwrapApiBody(response);
-  if (!body || typeof body !== "object" || Array.isArray(body)) return null;
+  if (!body || typeof body !== "object") return null;
 
-  const inner = body as Record<string, unknown>;
-  const nested = inner.data ?? inner.Data;
-  if (nested && typeof nested === "object" && !Array.isArray(nested)) {
-    return nested as T;
+  // First, check if there's a nested array somewhere and we just need the first item
+  const arr = collectArray<T>(body);
+  if (arr && arr.length > 0) {
+    return arr[0];
   }
+
+  // Otherwise, look for a nested object (e.g. data: { ... })
+  const inner = body as Record<string, unknown>;
+  const keys = ["data", "Data", "result", "Result", "item", "Item"];
+  
+  for (const key of keys) {
+    const nested = inner[key];
+    if (nested && typeof nested === "object" && !Array.isArray(nested)) {
+      return nested as T;
+    }
+  }
+
+  // Fallback to returning the unwrapped body itself
   return inner as T;
 }
 

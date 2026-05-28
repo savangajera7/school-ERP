@@ -3,7 +3,7 @@ import type { QuickAction, ActivityItem } from "@/components/shared";
 
 export const QUICK_ACTIONS: (QuickAction & { route: AppRoute })[] = [
   { title: "Admission", icon: "admission", route: "/(app)/admission-form" as any },
-  { title: "Students", icon: "students", route: "/(admin)/students" as any },
+  { title: "Students", icon: "students", route: "/(app)/students" as any },
   { title: "Masters", icon: "masters", route: "/(admin)/masters" as any },
   { title: "Teachers", icon: "teachers", route: "/(admin)/teachers" as any },
   { title: "Parents", icon: "parents", route: "/(admin)/parents" as any },
