@@ -1,7 +1,7 @@
 import React, { createContext, useCallback, useContext, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
-import { fetchMyNotifications, markNotificationRead } from "@/services/notifications/notificationApi";
+import { fetchMyNotifications, fetchUnreadCount, markNotificationRead } from "@/services/notifications/notificationApi";
 import { useAuthStore } from "@/store/authStore";
 
 export interface AppNotification {
@@ -27,11 +27,13 @@ interface NotificationContextValue {
 const NotificationContext = createContext<NotificationContextValue | null>(null);
 
 const MY_NOTIFICATIONS_KEY = ["notifications", "my"] as const;
+const UNREAD_COUNT_KEY = ["notifications", "unreadCount"] as const;
 
 export function NotificationProvider({ children }: { children: React.ReactNode }) {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const queryClient = useQueryClient();
 
+  // Full notification list (for the inbox screen)
   const { data, isLoading, refetch } = useQuery({
     queryKey: MY_NOTIFICATIONS_KEY,
     queryFn: fetchMyNotifications,
@@ -40,19 +42,34 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     refetchOnWindowFocus: true,
   });
 
+  // Separate lightweight query for unread badge count
+  // This uses the dedicated backend endpoint that only returns a number,
+  // so the badge reflects the true server-side unread state.
+  const { data: serverUnreadCount } = useQuery({
+    queryKey: UNREAD_COUNT_KEY,
+    queryFn: fetchUnreadCount,
+    enabled: isAuthenticated,
+    refetchInterval: isAuthenticated ? 30_000 : false,
+    refetchOnWindowFocus: true,
+  });
+
   const notifications = useMemo(() => data ?? [], [data]);
 
-  const unreadCount = useMemo(
-    () => notifications.filter((n) => !n.isRead).length,
-    [notifications]
-  );
+  // Use the server-side count as the source of truth for the badge.
+  // Fall back to computing from the list if the endpoint hasn't responded yet.
+  const unreadCount = useMemo(() => {
+    if (typeof serverUnreadCount === "number") return serverUnreadCount;
+    return notifications.filter((n) => !n.isRead).length;
+  }, [serverUnreadCount, notifications]);
 
   const openNotification = useCallback(
     async (n: AppNotification) => {
       if (n.notificationID) {
         try {
           await markNotificationRead(n.notificationID);
+          // Invalidate both the list and the count so badge updates immediately
           queryClient.invalidateQueries({ queryKey: MY_NOTIFICATIONS_KEY });
+          queryClient.invalidateQueries({ queryKey: UNREAD_COUNT_KEY });
         } catch {
           // still navigate if mark-read fails offline
         }
@@ -78,6 +95,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       refetch: () => {
         refetch();
         queryClient.invalidateQueries({ queryKey: MY_NOTIFICATIONS_KEY });
+        queryClient.invalidateQueries({ queryKey: UNREAD_COUNT_KEY });
       },
       openNotification,
     }),

@@ -6,11 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="973b64d6-6094-46c3-ae9b-d54eff11ffd3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/admission-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/admission-form.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/layout/DashboardTopBar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/layout/DashboardTopBar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/constants/appIcons.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/constants/appIcons.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/hooks/useProfilePhotoUpload.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/useProfilePhotoUpload.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/services/api/axiosInstance.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/api/axiosInstance.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/notifications.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/notifications.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/contexts/NotificationContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/contexts/NotificationContext.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/notifications/notificationApi.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/notifications/notificationApi.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -115,7 +113,7 @@
       <workItem from="1779801266900" duration="4098000" />
       <workItem from="1779876532117" duration="10247000" />
       <workItem from="1779893064587" duration="612000" />
-      <workItem from="1779944396095" duration="3081000" />
+      <workItem from="1779944396095" duration="4562000" />
     </task>
     <servers />
   </component>

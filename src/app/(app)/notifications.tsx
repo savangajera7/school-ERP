@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, FlatList } from "react-native";
 import { router } from "expo-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
@@ -16,13 +17,17 @@ import { markNotificationRead } from "@/services/notifications/notificationApi";
 export default function NotificationsScreen() {
   const { role } = useAuthStore();
   const { notifications, isLoading, openNotification, refetch } = useNotifications();
+  const queryClient = useQueryClient();
 
+  // Auto-mark all unread notifications as read when the inbox is opened
   React.useEffect(() => {
     if (isLoading) return;
     const unread = notifications.filter(n => !n.isRead && n.notificationID);
     if (unread.length > 0) {
       Promise.allSettled(unread.map(n => markNotificationRead(n.notificationID!))).then(() => {
-        refetch();
+        // Invalidate both the list and the unread count so badge resets to 0
+        queryClient.invalidateQueries({ queryKey: ["notifications", "my"] });
+        queryClient.invalidateQueries({ queryKey: ["notifications", "unreadCount"] });
       });
     }
   }, [isLoading, notifications.length]);
