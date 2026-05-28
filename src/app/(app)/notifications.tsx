@@ -40,15 +40,6 @@ export default function NotificationsScreen() {
       scrollable={false}
       bodyStyle={{ flex: 1, paddingHorizontal: 0 }}
       flatHeader
-      rightAction={
-        isAdminRole(role) ? (
-          <HeaderActionButton
-            label="Send Alert"
-            shortLabel="Send"
-            onPress={() => router.push("/(app)/notification-compose")}
-          />
-        ) : undefined
-      }
     >
       {isLoading ? (
         <View className="flex-1 items-center justify-center">
