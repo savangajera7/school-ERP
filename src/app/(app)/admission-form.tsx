@@ -120,7 +120,6 @@ export default function AdmissionFormScreen() {
   const [previousSchoolName, setPreviousSchoolName] = useState("");
   const [previousSchoolCategory, setPreviousSchoolCategory] = useState("");
   const [previousSchoolCityVillage, setPreviousSchoolCityVillage] = useState("");
-  const [lastSchoolType, setLastSchoolType] = useState("");
   const [previousSchoolType, setPreviousSchoolType] = useState("");
   const [lastPercentage, setLastPercentage] = useState("");
   const [status, setStatus] = useState("Active");
@@ -249,7 +248,6 @@ export default function AdmissionFormScreen() {
       setPreviousSchoolName(s.previousSchoolName || "");
       setPreviousSchoolCategory(s.previousSchoolCategory || "");
       setPreviousSchoolCityVillage(s.previousSchoolCityVillage || "");
-      setLastSchoolType(s.lastSchoolType || "");
       setPreviousSchoolType(s.previousSchoolType || "");
       setLastPercentage(String(s.lastSemesterYearPercentage || ""));
       setStatus(s.status || "Active");
@@ -337,7 +335,6 @@ export default function AdmissionFormScreen() {
       previousSchoolName,
       previousSchoolCategory,
       previousSchoolCityVillage,
-      lastSchoolType,
       previousSchoolType,
       lastSemesterYearPercentage: parseFloat(lastPercentage) || 0,
       studentShift: studentShift,
@@ -693,7 +690,6 @@ export default function AdmissionFormScreen() {
               {renderTextInput("Previous School City/Village", previousSchoolCityVillage, setPreviousSchoolCityVillage, "City/Village")}
             </View>
             <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>
-              {renderTextInput("Type Of Last School", lastSchoolType, setLastSchoolType, "e.g. Private")}
               {renderTextInput("Previous School Type", previousSchoolType, setPreviousSchoolType, "e.g. Co-Ed")}
               {renderTextInput("Last Semester/Year %", lastPercentage, setLastPercentage, "0.00", { keyboard: "decimal-pad" })}
             </View>
