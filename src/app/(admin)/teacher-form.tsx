@@ -274,7 +274,7 @@ export default function TeacherFormScreen() {
 
   if (loadingTeacher) {
     return (
-      <PremiumScreenLayout title="Loading..." subtitle="Fetching teacher details">
+    <PremiumScreenLayout title="Loading..." subtitle="Fetching teacher details">
         <ActivityIndicator size="large" color={Colors.primary} className="mt-20" />
       </PremiumScreenLayout>
     );
@@ -422,7 +422,7 @@ export default function TeacherFormScreen() {
                       onPress={() => setShowPassword((v) => !v)}
                       className="px-3 h-full items-center justify-center"
                     >
-                      <AppIcon name={showPassword ? "eyeOff" : "eye"} size={18} color="#9CA3AF" />
+                      <AppIcon name={(showPassword ? "eyeOff" : "eye") as any} size={18} color="#9CA3AF" />
                     </TouchableOpacity>
                   </View>
                 </View>

@@ -148,7 +148,7 @@ export function ResponsiveDataList<T>({
       data={data}
       keyExtractor={keyExtractor}
       renderItem={({ item, index }) => renderCard(item, index)}
-      contentContainerStyle={{ paddingBottom: 24, flexGrow: 1 }}
+      contentContainerStyle={{ paddingBottom: 100, flexGrow: 1 }}
       showsVerticalScrollIndicator={false}
       ListHeaderComponent={headerContent}
       ListEmptyComponent={

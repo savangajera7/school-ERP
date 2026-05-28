@@ -64,8 +64,9 @@ export function PremiumScreenLayout({
 
   const body = (
     <View style={[
-      styles.body, 
-      flatHeader && { marginTop: 0 }, 
+      styles.body,
+      !scrollable && { flex: 1 },
+      flatHeader && { marginTop: 0 },
       fullWidth && { maxWidth: '100%', paddingHorizontal: isMobile ? 16 : 32 },
       bodyStyle
     ]}>
@@ -75,6 +76,7 @@ export function PremiumScreenLayout({
 
   const scrollContent = scrollable ? (
     <ScrollView
+      style={styles.flex}
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
       contentContainerStyle={styles.scrollGrow}
@@ -135,7 +137,6 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
   scrollGrow: { flexGrow: 1 },
   body: {
-    flex: 1,
     paddingHorizontal: 16,
     marginTop: OVERLAP_MARGIN,
     paddingBottom: 24,

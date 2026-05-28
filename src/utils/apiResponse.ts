@@ -21,7 +21,7 @@ function collectArray<T>(value: unknown, depth = 0): T[] | null {
   if (typeof value !== "object") return null;
 
   const inner = value as Record<string, unknown>;
-  const keys = ["data", "Data", "items", "Items", "list", "List", "result", "Result", "records", "Records"];
+  const keys = ["data", "Data", "items", "Items", "list", "List", "result", "Result", "records", "Records", "students", "Students"];
 
   for (const key of keys) {
     const candidate = inner[key];
@@ -67,7 +67,7 @@ export function parseApiData<T = Record<string, unknown>>(
 
   // Otherwise, look for a nested object (e.g. data: { ... })
   const inner = body as Record<string, unknown>;
-  const keys = ["data", "Data", "result", "Result", "item", "Item"];
+  const keys = ["data", "Data", "result", "Result", "item", "Item", "student", "Student"];
   
   for (const key of keys) {
     const nested = inner[key];

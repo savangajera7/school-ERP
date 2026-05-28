@@ -2,7 +2,7 @@ import type { StudentModel } from "@/api/model/studentModel";
 import { toCamelCaseRow } from "@/utils/apiResponse";
 
 export function normalizeStudent(raw: Record<string, unknown>): StudentModel {
-  return toCamelCaseRow(raw) as StudentModel;
+  return toCamelCaseRow(raw) as unknown as StudentModel;
 }
 
 export function getStudentDisplayName(student: StudentModel): string {

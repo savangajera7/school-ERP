@@ -39,9 +39,9 @@ import type {
 
 import type {
   DeleteApiStudentDeleteIdParams,
+  GetApiStudentGetParams,
   ProblemDetails,
-  StudentSearchRequest,
-  StudentSearchResponse
+  StudentSearchRequest
 } from '../../model';
 
 import { customInstance } from '../../../services/api/axiosInstance';
@@ -51,89 +51,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
 
-export type postApiStudentSearchResponse200 = {
-  data: StudentSearchResponse
-  status: 200
-}
-
-export type postApiStudentSearchResponse401 = {
-  data: ProblemDetails
-  status: 401
-}
-
-export type postApiStudentSearchResponseSuccess = (postApiStudentSearchResponse200) & {
-  headers: Headers;
-};
-export type postApiStudentSearchResponseError = (postApiStudentSearchResponse401) & {
-  headers: Headers;
-};
-
-export type postApiStudentSearchResponse = (postApiStudentSearchResponseSuccess | postApiStudentSearchResponseError)
-
-export const getPostApiStudentSearchUrl = () => {
-
-
-
-
-  return `/api/Student/Search`
-}
-
-export const postApiStudentSearch = async (studentSearchRequest?: StudentSearchRequest, options?: RequestInit): Promise<postApiStudentSearchResponse> => {
-
-  return customInstance<postApiStudentSearchResponse>(getPostApiStudentSearchUrl(),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(studentSearchRequest)
-  }
-);}
-
-
-
-
-export const getPostApiStudentSearchMutationOptions = <TError = ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiStudentSearch>>, TError,{data?: StudentSearchRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof postApiStudentSearch>>, TError,{data?: StudentSearchRequest}, TContext> => {
-
-const mutationKey = ['postApiStudentSearch'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiStudentSearch>>, {data?: StudentSearchRequest}> = (props) => {
-          const {data} = props ?? {};
-
-          return  postApiStudentSearch(data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type PostApiStudentSearchMutationResult = NonNullable<Awaited<ReturnType<typeof postApiStudentSearch>>>
-    export type PostApiStudentSearchMutationBody = StudentSearchRequest | undefined
-    export type PostApiStudentSearchMutationError = ProblemDetails
-
-    export const usePostApiStudentSearch = <TError = ProblemDetails,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiStudentSearch>>, TError,{data?: StudentSearchRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof postApiStudentSearch>>,
-        TError,
-        {data?: StudentSearchRequest},
-        TContext
-      > => {
-      return useMutation(getPostApiStudentSearchMutationOptions(options), queryClient);
-    }
-    export type deleteApiStudentDeleteIdResponse401TextPlain = {
+export type deleteApiStudentDeleteIdResponse401TextPlain = {
   data: ProblemDetails
   status: 401
 }
@@ -249,17 +167,24 @@ export type getApiStudentGetResponseError = (getApiStudentGetResponse401TextPlai
 
 export type getApiStudentGetResponse = (getApiStudentGetResponseError)
 
-export const getGetApiStudentGetUrl = () => {
+export const getGetApiStudentGetUrl = (params?: GetApiStudentGetParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/api/Student/Get`
+  return stringifiedParams.length > 0 ? `/api/Student/Get?${stringifiedParams}` : `/api/Student/Get`
 }
 
-export const getApiStudentGet = async ( options?: RequestInit): Promise<getApiStudentGetResponse> => {
+export const getApiStudentGet = async (params?: GetApiStudentGetParams, options?: RequestInit): Promise<getApiStudentGetResponse> => {
 
-  return customInstance<getApiStudentGetResponse>(getGetApiStudentGetUrl(),
+  return customInstance<getApiStudentGetResponse>(getGetApiStudentGetUrl(params),
   {
     ...options,
     method: 'GET'
@@ -272,23 +197,23 @@ export const getApiStudentGet = async ( options?: RequestInit): Promise<getApiSt
 
 
 
-export const getGetApiStudentGetQueryKey = () => {
+export const getGetApiStudentGetQueryKey = (params?: GetApiStudentGetParams,) => {
     return [
-    `/api/Student/Get`
+    `/api/Student/Get`, ...(params ? [params] : [])
     ] as const;
     }
 
 
-export const getGetApiStudentGetQueryOptions = <TData = Awaited<ReturnType<typeof getApiStudentGet>>, TError = ProblemDetails>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiStudentGet>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+export const getGetApiStudentGetQueryOptions = <TData = Awaited<ReturnType<typeof getApiStudentGet>>, TError = ProblemDetails>(params?: GetApiStudentGetParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiStudentGet>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
 
-  const queryKey =  queryOptions?.queryKey ?? getGetApiStudentGetQueryKey();
+  const queryKey =  queryOptions?.queryKey ?? getGetApiStudentGetQueryKey(params);
 
 
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiStudentGet>>> = ({ signal }) => getApiStudentGet({ signal, ...requestOptions });
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiStudentGet>>> = ({ signal }) => getApiStudentGet(params, { signal, ...requestOptions });
 
 
 
@@ -302,7 +227,7 @@ export type GetApiStudentGetQueryError = ProblemDetails
 
 
 export function useGetApiStudentGet<TData = Awaited<ReturnType<typeof getApiStudentGet>>, TError = ProblemDetails>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiStudentGet>>, TError, TData>> & Pick<
+ params: undefined |  GetApiStudentGetParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiStudentGet>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiStudentGet>>,
           TError,
@@ -312,7 +237,7 @@ export function useGetApiStudentGet<TData = Awaited<ReturnType<typeof getApiStud
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetApiStudentGet<TData = Awaited<ReturnType<typeof getApiStudentGet>>, TError = ProblemDetails>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiStudentGet>>, TError, TData>> & Pick<
+ params?: GetApiStudentGetParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiStudentGet>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getApiStudentGet>>,
           TError,
@@ -322,16 +247,16 @@ export function useGetApiStudentGet<TData = Awaited<ReturnType<typeof getApiStud
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 export function useGetApiStudentGet<TData = Awaited<ReturnType<typeof getApiStudentGet>>, TError = ProblemDetails>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiStudentGet>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ params?: GetApiStudentGetParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiStudentGet>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 
 export function useGetApiStudentGet<TData = Awaited<ReturnType<typeof getApiStudentGet>>, TError = ProblemDetails>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiStudentGet>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ params?: GetApiStudentGetParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiStudentGet>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
-  const queryOptions = getGetApiStudentGetQueryOptions(options)
+  const queryOptions = getGetApiStudentGetQueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 
@@ -691,3 +616,88 @@ export function useGetApiStudentGetByIDId<TData = Awaited<ReturnType<typeof getA
 
 
 
+export type postApiStudentSearchResponse401TextPlain = {
+  data: ProblemDetails
+  status: 401
+}
+
+export type postApiStudentSearchResponse401ApplicationJson = {
+  data: ProblemDetails
+  status: 401
+}
+
+export type postApiStudentSearchResponse401TextJson = {
+  data: ProblemDetails
+  status: 401
+}
+
+;
+export type postApiStudentSearchResponseError = (postApiStudentSearchResponse401TextPlain | postApiStudentSearchResponse401ApplicationJson | postApiStudentSearchResponse401TextJson) & {
+  headers: Headers;
+};
+
+export type postApiStudentSearchResponse = (postApiStudentSearchResponseError)
+
+export const getPostApiStudentSearchUrl = () => {
+
+
+
+
+  return `/api/Student/Search`
+}
+
+export const postApiStudentSearch = async (studentSearchRequest?: StudentSearchRequest, options?: RequestInit): Promise<postApiStudentSearchResponse> => {
+
+  return customInstance<postApiStudentSearchResponse>(getPostApiStudentSearchUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(studentSearchRequest)
+  }
+);}
+
+
+
+
+export const getPostApiStudentSearchMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiStudentSearch>>, TError,{data?: StudentSearchRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof postApiStudentSearch>>, TError,{data?: StudentSearchRequest}, TContext> => {
+
+const mutationKey = ['postApiStudentSearch'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiStudentSearch>>, {data?: StudentSearchRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  postApiStudentSearch(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiStudentSearchMutationResult = NonNullable<Awaited<ReturnType<typeof postApiStudentSearch>>>
+    export type PostApiStudentSearchMutationBody = StudentSearchRequest | undefined
+    export type PostApiStudentSearchMutationError = ProblemDetails
+
+    export const usePostApiStudentSearch = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiStudentSearch>>, TError,{data?: StudentSearchRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postApiStudentSearch>>,
+        TError,
+        {data?: StudentSearchRequest},
+        TContext
+      > => {
+      return useMutation(getPostApiStudentSearchMutationOptions(options), queryClient);
+    }

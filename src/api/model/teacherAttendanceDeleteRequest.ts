@@ -20,6 +20,8 @@
  */
 
 export interface TeacherAttendanceDeleteRequest {
+  /** @nullable */
+  schoolID?: number | null;
   attendanceID?: number;
   updatedBy?: number;
 }

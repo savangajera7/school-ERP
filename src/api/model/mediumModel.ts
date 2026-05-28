@@ -32,5 +32,6 @@ export interface MediumModel {
   createdBy?: number | null;
   /** @nullable */
   createdOn?: string | null;
-  schoolID: number;
+  /** @nullable */
+  schoolID?: number | null;
 }

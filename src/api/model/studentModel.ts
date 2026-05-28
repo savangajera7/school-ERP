@@ -21,13 +21,33 @@
 
 export interface StudentModel {
   studentID?: number;
+  /**
+     * @minimum 1
+     * @maximum 2147483647
+     */
   schoolID?: number;
+  /**
+     * @minimum 1
+     * @maximum 2147483647
+     */
   academicYearID?: number;
+  /**
+     * @minimum 1
+     * @maximum 2147483647
+     */
   classID?: number;
   /** @nullable */
   batchID?: number | null;
   /** @nullable */
   sectionID?: number | null;
+  /** @nullable */
+  className?: string | null;
+  /** @nullable */
+  batchName?: string | null;
+  /** @nullable */
+  sectionName?: string | null;
+  /** @nullable */
+  academicYear?: string | null;
   /** @nullable */
   studentGRNo?: string | null;
   /** @nullable */
@@ -38,12 +58,12 @@ export interface StudentModel {
   hallTicketNo?: string | null;
   /** @nullable */
   admissionFormNo?: string | null;
-  /** @nullable */
-  firstName?: string | null;
+  /** @minLength 1 */
+  firstName: string;
   /** @nullable */
   middleName?: string | null;
-  /** @nullable */
-  lastName?: string | null;
+  /** @minLength 1 */
+  lastName: string;
   /** @nullable */
   firstNameSecondary?: string | null;
   /** @nullable */
@@ -52,16 +72,15 @@ export interface StudentModel {
   lastNameSecondary?: string | null;
   /** @nullable */
   studentDisplayName?: string | null;
-  /** @nullable */
-  studentNumber?: string | null;
+  /** @minLength 1 */
+  studentNumber: string;
   /** @nullable */
   studentWhatsappNo?: string | null;
   /** @nullable */
   studentEmail?: string | null;
   /** @nullable */
   password?: string | null;
-  /** @nullable */
-  dob?: string | null;
+  dob: string;
   /** @nullable */
   age?: number | null;
   bloodGroupID?: number;
@@ -91,8 +110,8 @@ export interface StudentModel {
   penNo?: string | null;
   /** @nullable */
   aparID?: string | null;
-  /** @nullable */
-  gender?: string | null;
+  /** @minLength 1 */
+  gender: string;
   /** @nullable */
   weight?: number | null;
   /** @nullable */
@@ -155,10 +174,10 @@ export interface StudentModel {
   status?: string | null;
   /** @nullable */
   createdDate?: string | null;
-  /** @nullable */
-  fatherName?: string | null;
-  /** @nullable */
-  fatherNumber?: string | null;
+  /** @minLength 1 */
+  fatherName: string;
+  /** @minLength 1 */
+  fatherNumber: string;
   /** @nullable */
   fatherOccupation?: string | null;
   /** @nullable */

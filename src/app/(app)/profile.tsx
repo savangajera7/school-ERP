@@ -51,7 +51,7 @@ export default function ProfileScreen() {
   const isParent = role === "parent";
 
   const { unreadCount } = useNotifications();
-  const { data: studentsResponse, isLoading: childrenLoading } = useGetApiStudentGet({
+  const { data: studentsResponse, isLoading: childrenLoading } = useGetApiStudentGet(undefined, {
     query: { enabled: isParent },
   });
 

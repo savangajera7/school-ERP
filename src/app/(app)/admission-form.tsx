@@ -23,7 +23,7 @@ import { useGetApiMediumGet } from "@/api/generated/master-medium/master-medium"
 import { usePermissions } from "@/hooks/usePermissions";
 import { AccessDenied } from "@/components/auth/AccessDenied";
 import { useResponsive } from "@/hooks/useResponsive";
-import { parseApiData, parseApiList } from "@/utils/apiResponse";
+import { parseApiData, parseApiList, toCamelCaseRow } from "@/utils/apiResponse";
 import { PremiumDatePicker } from "@/components/ui/PremiumDatePicker";
 import * as ImagePicker from 'expo-image-picker';
 import { useAuthStore } from "@/store/authStore";
@@ -40,6 +40,7 @@ export default function AdmissionFormScreen() {
   }
 
   const { isMobile } = useResponsive();
+  const scrollViewRef = React.useRef<ScrollView>(null);
   const [loading, setLoading] = useState(false);
   const { userData } = useAuthStore();
 
@@ -176,7 +177,8 @@ export default function AdmissionFormScreen() {
 
   useEffect(() => {
     if (studentResponse?.data) {
-      const s = parseApiData(studentResponse.data) as any;
+      const parsed = parseApiData(studentResponse.data) as any;
+      const s = parsed ? toCamelCaseRow(parsed) as any : {};
       setAcademicYearId(s.academicYearID);
       setClassId(s.classID);
       setBatchId(s.batchID);
@@ -279,6 +281,7 @@ export default function AdmissionFormScreen() {
         guardian: prev.guardian || !!newErrors.fatherName || !!newErrors.fatherNumber,
       }));
       Alert.alert("Missing Fields", "Please complete all required fields highlighted in red.");
+      scrollViewRef.current?.scrollTo({ y: 0, animated: true });
       return;
     }
     setErrors({});
@@ -366,12 +369,12 @@ export default function AdmissionFormScreen() {
       setLoading(true);
       if (isEditing) {
         await studentUpdateMutation.mutateAsync({
-          data: { ...payload, studentID: studentID as number }
+          data: { ...payload, studentID: studentID as number } as any
         });
         Alert.alert("Success", "Student Records Updated Successfully!");
       } else {
         await studentAddMutation.mutateAsync({
-          data: payload
+          data: payload as any
         });
         Alert.alert("Success", "Student Admission Registered Successfully!");
       }
@@ -753,6 +756,7 @@ export default function AdmissionFormScreen() {
       onBack={() => router.back()}
       keyboard
       fullWidth
+      scrollable={false}
       rightAction={
         !isMobile ? (
           <TouchableOpacity
@@ -773,9 +777,16 @@ export default function AdmissionFormScreen() {
         ) : undefined
       }
     >
-      {formContent}
+      <ScrollView
+        ref={scrollViewRef}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={{ paddingBottom: 40 }}
+      >
+        {formContent}
+      </ScrollView>
       {isMobile && (
-        <View className="mb-10">
+        <View className="mb-10 mt-2">
           <TouchableOpacity
             onPress={handleSubmit}
             disabled={loading}

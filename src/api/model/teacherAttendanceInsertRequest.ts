@@ -20,6 +20,8 @@
  */
 
 export interface TeacherAttendanceInsertRequest {
+  /** @nullable */
+  schoolID?: number | null;
   teacherID?: number;
   attendanceDate?: string;
   /** @nullable */

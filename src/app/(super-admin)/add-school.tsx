@@ -66,8 +66,8 @@ export default function AddSchoolScreen() {
 
   return (
     <PremiumScreenLayout
-      title="Add School"
-      subtitle="Register a new school and primary admin"
+      title="Add New School"
+      subtitle="Register a new school in the system"
       onBack={() => router.back()}
     >
       <KeyboardAvoidingView 
@@ -186,9 +186,9 @@ export default function AddSchoolScreen() {
 
           <View className="pb-8">
             <Button 
-              title="Create School" 
+              label="Create School" 
               onPress={handleSubmit(onSubmit)} 
-              isLoading={addSchoolMutation.isPending} 
+              loading={addSchoolMutation.isPending} 
             />
           </View>
         </ScrollView>

@@ -38,6 +38,7 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  DeleteApiMediumDeleteIdParams,
   MediumModel
 } from '../../model';
 
@@ -135,17 +136,26 @@ export type deleteApiMediumDeleteIdResponseSuccess = (deleteApiMediumDeleteIdRes
 
 export type deleteApiMediumDeleteIdResponse = (deleteApiMediumDeleteIdResponseSuccess)
 
-export const getDeleteApiMediumDeleteIdUrl = (id: number,) => {
+export const getDeleteApiMediumDeleteIdUrl = (id: number,
+    params?: DeleteApiMediumDeleteIdParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/api/Medium/Delete/${id}`
+  return stringifiedParams.length > 0 ? `/api/Medium/Delete/${id}?${stringifiedParams}` : `/api/Medium/Delete/${id}`
 }
 
-export const deleteApiMediumDeleteId = async (id: number, options?: RequestInit): Promise<deleteApiMediumDeleteIdResponse> => {
+export const deleteApiMediumDeleteId = async (id: number,
+    params?: DeleteApiMediumDeleteIdParams, options?: RequestInit): Promise<deleteApiMediumDeleteIdResponse> => {
 
-  return customInstance<deleteApiMediumDeleteIdResponse>(getDeleteApiMediumDeleteIdUrl(id),
+  return customInstance<deleteApiMediumDeleteIdResponse>(getDeleteApiMediumDeleteIdUrl(id,params),
   {
     ...options,
     method: 'DELETE'
@@ -158,8 +168,8 @@ export const deleteApiMediumDeleteId = async (id: number, options?: RequestInit)
 
 
 export const getDeleteApiMediumDeleteIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiMediumDeleteId>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof deleteApiMediumDeleteId>>, TError,{id: number}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiMediumDeleteId>>, TError,{id: number;params?: DeleteApiMediumDeleteIdParams}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteApiMediumDeleteId>>, TError,{id: number;params?: DeleteApiMediumDeleteIdParams}, TContext> => {
 
 const mutationKey = ['deleteApiMediumDeleteId'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -171,10 +181,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiMediumDeleteId>>, {id: number}> = (props) => {
-          const {id} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiMediumDeleteId>>, {id: number;params?: DeleteApiMediumDeleteIdParams}> = (props) => {
+          const {id,params} = props ?? {};
 
-          return  deleteApiMediumDeleteId(id,requestOptions)
+          return  deleteApiMediumDeleteId(id,params,requestOptions)
         }
 
 
@@ -189,89 +199,14 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type DeleteApiMediumDeleteIdMutationError = unknown
 
     export const useDeleteApiMediumDeleteId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiMediumDeleteId>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiMediumDeleteId>>, TError,{id: number;params?: DeleteApiMediumDeleteIdParams}, TContext>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteApiMediumDeleteId>>,
         TError,
-        {id: number},
+        {id: number;params?: DeleteApiMediumDeleteIdParams},
         TContext
       > => {
       return useMutation(getDeleteApiMediumDeleteIdMutationOptions(options), queryClient);
-    }
-    export type postApiMediumDeleteMediumIdResponse200 = {
-  data: void
-  status: 200
-}
-
-export type postApiMediumDeleteMediumIdResponseSuccess = (postApiMediumDeleteMediumIdResponse200) & {
-  headers: Headers;
-};
-;
-
-export type postApiMediumDeleteMediumIdResponse = (postApiMediumDeleteMediumIdResponseSuccess)
-
-export const getPostApiMediumDeleteMediumIdUrl = (id: number,) => {
-
-
-
-
-  return `/api/Medium/DeleteMedium/${id}`
-}
-
-export const postApiMediumDeleteMediumId = async (id: number, options?: RequestInit): Promise<postApiMediumDeleteMediumIdResponse> => {
-
-  return customInstance<postApiMediumDeleteMediumIdResponse>(getPostApiMediumDeleteMediumIdUrl(id),
-  {
-    ...options,
-    method: 'POST'
-
-
-  }
-);}
-
-
-
-
-export const getPostApiMediumDeleteMediumIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiMediumDeleteMediumId>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof postApiMediumDeleteMediumId>>, TError,{id: number}, TContext> => {
-
-const mutationKey = ['postApiMediumDeleteMediumId'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiMediumDeleteMediumId>>, {id: number}> = (props) => {
-          const {id} = props ?? {};
-
-          return  postApiMediumDeleteMediumId(id,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type PostApiMediumDeleteMediumIdMutationResult = NonNullable<Awaited<ReturnType<typeof postApiMediumDeleteMediumId>>>
-
-    export type PostApiMediumDeleteMediumIdMutationError = unknown
-
-    export const usePostApiMediumDeleteMediumId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiMediumDeleteMediumId>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof postApiMediumDeleteMediumId>>,
-        TError,
-        {id: number},
-        TContext
-      > => {
-      return useMutation(getPostApiMediumDeleteMediumIdMutationOptions(options), queryClient);
     }
     export type getApiMediumGetResponse200 = {
   data: void
@@ -485,294 +420,7 @@ export function useGetApiMediumGetByIDId<TData = Awaited<ReturnType<typeof getAp
 
 
 
-export type getApiMediumGetMediumByIdIdResponse200 = {
-  data: void
-  status: 200
-}
-
-export type getApiMediumGetMediumByIdIdResponseSuccess = (getApiMediumGetMediumByIdIdResponse200) & {
-  headers: Headers;
-};
-;
-
-export type getApiMediumGetMediumByIdIdResponse = (getApiMediumGetMediumByIdIdResponseSuccess)
-
-export const getGetApiMediumGetMediumByIdIdUrl = (id: number,) => {
-
-
-
-
-  return `/api/Medium/GetMediumById/${id}`
-}
-
-export const getApiMediumGetMediumByIdId = async (id: number, options?: RequestInit): Promise<getApiMediumGetMediumByIdIdResponse> => {
-
-  return customInstance<getApiMediumGetMediumByIdIdResponse>(getGetApiMediumGetMediumByIdIdUrl(id),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
-
-export const getGetApiMediumGetMediumByIdIdQueryKey = (id: number,) => {
-    return [
-    `/api/Medium/GetMediumById/${id}`
-    ] as const;
-    }
-
-
-export const getGetApiMediumGetMediumByIdIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiMediumGetMediumByIdId>>, TError = unknown>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMediumGetMediumByIdId>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetApiMediumGetMediumByIdIdQueryKey(id);
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiMediumGetMediumByIdId>>> = ({ signal }) => getApiMediumGetMediumByIdId(id, { signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, enabled: id !== null && id !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiMediumGetMediumByIdId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetApiMediumGetMediumByIdIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiMediumGetMediumByIdId>>>
-export type GetApiMediumGetMediumByIdIdQueryError = unknown
-
-
-export function useGetApiMediumGetMediumByIdId<TData = Awaited<ReturnType<typeof getApiMediumGetMediumByIdId>>, TError = unknown>(
- id: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMediumGetMediumByIdId>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiMediumGetMediumByIdId>>,
-          TError,
-          Awaited<ReturnType<typeof getApiMediumGetMediumByIdId>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiMediumGetMediumByIdId<TData = Awaited<ReturnType<typeof getApiMediumGetMediumByIdId>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMediumGetMediumByIdId>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiMediumGetMediumByIdId>>,
-          TError,
-          Awaited<ReturnType<typeof getApiMediumGetMediumByIdId>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiMediumGetMediumByIdId<TData = Awaited<ReturnType<typeof getApiMediumGetMediumByIdId>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMediumGetMediumByIdId>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-
-export function useGetApiMediumGetMediumByIdId<TData = Awaited<ReturnType<typeof getApiMediumGetMediumByIdId>>, TError = unknown>(
- id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMediumGetMediumByIdId>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetApiMediumGetMediumByIdIdQueryOptions(id,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return { ...query, queryKey: queryOptions.queryKey };
-}
-
-
-
-
-
-
-export type getApiMediumGetMediumListResponse200 = {
-  data: void
-  status: 200
-}
-
-export type getApiMediumGetMediumListResponseSuccess = (getApiMediumGetMediumListResponse200) & {
-  headers: Headers;
-};
-;
-
-export type getApiMediumGetMediumListResponse = (getApiMediumGetMediumListResponseSuccess)
-
-export const getGetApiMediumGetMediumListUrl = () => {
-
-
-
-
-  return `/api/Medium/GetMediumList`
-}
-
-export const getApiMediumGetMediumList = async ( options?: RequestInit): Promise<getApiMediumGetMediumListResponse> => {
-
-  return customInstance<getApiMediumGetMediumListResponse>(getGetApiMediumGetMediumListUrl(),
-  {
-    ...options,
-    method: 'GET'
-
-
-  }
-);}
-
-
-
-
-
-export const getGetApiMediumGetMediumListQueryKey = () => {
-    return [
-    `/api/Medium/GetMediumList`
-    ] as const;
-    }
-
-
-export const getGetApiMediumGetMediumListQueryOptions = <TData = Awaited<ReturnType<typeof getApiMediumGetMediumList>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMediumGetMediumList>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetApiMediumGetMediumListQueryKey();
-
-
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiMediumGetMediumList>>> = ({ signal }) => getApiMediumGetMediumList({ signal, ...requestOptions });
-
-
-
-
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiMediumGetMediumList>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetApiMediumGetMediumListQueryResult = NonNullable<Awaited<ReturnType<typeof getApiMediumGetMediumList>>>
-export type GetApiMediumGetMediumListQueryError = unknown
-
-
-export function useGetApiMediumGetMediumList<TData = Awaited<ReturnType<typeof getApiMediumGetMediumList>>, TError = unknown>(
-  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMediumGetMediumList>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiMediumGetMediumList>>,
-          TError,
-          Awaited<ReturnType<typeof getApiMediumGetMediumList>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiMediumGetMediumList<TData = Awaited<ReturnType<typeof getApiMediumGetMediumList>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMediumGetMediumList>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getApiMediumGetMediumList>>,
-          TError,
-          Awaited<ReturnType<typeof getApiMediumGetMediumList>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetApiMediumGetMediumList<TData = Awaited<ReturnType<typeof getApiMediumGetMediumList>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMediumGetMediumList>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-
-export function useGetApiMediumGetMediumList<TData = Awaited<ReturnType<typeof getApiMediumGetMediumList>>, TError = unknown>(
-  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiMediumGetMediumList>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetApiMediumGetMediumListQueryOptions(options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return { ...query, queryKey: queryOptions.queryKey };
-}
-
-
-
-
-
-
-export type postApiMediumInsertMediumResponse200 = {
-  data: void
-  status: 200
-}
-
-export type postApiMediumInsertMediumResponseSuccess = (postApiMediumInsertMediumResponse200) & {
-  headers: Headers;
-};
-;
-
-export type postApiMediumInsertMediumResponse = (postApiMediumInsertMediumResponseSuccess)
-
-export const getPostApiMediumInsertMediumUrl = () => {
-
-
-
-
-  return `/api/Medium/InsertMedium`
-}
-
-export const postApiMediumInsertMedium = async (mediumModel?: MediumModel, options?: RequestInit): Promise<postApiMediumInsertMediumResponse> => {
-
-  return customInstance<postApiMediumInsertMediumResponse>(getPostApiMediumInsertMediumUrl(),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(mediumModel)
-  }
-);}
-
-
-
-
-export const getPostApiMediumInsertMediumMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiMediumInsertMedium>>, TError,{data?: MediumModel}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof postApiMediumInsertMedium>>, TError,{data?: MediumModel}, TContext> => {
-
-const mutationKey = ['postApiMediumInsertMedium'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiMediumInsertMedium>>, {data?: MediumModel}> = (props) => {
-          const {data} = props ?? {};
-
-          return  postApiMediumInsertMedium(data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type PostApiMediumInsertMediumMutationResult = NonNullable<Awaited<ReturnType<typeof postApiMediumInsertMedium>>>
-    export type PostApiMediumInsertMediumMutationBody = MediumModel | undefined
-    export type PostApiMediumInsertMediumMutationError = unknown
-
-    export const usePostApiMediumInsertMedium = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiMediumInsertMedium>>, TError,{data?: MediumModel}, TContext>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof postApiMediumInsertMedium>>,
-        TError,
-        {data?: MediumModel},
-        TContext
-      > => {
-      return useMutation(getPostApiMediumInsertMediumMutationOptions(options), queryClient);
-    }
-    export type putApiMediumUpdateResponse200 = {
+export type putApiMediumUpdateResponse200 = {
   data: void
   status: 200
 }
@@ -846,79 +494,4 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
         TContext
       > => {
       return useMutation(getPutApiMediumUpdateMutationOptions(options), queryClient);
-    }
-    export type postApiMediumUpdateMediumResponse200 = {
-  data: void
-  status: 200
-}
-
-export type postApiMediumUpdateMediumResponseSuccess = (postApiMediumUpdateMediumResponse200) & {
-  headers: Headers;
-};
-;
-
-export type postApiMediumUpdateMediumResponse = (postApiMediumUpdateMediumResponseSuccess)
-
-export const getPostApiMediumUpdateMediumUrl = () => {
-
-
-
-
-  return `/api/Medium/UpdateMedium`
-}
-
-export const postApiMediumUpdateMedium = async (mediumModel?: MediumModel, options?: RequestInit): Promise<postApiMediumUpdateMediumResponse> => {
-
-  return customInstance<postApiMediumUpdateMediumResponse>(getPostApiMediumUpdateMediumUrl(),
-  {
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(mediumModel)
-  }
-);}
-
-
-
-
-export const getPostApiMediumUpdateMediumMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiMediumUpdateMedium>>, TError,{data?: MediumModel}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof postApiMediumUpdateMedium>>, TError,{data?: MediumModel}, TContext> => {
-
-const mutationKey = ['postApiMediumUpdateMedium'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiMediumUpdateMedium>>, {data?: MediumModel}> = (props) => {
-          const {data} = props ?? {};
-
-          return  postApiMediumUpdateMedium(data,requestOptions)
-        }
-
-
-
-
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type PostApiMediumUpdateMediumMutationResult = NonNullable<Awaited<ReturnType<typeof postApiMediumUpdateMedium>>>
-    export type PostApiMediumUpdateMediumMutationBody = MediumModel | undefined
-    export type PostApiMediumUpdateMediumMutationError = unknown
-
-    export const usePostApiMediumUpdateMedium = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiMediumUpdateMedium>>, TError,{data?: MediumModel}, TContext>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof postApiMediumUpdateMedium>>,
-        TError,
-        {data?: MediumModel},
-        TContext
-      > => {
-      return useMutation(getPostApiMediumUpdateMediumMutationOptions(options), queryClient);
     }

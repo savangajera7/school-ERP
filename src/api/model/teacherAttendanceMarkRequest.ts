@@ -18,16 +18,13 @@
  * **Student:** yash@gmail.com / 123 | **Admin:** admin / admin123
  * OpenAPI spec version: v1
  */
+import type { TeacherAttendanceItemDto } from './teacherAttendanceItemDto';
 
-export type GetApiTimetableGetParams = {
-SchoolID?: number;
-View?: string;
-ClassID?: number;
-BatchID?: number;
-TeacherID?: number;
-StudentID?: number;
-TimetableID?: number;
-Day?: string;
-Date?: string;
-ExportType?: string;
-};
+export interface TeacherAttendanceMarkRequest {
+  /** @nullable */
+  schoolID?: number | null;
+  attendanceDate?: string;
+  absentOnly?: boolean;
+  /** @nullable */
+  teachers?: TeacherAttendanceItemDto[] | null;
+}

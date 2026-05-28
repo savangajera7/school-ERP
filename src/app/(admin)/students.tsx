@@ -3,7 +3,7 @@ import {
   View, Text, TouchableOpacity, Alert, Modal,
   ScrollView, ActivityIndicator, TextInput,
 } from "react-native";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { 
   useDeleteApiStudentDeleteId,
   usePostApiStudentSearch 
@@ -112,21 +112,23 @@ export default function AdminStudentManagementScreen() {
     }
   }, [searchMutate]);
 
-  // Effect to trigger search when filters or pagination change
-  useEffect(() => {
-    const searchRequest: StudentSearchRequest = {
-      page: currentPage,
-      pageSize: pageSize,
-      search: searchQuery.trim() || undefined,
-      classID: selectedClassId || undefined,
-      batchID: selectedBatchId || undefined,
-      mediumID: selectedMediumId || undefined,
-      sortBy: "Name",
-      sortOrder: "ASC"
-    };
+  // Effect to trigger search when focused or when filters/pagination change
+  useFocusEffect(
+    useCallback(() => {
+      const searchRequest: StudentSearchRequest = {
+        page: currentPage,
+        pageSize: pageSize,
+        search: searchQuery.trim() || undefined,
+        classID: selectedClassId || undefined,
+        batchID: selectedBatchId || undefined,
+        mediumID: selectedMediumId || undefined,
+        sortBy: "Name",
+        sortOrder: "ASC"
+      };
 
-    searchStudents(searchRequest);
-  }, [searchQuery, selectedClassId, selectedBatchId, selectedMediumId, currentPage, pageSize, searchStudents]);
+      searchStudents(searchRequest);
+    }, [searchQuery, selectedClassId, selectedBatchId, selectedMediumId, currentPage, pageSize, searchStudents])
+  );
 
   // Reset to first page when filters change
   useEffect(() => {
@@ -199,14 +201,14 @@ export default function AdminStudentManagementScreen() {
       header: "Student Name",
       flex: 2,
       render: (s) => (
-        <View className="flex-row items-center gap-2">
+        <View className="flex-row items-center gap-2 flex-1 overflow-hidden">
           {s.studentPhoto ? (
-            <Image source={{ uri: s.studentPhoto }} className="w-6 h-6 rounded-full" />
+            <Image source={{ uri: s.studentPhoto }} className="w-6 h-6 rounded-full shrink-0" />
           ) : (
             <GenderIcon gender={s.gender} size={16} />
           )}
-          <View>
-            <Text className="text-sm font-bold text-gray-800">{getStudentDisplayName(s)}</Text>
+          <View className="flex-1 overflow-hidden">
+            <Text className="text-sm font-bold text-gray-800" numberOfLines={1}>{getStudentDisplayName(s)}</Text>
           </View>
         </View>
       )
@@ -216,7 +218,7 @@ export default function AdminStudentManagementScreen() {
       header: "Parent Login",
       flex: 1.4,
       render: (s) => (
-        <View>
+        <View className="flex-1 overflow-hidden">
           <Text className="text-xs font-bold text-gray-700" numberOfLines={1}>
             U: {getParentLoginUsername(s)}
           </Text>
@@ -250,10 +252,14 @@ export default function AdminStudentManagementScreen() {
     {
       key: "actions",
       header: "Actions",
-      width: 100,
+      width: 130,
       align: "right",
       render: (s) => (
         <EntityActionButtons
+          onView={() => {
+            if (s.studentID == null) return;
+            router.push({ pathname: "/(app)/student-profile", params: { id: String(s.studentID) } });
+          }}
           onEdit={() => router.push(`/(app)/admission-form?id=${s.studentID}`)}
           onDelete={() => handleDeleteClick(s)}
         />
@@ -406,7 +412,8 @@ export default function AdminStudentManagementScreen() {
       title="Students"
       subtitle="Manage school enrollment"
       scrollable={false}
-      flatHeader
+      fullWidth
+      hideBack
     >
       <View
         className="bg-white px-4 py-3 border-b border-gray-200 z-20"

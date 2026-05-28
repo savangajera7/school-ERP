@@ -20,6 +20,7 @@
  */
 
 export type GetApiHomeworkGetParams = {
+SchoolID?: number;
 HomeworkID?: number;
 ClassID?: number;
 StudentID?: number;

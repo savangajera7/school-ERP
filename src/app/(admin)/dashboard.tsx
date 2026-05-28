@@ -3,7 +3,7 @@ import { View, RefreshControl } from "react-native";
 import { router } from "expo-router";
 import { useAuthStore } from "@/store/authStore";
 import { useResponsive } from "@/hooks/useResponsive";
-import { useGetApiStudentGet } from "@/api/generated/3-student-crud/3-student-crud";
+import { usePostApiStudentSearch } from "@/api/generated/3-student-crud/3-student-crud";
 import { useGetApiTeacherGetTeacherList } from "@/api/generated/teacher/teacher";
 import { useGetApiClassGetClassList } from "@/api/generated/master-class/master-class";
 import { useGetApiAttendanceGet } from "@/api/generated/9-attendance/9-attendance";
@@ -27,21 +27,38 @@ export default function AdminDashboard() {
   const quickActions = QUICK_ACTIONS.filter((a) => canAccessRoute(a.route));
   const { t } = useTranslation();
 
-  const { data: studentsData, isLoading: loadingStudents, refetch: refetchStudents } = useGetApiStudentGet();
+  const [totalStudents, setTotalStudents] = useState<number | string>("...");
+  const { mutateAsync: searchMutate } = usePostApiStudentSearch();
+  
+  React.useEffect(() => {
+    searchMutate({ data: { page: 1, pageSize: 1 } })
+      .then((res: any) => {
+        if (res?.data?.data?.totalCount !== undefined) {
+          setTotalStudents(res.data.data.totalCount);
+        } else if (res?.data?.data?.TotalCount !== undefined) {
+          setTotalStudents(res.data.data.TotalCount);
+        }
+      })
+      .catch((e) => console.log('Failed to fetch students count', e));
+  }, [searchMutate]);
+
   const { data: teachersData, isLoading: loadingTeachers, refetch: refetchTeachers } = useGetApiTeacherGetTeacherList();
   const { data: classesData, isLoading: loadingClasses, refetch: refetchClasses } = useGetApiClassGetClassList();
   const { data: attendanceData, isLoading: loadingAttendance, refetch: refetchAttendance } = useGetApiAttendanceGet();
 
-  const isLoading = loadingStudents || loadingTeachers || loadingClasses || loadingAttendance;
+  const isLoading = loadingTeachers || loadingClasses || loadingAttendance;
 
   const onRefresh = () => {
-    refetchStudents();
+    searchMutate({ data: { page: 1, pageSize: 1 } }).then((res: any) => {
+       if (res?.data?.data?.totalCount !== undefined) {
+          setTotalStudents(res.data.data.totalCount);
+       }
+    });
     refetchTeachers();
     refetchClasses();
     refetchAttendance();
   };
 
-  const students = parseApiList(studentsData?.data);
   const teachers = parseApiList(teachersData?.data);
   const classes = parseApiList(classesData?.data);
   const attendance = parseApiList(attendanceData?.data);
@@ -49,7 +66,7 @@ export default function AdminDashboard() {
   const stats = [
     {
       icon: "students" as AppIconName, label: "Total Students", subtitle: "Active enrollment",
-      value: isLoading ? "..." : students.length.toString(),
+      value: String(totalStudents),
       backgroundColor: "#E0F2FE", textColor: "#0369A1", route: "/(app)/students"
     },
     {

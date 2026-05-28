@@ -19,15 +19,7 @@
  * OpenAPI spec version: v1
  */
 
-export type GetApiTimetableGetParams = {
-SchoolID?: number;
-View?: string;
-ClassID?: number;
-BatchID?: number;
-TeacherID?: number;
-StudentID?: number;
-TimetableID?: number;
-Day?: string;
-Date?: string;
-ExportType?: string;
+export type DeleteApiTeacherPermissionsRemoveParams = {
+teacherId?: number;
+classId?: number;
 };

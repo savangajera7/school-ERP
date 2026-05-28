@@ -50,7 +50,7 @@ export default function EditSchoolScreen() {
 
   useEffect(() => {
     if (data?.data?.data) {
-      const school = data.data.data;
+      const school = data.data as any;
       reset({
         schoolID: school.schoolID,
         schoolName: school.schoolName || "",
@@ -92,7 +92,7 @@ export default function EditSchoolScreen() {
   return (
     <PremiumScreenLayout
       title="Edit School"
-      subtitle="Update school and admin details"
+      subtitle="Manage school information"
       onBack={() => router.back()}
     >
       {isLoading ? (
@@ -135,7 +135,7 @@ export default function EditSchoolScreen() {
                 control={control}
                 name="line1"
                 render={({ field: { onChange, onBlur, value } }) => (
-                  <Input label="Address Line 1" placeholder="123 Main St" onBlur={onBlur} onChangeText={onChange} value={value} error={errors.line1?.message} />
+                  <Input label="Address Line 1" placeholder="123 Main St" onBlur={onBlur} onChangeText={onChange} value={value ?? ""} error={errors.line1?.message} />
                 )}
               />
               <View className="flex-row space-x-4">
@@ -144,7 +144,7 @@ export default function EditSchoolScreen() {
                     control={control}
                     name="city"
                     render={({ field: { onChange, onBlur, value } }) => (
-                      <Input label="City" placeholder="New York" onBlur={onBlur} onChangeText={onChange} value={value} error={errors.city?.message} />
+                      <Input label="City" placeholder="New York" onBlur={onBlur} onChangeText={onChange} value={value ?? ""} error={errors.city?.message} />
                     )}
                   />
                 </View>
@@ -153,7 +153,7 @@ export default function EditSchoolScreen() {
                     control={control}
                     name="state"
                     render={({ field: { onChange, onBlur, value } }) => (
-                      <Input label="State" placeholder="NY" onBlur={onBlur} onChangeText={onChange} value={value} error={errors.state?.message} />
+                      <Input label="State" placeholder="NY" onBlur={onBlur} onChangeText={onChange} value={value ?? ""} error={errors.state?.message} />
                     )}
                   />
                 </View>
@@ -168,7 +168,7 @@ export default function EditSchoolScreen() {
                     control={control}
                     name="adminFirstName"
                     render={({ field: { onChange, onBlur, value } }) => (
-                      <Input label="First Name" placeholder="John" onBlur={onBlur} onChangeText={onChange} value={value} error={errors.adminFirstName?.message} />
+                      <Input label="First Name" placeholder="John" onBlur={onBlur} onChangeText={onChange} value={value ?? ""} error={errors.adminFirstName?.message} />
                     )}
                   />
                 </View>
@@ -177,7 +177,7 @@ export default function EditSchoolScreen() {
                     control={control}
                     name="adminLastName"
                     render={({ field: { onChange, onBlur, value } }) => (
-                      <Input label="Last Name" placeholder="Doe" onBlur={onBlur} onChangeText={onChange} value={value} error={errors.adminLastName?.message} />
+                      <Input label="Last Name" placeholder="Doe" onBlur={onBlur} onChangeText={onChange} value={value ?? ""} error={errors.adminLastName?.message} />
                     )}
                   />
                 </View>
@@ -186,23 +186,23 @@ export default function EditSchoolScreen() {
                 control={control}
                 name="adminPhone"
                 render={({ field: { onChange, onBlur, value } }) => (
-                  <Input label="Admin Phone" placeholder="+1234567890" keyboardType="phone-pad" onBlur={onBlur} onChangeText={onChange} value={value} error={errors.adminPhone?.message} />
+                  <Input label="Admin Phone" placeholder="+1234567890" keyboardType="phone-pad" onBlur={onBlur} onChangeText={onChange} value={value ?? ""} error={errors.adminPhone?.message} />
                 )}
               />
               <Controller
                 control={control}
                 name="adminPassword"
                 render={({ field: { onChange, onBlur, value } }) => (
-                  <PasswordInput label="Admin Password (leave blank to keep current)" placeholder="••••••••" onBlur={onBlur} onChangeText={onChange} value={value} error={errors.adminPassword?.message} />
+                  <PasswordInput label="Admin Password (leave blank to keep current)" placeholder="••••••••" onBlur={onBlur} onChangeText={onChange} value={value ?? ""} error={errors.adminPassword?.message} />
                 )}
               />
             </Card>
 
             <View className="pb-8">
               <Button 
-                title="Update School" 
+                label="Update School" 
                 onPress={handleSubmit(onSubmit)} 
-                isLoading={updateSchoolMutation.isPending} 
+                loading={updateSchoolMutation.isPending} 
               />
             </View>
           </ScrollView>

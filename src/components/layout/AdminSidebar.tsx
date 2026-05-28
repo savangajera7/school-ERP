@@ -31,6 +31,7 @@ export function AdminSidebar() {
   const insets = useSafeAreaInsets();
   const { handleLogout } = useAuth();
   const { can, userData, roleLabel } = usePermissions();
+  const [isCollapsed, setIsCollapsed] = React.useState(false);
 
   const moreItems = MORE.filter((m) => !m.perm || can(m.perm as never));
 
@@ -47,7 +48,7 @@ export function AdminSidebar() {
     return (
       <TouchableOpacity
         onPress={() => router.push(route as never)}
-        style={[styles.item, active && styles.itemActive]}
+        style={[styles.item, active && styles.itemActive, isCollapsed && styles.itemCollapsed]}
       >
         <AppIcon
           name={icon}
@@ -55,31 +56,45 @@ export function AdminSidebar() {
           color={active ? SchoolTheme.primary : SchoolTheme.textSecondary}
           active={active}
         />
-        <Text style={[styles.itemLabel, active && styles.itemLabelActive]}>{label}</Text>
+        {!isCollapsed && (
+          <Text style={[styles.itemLabel, active && styles.itemLabelActive]}>{label}</Text>
+        )}
       </TouchableOpacity>
     );
   };
 
   return (
-    <View style={[styles.sidebar, { paddingTop: insets.top + 16 }]}>
-      <Text style={styles.brand}>Little Angel&apos;s</Text>
-      <Text style={styles.role}>{roleLabel}</Text>
-      <Text style={styles.user} numberOfLines={1}>
-        {userData?.name}
-      </Text>
+    <View style={[styles.sidebar, { paddingTop: insets.top + 16 }, isCollapsed && styles.sidebarCollapsed]}>
+      <View style={styles.headerRow}>
+        {!isCollapsed && (
+          <View style={styles.brandContainer}>
+            <Text style={styles.brand}>Little Angel&apos;s</Text>
+            <Text style={styles.role}>{roleLabel}</Text>
+            <Text style={styles.user} numberOfLines={1}>
+              {userData?.name}
+            </Text>
+          </View>
+        )}
+        <TouchableOpacity 
+          onPress={() => setIsCollapsed(!isCollapsed)} 
+          style={styles.collapseButton}
+        >
+          <AppIcon name={isCollapsed ? "chevronRight" : "chevronBack"} size={16} color="#374151" />
+        </TouchableOpacity>
+      </View>
       <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-        <Text style={styles.section}>Main</Text>
+        {!isCollapsed && <Text style={styles.section}>Main</Text>}
         {PRIMARY.map((item) => (
           <NavItem key={item.route} {...item} />
         ))}
-        <Text style={[styles.section, { marginTop: 16 }]}>More</Text>
+        {!isCollapsed && <Text style={[styles.section, { marginTop: 16 }]}>More</Text>}
         {moreItems.map((item) => (
           <NavItem key={item.route} label={item.label} route={item.route} icon={item.icon} />
         ))}
       </ScrollView>
-      <TouchableOpacity onPress={handleLogout} style={styles.logout}>
+      <TouchableOpacity onPress={handleLogout} style={[styles.logout, isCollapsed && styles.itemCollapsed]}>
         <AppIcon name="logout" size={20} color={SchoolTheme.error} />
-        <Text style={styles.logoutText}>Sign out</Text>
+        {!isCollapsed && <Text style={styles.logoutText}>Sign out</Text>}
       </TouchableOpacity>
     </View>
   );
@@ -94,9 +109,34 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingBottom: 16,
   },
-  brand: { fontSize: 15, fontWeight: "900", color: SchoolTheme.primary, paddingHorizontal: 8 },
-  role: { fontSize: 10, fontWeight: "800", color: SchoolTheme.accent, marginTop: 2, paddingHorizontal: 8 },
-  user: { fontSize: 12, color: SchoolTheme.textSecondary, marginTop: 4, marginBottom: 16, paddingHorizontal: 8 },
+  sidebarCollapsed: {
+    width: 72,
+    paddingHorizontal: 8,
+  },
+  headerRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    marginBottom: 16,
+    paddingHorizontal: 8,
+  },
+  brandContainer: {
+    flex: 1,
+  },
+  collapseButton: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: SchoolTheme.border,
+    backgroundColor: "#F9FAFB",
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "flex-end",
+  },
+  brand: { fontSize: 15, fontWeight: "900", color: SchoolTheme.primary },
+  role: { fontSize: 10, fontWeight: "800", color: SchoolTheme.accent, marginTop: 2 },
+  user: { fontSize: 12, color: SchoolTheme.textSecondary, marginTop: 4 },
   scroll: { flex: 1 },
   section: {
     fontSize: 10,
@@ -115,6 +155,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 12,
     minHeight: 48,
+  },
+  itemCollapsed: {
+    justifyContent: "center",
+    paddingHorizontal: 0,
   },
   itemActive: { backgroundColor: `${SchoolTheme.primary}14` },
   itemLabel: { fontSize: 14, fontWeight: "600", color: SchoolTheme.textSecondary },

@@ -43,8 +43,8 @@ export function DataTable<T>({
   }
 
   return (
-    <View className="bg-white rounded-2xl border border-gray-100 overflow-hidden" style={premiumCardShadow}>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+    <View className="bg-white rounded-2xl border border-gray-100 overflow-hidden flex-1" style={premiumCardShadow}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ minWidth: '100%' }}>
         <View style={styles.tableContainer}>
           {/* Header Row */}
           <View style={styles.headerRow}>
@@ -119,6 +119,7 @@ export function DataTable<T>({
 const styles = StyleSheet.create({
   tableContainer: {
     minWidth: "100%",
+    flex: 1,
   },
   headerRow: {
     flexDirection: "row",
@@ -144,5 +145,7 @@ const styles = StyleSheet.create({
   cell: {
     justifyContent: "center",
     paddingHorizontal: 6,
+    minWidth: 0,
+    overflow: "hidden",
   },
 });

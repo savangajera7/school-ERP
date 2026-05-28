@@ -21,8 +21,11 @@
 import type { AttendanceStudentItemDto } from './attendanceStudentItemDto';
 
 export interface AttendanceMarkRequest {
+  /** @nullable */
+  schoolID?: number | null;
   classID?: number;
   attendanceDate?: string;
   /** @nullable */
   students?: AttendanceStudentItemDto[] | null;
+  absentOnly?: boolean;
 }

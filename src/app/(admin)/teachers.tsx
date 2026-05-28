@@ -521,7 +521,7 @@ export default function AdminTeacherManagementScreen() {
           {/* Table header */}
           <View className="flex-row bg-gray-100 rounded-xl px-4 py-3 mb-2">
             {tableColumns.map((col) => (
-              <View key={col.key} style={{ flex: col.flex, width: col.width, alignItems: col.align === "right" ? "flex-end" : "flex-start" }}>
+              <View key={col.key} style={{ flex: col.flex, width: col.width, minWidth: 0, alignItems: col.align === "right" ? "flex-end" : "flex-start" }}>
                 <Text className="text-[10px] font-black text-gray-500 uppercase tracking-wider">{col.header}</Text>
               </View>
             ))}
@@ -529,7 +529,7 @@ export default function AdminTeacherManagementScreen() {
           {teachers.map((t, rowIdx) => (
             <View key={t.teacherID} className="flex-row bg-white rounded-xl px-4 py-3 mb-2 border border-gray-100 items-center">
               {tableColumns.map((col) => (
-                <View key={col.key} style={{ flex: col.flex, width: col.width, alignItems: col.align === "right" ? "flex-end" : "flex-start" }}>
+                <View key={col.key} style={{ flex: col.flex, width: col.width, minWidth: 0, alignItems: col.align === "right" ? "flex-end" : "flex-start" }}>
                   {col.render ? col.render(t, rowIdx) : (
                     <Text className="text-sm text-gray-700">{String((t as any)[col.key] ?? "—")}</Text>
                   )}

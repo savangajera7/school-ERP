@@ -22,7 +22,7 @@ const SchoolCard = ({ school, handleToggleStatus, handleDeleteSchool }: any) => 
     }
   });
 
-  const roleCounts = countsData?.data?.data || [];
+  const roleCounts = (countsData?.data as any) || [];
 
   return (
     <Card className="p-4 mb-4">

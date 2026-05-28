@@ -20,6 +20,7 @@
  */
 
 export type GetApiAttendanceGetParams = {
+SchoolID?: number;
 View?: string;
 ClassID?: number;
 AttendanceDate?: string;

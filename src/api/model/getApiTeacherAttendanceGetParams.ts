@@ -19,15 +19,8 @@
  * OpenAPI spec version: v1
  */
 
-export type GetApiTimetableGetParams = {
+export type GetApiTeacherAttendanceGetParams = {
 SchoolID?: number;
 View?: string;
-ClassID?: number;
-BatchID?: number;
-TeacherID?: number;
-StudentID?: number;
-TimetableID?: number;
-Day?: string;
-Date?: string;
-ExportType?: string;
+AttendanceDate?: string;
 };

@@ -19,15 +19,17 @@
  * OpenAPI spec version: v1
  */
 
-export type GetApiTimetableGetParams = {
-SchoolID?: number;
-View?: string;
-ClassID?: number;
-BatchID?: number;
-TeacherID?: number;
-StudentID?: number;
-TimetableID?: number;
-Day?: string;
-Date?: string;
-ExportType?: string;
-};
+export interface TeacherAttendanceItemDto {
+  teacherID?: number;
+  /** @nullable */
+  teacherCode?: string | null;
+  /** @nullable */
+  teacherName?: string | null;
+  /** @nullable */
+  subjectName?: string | null;
+  /** @nullable */
+  attendanceStatus?: string | null;
+  /** @nullable */
+  remark?: string | null;
+  isMarked?: boolean;
+}

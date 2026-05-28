@@ -20,11 +20,11 @@ export default function StudentProfileScreen() {
   const { isMobile } = useResponsive();
   const { id } = useLocalSearchParams();
   const studentId = Number(id) || 0;
-  const { data, isLoading: loading } = useGetApiStudentGetByIDId(studentId, {
+  const { data, isLoading: loading, isError, error, refetch } = useGetApiStudentGetByIDId(studentId, {
     query: { enabled: studentId > 0 },
   });
   const raw = parseApiData<Record<string, unknown>>(data);
-  const student = raw ? (toCamelCaseRow(raw) as StudentModel) : null;
+  const student = raw ? (toCamelCaseRow(raw) as unknown as StudentModel) : null;
   
   const { data: classData } = useGetApiClassGet();
   const classes = React.useMemo(() => parseApiList<any>(classData?.data), [classData]);
@@ -50,17 +50,64 @@ export default function StudentProfileScreen() {
     );
   }
 
+  if (isError) {
+    return (
+      <View className="flex-1 items-center justify-center bg-white p-6">
+        <IconCircle name="warning" size={64} iconSize={32} />
+        <Text className="text-gray-800 font-extrabold text-lg mt-4 mb-2">Error Loading Profile</Text>
+        <Text className="text-gray-500 font-semibold text-center mb-6">
+          {(error as any)?.message || "Failed to fetch student details. Please try again."}
+        </Text>
+        <ScrollView className="w-full max-h-[200px] mb-4 bg-red-50 p-4 rounded-lg">
+          <Text className="text-xs text-red-800 font-mono">
+            RAW ERROR: {JSON.stringify(error, null, 2)}
+          </Text>
+        </ScrollView>
+        <View className="flex-row gap-4">
+          <TouchableOpacity 
+            onPress={() => router.back()} 
+            className="px-6 py-3 bg-gray-100 rounded-xl"
+            activeOpacity={0.8}
+          >
+            <Text className="text-gray-700 font-black uppercase text-xs tracking-wider">Return Back</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            onPress={() => refetch()} 
+            className="px-6 py-3 bg-[#0d3666] rounded-xl"
+            activeOpacity={0.8}
+          >
+            <Text className="text-white font-black uppercase text-xs tracking-wider">Retry</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
+
   if (!student) {
     return (
       <View className="flex-1 items-center justify-center bg-white p-6">
         <Text className="text-gray-500 font-extrabold text-sm uppercase tracking-wider mb-4">Student profile not located</Text>
-        <TouchableOpacity 
-          onPress={() => router.back()} 
-          className="px-6 py-3 bg-[#0d3666] rounded-xl"
-          activeOpacity={0.8}
-        >
-          <Text className="text-white font-black uppercase text-xs tracking-wider">Return Back</Text>
-        </TouchableOpacity>
+        <ScrollView className="w-full max-h-[300px] mb-4 bg-gray-50 p-4 rounded-lg">
+          <Text className="text-xs text-gray-500 font-mono">
+            RAW DATA: {JSON.stringify(data, null, 2)}
+          </Text>
+        </ScrollView>
+        <View className="flex-row gap-4">
+          <TouchableOpacity 
+            onPress={() => router.back()} 
+            className="px-6 py-3 bg-gray-100 rounded-xl"
+            activeOpacity={0.8}
+          >
+            <Text className="text-gray-700 font-black uppercase text-xs tracking-wider">Return Back</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            onPress={() => refetch()} 
+            className="px-6 py-3 bg-[#0d3666] rounded-xl"
+            activeOpacity={0.8}
+          >
+            <Text className="text-white font-black uppercase text-xs tracking-wider">Retry</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
