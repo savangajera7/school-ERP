@@ -113,13 +113,32 @@ export function setupNotificationListeners(): () => void {
         screenName?: string;
         jsonData?: string;
       };
+      
       if (data?.screenName) {
-        try {
-          const params = data.jsonData ? JSON.parse(data.jsonData) : {};
-          router.push({ pathname: data.screenName as never, params });
-        } catch {
-          router.push(data.screenName as never);
+        const role = useAuthStore.getState().role;
+        const roleGroup = role === "super_admin" ? "super-admin" : role;
+        
+        let targetRoute = data.screenName;
+        
+        // Strip out any existing role prefix (e.g. "/(admin)/", "/admin/", etc.)
+        if (roleGroup) {
+           targetRoute = targetRoute.replace(/^\/?(\(?(?:super_admin|super-admin|admin|teacher|student|parent)\)?\/)?/, '');
+           targetRoute = `/(${roleGroup})/${targetRoute}`;
         }
+        
+        // Add a slight delay to ensure layout is mounted after a cold start
+        setTimeout(() => {
+          try {
+            const params = data.jsonData ? JSON.parse(data.jsonData) : {};
+            if (Object.keys(params).length > 0) {
+              router.push({ pathname: targetRoute as never, params });
+            } else {
+              router.push(targetRoute as never);
+            }
+          } catch {
+            router.push(targetRoute as never);
+          }
+        }, 500);
       }
     });
 

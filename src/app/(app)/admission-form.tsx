@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, TextInput, Alert, ActivityIndicator, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, TextInput, Alert, ActivityIndicator, ScrollView, Image } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { Card } from "@/components/ui/Card";
 import { Colors } from "@/constants/colors";
@@ -24,6 +24,8 @@ import { AccessDenied } from "@/components/auth/AccessDenied";
 import { useResponsive } from "@/hooks/useResponsive";
 import { parseApiData, parseApiList } from "@/utils/apiResponse";
 import { PremiumDatePicker } from "@/components/ui/PremiumDatePicker";
+import * as ImagePicker from 'expo-image-picker';
+import { useAuthStore } from "@/store/authStore";
 
 export default function AdmissionFormScreen() {
   const { id } = useLocalSearchParams();
@@ -37,6 +39,7 @@ export default function AdmissionFormScreen() {
 
   const { isMobile } = useResponsive();
   const [loading, setLoading] = useState(false);
+  const { userData } = useAuthStore();
 
   // --- Form State ---
   
@@ -77,7 +80,7 @@ export default function AdmissionFormScreen() {
   const [penNo, setPenNo] = useState("");
   const [weight, setWeight] = useState("");
   const [height, setHeight] = useState("");
-  const [heightWeightDate, setHeightWeightDate] = useState("");
+  const [studentPhoto, setStudentPhoto] = useState<string | null>(null);
   const [ews, setEws] = useState(false);
 
   // 3. Guardian Details
@@ -91,6 +94,8 @@ export default function AdmissionFormScreen() {
   const [motherOccupation, setMotherOccupation] = useState("");
   const [motherEducation, setMotherEducation] = useState("");
   const [motherEmail, setMotherEmail] = useState("");
+  const [fatherPhoto, setFatherPhoto] = useState<string | null>(null);
+  const [motherPhoto, setMotherPhoto] = useState<string | null>(null);
   const [whatsappNumber, setWhatsappNumber] = useState("");
   const [sendSMSNotification, setSendSMSNotification] = useState(false);
 
@@ -200,7 +205,7 @@ export default function AdmissionFormScreen() {
       setPenNo(s.penNo || "");
       setWeight(String(s.weight || ""));
       setHeight(String(s.height || ""));
-      setHeightWeightDate(s.heightWeightDate ? String(s.heightWeightDate).slice(0, 10) : "");
+      setStudentPhoto(s.studentPhoto || null);
       setEws(!!s.ews);
 
       setFatherName(s.fatherName || "");
@@ -213,6 +218,8 @@ export default function AdmissionFormScreen() {
       setMotherOccupation(s.motherOccupation || "");
       setMotherEducation(s.motherEducation || "");
       setMotherEmail(s.motherEmail || "");
+      setFatherPhoto(s.fatherPhoto || null);
+      setMotherPhoto(s.motherPhoto || null);
       setWhatsappNumber(s.whatsappNumber || "");
       setSendSMSNotification(!!s.sendSMSNotification);
 
@@ -250,6 +257,7 @@ export default function AdmissionFormScreen() {
     }
 
     const payload = {
+      schoolID: userData?.schoolID,
       academicYearID: academicYearId,
       classID: classId,
       batchID: batchId,
@@ -284,7 +292,7 @@ export default function AdmissionFormScreen() {
       penNo,
       weight: parseFloat(weight) || 0,
       height: parseFloat(height) || 0,
-      heightWeightDate,
+      studentPhoto,
       ews,
       fatherName,
       fatherNumber,
@@ -296,6 +304,8 @@ export default function AdmissionFormScreen() {
       motherOccupation,
       motherEducation,
       motherEmail,
+      fatherPhoto,
+      motherPhoto,
       whatsappNumber,
       sendSMSNotification,
       currentAddress,
@@ -444,6 +454,41 @@ export default function AdmissionFormScreen() {
     </TouchableOpacity>
   );
 
+  const pickImage = async (setter: (uri: string) => void) => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.5,
+      base64: true,
+    });
+
+    if (!result.canceled && result.assets && result.assets[0].base64) {
+      setter(`data:image/jpeg;base64,${result.assets[0].base64}`);
+    }
+  };
+
+  const renderImagePicker = (label: string, photoUri: string | null, setter: (uri: string) => void) => (
+    <View className="flex-1 min-w-[280px] items-center">
+      <Text className="text-[12px] font-black text-gray-450 mb-2 uppercase">{label}</Text>
+      <TouchableOpacity 
+        onPress={() => pickImage(setter)}
+        className="w-24 h-24 rounded-full border-2 border-dashed border-gray-300 items-center justify-center bg-gray-50 overflow-hidden"
+      >
+        {photoUri ? (
+          <Image source={{ uri: photoUri }} className="w-full h-full" />
+        ) : (
+          <AppIcon name="camera" size={24} color="#9CA3AF" />
+        )}
+      </TouchableOpacity>
+      {photoUri && (
+        <TouchableOpacity onPress={() => setter('')} className="mt-2">
+          <Text className="text-red-500 text-xs font-bold">Remove</Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+
   const formContent = (
     <View className="flex-1 w-full max-w-full">
       {/* SECTION 1: Academic Details */}
@@ -513,8 +558,10 @@ export default function AdmissionFormScreen() {
             <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>
               {renderTextInput("Weight (KG)", weight, setWeight, "0.00", { keyboard: "decimal-pad" })}
               {renderTextInput("Height (CM)", height, setHeight, "0.00", { keyboard: "decimal-pad" })}
-              {renderDatePicker("Height/Weight Date", heightWeightDate, setHeightWeightDate)}
+            </View>
+            <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>
               {renderToggle("EWS", ews, ["Yes", "No"], setEws)}
+              {renderImagePicker("Student Photo", studentPhoto, setStudentPhoto)}
             </View>
           </View>
         )}
@@ -544,6 +591,10 @@ export default function AdmissionFormScreen() {
             <View className={`flex-row flex-wrap gap-5 mt-8 ${isMobile ? "flex-col" : ""}`}>
               {renderToggle("Send SMS Notification", sendSMSNotification, ["Yes", "No"], setSendSMSNotification)}
               {renderTextInput("Whatsapp Number", whatsappNumber, setWhatsappNumber, "Default for Whatsapp", { keyboard: "phone-pad" })}
+            </View>
+            <View className={`flex-row flex-wrap justify-around gap-5 mt-8 ${isMobile ? "flex-col" : ""}`}>
+              {renderImagePicker("Father Photo", fatherPhoto, setFatherPhoto)}
+              {renderImagePicker("Mother Photo", motherPhoto, setMotherPhoto)}
             </View>
           </View>
         )}
