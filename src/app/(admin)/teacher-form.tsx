@@ -293,12 +293,13 @@ export default function TeacherFormScreen() {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{ alignItems: "center", paddingHorizontal: 10 }}
         >
-          {roles.map((r: any) => {
-            const rid = r.roleID ?? r.id;
-            const rname = r.roleName ?? r.name;
+          {roles.map((r: any, idx: number) => {
+            const rid = r.roleID ?? r.id ?? r.RoleID ?? r.roleId;
+            const rname = r.roleName ?? r.name ?? r.RoleName;
+            if (!rname) return null;
             return (
               <TouchableOpacity
-                key={rid}
+                key={rid ?? idx}
                 onPress={() => setRoleID(rid)}
                 className={`px-3 py-1.5 rounded-lg mr-2 ${roleID === rid ? "bg-[#1A3C6E]" : "bg-gray-200"}`}
               >

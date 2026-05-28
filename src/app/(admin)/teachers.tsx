@@ -1,13 +1,11 @@
 import React, { useState, useMemo, useCallback } from "react";
 import {
-  View, Text, TouchableOpacity, Alert, Modal,
+  View, Text, TouchableOpacity, Modal,
   ScrollView, ActivityIndicator, Image, TextInput,
 } from "react-native";
 import { router } from "expo-router";
 import { Colors } from "@/constants/colors";
-import {
-  useDeleteApiTeacherDeleteTeacher,
-} from "@/api/generated/teacher/teacher";
+import { useDeleteApiTeacherDeleteTeacher } from "@/api/generated/teacher/teacher";
 import { parseApiList } from "@/utils/apiResponse";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { HeaderActionButton } from "@/components/ui/HeaderActionButton";
@@ -20,7 +18,6 @@ import {
   useDeleteApiTeacherClassAssignmentRemove,
 } from "@/api/generated/6-teacher-class-assignment/6-teacher-class-assignment";
 import { useQueryClient } from "@tanstack/react-query";
-import { useResponsive } from "@/hooks/useResponsive";
 import {
   useGetApiTeacherPermissionsAll,
   usePostApiTeacherPermissionsSet,
@@ -86,7 +83,6 @@ export default function AdminTeacherManagementScreen() {
 
   // ── Data ──────────────────────────────────────────────────────────────────
   const { data: teachersRaw, isLoading, isError, error, refetch } = useGetApiTeacherPermissionsAll();
-
   const { data: classesRaw } = useGetApiClassGet();
   const allClasses = useMemo(() => parseApiList<any>(classesRaw?.data), [classesRaw]);
 
@@ -97,7 +93,6 @@ export default function AdminTeacherManagementScreen() {
 
   // ── Search ────────────────────────────────────────────────────────────────
   const [searchQuery, setSearchQuery] = useState("");
-
   const filteredTeachers = useMemo(() => {
     if (!searchQuery.trim()) return teachers;
     const q = searchQuery.toLowerCase();
@@ -111,16 +106,45 @@ export default function AdminTeacherManagementScreen() {
   }, [teachers, searchQuery]);
 
   // ── Mutations ─────────────────────────────────────────────────────────────
-  const deleteTeacher = useDeleteApiTeacherDeleteTeacher();
+  const deleteTeacherMutation = useDeleteApiTeacherDeleteTeacher();
   const addClassAssignment = usePostApiTeacherClassAssignmentAdd();
   const removeClassAssignment = useDeleteApiTeacherClassAssignmentRemove();
   const permissionMutation = usePostApiTeacherPermissionsSet();
+
+  // ── Delete modal state ────────────────────────────────────────────────────
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [teacherToDelete, setTeacherToDelete] = useState<TeacherWithDetails | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeleteClick = (teacher: TeacherWithDetails) => {
+    setTeacherToDelete(teacher);
+    setDeleteModalVisible(true);
+  };
+
+  const executeDelete = async () => {
+    if (!teacherToDelete) return;
+    setIsDeleting(true);
+    try {
+      await deleteTeacherMutation.mutateAsync({ data: { teacherID: teacherToDelete.teacherID } });
+      queryClient.invalidateQueries({ queryKey: getGetApiTeacherPermissionsAllQueryKey() });
+      setDeleteModalVisible(false);
+      setTeacherToDelete(null);
+    } catch (e: any) {
+      // keep modal open, show inline error handled below
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   // ── Permission panel state ────────────────────────────────────────────────
   const [selectedTeacher, setSelectedTeacher] = useState<TeacherWithDetails | null>(null);
   const [panelVisible, setPanelVisible] = useState(false);
   const [localPerms, setLocalPerms] = useState<Record<number, ClassPermission>>({});
   const [savingClassID, setSavingClassID] = useState<number | null>(null);
+
+  // Remove-class confirm modal
+  const [removeClassModal, setRemoveClassModal] = useState<{ classID: number; className: string } | null>(null);
+  const [isRemovingClass, setIsRemovingClass] = useState(false);
 
   const openPanel = useCallback((teacher: TeacherWithDetails) => {
     setSelectedTeacher(teacher);
@@ -155,11 +179,11 @@ export default function AdminTeacherManagementScreen() {
           canClasswork:  !!p.canClasswork,
           canTimetable:  !!p.canTimetable,
           canExam:       !!p.canExam,
-        }
+        },
       });
       queryClient.invalidateQueries({ queryKey: getGetApiTeacherPermissionsAllQueryKey() });
-    } catch (e: any) {
-      Alert.alert("Error", e.message || "Failed to save permissions");
+    } catch (_e) {
+      // silent — user can retry
     } finally {
       setSavingClassID(null);
     }
@@ -173,75 +197,36 @@ export default function AdminTeacherManagementScreen() {
       });
       queryClient.invalidateQueries({ queryKey: getGetApiTeacherPermissionsAllQueryKey() });
       const cls = allClasses.find((c: any) => c.classID === classID);
-      setLocalPerms((prev) => ({
-        ...prev,
-        [classID]: {
-          classID, className: cls?.className ?? "",
-          canNotice: false, canAttendance: false, canHomework: false,
-          canClasswork: false, canTimetable: false, canExam: false,
-        },
-      }));
+      const newPerm: ClassPermission = {
+        classID, className: cls?.className ?? "",
+        canNotice: false, canAttendance: false, canHomework: false,
+        canClasswork: false, canTimetable: false, canExam: false,
+      };
+      setLocalPerms((prev) => ({ ...prev, [classID]: newPerm }));
+      setSelectedTeacher((prev) => prev ? {
+        ...prev, classPermissions: [...prev.classPermissions, newPerm],
+      } : prev);
+    } catch (_e) {}
+  };
+
+  const confirmRemoveClass = async () => {
+    if (!selectedTeacher || !removeClassModal) return;
+    setIsRemovingClass(true);
+    try {
+      await removeClassAssignment.mutateAsync({
+        data: { teacherID: selectedTeacher.teacherID, classID: removeClassModal.classID },
+      });
+      queryClient.invalidateQueries({ queryKey: getGetApiTeacherPermissionsAllQueryKey() });
+      setLocalPerms((prev) => { const n = { ...prev }; delete n[removeClassModal.classID]; return n; });
       setSelectedTeacher((prev) => prev ? {
         ...prev,
-        classPermissions: [
-          ...prev.classPermissions,
-          { classID, className: cls?.className ?? "", canNotice: false, canAttendance: false,
-            canHomework: false, canClasswork: false, canTimetable: false, canExam: false },
-        ],
+        classPermissions: prev.classPermissions.filter((c) => c.classID !== removeClassModal.classID),
       } : prev);
-    } catch (e: any) {
-      Alert.alert("Error", e.message || "Failed to assign class");
+      setRemoveClassModal(null);
+    } catch (_e) {
+    } finally {
+      setIsRemovingClass(false);
     }
-  };
-
-  const removeClass = (classID: number, className: string) => {
-    if (!selectedTeacher) return;
-    Alert.alert(
-      "Remove Class",
-      `Remove ${className} from ${selectedTeacher.teacherName}? This also removes all permissions for this class.`,
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Remove", style: "destructive",
-          onPress: async () => {
-            try {
-              await removeClassAssignment.mutateAsync({
-                data: { teacherID: selectedTeacher.teacherID, classID },
-              });
-              queryClient.invalidateQueries({ queryKey: getGetApiTeacherPermissionsAllQueryKey() });
-              setLocalPerms((prev) => { const n = { ...prev }; delete n[classID]; return n; });
-              setSelectedTeacher((prev) => prev ? {
-                ...prev,
-                classPermissions: prev.classPermissions.filter((c) => c.classID !== classID),
-              } : prev);
-            } catch (e: any) {
-              Alert.alert("Error", e.message || "Failed to remove class");
-            }
-          },
-        },
-      ]
-    );
-  };
-
-  const handleDelete = (teacher: TeacherWithDetails) => {
-    Alert.alert(
-      "Delete Teacher",
-      `Remove ${teacher.teacherName} from the school?`,
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete", style: "destructive",
-          onPress: async () => {
-            try {
-              await deleteTeacher.mutateAsync({ data: { teacherID: teacher.teacherID } });
-              queryClient.invalidateQueries({ queryKey: getGetApiTeacherPermissionsAllQueryKey() });
-            } catch (e: any) {
-              Alert.alert("Error", e.message || "Failed to delete teacher");
-            }
-          },
-        },
-      ]
-    );
   };
 
   const unassignedClasses = useMemo(() => {
@@ -255,15 +240,8 @@ export default function AdminTeacherManagementScreen() {
     <TouchableOpacity
       activeOpacity={0.9}
       className="bg-white rounded-2xl mb-4 border border-gray-100"
-      style={{
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.04,
-        shadowRadius: 10,
-        elevation: 2,
-      }}
+      style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, shadowRadius: 10, elevation: 2 }}
     >
-      {/* Card header */}
       <View className="p-4 border-b border-gray-50 flex-row gap-3 rounded-t-2xl bg-white">
         <View className="relative">
           <View className="w-14 h-14 rounded-2xl bg-gray-50 border border-gray-200 items-center justify-center overflow-hidden">
@@ -273,7 +251,6 @@ export default function AdminTeacherManagementScreen() {
             <View className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full" />
           )}
         </View>
-
         <View className="flex-1 justify-center">
           <View className="flex-row items-center justify-between mb-1 gap-2">
             <Text className="text-sm font-extrabold text-gray-900 uppercase flex-1" numberOfLines={1}>
@@ -283,26 +260,19 @@ export default function AdminTeacherManagementScreen() {
               <Text className="text-[10px] font-black text-blue-700 uppercase">{item.teacherCode || "—"}</Text>
             </View>
           </View>
-
           {item.subjectName ? (
             <View className="flex-row items-center gap-1.5 mb-1">
               <AppIcon name="subjects" size={12} color="#7C3AED" />
-              <Text className="text-[12px] font-bold text-violet-600 flex-1" numberOfLines={1}>
-                {item.subjectName}
-              </Text>
+              <Text className="text-[12px] font-bold text-violet-600 flex-1" numberOfLines={1}>{item.subjectName}</Text>
             </View>
           ) : null}
-
           <View className="flex-row items-center gap-1.5">
             <AppIcon name="phone" size={12} color="#6B7280" />
-            <Text className="text-[12px] font-semibold text-gray-500 flex-1" numberOfLines={1}>
-              {item.mobileNo || "No phone"}
-            </Text>
+            <Text className="text-[12px] font-semibold text-gray-500 flex-1" numberOfLines={1}>{item.mobileNo || "No phone"}</Text>
           </View>
         </View>
       </View>
 
-      {/* Classes row */}
       {item.classPermissions.length > 0 && (
         <View className="px-4 py-2.5 border-b border-gray-50 flex-row items-center gap-2 flex-wrap">
           <AppIcon name="subjects" size={12} color="#9CA3AF" />
@@ -314,30 +284,24 @@ export default function AdminTeacherManagementScreen() {
         </View>
       )}
 
-      {/* Actions */}
       <View className="flex-row justify-end items-center px-4 py-2.5 bg-gray-50/50 gap-2 rounded-b-2xl">
         <TouchableOpacity
           className="flex-row items-center gap-1.5 px-3 py-1.5 bg-blue-50 border border-blue-100 rounded-xl"
-          onPress={() => openPanel(item)}
-          activeOpacity={0.7}
+          onPress={() => openPanel(item)} activeOpacity={0.7}
         >
           <AppIcon name="settings" size={12} color="#1A3C6E" />
           <Text className="text-[10px] font-extrabold text-[#1A3C6E] uppercase">Permissions</Text>
         </TouchableOpacity>
-
         <TouchableOpacity
           className="flex-row items-center gap-1.5 px-3 py-1.5 bg-indigo-50 border border-indigo-100 rounded-xl"
-          onPress={() => router.push(`/(admin)/teacher-form?id=${item.teacherID}`)}
-          activeOpacity={0.7}
+          onPress={() => router.push(`/(admin)/teacher-form?id=${item.teacherID}`)} activeOpacity={0.7}
         >
           <AppIcon name="edit" size={12} color="#4F46E5" />
           <Text className="text-[10px] font-extrabold text-indigo-700 uppercase">Edit</Text>
         </TouchableOpacity>
-
         <TouchableOpacity
           className="flex-row items-center gap-1.5 px-3 py-1.5 bg-rose-50 border border-rose-100 rounded-xl"
-          onPress={() => handleDelete(item)}
-          activeOpacity={0.7}
+          onPress={() => handleDeleteClick(item)} activeOpacity={0.7}
         >
           <AppIcon name="delete" size={12} color="#E11D48" />
           <Text className="text-[10px] font-extrabold text-rose-700 uppercase">Delete</Text>
@@ -350,9 +314,7 @@ export default function AdminTeacherManagementScreen() {
   const tableColumns: TableColumn<TeacherWithDetails>[] = [
     {
       key: "rowNo", header: "#", width: 48, align: "center",
-      render: (_t, i) => (
-        <Text className="text-sm font-semibold text-gray-400">{i + 1}</Text>
-      ),
+      render: (_t, i) => <Text className="text-sm font-semibold text-gray-400">{i + 1}</Text>,
     },
     {
       key: "teacherName", header: "Teacher Name", flex: 2,
@@ -361,24 +323,18 @@ export default function AdminTeacherManagementScreen() {
           <TeacherAvatar photo={t.photo ?? undefined} size={28} />
           <View className="flex-1 overflow-hidden">
             <Text className="text-sm font-bold text-gray-800" numberOfLines={1}>{t.teacherName}</Text>
-            {t.email ? (
-              <Text className="text-[11px] text-gray-400 font-semibold" numberOfLines={1}>{t.email}</Text>
-            ) : null}
+            {t.email ? <Text className="text-[11px] text-gray-400 font-semibold" numberOfLines={1}>{t.email}</Text> : null}
           </View>
         </View>
       ),
     },
     {
       key: "subjectName", header: "Subject", flex: 1,
-      render: (t) => (
-        <Text className="text-sm text-gray-700 font-semibold" numberOfLines={1}>{t.subjectName || "—"}</Text>
-      ),
+      render: (t) => <Text className="text-sm text-gray-700 font-semibold" numberOfLines={1}>{t.subjectName || "—"}</Text>,
     },
     {
       key: "mobileNo", header: "Phone", width: 130,
-      render: (t) => (
-        <Text className="text-sm text-gray-600">{t.mobileNo || "—"}</Text>
-      ),
+      render: (t) => <Text className="text-sm text-gray-600">{t.mobileNo || "—"}</Text>,
     },
     {
       key: "classPermissions", header: "Assigned Classes", flex: 2,
@@ -419,7 +375,7 @@ export default function AdminTeacherManagementScreen() {
           </TouchableOpacity>
           <EntityActionButtons
             onEdit={() => router.push(`/(admin)/teacher-form?id=${t.teacherID}`)}
-            onDelete={() => handleDelete(t)}
+            onDelete={() => handleDeleteClick(t)}
           />
         </View>
       ),
@@ -438,9 +394,7 @@ export default function AdminTeacherManagementScreen() {
               <TeacherAvatar photo={selectedTeacher.photo ?? undefined} size={48} />
               <View>
                 <Text className="text-[18px] font-black text-gray-900">{selectedTeacher.teacherName}</Text>
-                <Text className="text-[12px] text-gray-500 font-semibold mt-0.5">
-                  Class Assignments & Module Permissions
-                </Text>
+                <Text className="text-[12px] text-gray-500 font-semibold mt-0.5">Class Assignments & Module Permissions</Text>
               </View>
             </View>
             <TouchableOpacity onPress={closePanel} className="w-9 h-9 bg-gray-100 rounded-full items-center justify-center">
@@ -449,12 +403,11 @@ export default function AdminTeacherManagementScreen() {
           </View>
 
           <ScrollView className="flex-1" contentContainerStyle={{ padding: 16, paddingBottom: 40 }}>
-
             {selectedTeacher.classPermissions.length === 0 ? (
-              <View className="bg-white rounded-2xl border border-gray-200 p-6 items-center mb-4">
-                <IconCircle name="subjects" size={48} iconSize={24} />
-                <Text className="text-gray-500 font-bold mt-3 text-center">No classes assigned yet.</Text>
-                <Text className="text-gray-400 text-xs mt-1 text-center">Add a class below to set permissions.</Text>
+              <View className="bg-white rounded-2xl border border-gray-200 p-8 items-center mb-4">
+                <IconCircle name="subjects" size={56} iconSize={28} />
+                <Text className="text-gray-700 font-black text-base mt-4">No classes assigned yet</Text>
+                <Text className="text-gray-400 text-xs mt-1 text-center">Add a class below to configure module access.</Text>
               </View>
             ) : (
               selectedTeacher.classPermissions.map((cp) => {
@@ -462,7 +415,6 @@ export default function AdminTeacherManagementScreen() {
                 const isSaving = savingClassID === cp.classID;
                 return (
                   <View key={cp.classID} className="bg-white rounded-2xl border border-gray-200 mb-3 overflow-hidden">
-                    {/* Class header */}
                     <View className="flex-row items-center justify-between px-4 py-3 bg-[#1A3C6E]">
                       <View className="flex-row items-center gap-2">
                         <View className="w-7 h-7 bg-white/20 rounded-lg items-center justify-center">
@@ -474,27 +426,20 @@ export default function AdminTeacherManagementScreen() {
                         {isSaving ? (
                           <ActivityIndicator size="small" color="#fff" />
                         ) : (
-                          <TouchableOpacity
-                            onPress={() => saveClassPerms(cp.classID)}
-                            className="px-3 py-1 bg-white/20 rounded-lg"
-                          >
+                          <TouchableOpacity onPress={() => saveClassPerms(cp.classID)} className="px-3 py-1 bg-white/20 rounded-lg">
                             <Text className="text-white text-[11px] font-black uppercase">Save</Text>
                           </TouchableOpacity>
                         )}
                         <TouchableOpacity
-                          onPress={() => removeClass(cp.classID, cp.className)}
+                          onPress={() => setRemoveClassModal({ classID: cp.classID, className: cp.className })}
                           className="w-7 h-7 bg-red-500/80 rounded-lg items-center justify-center"
                         >
                           <AppIcon name="delete" size={13} color="#fff" />
                         </TouchableOpacity>
                       </View>
                     </View>
-
-                    {/* Module toggles */}
                     <View className="px-4 py-3">
-                      <Text className="text-[10px] font-black text-gray-400 uppercase mb-3 tracking-wider">
-                        Module Access
-                      </Text>
+                      <Text className="text-[10px] font-black text-gray-400 uppercase mb-3 tracking-wider">Module Access</Text>
                       <View className="flex-row flex-wrap gap-2">
                         {MODULE_KEYS.map(({ key, label, icon }) => {
                           const enabled = !!(local as any)[key];
@@ -502,20 +447,10 @@ export default function AdminTeacherManagementScreen() {
                             <TouchableOpacity
                               key={key}
                               onPress={() => toggleModule(cp.classID, key)}
-                              className={`flex-row items-center gap-1.5 px-3 py-2 rounded-xl border ${
-                                enabled
-                                  ? "bg-emerald-50 border-emerald-300"
-                                  : "bg-gray-50 border-gray-200"
-                              }`}
+                              className={`flex-row items-center gap-1.5 px-3 py-2 rounded-xl border ${enabled ? "bg-emerald-50 border-emerald-300" : "bg-gray-50 border-gray-200"}`}
                             >
-                              <AppIcon
-                                name={icon as any}
-                                size={13}
-                                color={enabled ? "#059669" : "#9CA3AF"}
-                              />
-                              <Text className={`text-[11px] font-black ${enabled ? "text-emerald-700" : "text-gray-400"}`}>
-                                {label}
-                              </Text>
+                              <AppIcon name={icon as any} size={13} color={enabled ? "#059669" : "#9CA3AF"} />
+                              <Text className={`text-[11px] font-black ${enabled ? "text-emerald-700" : "text-gray-400"}`}>{label}</Text>
                             </TouchableOpacity>
                           );
                         })}
@@ -526,12 +461,9 @@ export default function AdminTeacherManagementScreen() {
               })
             )}
 
-            {/* Add class section */}
             {unassignedClasses.length > 0 && (
               <View className="bg-white rounded-2xl border border-dashed border-gray-300 p-4 mt-2">
-                <Text className="text-[11px] font-black text-gray-400 uppercase mb-3 tracking-wider">
-                  Assign New Class
-                </Text>
+                <Text className="text-[11px] font-black text-gray-400 uppercase mb-3 tracking-wider">Assign New Class</Text>
                 <View className="flex-row flex-wrap gap-2">
                   {unassignedClasses.map((cls: any) => (
                     <TouchableOpacity
@@ -588,6 +520,86 @@ export default function AdminTeacherManagementScreen() {
       />
 
       {renderPermissionPanel()}
+
+      {/* ── Delete Teacher Modal ── */}
+      <Modal visible={deleteModalVisible} transparent animationType="fade">
+        <View className="flex-1 bg-black/50 items-center justify-center p-4">
+          <View className="bg-white w-full max-w-sm rounded-2xl overflow-hidden shadow-xl">
+            {/* Red danger header */}
+            <View className="bg-red-50 px-6 pt-6 pb-4 items-center border-b border-red-100">
+              <View className="w-14 h-14 bg-red-100 rounded-full items-center justify-center mb-3">
+                <AppIcon name="delete" size={26} color="#DC2626" />
+              </View>
+              <Text className="text-lg font-black text-gray-900 text-center">Delete Teacher</Text>
+              <Text className="text-sm font-semibold text-gray-500 text-center mt-1">
+                This will permanently remove{"\n"}
+                <Text className="text-gray-800 font-black">{teacherToDelete?.teacherName}</Text>
+                {"\n"}from the school.
+              </Text>
+            </View>
+
+            <View className="px-6 py-5">
+              <View className="flex-row gap-3">
+                <TouchableOpacity
+                  className="flex-1 bg-gray-100 py-3 rounded-xl items-center justify-center"
+                  onPress={() => { setDeleteModalVisible(false); setTeacherToDelete(null); }}
+                  disabled={isDeleting}
+                >
+                  <Text className="font-bold text-gray-700">Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  className="flex-1 bg-red-600 py-3 rounded-xl items-center flex-row justify-center gap-2"
+                  onPress={executeDelete}
+                  disabled={isDeleting}
+                >
+                  {isDeleting && <ActivityIndicator size="small" color="white" />}
+                  <Text className="font-bold text-white">Delete</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* ── Remove Class Confirm Modal ── */}
+      <Modal visible={!!removeClassModal} transparent animationType="fade">
+        <View className="flex-1 bg-black/50 items-center justify-center p-4">
+          <View className="bg-white w-full max-w-sm rounded-2xl overflow-hidden shadow-xl">
+            <View className="bg-amber-50 px-6 pt-6 pb-4 items-center border-b border-amber-100">
+              <View className="w-14 h-14 bg-amber-100 rounded-full items-center justify-center mb-3">
+                <AppIcon name="warning" size={26} color="#D97706" />
+              </View>
+              <Text className="text-lg font-black text-gray-900 text-center">Remove Class</Text>
+              <Text className="text-sm font-semibold text-gray-500 text-center mt-1">
+                Remove{" "}
+                <Text className="text-gray-800 font-black">{removeClassModal?.className}</Text>
+                {" "}from{" "}
+                <Text className="text-gray-800 font-black">{selectedTeacher?.teacherName}</Text>?
+                {"\n"}All permissions for this class will be lost.
+              </Text>
+            </View>
+            <View className="px-6 py-5">
+              <View className="flex-row gap-3">
+                <TouchableOpacity
+                  className="flex-1 bg-gray-100 py-3 rounded-xl items-center justify-center"
+                  onPress={() => setRemoveClassModal(null)}
+                  disabled={isRemovingClass}
+                >
+                  <Text className="font-bold text-gray-700">Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  className="flex-1 bg-amber-500 py-3 rounded-xl items-center flex-row justify-center gap-2"
+                  onPress={confirmRemoveClass}
+                  disabled={isRemovingClass}
+                >
+                  {isRemovingClass && <ActivityIndicator size="small" color="white" />}
+                  <Text className="font-bold text-white">Remove</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </PremiumScreenLayout>
   );
 }
