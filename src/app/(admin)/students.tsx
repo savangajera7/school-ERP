@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Alert, ScrollView } from "react-native";
 import { router } from "expo-router";
 import { Colors } from "@/constants/colors";
 import type { StudentModel } from "@/api/model/studentModel";
