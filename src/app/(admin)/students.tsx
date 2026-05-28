@@ -184,60 +184,98 @@ export default function AdminStudentManagementScreen() {
           });
         }}
         activeOpacity={0.9}
-        className="bg-white rounded-xl mb-3 shadow-sm border border-gray-100 overflow-hidden"
+        className="bg-white rounded-2xl mb-4 border border-gray-100"
+        style={{
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.04,
+          shadowRadius: 10,
+          elevation: 2,
+        }}
       >
-        <View className="p-4 border-b border-gray-50 flex-row gap-3">
-          <View className="w-12 h-12 rounded-full overflow-hidden bg-gray-100 border border-gray-200 items-center justify-center">
-            {item.studentPhoto ? (
-              <Image source={{ uri: item.studentPhoto }} className="w-full h-full" />
-            ) : (
-              <GenderIcon gender={item.gender} size={24} />
+        <View className="p-4 border-b border-gray-50 flex-row gap-3 rounded-t-2xl bg-white">
+          <View className="relative">
+            <View className="w-14 h-14 rounded-2xl bg-gray-50 border border-gray-200 items-center justify-center overflow-hidden">
+              {item.studentPhoto ? (
+                <Image source={{ uri: item.studentPhoto }} className="w-full h-full" />
+              ) : (
+                <GenderIcon gender={item.gender} size={26} />
+              )}
+            </View>
+            {item.rollNo && (
+              <View className="absolute -top-1.5 -right-1.5 bg-amber-500 border border-white min-w-[20px] h-5 px-1 rounded-full items-center justify-center shadow-sm">
+                <Text className="text-[10px] font-black text-white">{item.rollNo}</Text>
+              </View>
             )}
           </View>
           <View className="flex-1 justify-center">
-            <Text className="text-[13px] font-black text-gray-900 mb-2 uppercase" numberOfLines={1}>
-              ({item.rollNo || '-'}) {fullName}
-            </Text>
+            <View className="flex-row items-center justify-between mb-1.5 gap-2">
+              <Text className="text-sm font-extrabold text-gray-900 uppercase flex-1" numberOfLines={1}>
+                {fullName}
+              </Text>
+              {(item.classID || item.sectionID) && (
+                <View className="px-2 py-0.5 bg-teal-50 border border-teal-100 rounded-lg">
+                  <Text className="text-[10px] font-black text-teal-700 uppercase">
+                    {item.classID ? `Class ${item.classID}` : ''}{item.sectionID ? `-${item.sectionID}` : ''}
+                  </Text>
+                </View>
+              )}
+            </View>
             
             <View className="flex-row items-center gap-1.5 mb-1.5">
-              <AppIcon name="call" size={14} color="#059669" />
+              <AppIcon name="call" size={13} color="#059669" />
               <Text className="text-[12px] font-bold text-emerald-600">
-                +91 {item.fatherNumber || item.studentNumber || '-'} <Text className="text-gray-400 font-medium">(Father)</Text>
+                +91 {item.fatherNumber || item.studentNumber || '-'} <Text className="text-gray-400 font-semibold">(Father)</Text>
               </Text>
             </View>
             
-            <View className="flex-row items-center gap-1.5">
-              <AppIcon name="lock" size={14} color="#6B7280" />
+            <View className="flex-row items-center gap-1.5 mb-1.5">
+              <AppIcon name="lock" size={13} color="#6B7280" />
               <Text className="text-[12px] font-bold text-gray-600">
-                Password : {(item as any).parentPassword || 'N/A'}
+                Password: {(item as any).parentPassword || 'N/A'}
               </Text>
             </View>
+
+            {item.studentGRNo && (
+              <View className="flex-row items-center gap-1.5">
+                <AppIcon name="admission" size={13} color="#3B82F6" />
+                <Text className="text-[12px] font-bold text-gray-600">
+                  GR No: {item.studentGRNo}
+                </Text>
+              </View>
+            )}
           </View>
         </View>
         
-        <View className="flex-row justify-end items-center px-4 py-2 bg-gray-50/50 gap-2">
+        <View className="flex-row justify-end items-center px-4 py-2.5 bg-gray-50/50 gap-2.5 rounded-b-2xl">
           <TouchableOpacity 
-            className="w-8 h-8 rounded border border-amber-100 bg-amber-400 items-center justify-center"
+            className="flex-row items-center gap-1.5 px-3 py-1.5 bg-indigo-50 border border-indigo-100 rounded-xl"
             onPress={() => router.push(`/(app)/admission-form?id=${studentId}`)}
+            activeOpacity={0.7}
           >
-            <AppIcon name="admission" size={14} color="white" />
+            <AppIcon name="admission" size={12} color="#4F46E5" />
+            <Text className="text-[10px] font-extrabold text-indigo-700 uppercase">Edit</Text>
           </TouchableOpacity>
           
           <TouchableOpacity 
-            className="w-8 h-8 rounded border border-blue-100 bg-blue-600 items-center justify-center"
+            className="flex-row items-center gap-1.5 px-3 py-1.5 bg-rose-50 border border-rose-100 rounded-xl"
             onPress={() => handleDeleteClick(item)}
+            activeOpacity={0.7}
           >
-            <AppIcon name="warning" size={14} color="white" />
+            <AppIcon name="warning" size={12} color="#E11D48" />
+            <Text className="text-[10px] font-extrabold text-rose-700 uppercase">Delete</Text>
           </TouchableOpacity>
 
           <TouchableOpacity 
-            className="w-8 h-8 rounded border border-orange-100 bg-orange-500 items-center justify-center"
+            className="flex-row items-center gap-1.5 px-3 py-1.5 bg-emerald-50 border border-emerald-100 rounded-xl"
             onPress={() => {
               if (studentId == null) return;
               router.push({ pathname: "/(app)/student-profile", params: { id: String(studentId) } });
             }}
+            activeOpacity={0.7}
           >
-            <AppIcon name="profile" size={14} color="white" />
+            <AppIcon name="profile" size={12} color="#059669" />
+            <Text className="text-[10px] font-extrabold text-emerald-700 uppercase">Profile</Text>
           </TouchableOpacity>
         </View>
       </TouchableOpacity>
@@ -251,13 +289,22 @@ export default function AdminStudentManagementScreen() {
       scrollable={false}
       flatHeader
     >
-      <View className="bg-white px-4 py-2 border-b border-gray-100">
-        <View className="mb-2">
-          <Text className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Select Medium</Text>
+      <View 
+        className="bg-white px-4 py-3 border-b border-gray-200 z-20"
+        style={{
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.04,
+          shadowRadius: 6,
+          elevation: 3,
+        }}
+      >
+        <View className="mb-3">
+          <Text className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-1.5">Select Medium</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
             <TouchableOpacity
               onPress={() => setSelectedMediumId(null)}
-              className={`px-4 py-1.5 rounded-lg border ${selectedMediumId === null ? "bg-orange-50 border-orange-200" : "bg-white border-gray-200"}`}
+              className={`px-4 py-1.5 rounded-xl border ${selectedMediumId === null ? "bg-orange-50 border-orange-200" : "bg-white border-gray-200"}`}
             >
               <Text className={`text-[11px] font-bold ${selectedMediumId === null ? "text-orange-700" : "text-gray-600"}`}>All Mediums</Text>
             </TouchableOpacity>
@@ -265,7 +312,7 @@ export default function AdminStudentManagementScreen() {
               <TouchableOpacity
                 key={med.mediumID}
                 onPress={() => setSelectedMediumId(med.mediumID)}
-                className={`px-4 py-1.5 rounded-lg border flex-row items-center gap-1 ${selectedMediumId === med.mediumID ? "bg-orange-50 border-orange-200" : "bg-white border-gray-200"}`}
+                className={`px-4 py-1.5 rounded-xl border flex-row items-center gap-1 ${selectedMediumId === med.mediumID ? "bg-orange-50 border-orange-200" : "bg-white border-gray-200"}`}
               >
                 <Text className={`text-[11px] font-bold ${selectedMediumId === med.mediumID ? "text-orange-700" : "text-gray-600"}`}>
                   {med.mediumName}
@@ -276,12 +323,12 @@ export default function AdminStudentManagementScreen() {
           </ScrollView>
         </View>
 
-        <View className="mb-2">
-          <Text className="text-xs font-bold text-gray-500 mb-1">Select Batch</Text>
+        <View className="mb-3">
+          <Text className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-1.5">Select Batch</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
             <TouchableOpacity
               onPress={() => setSelectedBatchId(null)}
-              className={`px-4 py-1.5 rounded-lg border ${selectedBatchId === null ? "bg-blue-50 border-blue-200" : "bg-white border-gray-200"}`}
+              className={`px-4 py-1.5 rounded-xl border ${selectedBatchId === null ? "bg-blue-50 border-blue-200" : "bg-white border-gray-200"}`}
             >
               <Text className={`text-[11px] font-bold ${selectedBatchId === null ? "text-blue-700" : "text-gray-600"}`}>All Batches</Text>
             </TouchableOpacity>
@@ -289,7 +336,7 @@ export default function AdminStudentManagementScreen() {
               <TouchableOpacity
                 key={b.batchID}
                 onPress={() => setSelectedBatchId(b.batchID)}
-                className={`px-4 py-1.5 rounded-lg border flex-row items-center gap-1 ${selectedBatchId === b.batchID ? "bg-blue-50 border-blue-200" : "bg-white border-gray-200"}`}
+                className={`px-4 py-1.5 rounded-xl border flex-row items-center gap-1 ${selectedBatchId === b.batchID ? "bg-blue-50 border-blue-200" : "bg-white border-gray-200"}`}
               >
                 <Text className={`text-[11px] font-bold ${selectedBatchId === b.batchID ? "text-blue-700" : "text-gray-600"}`}>
                   {b.batchName}
@@ -300,25 +347,28 @@ export default function AdminStudentManagementScreen() {
           </ScrollView>
         </View>
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
-          <TouchableOpacity
-            onPress={() => setSelectedClassId(null)}
-            className={`px-4 py-2 rounded-full border ${selectedClassId === null ? "bg-[#0d3666] border-[#0d3666]" : "bg-gray-50 border-gray-200"}`}
-          >
-            <Text className={`text-xs font-bold ${selectedClassId === null ? "text-white" : "text-gray-600"}`}>All Classes</Text>
-          </TouchableOpacity>
-          {classes.map((cls) => (
+        <View className="mb-1">
+          <Text className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-1.5">Select Class</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
             <TouchableOpacity
-              key={cls.classID}
-              onPress={() => setSelectedClassId(cls.classID)}
-              className={`px-4 py-2 rounded-full border ${selectedClassId === cls.classID ? "bg-[#0d3666] border-[#0d3666]" : "bg-gray-50 border-gray-200"}`}
+              onPress={() => setSelectedClassId(null)}
+              className={`px-4 py-2 rounded-xl border ${selectedClassId === null ? "bg-teal-50 border-teal-200" : "bg-white border-gray-200"}`}
             >
-              <Text className={`text-xs font-bold ${selectedClassId === cls.classID ? "text-white" : "text-gray-600"}`}>
-                Class {cls.className}
-              </Text>
+              <Text className={`text-[11px] font-bold ${selectedClassId === null ? "text-teal-700" : "text-gray-600"}`}>All Classes</Text>
             </TouchableOpacity>
-          ))}
-        </ScrollView>
+            {classes.map((cls) => (
+              <TouchableOpacity
+                key={cls.classID}
+                onPress={() => setSelectedClassId(cls.classID)}
+                className={`px-4 py-2 rounded-xl border ${selectedClassId === cls.classID ? "bg-teal-50 border-teal-200" : "bg-white border-gray-200"}`}
+              >
+                <Text className={`text-[11px] font-bold ${selectedClassId === cls.classID ? "text-teal-700" : "text-gray-600"}`}>
+                  Class {cls.className}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
       </View>
       <ResponsiveDataList
         data={filteredStudents}

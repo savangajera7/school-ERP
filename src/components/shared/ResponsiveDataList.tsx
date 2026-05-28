@@ -94,7 +94,7 @@ export function ResponsiveDataList<T>({
   };
 
   const searchBar = onSearchChange !== undefined ? (
-    <View className="bg-white border border-gray-100 rounded-xl flex-row items-center h-12 px-4 mb-4 shadow-sm">
+    <View className="bg-white border border-gray-100 rounded-xl flex-row items-center h-12 px-4 mt-2 mb-4 shadow-sm">
       <AppIcon name="search" size={20} color="#9CA3AF" />
       <TextInput
         value={searchQuery}
