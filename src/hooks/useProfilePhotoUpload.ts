@@ -4,8 +4,10 @@ import * as ImagePicker from "expo-image-picker";
 import { useAuthStore } from "@/store/authStore";
 import { putApiUserUpdateUser } from "@/api/generated/user/user";
 import { uploadProfileImage } from "@/services/upload/uploadService";
+import { useDialog } from "@/components/ui/AppDialog";
 
 export function useProfilePhotoUpload() {
+  const dialog = useDialog();
   const { userData, setUser } = useAuthStore();
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -16,10 +18,7 @@ export function useProfilePhotoUpload() {
     if (Platform.OS !== "web") {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== "granted") {
-        Alert.alert(
-          "Permission required",
-          "Please allow photo library access to change your profile picture."
-        );
+        dialog.alert("Permission required", "Please allow photo library access to change your profile picture.");
         return;
       }
     }
@@ -67,7 +66,7 @@ export function useProfilePhotoUpload() {
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Failed to update profile photo";
       setError(msg);
-      Alert.alert("Upload failed", msg);
+      dialog.alert("Upload failed", msg, "error");
     } finally {
       setUploading(false);
     }

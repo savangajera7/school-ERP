@@ -1,49 +1,38 @@
 import React, { useState } from "react";
-import { View, Text, FlatList, TextInput, TouchableOpacity, Alert, Platform } from "react-native";
+import { View, Text, FlatList, TextInput, TouchableOpacity, Platform } from "react-native";
 import { router } from "expo-router";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
+import { ResponsiveDataList } from "@/components/shared/ResponsiveDataList";
+import { FormLayout } from "@/components/layout/FormLayout";
+import { IconButton } from "@/components/ui/IconButton";
+import { Switch } from "react-native";
+import { useDebounce } from "@/hooks/useDebounce";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { AppIcon, IconCircle } from "@/components/icons/AppIcon";
+import { AppIcon } from "@/components/icons/AppIcon";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
 import { premiumCardShadow } from "@/constants/premiumStyles";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { parseApiList } from "@/utils/apiResponse";
 import type { AppIconName } from "@/constants/appIcons";
 import { useAuthStore } from "@/store/authStore";
+import { useDialog } from "@/components/ui/AppDialog";
 
 export interface MasterCrudScreenProps {
-  /** Page title (e.g. "Classes") */
   title: string;
-  /** Page subtitle (e.g. "Manage school classes") */
   subtitle: string;
-  /** Human-readable entity name (e.g. "class") */
   entityName: string;
-  /** Primary identifier key (e.g. "classID") */
   idField: string;
-  /** Display label key (e.g. "className") */
   nameField: string;
-  /** Input field placeholder (e.g. "e.g. Class 10") */
   placeholder: string;
-  /** Left icon for list items */
   iconName: AppIconName;
-  /** TanStack query hook to fetch list */
   useGetList: () => { data: any; isLoading: boolean; refetch: () => any };
-  /** TanStack mutation hook to add entity */
   useAdd: () => { mutateAsync: (payload: { data: any }) => Promise<any>; isPending: boolean };
-  /** TanStack mutation hook to update entity */
   useUpdate: () => { mutateAsync: (payload: { data: any }) => Promise<any>; isPending: boolean };
-  /** TanStack mutation hook to delete entity by ID */
   useDelete: () => { mutateAsync: (payload: { id: number }) => Promise<any>; isPending: boolean };
-  /** Optional custom subtitle mapping (e.g., active status display) */
   getSubtitle?: (item: any) => string;
 }
 
-/**
- * Standardized generic Master CRUD controller screen.
- * Consolidates layout, state, loading skeleton, form input, update modes,
- * and deletion confirmation prompts for all master lists.
- */
 export function MasterCrudScreen({
   title,
   subtitle,
@@ -59,8 +48,14 @@ export function MasterCrudScreen({
   getSubtitle = (item) => (item.isActive ? "Active" : "Inactive"),
 }: MasterCrudScreenProps) {
   const [inputValue, setInputValue] = useState("");
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [isActive, setIsActive] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearch = useDebounce(searchQuery, 300);
   const [editingItem, setEditingItem] = useState<any>(null);
   const { userData } = useAuthStore();
+  const { alert, confirm } = useDialog();
+
   const currentUserId =
     Number(userData?.id ?? (userData as any)?.userID ?? (userData as any)?.UserID) || 1;
   const currentSchoolId =
@@ -73,6 +68,12 @@ export function MasterCrudScreen({
   const deleteMutation = useDelete();
 
   const items = parseApiList(data?.data);
+  const filteredItems = React.useMemo(() => {
+    if (!debouncedSearch) return items;
+    return items.filter((item: any) => 
+      String(item[nameField]).toLowerCase().includes(debouncedSearch.toLowerCase())
+    );
+  }, [items, debouncedSearch, nameField]);
 
   const assertSuccessfulMutation = (response: any, fallbackMessage: string) => {
     const body = response?.data ?? response;
@@ -82,31 +83,37 @@ export function MasterCrudScreen({
   };
 
   const handleAdd = async () => {
+    setHasSubmitted(true);
     if (!inputValue.trim()) return;
     try {
       const response = await addMutation.mutateAsync({
         data: {
           [nameField]: inputValue,
-          isActive: true,
+          isActive: isActive,
           createdBy: currentUserId,
           ...(currentSchoolId ? { schoolID: currentSchoolId } : {}),
         },
       });
       assertSuccessfulMutation(response, `Failed to add ${entityName}`);
       setInputValue("");
+      setHasSubmitted(false);
+      setIsActive(true);
+      await alert("Success", `${entityName} added successfully.`, "success");
       refetch();
     } catch (error: any) {
-      Alert.alert("Error", error.message || `Failed to add ${entityName}`);
+      await alert("Error", error.message || `Failed to add ${entityName}`, "error");
     }
   };
 
   const handleUpdate = async () => {
+    setHasSubmitted(true);
     if (!inputValue.trim() || !editingItem) return;
     try {
       const response = await updateMutation.mutateAsync({
         data: {
           ...editingItem,
           [nameField]: inputValue,
+          isActive: isActive,
           createdBy: currentUserId,
           updatedBy: currentUserId,
           ...(currentSchoolId ? { schoolID: currentSchoolId } : {}),
@@ -115,39 +122,44 @@ export function MasterCrudScreen({
       assertSuccessfulMutation(response, `Failed to update ${entityName}`);
       setInputValue("");
       setEditingItem(null);
+      setHasSubmitted(false);
+      setIsActive(true);
+      await alert("Success", `${entityName} updated successfully.`, "success");
       refetch();
     } catch (error: any) {
-      Alert.alert("Error", error.message || `Failed to update ${entityName}`);
+      await alert("Error", error.message || `Failed to update ${entityName}`, "error");
     }
   };
 
   const startEdit = (item: any) => {
     setEditingItem(item);
     setInputValue(item[nameField]);
+    setIsActive(item.isActive ?? true);
+    setHasSubmitted(false);
   };
 
   const cancelEdit = () => {
     setEditingItem(null);
     setInputValue("");
+    setIsActive(true);
+    setHasSubmitted(false);
   };
 
-  const handleDelete = (id: number) => {
-    Alert.alert("Delete", `Are you sure you want to delete this ${entityName}?`, [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Delete",
-        style: "destructive",
-        onPress: async () => {
-          try {
-            const response = await deleteMutation.mutateAsync({ id });
-            assertSuccessfulMutation(response, `Failed to delete ${entityName}`);
-            refetch();
-          } catch (error: any) {
-            Alert.alert("Error", error.message || `Failed to delete ${entityName}`);
-          }
-        },
-      },
-    ]);
+  const handleDelete = async (id: number) => {
+    const ok = await confirm(
+      `Delete ${entityName}`,
+      `Are you sure you want to delete this ${entityName}? This cannot be undone.`,
+      { confirmLabel: "Delete", destructive: true }
+    );
+    if (!ok) return;
+    try {
+      const response = await deleteMutation.mutateAsync({ id });
+      assertSuccessfulMutation(response, `Failed to delete ${entityName}`);
+      await alert("Success", `${entityName} deleted successfully.`, "success");
+      refetch();
+    } catch (error: any) {
+      await alert("Error", error.message || `Failed to delete ${entityName}`, "error");
+    }
   };
 
   return (
@@ -157,7 +169,7 @@ export function MasterCrudScreen({
       onBack={() => router.back()}
       scrollable={false}
       fullWidth
-      hideBack={Platform.OS === 'web'}
+      hideBack={Platform.OS === "web"}
     >
       <Card className="p-4 mb-6" style={premiumCardShadow}>
         <View className="flex-row gap-3">

@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from "react";
-import { View, Text, TouchableOpacity, FlatList, Alert, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, FlatList, ScrollView } from "react-native";
+import { useDialog } from "@/components/ui/AppDialog";
 import { router } from "expo-router";
 import { useResponsive } from "@/hooks/useResponsive";
 import { Colors } from "@/constants/colors";
@@ -18,6 +19,7 @@ export default function AdminNoticesManagementScreen() {
   const { isMobile } = useResponsive();
   const [searchQuery, setSearchQuery] = useState("");
   const [showForm, setShowForm] = useState(false);
+  const { confirm, alert } = useDialog();
 
   const { data, isLoading, isError, error, refetch } = useGetApiNoticeGet();
   const deleteNotice = usePostApiNoticeDelete();
@@ -38,28 +40,19 @@ export default function AdminNoticesManagementScreen() {
     });
   }, [notices, searchQuery]);
 
-  const handleDelete = (notice: any) => {
-    Alert.alert(
+  const handleDelete = async (notice: any) => {
+    const ok = await confirm(
       "Delete Notice",
       `Are you sure you want to remove "${notice.noticeTitle}"?`,
-      [
-        { text: "Cancel", style: "cancel" },
-        { 
-          text: "Delete", 
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await deleteNotice.mutateAsync({ 
-                data: { noticeID: notice.noticeID } 
-              });
-              refetch();
-            } catch (err: any) {
-              Alert.alert("Error", err.message || "Failed to delete notice");
-            }
-          }
-        }
-      ]
+      { confirmLabel: "Delete", destructive: true }
     );
+    if (!ok) return;
+    try {
+      await deleteNotice.mutateAsync({ data: { noticeID: notice.noticeID } });
+      refetch();
+    } catch (err: any) {
+      await alert("Error", err.message || "Failed to delete notice", "error");
+    }
   };
 
   const renderNoticeItem = ({ item }: { item: any }) => {

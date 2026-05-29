@@ -13,6 +13,9 @@ export interface ResponsiveDataListProps<T> {
   isError?: boolean;
   error?: any;
   onRefresh?: () => void;
+  onEndReached?: () => void;
+  onEndReachedThreshold?: number;
+  isFetchingNextPage?: boolean;
   
   /** Card renderer for Mobile view */
   renderCard: (item: T, index: number) => React.ReactElement | null;
@@ -51,6 +54,9 @@ export function ResponsiveDataList<T>({
   onSearchChange,
   searchPlaceholder,
   headerComponent,
+  onEndReached,
+  onEndReachedThreshold = 0.5,
+  isFetchingNextPage,
 }: ResponsiveDataListProps<T>) {
   const { listMode } = useResponsive();
   const { t } = useTranslation();
@@ -142,6 +148,11 @@ export function ResponsiveDataList<T>({
               onRowPress={onRowPress}
               isLoading={isLoading}
             />
+            {isFetchingNextPage && (
+              <View className="p-4 items-center justify-center">
+                <ActivityIndicator size="small" color="#4B5563" />
+              </View>
+            )}
           </ScrollView>
         ) : (
           renderEmptyState()
@@ -169,7 +180,16 @@ export function ResponsiveDataList<T>({
         )
       }
       refreshControl={
-        <RefreshControl refreshing={!!isLoading} onRefresh={handleRefresh} />
+        <RefreshControl refreshing={!!isLoading && !isFetchingNextPage} onRefresh={handleRefresh} />
+      }
+      onEndReached={onEndReached}
+      onEndReachedThreshold={onEndReachedThreshold}
+      ListFooterComponent={
+        isFetchingNextPage ? (
+          <View className="p-4 items-center justify-center">
+            <ActivityIndicator size="small" color="#4B5563" />
+          </View>
+        ) : null
       }
     />
   );

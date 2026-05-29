@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
-import { View, ScrollView, Alert, KeyboardAvoidingView, Platform, Text } from "react-native";
+import { View, ScrollView, KeyboardAvoidingView, Platform, Text } from "react-native";
+import { useDialog } from "@/components/ui/AppDialog";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { Input } from "@/components/ui/Input";
 import { PasswordInput } from "@/components/ui/PasswordInput";
@@ -32,6 +33,7 @@ const editSchoolSchema = z.object({
 type EditSchoolFormValues = z.infer<typeof editSchoolSchema>;
 
 export default function EditSchoolScreen() {
+  const dialog = useDialog();
   const { id } = useLocalSearchParams<{ id: string }>();
   const schoolId = parseInt(id, 10);
   const queryClient = useQueryClient();
@@ -74,16 +76,16 @@ export default function EditSchoolScreen() {
       {
         onSuccess: (res: any) => {
           if (res?.data?.success === false || res?.data?.status === 0) {
-            Alert.alert("Error", res?.data?.message || "Failed to update school.");
+            dialog.alert("Error", res?.data?.message || "Failed to update school.", "error");
             return;
           }
-          Alert.alert("Success", "School updated successfully.");
+          dialog.alert("Success", "School updated successfully.", "success");
           queryClient.invalidateQueries({ queryKey: ["/api/School/Get"] });
           queryClient.invalidateQueries({ queryKey: [`/api/School/GetByID/${schoolId}`] });
           router.back();
         },
         onError: (err: any) => {
-          Alert.alert("Error", err?.response?.data?.message || "Failed to update school.");
+          dialog.alert("Error", err?.response?.data?.message || "Failed to update school.", "error");
         }
       }
     );

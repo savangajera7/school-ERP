@@ -1,9 +1,10 @@
 import React, { useState, useMemo, useCallback } from "react";
 import {
   View, Text, TouchableOpacity, ScrollView,
-  ActivityIndicator, Modal, TextInput, Alert,
+  ActivityIndicator, Modal, TextInput,
 } from "react-native";
 import { useFocusEffect } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { AppIcon, IconCircle } from "@/components/icons/AppIcon";
 import { usePermissions } from "@/hooks/usePermissions";
@@ -24,6 +25,7 @@ import {
 import { useGetApiTeacherPermissionsTeacherId } from "@/api/generated/6-teacher-permissions-admin-assigns-module-access-per-class/6-teacher-permissions-admin-assigns-module-access-per-class";
 import { useGetApiSubjectGetSubjectList } from "@/api/generated/subject/subject";
 import { useQueryClient } from "@tanstack/react-query";
+import { useDialog } from "@/components/ui/AppDialog";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -62,6 +64,7 @@ interface Period {
   className?: string;
   subjectID?: number;
   teacherID?: number;
+  hasOverlap?: boolean;
 }
 
 interface TimetableView {
@@ -94,6 +97,12 @@ function PeriodCard({
         <View className="flex-row items-start justify-between gap-2">
           <View className="flex-1">
             {/* Time badge */}
+            {period.hasOverlap && (
+              <View className="bg-red-50 px-2 py-1 rounded-lg border border-red-200 self-start mb-2 flex-row items-center gap-1">
+                <AppIcon name="warning" size={10} color="#DC2626" />
+                <Text className="text-[9px] font-black text-red-600 uppercase tracking-wider">Time Overlap</Text>
+              </View>
+            )}
             <View className="flex-row items-center gap-2 mb-2">
               <View className="bg-gray-100 px-2.5 py-1 rounded-lg flex-row items-center gap-1.5">
                 <AppIcon name="clock" size={11} color="#6B7280" />
@@ -170,6 +179,12 @@ function TableRow({
       {/* Time */}
       <View className="w-[140px]">
         <Text className="text-[12px] font-black text-gray-700">{period.startTime} – {period.endTime}</Text>
+        {period.hasOverlap && (
+          <View className="bg-red-50 px-1.5 py-0.5 rounded-md border border-red-200 self-start mt-1 flex-row items-center gap-1">
+            <AppIcon name="warning" size={8} color="#DC2626" />
+            <Text className="text-[8px] font-black text-red-600 uppercase">Overlap</Text>
+          </View>
+        )}
       </View>
       {/* Subject */}
       <View className="flex-1 flex-row items-center gap-2">
@@ -221,6 +236,7 @@ export default function TimetableScreen() {
   const { isSchoolAdmin, isAdmin, isTeacher, isParent, isStudent, userData } = usePermissions();
   const { isMobile } = useResponsive();
   const queryClient = useQueryClient();
+  const dialog = useDialog();
 
   const canEdit = isSchoolAdmin || isAdmin;
   const isViewOnly = isParent || isStudent;
@@ -352,41 +368,26 @@ export default function TimetableScreen() {
 
   const handleSave = async () => {
     if (!formSubjectID || !formTeacherID || !formStart || !formEnd) {
-      Alert.alert("Missing Fields", "Subject, Teacher, Start Time and End Time are required.");
+      await dialog.alert("Missing Fields", "Subject, Teacher, Start Time and End Time are required.", "warning");
       return;
     }
     setFormSaving(true);
     try {
       if (editingPeriod?.timetableID) {
         await updateMutation.mutateAsync({
-          data: {
-            timetableID: editingPeriod.timetableID,
-            subjectID: formSubjectID,
-            teacherID: formTeacherID,
-            roomNumber: formRoom || null,
-            startTime: formStart,
-            endTime: formEnd,
-          },
+          data: { timetableID: editingPeriod.timetableID, subjectID: formSubjectID, teacherID: formTeacherID, roomNumber: formRoom || null, startTime: formStart, endTime: formEnd },
         });
       } else {
         const classId = formClassID ?? selectedClassID;
-        if (!classId) { Alert.alert("Error", "Please select a class."); return; }
+        if (!classId) { await dialog.alert("Error", "Please select a class.", "error"); return; }
         await addMutation.mutateAsync({
-          data: {
-            classID: classId,
-            day: formDay,
-            subjectID: formSubjectID,
-            teacherID: formTeacherID,
-            roomNumber: formRoom || null,
-            startTime: formStart,
-            endTime: formEnd,
-          },
+          data: { classID: classId, day: formDay, subjectID: formSubjectID, teacherID: formTeacherID, roomNumber: formRoom || null, startTime: formStart, endTime: formEnd },
         });
       }
       queryClient.invalidateQueries({ queryKey: ['/api/timetable/get'] });
       setFormVisible(false);
     } catch (e: any) {
-      Alert.alert("Error", e?.message || "Failed to save period");
+      await dialog.alert("Error", e?.message || "Failed to save period", "error");
     } finally {
       setFormSaving(false);
     }
@@ -404,13 +405,29 @@ export default function TimetableScreen() {
       queryClient.invalidateQueries({ queryKey: ['/api/timetable/get'] });
       setDeleteTarget(null);
     } catch (e: any) {
-      Alert.alert("Error", e?.message || "Failed to delete period");
+      await dialog.alert("Error", e?.message || "Failed to delete period", "error");
     } finally {
       setIsDeleting(false);
     }
   };
 
-  const periods = timetableView?.periods ?? [];
+  const sortedPeriods = useMemo(() => {
+    const sorted = [...(timetableView?.periods ?? [])].sort((a, b) => {
+      return a.startTime.localeCompare(b.startTime);
+    });
+    
+    // Check overlaps
+    return sorted.map((p, i) => {
+      let hasOverlap = false;
+      if (i > 0) {
+        if (p.startTime < sorted[i-1].endTime) {
+          hasOverlap = true;
+        }
+      }
+      return { ...p, hasOverlap };
+    });
+  }, [timetableView?.periods]);
+  const periods = sortedPeriods;
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
@@ -476,7 +493,7 @@ export default function TimetableScreen() {
 
       {/* ── Form Modal ── */}
       <Modal visible={formVisible} transparent animationType="fade">
-        <View className="flex-1 bg-black/50 items-center justify-center p-4">
+        <SafeAreaView className="flex-1 bg-black/50 items-center justify-center p-4">
           <View className="bg-white rounded-3xl w-full max-w-[500px] overflow-hidden"
             style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.15, shadowRadius: 24, elevation: 8 }}
           >
@@ -632,12 +649,12 @@ export default function TimetableScreen() {
               </TouchableOpacity>
             </View>
           </View>
-        </View>
+        </SafeAreaView>
       </Modal>
 
       {/* ── Delete Modal ── */}
       <Modal visible={!!deleteTarget} transparent animationType="fade">
-        <View className="flex-1 bg-black/50 items-center justify-center p-4">
+        <SafeAreaView className="flex-1 bg-black/50 items-center justify-center p-4">
           <View className="bg-white rounded-3xl w-full max-w-[420px] overflow-hidden"
             style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.15, shadowRadius: 24, elevation: 8 }}
           >
@@ -687,7 +704,7 @@ export default function TimetableScreen() {
               </TouchableOpacity>
             </View>
           </View>
-        </View>
+        </SafeAreaView>
       </Modal>
 
         {/* Day selector */}
@@ -773,6 +790,8 @@ export default function TimetableScreen() {
         <View className="flex-1 bg-white rounded-2xl border border-gray-100 overflow-hidden"
           style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 8, elevation: 2 }}
         >
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <View style={{ minWidth: 600 }}>
           {/* Table header */}
           <View className="flex-row items-center px-5 py-3 bg-gray-50 border-b border-gray-100">
             <View className="w-10"><Text className="text-[10px] font-black text-gray-400 uppercase">#</Text></View>
@@ -790,6 +809,8 @@ export default function TimetableScreen() {
                 onEdit={openEdit} onDelete={setDeleteTarget}
               />
             ))}
+          </ScrollView>
+            </View>
           </ScrollView>
         </View>
       )}

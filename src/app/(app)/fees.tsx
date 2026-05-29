@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from "react";
-import { View, Text, TouchableOpacity, TextInput, Alert, Platform } from "react-native";
+import { View, Text, TouchableOpacity, TextInput, Platform } from "react-native";
+import { useDialog } from "@/components/ui/AppDialog";
 import { router } from "expo-router";
 import { Card } from "@/components/ui/Card";
 import { useResponsive } from "@/hooks/useResponsive";
@@ -27,6 +28,7 @@ const FEE_STRUCTURE = [
 ];
 
 export default function FeesManagementScreen() {
+  const dialog = useDialog();
   const { isMobile } = useResponsive();
   const { canManageFees, isParent } = usePermissions();
   const [activeTab, setActiveTab] = useState<"collect" | "history" | "structure">(

@@ -4,10 +4,10 @@ import {
   Text,
   TouchableOpacity,
   ActivityIndicator,
-  Alert,
   FlatList,
   TextInput,
 } from "react-native";
+import { useDialog } from "@/components/ui/AppDialog";
 import { Redirect, router, useLocalSearchParams } from "expo-router";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import {
@@ -34,6 +34,8 @@ import { useAttendanceAccess } from "@/hooks/useAttendanceAccess";
 import { AccessDenied } from "@/components/auth/AccessDenied";
 import { Colors } from "@/constants/colors";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
+import * as Haptics from "expo-haptics";
+import { ScrollView } from "react-native";
 import { getApiErrorMessage } from "@/utils/recordHelpers";
 import { AppIcon, GenderIcon } from "@/components/icons/AppIcon";
 import { premiumCardShadow } from "@/constants/premiumStyles";
@@ -72,6 +74,7 @@ const STATUS_CONFIG = {
 } as const;
 
 export default function MarkAttendanceScreen() {
+  const dialog = useDialog();
   const access = useAttendanceAccess();
   const params = useLocalSearchParams<{
     classId?: string;
@@ -92,6 +95,8 @@ export default function MarkAttendanceScreen() {
   const [attendanceMap, setAttendanceMap] = useState<Record<number, MarkStatus>>({});
   const [remarks, setRemarks] = useState<Record<number, string>>({});
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
 
   const queryParams = useMemo(
     () => (classID ? buildClassStudentsLoadParams(classID, date, userData?.schoolID) : undefined),
@@ -150,6 +155,33 @@ export default function MarkAttendanceScreen() {
     );
   }
 
+  const toggleSelection = (id: number) => {
+    setSelectedIds(prev => {
+      const next = prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id];
+      if (next.length === 0) setIsSelectionMode(false);
+      return next;
+    });
+  };
+
+  const handleLongPress = (id: number) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    if (!isSelectionMode) {
+      setIsSelectionMode(true);
+      setSelectedIds([id]);
+    }
+  };
+
+  const handleBulkMark = (status: MarkStatus) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setAttendanceMap(prev => {
+      const next = { ...prev };
+      selectedIds.forEach(id => next[id] = status);
+      return next;
+    });
+    setSelectedIds([]);
+    setIsSelectionMode(false);
+  };
+
   const markAllPresent = () => {
     const next: Record<number, MarkStatus> = {};
     students.forEach((s) => { if (s.studentID) next[s.studentID] = "Present"; });
@@ -159,7 +191,7 @@ export default function MarkAttendanceScreen() {
 
   const handleSave = () => {
     if (isFutureDate(date)) {
-      Alert.alert("Invalid date", "Cannot mark attendance for a future date.");
+      dialog.alert("Invalid date", "Cannot mark attendance for a future date.");
       return;
     }
 
@@ -199,9 +231,7 @@ export default function MarkAttendanceScreen() {
     };
 
     if (absentRate > 0.5) {
-      Alert.alert(
-        "High absence rate",
-        `More than half the class (${counts.absent + counts.leave} of ${studentIds.length}) is absent or on leave. Save anyway?`,
+      dialog.alert("High absence rate", `More than half the class (${counts.absent + counts.leave} of ${studentIds.length}) is absent or on leave. Save anyway?`,
         [
           { text: "Cancel", style: "cancel" },
           { text: "Save", onPress: () => void doSave() },
@@ -218,11 +248,22 @@ export default function MarkAttendanceScreen() {
     const cfg = STATUS_CONFIG[status];
     const showRemark = status !== "Present";
 
+    const isSelected = selectedIds.includes(sid);
     return (
-      <View
-        className="bg-white rounded-2xl mb-3 border border-gray-100"
+      <TouchableOpacity
+        activeOpacity={0.9}
+        onLongPress={() => handleLongPress(sid)}
+        onPress={() => {
+          if (isSelectionMode) toggleSelection(sid);
+        }}
+        className={`bg-white rounded-2xl mb-3 border ${isSelected ? 'border-blue-500' : 'border-gray-100'}`}
         style={premiumCardShadow}
       >
+        {isSelected && (
+          <View className="absolute top-4 left-4 z-10 w-6 h-6 rounded-md bg-blue-600 items-center justify-center border border-blue-700">
+            <AppIcon name="check" size={12} color="white" />
+          </View>
+        )}
         <View className="p-4 flex-row items-center gap-3">
           <View className="relative">
             <View className="w-12 h-12 rounded-xl bg-gray-50 border border-gray-200 items-center justify-center">
@@ -260,7 +301,7 @@ export default function MarkAttendanceScreen() {
             return (
               <TouchableOpacity
                 key={`${sid}-${opt}`}
-                onPress={() => setAttendanceMap((prev) => ({ ...prev, [sid]: opt }))}
+                onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setAttendanceMap((prev) => ({ ...prev, [sid]: opt })); }}
                 className={`flex-1 py-2.5 rounded-xl border items-center ${active ? c.active : c.inactive}`}
                 activeOpacity={0.85}
               >
@@ -283,7 +324,7 @@ export default function MarkAttendanceScreen() {
             />
           </View>
         )}
-      </View>
+      </TouchableOpacity>
     );
   };
 
@@ -315,6 +356,31 @@ export default function MarkAttendanceScreen() {
         </TouchableOpacity>
       }
     >
+      {/* Weekly Date Strip */}
+      <View className="px-2 mb-4 mt-2">
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+          {Array.from({ length: 7 }).map((_, i) => {
+            const d = new Date();
+            d.setDate(d.getDate() - 6 + i); // Last 7 days ending today
+            const iso = d.toISOString().split("T")[0];
+            const isSelected = date === iso;
+            const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
+            const dayNum = d.getDate();
+            return (
+              <TouchableOpacity
+                key={iso}
+                onPress={() => setDate(iso)}
+                className={`w-[52px] h-[64px] rounded-2xl items-center justify-center border ${isSelected ? 'bg-indigo-600 border-indigo-700' : 'bg-white border-gray-200'}`}
+                activeOpacity={0.7}
+              >
+                <Text className={`text-[10px] font-bold uppercase mb-1 ${isSelected ? 'text-indigo-100' : 'text-gray-400'}`}>{dayName}</Text>
+                <Text className={`text-[16px] font-black ${isSelected ? 'text-white' : 'text-gray-800'}`}>{dayNum}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+      </View>
+
       {/* Summary chips */}
       <View className="px-1 mb-2">
         <AttendanceSummaryChips
@@ -390,7 +456,7 @@ export default function MarkAttendanceScreen() {
         <FlatList
           data={filteredStudents}
           keyExtractor={(item) => String(item.studentID)}
-          contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 4 }}
+          contentContainerStyle={{ paddingBottom: 160, paddingHorizontal: 4 }}
           onRefresh={refetch}
           refreshing={false}
           ListEmptyComponent={
@@ -402,6 +468,26 @@ export default function MarkAttendanceScreen() {
           }
           renderItem={renderStudentCard}
         />
+      )}
+      {/* Bulk Action Footer */}
+      {isSelectionMode && selectedIds.length > 0 && (
+        <View className="absolute bottom-6 left-4 right-4 bg-gray-900 rounded-2xl p-4 shadow-xl z-50 flex-row items-center justify-between">
+          <Text className="text-white font-bold text-sm ml-2">{selectedIds.length} Selected</Text>
+          <View className="flex-row gap-2">
+            <TouchableOpacity onPress={() => handleBulkMark("Present")} className="bg-emerald-600 px-3 py-2 rounded-xl">
+              <Text className="text-white font-bold text-xs">P</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => handleBulkMark("Absent")} className="bg-rose-600 px-3 py-2 rounded-xl">
+              <Text className="text-white font-bold text-xs">A</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => handleBulkMark("Leave")} className="bg-amber-500 px-3 py-2 rounded-xl">
+              <Text className="text-white font-bold text-xs">L</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => { setIsSelectionMode(false); setSelectedIds([]); }} className="bg-gray-700 px-3 py-2 rounded-xl ml-2">
+              <AppIcon name="close" size={14} color="white" />
+            </TouchableOpacity>
+          </View>
+        </View>
       )}
     </PremiumScreenLayout>
   );

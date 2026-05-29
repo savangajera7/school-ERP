@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
-import { ScrollView, Alert } from "react-native";
+import { ScrollView } from "react-native";
+import { useDialog } from "@/components/ui/AppDialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -30,6 +31,7 @@ export default function CreateRoleScreen() {
   const isEditing = !!roleID;
 
   const { userData } = useAuthStore();
+  const { alert } = useDialog();
   const insertRole = usePostApiRoleInsertRole();
   const updateRole = usePutApiRoleUpdateRole();
   const { data: roleResponse, isLoading: loadingRole } = useGetApiRoleGetRoleByIdId(roleID as number, {
@@ -59,26 +61,15 @@ export default function CreateRoleScreen() {
   const onSubmit = async (data: RoleFormData) => {
     try {
       if (isEditing) {
-        await updateRole.mutateAsync({
-          data: {
-            ...data,
-            roleID: roleID as number,
-            updatedBy: parseInt(userData?.id || "0"),
-          },
-        });
-        Alert.alert("Success", "Role updated successfully");
+        await updateRole.mutateAsync({ data: { ...data, roleID: roleID as number, updatedBy: parseInt(userData?.id || "0") } });
+        await alert("Success", "Role updated successfully", "success");
       } else {
-        await insertRole.mutateAsync({
-          data: {
-            ...data,
-            createdBy: parseInt(userData?.id || "0"),
-          },
-        });
-        Alert.alert("Success", "Role created successfully");
+        await insertRole.mutateAsync({ data: { ...data, createdBy: parseInt(userData?.id || "0") } });
+        await alert("Success", "Role created successfully", "success");
       }
       router.back();
     } catch (error: any) {
-      Alert.alert("Error", error.message || `Failed to ${isEditing ? "update" : "create"} role`);
+      await alert("Error", error.message || `Failed to ${isEditing ? "update" : "create"} role`, "error");
     }
   };
 

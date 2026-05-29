@@ -1,5 +1,6 @@
 import React from "react";
-import { View, Text, StyleSheet, Alert, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { useDialog } from "@/components/ui/AppDialog";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { Colors } from "@/constants/colors";
 import { useGetApiSchoolGet, useDeleteApiSchoolDeleteId, usePatchApiSchoolChangeStatusId, useGetApiSchoolGetRoleCountsId } from "@/api/generated/0-schools-super-admin/0-schools-super-admin";
@@ -93,6 +94,7 @@ const SchoolCard = ({ school, handleToggleStatus, handleDeleteSchool }: any) => 
 };
 
 export default function SchoolsManagementScreen() {
+  const dialog = useDialog();
   const { data, isLoading } = useGetApiSchoolGet();
   const queryClient = useQueryClient();
   const deleteSchoolMutation = useDeleteApiSchoolDeleteId();
@@ -121,7 +123,7 @@ export default function SchoolsManagementScreen() {
                   queryClient.invalidateQueries({ queryKey: ["/api/School/Get"] });
                 },
                 onError: () => {
-                  Alert.alert("Error", "Failed to delete school.");
+                  dialog.alert("Error", "Failed to delete school.", "error");
                 }
               }
             );
@@ -140,7 +142,7 @@ export default function SchoolsManagementScreen() {
           queryClient.invalidateQueries({ queryKey: ["/api/School/Get"] });
         },
         onError: () => {
-          Alert.alert("Error", "Failed to change school status.");
+          dialog.alert("Error", "Failed to change school status.", "error");
         }
       }
     );

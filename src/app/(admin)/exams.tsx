@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from "react";
-import { View, Text, TouchableOpacity, Alert } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
+import { useDialog } from "@/components/ui/AppDialog";
 import { router } from "expo-router";
 import { Colors } from "@/constants/colors";
 import { useGetApiExamGetExamList, useDeleteApiExamDeleteExam } from "@/api/generated/exam/exam";
@@ -13,6 +14,7 @@ import { ResponsiveDataList, EntityActionButtons, type TableColumn } from "@/com
 
 export default function AdminExamsManagementScreen() {
   const [searchQuery, setSearchQuery] = useState("");
+  const { confirm, alert } = useDialog();
 
   const { data, isLoading, isError, error, refetch } = useGetApiExamGetExamList();
   const deleteExam = useDeleteApiExamDeleteExam();
@@ -34,28 +36,19 @@ export default function AdminExamsManagementScreen() {
     });
   }, [exams, searchQuery]);
 
-  const handleDelete = (exam: any) => {
-    Alert.alert(
+  const handleDelete = async (exam: any) => {
+    const ok = await confirm(
       "Delete Exam",
       `Are you sure you want to remove "${exam.examName}"?`,
-      [
-        { text: "Cancel", style: "cancel" },
-        { 
-          text: "Delete", 
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await deleteExam.mutateAsync({ 
-                data: { examID: exam.examID } 
-              });
-              refetch();
-            } catch (err: any) {
-              Alert.alert("Error", err.message || "Failed to delete exam");
-            }
-          }
-        }
-      ]
+      { confirmLabel: "Delete", destructive: true }
     );
+    if (!ok) return;
+    try {
+      await deleteExam.mutateAsync({ data: { examID: exam.examID } });
+      refetch();
+    } catch (err: any) {
+      await alert("Error", err.message || "Failed to delete exam", "error");
+    }
   };
 
   const tableColumns: TableColumn<any>[] = [

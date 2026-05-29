@@ -7,6 +7,7 @@ import { StatusBar } from "expo-status-bar";
 import { Platform } from "react-native";
 import { PremiumLoadingScreen } from "@/components/ui/PremiumLoadingScreen";
 import { ToastProvider } from "@/components/ui/Toast";
+import { AppDialogProvider } from "@/components/ui/AppDialog";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { AppUpdateModal } from "@/components/updates/AppUpdateModal";
 import { useAppUpdate } from "@/hooks/useAppUpdate";
@@ -71,17 +72,19 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
         <ToastProvider>
-          <NotificationProvider>
-            <StatusBar style="dark" />
-            <AuthGate />
-            <AppUpdateModal
-              visible={appUpdate.visible}
-              manifest={appUpdate.manifest}
-              apkUrl={appUpdate.apkUrl}
-              installedVersion={appUpdate.installedVersion}
-              onDismiss={appUpdate.dismiss}
-            />
-          </NotificationProvider>
+          <AppDialogProvider>
+            <NotificationProvider>
+              <StatusBar style="dark" />
+              <AuthGate />
+              <AppUpdateModal
+                visible={appUpdate.visible}
+                manifest={appUpdate.manifest}
+                apkUrl={appUpdate.apkUrl}
+                installedVersion={appUpdate.installedVersion}
+                onDismiss={appUpdate.dismiss}
+              />
+            </NotificationProvider>
+          </AppDialogProvider>
         </ToastProvider>
       </SafeAreaProvider>
     </QueryClientProvider>

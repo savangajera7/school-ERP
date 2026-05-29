@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
-import { View, Text, FlatList, Switch, Alert } from "react-native";
+import { View, Text, FlatList, Switch } from "react-native";
+import { useDialog } from "@/components/ui/AppDialog";
 import { useLocalSearchParams, router } from "expo-router";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { 
@@ -16,6 +17,7 @@ export default function RoleRightsScreen() {
   const { roleID, roleName } = useLocalSearchParams();
   const selectedRoleID = parseInt(typeof roleID === "string" ? roleID : roleID?.[0] || "0");
   const { userData } = useAuthStore();
+  const { alert } = useDialog();
   
   const { data, isLoading, refetch } = useGetApiRoleRightsGetRoleRightsList();
   const updateRights = usePutApiRoleRightsUpdateRoleRights();
@@ -36,7 +38,7 @@ export default function RoleRightsScreen() {
       });
       refetch();
     } catch (error: any) {
-      Alert.alert("Error", error.message || "Failed to update permission");
+      await alert("Error", error.message || "Failed to update permission", "error");
     }
   };
 

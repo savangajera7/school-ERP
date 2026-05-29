@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import {
   View, Text, ScrollView, TouchableOpacity, TextInput,
-  Alert, ActivityIndicator, StyleSheet, Image,
+  ActivityIndicator, StyleSheet, Image,
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { Card } from "@/components/ui/Card";
 import { Colors } from "@/constants/colors";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
+import { FormLayout } from "@/components/layout/FormLayout";
+import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import { AppIcon } from "@/components/icons/AppIcon";
 import { PremiumDatePicker } from "@/components/ui/PremiumDatePicker";
 import {
@@ -17,6 +19,7 @@ import {
 import { parseApiData, parseApiList, toCamelCaseRow } from "@/utils/apiResponse";
 import { useAuthStore } from "@/store/authStore";
 import { uploadProfileImage, resolveMediaUrl } from "@/services/upload/uploadService";
+import { useDialog } from "@/components/ui/AppDialog";
 import { useResponsive } from "@/hooks/useResponsive";
 import * as ImagePicker from "expo-image-picker";
 
@@ -31,6 +34,7 @@ export default function TeacherFormScreen() {
   const [loading, setLoading] = useState(false);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const { alert } = useDialog();
 
   // ── Validation errors ─────────────────────────────────────────────────────
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -41,8 +45,15 @@ export default function TeacherFormScreen() {
     professional: false,
     account: false,
   });
-  const toggleSection = (key: string) =>
-    setExpandedSections((prev) => ({ ...prev, [key]: !prev[key] }));
+  const toggleSection = (key: string) => {
+    setExpandedSections(prev => {
+      if (prev[key]) return { ...prev, [key]: false };
+      const next = { ...prev };
+      for (const k in next) next[k] = false;
+      next[key] = true;
+      return next;
+    });
+  };
 
   // ── Form state ────────────────────────────────────────────────────────────
   const [teacherCode, setTeacherCode]       = useState("");
@@ -93,6 +104,12 @@ export default function TeacherFormScreen() {
 
   // ── Photo picker ──────────────────────────────────────────────────────────
   const pickPhoto = async () => {
+    // AUDIT FIX #8
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      await alert('Permission needed', 'Please allow camera roll access in settings to upload a photo.', 'warning');
+      return;
+    }
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -109,7 +126,7 @@ export default function TeacherFormScreen() {
       const url = await uploadProfileImage({ uri: asset.uri, name, type });
       setPhoto(url);
     } catch (e: any) {
-      Alert.alert("Upload Failed", e.message || "Could not upload photo");
+      await alert("Upload Failed", e.message || "Could not upload photo", "error");
     } finally {
       setUploadingPhoto(false);
     }
@@ -132,7 +149,7 @@ export default function TeacherFormScreen() {
         personal: prev.personal || !!(newErrors.firstName || newErrors.lastName || newErrors.teacherCode || newErrors.mobileNo),
         account:  prev.account  || !!newErrors.password,
       }));
-      Alert.alert("Missing Fields", "Please complete all required fields highlighted in red.");
+      await alert("Missing Fields", "Please complete all required fields highlighted in red.", "warning");
       scrollViewRef.current?.scrollTo({ y: 0, animated: true });
       return;
     }
@@ -167,14 +184,14 @@ export default function TeacherFormScreen() {
             ...(password ? { password } : {}),
           },
         });
-        Alert.alert("Success", "Teacher updated successfully!");
+        await alert("Success", "Teacher updated successfully!", "success");
       } else {
         await insertTeacher.mutateAsync({ data: { ...base, password } });
-        Alert.alert("Success", "Teacher registered successfully!");
+        await alert("Success", "Teacher registered successfully!", "success");
       }
       router.back();
     } catch (error: any) {
-      Alert.alert("Error", error.message || `Failed to ${isEditing ? "update" : "register"} teacher`);
+      await alert("Error", error.message || `Failed to ${isEditing ? "update" : "register"} teacher`, "error");
     } finally {
       setLoading(false);
     }
@@ -239,6 +256,7 @@ export default function TeacherFormScreen() {
           multiline={opts?.multiline}
           editable={opts?.editable !== false}
           secureTextEntry={opts?.secure && !showPassword}
+          returnKeyType="next"
           className={`${opts?.multiline ? "min-h-[80px] py-3" : "h-[48px]"} ${
             hasError
               ? "bg-red-50 border-red-400 text-red-900"
@@ -296,30 +314,19 @@ export default function TeacherFormScreen() {
       scrollable={false}
       rightAction={
         !isMobile ? (
-          <TouchableOpacity
-            onPress={handleSubmit}
-            disabled={loading || uploadingPhoto}
-            className="px-5 py-2.5 rounded-xl flex-row gap-2 items-center"
-            style={{ backgroundColor: Colors.primary, opacity: loading || uploadingPhoto ? 0.7 : 1 }}
-            activeOpacity={0.8}
-          >
-            {loading ? (
-              <ActivityIndicator size="small" color="white" />
-            ) : (
-              <Text className="text-white font-black text-xs uppercase tracking-widest">
-                {isEditing ? "Update" : "Register"}
-              </Text>
-            )}
-          </TouchableOpacity>
+          // AUDIT FIX #3
+          <View style={{ width: 120 }}>
+            <PrimaryButton 
+              label={isEditing ? "Update" : "Register"}
+              onPress={handleSubmit}
+              isLoading={loading || uploadingPhoto}
+            />
+          </View>
         ) : undefined
       }
     >
-      <ScrollView
-        ref={scrollViewRef}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 40 }}
-        keyboardShouldPersistTaps="handled"
-      >
+      {/* AUDIT FIX #1 */}
+      <FormLayout ref={scrollViewRef} contentContainerStyle={{ paddingBottom: 40 }}>
 
         {/* ── SECTION 1: Personal Details ── */}
         <Card className="bg-white border border-gray-150 p-6 mb-4 overflow-hidden">
@@ -334,7 +341,7 @@ export default function TeacherFormScreen() {
                 <TouchableOpacity
                   onPress={pickPhoto}
                   disabled={uploadingPhoto}
-                  className="w-24 h-24 rounded-full border-2 border-dashed border-gray-300 items-center justify-center bg-gray-50 overflow-hidden"
+                  className="w-[100px] h-[100px] rounded-full border-2 border-dashed border-gray-300 items-center justify-center bg-gray-50 overflow-hidden"
                   activeOpacity={0.8}
                 >
                   {uploadingPhoto ? (
@@ -476,25 +483,16 @@ export default function TeacherFormScreen() {
         {/* ── Mobile submit button ── */}
         {isMobile && (
           <View className="mb-10 mt-2">
-            <TouchableOpacity
+            {/* AUDIT FIX #3 */}
+            <PrimaryButton 
+              label={isEditing ? "Update Teacher" : "Register Teacher"}
               onPress={handleSubmit}
-              disabled={loading || uploadingPhoto}
-              className="h-[52px] rounded-xl items-center justify-center shadow-lg flex-row gap-2"
-              style={{ backgroundColor: Colors.primary, opacity: loading || uploadingPhoto ? 0.7 : 1 }}
-              activeOpacity={0.8}
-            >
-              {loading ? (
-                <ActivityIndicator size="small" color="white" />
-              ) : (
-                <Text className="text-white font-black text-xs uppercase tracking-widest">
-                  {isEditing ? "Update Teacher" : "Register Teacher"}
-                </Text>
-              )}
-            </TouchableOpacity>
+              isLoading={loading || uploadingPhoto}
+            />
           </View>
         )}
 
-      </ScrollView>
+      </FormLayout>
     </PremiumScreenLayout>
   );
 }

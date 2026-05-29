@@ -1,5 +1,6 @@
 import React from "react";
 import { View, FlatList, RefreshControl } from "react-native";
+import { useDialog } from "@/components/ui/AppDialog";
 import { router } from "expo-router";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { 
@@ -18,29 +19,21 @@ export default function RolesManagementScreen() {
   const { data, isLoading, refetch } = useGetApiRoleGetRoleList();
   const deleteRole = useDeleteApiRoleDeleteRole();
   const roles = parseApiList(data?.data);
+  const { alert, confirm } = useDialog();
 
-  const handleDelete = (role: any) => {
-    Alert.alert(
+  const handleDelete = async (role: any) => {
+    const ok = await confirm(
       "Delete Role",
       `Are you sure you want to delete "${role.roleName}"?`,
-      [
-        { text: "Cancel", style: "cancel" },
-        { 
-          text: "Delete", 
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await deleteRole.mutateAsync({ 
-                data: { roleID: role.roleID } 
-              });
-              refetch();
-            } catch (error: any) {
-              Alert.alert("Error", error.message || "Failed to delete role");
-            }
-          }
-        }
-      ]
+      { confirmLabel: "Delete", destructive: true }
     );
+    if (!ok) return;
+    try {
+      await deleteRole.mutateAsync({ data: { roleID: role.roleID } });
+      refetch();
+    } catch (error: any) {
+      await alert("Error", error.message || "Failed to delete role", "error");
+    }
   };
 
   const renderRoleItem = ({ item }: { item: any }) => (

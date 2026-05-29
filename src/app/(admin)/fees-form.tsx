@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert, ActivityIndicator, StyleSheet } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, TextInput, ActivityIndicator, StyleSheet } from "react-native";
+import { useDialog } from "@/components/ui/AppDialog";
 import { router, useLocalSearchParams } from "expo-router";
 import { Card } from "@/components/ui/Card";
 import { Colors } from "@/constants/colors";
@@ -23,6 +24,7 @@ export default function FeesFormScreen() {
   const { isMobile } = useResponsive();
   const { userData } = useAuthStore();
   const [loading, setLoading] = useState(false);
+  const { alert } = useDialog();
 
   // Form State
   const [studentID, setStudentID] = useState("");
@@ -52,39 +54,28 @@ export default function FeesFormScreen() {
 
   const handleSubmit = async () => {
     if (!studentID || !amount) {
-      Alert.alert("Missing Fields", "Please complete all required fields (*).");
+      await alert("Missing Fields", "Please complete all required fields (*).", "warning");
       return;
     }
-
     const payload = {
-      studentID: parseInt(studentID),
-      amount: parseFloat(amount),
-      feesType,
-      paymentMethod,
-      paymentDate,
-      remarks,
-      isActive: true,
+      studentID: parseInt(studentID), amount: parseFloat(amount),
+      feesType, paymentMethod, paymentDate, remarks, isActive: true,
       createdBy: parseInt(userData?.id || "0"),
     };
-
     try {
       setLoading(true);
       if (isEditing) {
-        await updateFees.mutateAsync({
-          data: { ...payload, feesID: feesID as number, updatedBy: parseInt(userData?.id || "0") }
-        });
-        Alert.alert("Success", "Fee record updated successfully!");
+        await updateFees.mutateAsync({ data: { ...payload, feesID: feesID as number, updatedBy: parseInt(userData?.id || "0") } });
+        await alert("Success", "Fee record updated successfully!", "success");
       } else {
-        await insertFees.mutateAsync({
-          data: payload
-        });
-        Alert.alert("Success", "Fee payment recorded successfully!");
+        await insertFees.mutateAsync({ data: payload });
+        await alert("Success", "Fee payment recorded successfully!", "success");
       }
       setLoading(false);
       router.back();
     } catch (error: any) {
       setLoading(false);
-      Alert.alert("Error", error.message || `Failed to ${isEditing ? "update" : "record"} fees`);
+      await alert("Error", error.message || `Failed to ${isEditing ? "update" : "record"} fees`, "error");
     }
   };
 

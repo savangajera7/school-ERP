@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert, ActivityIndicator, StyleSheet } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, TextInput, ActivityIndicator, StyleSheet } from "react-native";
+import { useDialog } from "@/components/ui/AppDialog";
 import { router, useLocalSearchParams } from "expo-router";
 import { Card } from "@/components/ui/Card";
 import { Colors } from "@/constants/colors";
@@ -23,6 +24,7 @@ export default function ExamFormScreen() {
   const { isMobile } = useResponsive();
   const { userData } = useAuthStore();
   const [loading, setLoading] = useState(false);
+  const { alert } = useDialog();
 
   // Form State
   const [examName, setExamName] = useState("");
@@ -52,39 +54,28 @@ export default function ExamFormScreen() {
 
   const handleSubmit = async () => {
     if (!examName || !examCode || !classID) {
-      Alert.alert("Missing Fields", "Please complete all required fields (*).");
+      await alert("Missing Fields", "Please complete all required fields (*).", "warning");
       return;
     }
-
     const payload = {
-      examName,
-      examCode,
-      classID: parseInt(classID),
-      examDate,
-      totalMarks: parseInt(totalMarks),
-      description,
-      isActive: true,
+      examName, examCode, classID: parseInt(classID), examDate,
+      totalMarks: parseInt(totalMarks), description, isActive: true,
       createdBy: parseInt(userData?.id || "0"),
     };
-
     try {
       setLoading(true);
       if (isEditing) {
-        await updateExam.mutateAsync({
-          data: { ...payload, examID: examID as number, updatedBy: parseInt(userData?.id || "0") }
-        });
-        Alert.alert("Success", "Exam details updated successfully!");
+        await updateExam.mutateAsync({ data: { ...payload, examID: examID as number, updatedBy: parseInt(userData?.id || "0") } });
+        await alert("Success", "Exam details updated successfully!", "success");
       } else {
-        await insertExam.mutateAsync({
-          data: payload
-        });
-        Alert.alert("Success", "Exam created successfully!");
+        await insertExam.mutateAsync({ data: payload });
+        await alert("Success", "Exam created successfully!", "success");
       }
       setLoading(false);
       router.back();
     } catch (error: any) {
       setLoading(false);
-      Alert.alert("Error", error.message || `Failed to ${isEditing ? "update" : "create"} exam`);
+      await alert("Error", error.message || `Failed to ${isEditing ? "update" : "create"} exam`, "error");
     }
   };
 

@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
-import { View, Text, ScrollView, Alert, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { useDialog } from "@/components/ui/AppDialog";
 import { useLocalSearchParams, router } from "expo-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -34,6 +35,7 @@ export default function UserDetailScreen() {
   const { id } = useLocalSearchParams();
   const userID = parseInt(typeof id === "string" ? id : id?.[0] || "0");
   const { userData } = useAuthStore();
+  const { alert, confirm } = useDialog();
   
   const { data: userResponse, isLoading: loadingUser, refetch } = useGetApiUserGetUserByIdId(userID);
   const { data: rolesData } = useGetApiRoleGetRoleList();
@@ -68,39 +70,27 @@ export default function UserDetailScreen() {
           updatedBy: parseInt(userData?.id || "0"),
         } as any,
       });
-      Alert.alert("Success", "User updated successfully");
+      await alert("Success", "User updated successfully", "success");
       refetch();
     } catch (error: any) {
-      Alert.alert("Error", error.message || "Failed to update user");
+      await alert("Error", error.message || "Failed to update user", "error");
     }
   };
 
-  const onDelete = () => {
-    Alert.alert(
+  const onDelete = async () => {
+    const ok = await confirm(
       "Confirm Delete",
       "Are you sure you want to remove this user? This action cannot be undone.",
-      [
-        { text: "Cancel", style: "cancel" },
-        { 
-          text: "Delete", 
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await deleteUser.mutateAsync({
-                data: {
-                  userID,
-                  updatedBy: parseInt(userData?.id || "0"),
-                }
-              });
-              Alert.alert("Deleted", "User has been removed");
-              router.back();
-            } catch (error: any) {
-              Alert.alert("Error", error.message || "Failed to delete user");
-            }
-          }
-        }
-      ]
+      { confirmLabel: "Delete", destructive: true }
     );
+    if (!ok) return;
+    try {
+      await deleteUser.mutateAsync({ data: { userID, updatedBy: parseInt(userData?.id || "0") } });
+      await alert("Deleted", "User has been removed", "success");
+      router.back();
+    } catch (error: any) {
+      await alert("Error", error.message || "Failed to delete user", "error");
+    }
   };
 
   return (

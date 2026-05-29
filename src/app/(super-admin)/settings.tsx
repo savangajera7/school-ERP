@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { View, Text, ScrollView, Switch, TouchableOpacity, Platform, Alert } from "react-native";
+import { View, Text, ScrollView, Switch, TouchableOpacity, Platform } from "react-native";
+import { useDialog } from "@/components/ui/AppDialog";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { Card } from "@/components/ui/Card";
 import { AppIcon } from "@/components/icons/AppIcon";
@@ -9,6 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 
 export default function SuperAdminSettingsScreen() {
   const { handleLogout } = useAuth();
+  const { confirm } = useDialog();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [maintenanceMode, setMaintenanceMode] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
@@ -89,11 +91,12 @@ export default function SuperAdminSettingsScreen() {
         <TouchableOpacity 
           className="bg-white border border-gray-100 rounded-2xl p-4 flex-row items-center justify-center gap-2"
           activeOpacity={0.7}
-          onPress={() => {
-            Alert.alert("Sign Out", "Are you sure you want to sign out?", [
-              { text: "Cancel", style: "cancel" },
-              { text: "Sign Out", style: "destructive", onPress: handleLogout }
-            ]);
+          onPress={async () => {
+            const ok = await confirm("Sign Out", "Are you sure you want to sign out?", {
+              confirmLabel: "Sign Out",
+              destructive: true,
+            });
+            if (ok) handleLogout();
           }}
         >
           <AppIcon name="logout" size={18} color="#EF4444" />

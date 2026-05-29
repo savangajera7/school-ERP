@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from "react";
-import { View, Text, TouchableOpacity, FlatList, Alert, TextInput, ScrollView, ActivityIndicator } from "react-native";
+import { View, Text, TouchableOpacity, FlatList, TextInput, ScrollView, ActivityIndicator } from "react-native";
+import { useDialog } from "@/components/ui/AppDialog";
 import { router } from "expo-router";
 import { useResponsive } from "@/hooks/useResponsive";
 import { Colors } from "@/constants/colors";
@@ -20,6 +21,7 @@ export default function AdminNotificationsManagementScreen() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { confirm, alert } = useDialog();
 
   // Form State
   const [title, setTitle] = useState("");
@@ -55,33 +57,24 @@ export default function AdminNotificationsManagementScreen() {
     });
   }, [notifications, searchQuery, isSuperAdmin]);
 
-  const handleDelete = (notification: any) => {
-    Alert.alert(
+  const handleDelete = async (notification: any) => {
+    const ok = await confirm(
       "Delete Notification",
       `Are you sure you want to remove "${notification.title}"?`,
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await deleteNotification.mutateAsync({
-                data: { notificationID: notification.notificationID }
-              });
-              refetch();
-            } catch (err: any) {
-              Alert.alert("Error", err.message || "Failed to delete notification");
-            }
-          }
-        }
-      ]
+      { confirmLabel: "Delete", destructive: true }
     );
+    if (!ok) return;
+    try {
+      await deleteNotification.mutateAsync({ data: { notificationID: notification.notificationID } });
+      refetch();
+    } catch (err: any) {
+      await alert("Error", err.message || "Failed to delete notification", "error");
+    }
   };
 
   const handleSubmit = async () => {
     if (!title || !message) {
-      Alert.alert("Missing Fields", "Please complete title and message.");
+      await alert("Missing Fields", "Please complete title and message.", "warning");
       return;
     }
 
@@ -99,9 +92,8 @@ export default function AdminNotificationsManagementScreen() {
     try {
       setLoading(true);
       await insertNotification.mutateAsync({ data: payload });
-      Alert.alert("Success", "Notification queued successfully!");
+      await alert("Success", "Notification queued successfully!", "success");
       setLoading(false);
-      // Reset form
       setTitle("");
       setMessage("");
       setNotificationType("General");
@@ -109,7 +101,7 @@ export default function AdminNotificationsManagementScreen() {
       refetch();
     } catch (error: any) {
       setLoading(false);
-      Alert.alert("Error", error.message || "Failed to send notification");
+      await alert("Error", error.message || "Failed to send notification", "error");
     }
   };
 

@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from "react-native";
 import { Card } from "@/components/ui/Card";
 import { AppIcon } from "@/components/icons/AppIcon";
 import { Colors } from "@/constants/colors";
 import { useAuthStore } from "@/store/authStore";
 import { usePostApiNoticeAdd } from "@/api/generated/8-notice/8-notice";
 import { usePostApiNotificationInsertNotification } from "@/api/generated/notification/notification";
+import { useDialog } from "@/components/ui/AppDialog";
 
 export interface NoticeFormProps {
   /** Target audience options (e.g. ["Everyone", "Students", "Teachers", "Parents"]) */
@@ -30,6 +31,7 @@ export function NoticeForm({
 }: NoticeFormProps) {
   const { userData } = useAuthStore();
   const [loading, setLoading] = useState(false);
+  const { alert } = useDialog();
 
   // Form State
   const [noticeTitle, setNoticeTitle] = useState("");
@@ -43,7 +45,7 @@ export function NoticeForm({
 
   const handleSubmit = async () => {
     if (!noticeTitle || !noticeDescription) {
-      Alert.alert("Missing Fields", "Please complete title and description.");
+      await alert("Missing Fields", "Please complete title and description.", "warning");
       return;
     }
 
@@ -75,7 +77,7 @@ export function NoticeForm({
         },
       });
 
-      Alert.alert("Success", "Notice published and notification sent!");
+      await alert("Success", "Notice published and notification sent!", "success");
       setLoading(false);
       
       // Reset form
@@ -88,7 +90,7 @@ export function NoticeForm({
       onSuccess();
     } catch (error: any) {
       setLoading(false);
-      Alert.alert("Error", error.message || "Failed to publish notice");
+      await alert("Error", error.message || "Failed to publish notice", "error");
     }
   };
 

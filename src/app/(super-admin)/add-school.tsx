@@ -1,5 +1,6 @@
 import React from "react";
-import { View, ScrollView, Alert, KeyboardAvoidingView, Platform, Text } from "react-native";
+import { View, ScrollView, KeyboardAvoidingView, Platform, Text } from "react-native";
+import { useDialog } from "@/components/ui/AppDialog";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { Input } from "@/components/ui/Input";
 import { PasswordInput } from "@/components/ui/PasswordInput";
@@ -32,6 +33,7 @@ const addSchoolSchema = z.object({
 type AddSchoolFormValues = z.infer<typeof addSchoolSchema>;
 
 export default function AddSchoolScreen() {
+  const dialog = useDialog();
   const queryClient = useQueryClient();
   const addSchoolMutation = usePostApiSchoolAdd();
 
@@ -50,15 +52,15 @@ export default function AddSchoolScreen() {
       {
         onSuccess: (res: any) => {
           if (res?.data?.success === false || res?.data?.status === 0) {
-            Alert.alert("Error", res?.data?.message || "Failed to add school.");
+            dialog.alert("Error", res?.data?.message || "Failed to add school.", "error");
             return;
           }
-          Alert.alert("Success", "School added successfully.");
+          dialog.alert("Success", "School added successfully.", "success");
           queryClient.invalidateQueries({ queryKey: ["/api/School/Get"] });
           router.back();
         },
         onError: (err: any) => {
-          Alert.alert("Error", err?.response?.data?.message || "Failed to add school.");
+          dialog.alert("Error", err?.response?.data?.message || "Failed to add school.", "error");
         }
       }
     );

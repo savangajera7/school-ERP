@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, ScrollView, TouchableOpacity, TextInput, Alert, ActivityIndicator, StyleSheet } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, TextInput, ActivityIndicator, StyleSheet } from "react-native";
+import { useDialog } from "@/components/ui/AppDialog";
 import { router, useLocalSearchParams } from "expo-router";
 import { Card } from "@/components/ui/Card";
 import { Colors } from "@/constants/colors";
@@ -22,6 +23,7 @@ export default function NoticeFormScreen() {
   const { isMobile } = useResponsive();
   const { userData } = useAuthStore();
   const [loading, setLoading] = useState(false);
+  const { alert } = useDialog();
 
   // Form State
   const [noticeTitle, setNoticeTitle] = useState("");
@@ -47,41 +49,31 @@ export default function NoticeFormScreen() {
 
   const handleSubmit = async () => {
     if (!noticeTitle || !noticeDescription) {
-      Alert.alert("Missing Fields", "Please complete title and description.");
+      await alert("Missing Fields", "Please complete title and description.", "warning");
       return;
     }
-
     const payload = {
-      noticeTitle,
-      noticeType,
-      startDate: noticeDate,
-      endDate: noticeDate,
-      noticeDescription,
+      noticeTitle, noticeType, startDate: noticeDate, endDate: noticeDate, noticeDescription,
       classIDs: noticeType === "Class Notice" && classIDs ? classIDs.split(",").map(id => parseInt(id.trim())).filter(id => !isNaN(id)) : [],
       addedBy: parseInt(userData?.id || "0"),
       schoolID: parseInt((userData as any)?.schoolID || "1"),
       assignedByRole: userData?.role || "Admin",
       assignedByName: userData?.name || "Admin",
     };
-
     try {
       setLoading(true);
       if (isEditing) {
-        await updateNotice.mutateAsync({
-          data: { ...payload, updatedBy: parseInt(userData?.id || "0") } as any
-        });
-        Alert.alert("Success", "Notice updated successfully!");
+        await updateNotice.mutateAsync({ data: { ...payload, updatedBy: parseInt(userData?.id || "0") } as any });
+        await alert("Success", "Notice updated successfully!", "success");
       } else {
-        await insertNotice.mutateAsync({
-          data: payload
-        });
-        Alert.alert("Success", "Notice published successfully!");
+        await insertNotice.mutateAsync({ data: payload });
+        await alert("Success", "Notice published successfully!", "success");
       }
       setLoading(false);
       router.back();
     } catch (error: any) {
       setLoading(false);
-      Alert.alert("Error", error.message || `Failed to ${isEditing ? "update" : "publish"} notice`);
+      await alert("Error", error.message || `Failed to ${isEditing ? "update" : "publish"} notice`, "error");
     }
   };
 

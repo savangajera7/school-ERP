@@ -1,5 +1,6 @@
 import React from "react";
-import { View, Text, ScrollView, Alert, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { useDialog } from "@/components/ui/AppDialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -28,6 +29,7 @@ type UserFormData = z.infer<typeof userSchema>;
 export default function CreateUserScreen() {
   const { isMobile } = useResponsive();
   const { userData } = useAuthStore();
+  const { alert } = useDialog();
   const insertUser = usePostApiUserInsertUser();
   const { data: rolesData, isLoading: loadingRoles } = useGetApiRoleGetRoleList();
   
@@ -54,10 +56,10 @@ export default function CreateUserScreen() {
           isActive: true,
         } as any,
       });
-      Alert.alert("Success", "User created successfully");
+      await alert("Success", "User created successfully", "success");
       router.back();
     } catch (error: any) {
-      Alert.alert("Error", error.message || "Failed to create user");
+      await alert("Error", error.message || "Failed to create user", "error");
     }
   };
 

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, TextInput, Alert, ActivityIndicator, ScrollView, Image } from "react-native";
+import { View, Text, TouchableOpacity, TextInput, ActivityIndicator, ScrollView, Image } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { Card } from "@/components/ui/Card";
 import { Colors } from "@/constants/colors";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { AppIcon } from "@/components/icons/AppIcon";
+import { useDialog } from "@/components/ui/AppDialog";
 import { 
   useGetApiStudentGetByIDId 
 } from "@/api/generated/3-student-crud/3-student-crud";
@@ -27,9 +28,13 @@ import { parseApiData, parseApiList, toCamelCaseRow } from "@/utils/apiResponse"
 import { PremiumDatePicker } from "@/components/ui/PremiumDatePicker";
 import * as ImagePicker from 'expo-image-picker';
 import { useAuthStore } from "@/store/authStore";
+import { useAdmissionStore } from "@/store/admissionStore";
+import { FormLayout } from "@/components/layout/FormLayout";
+import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import { uploadProfileImage } from "@/services/upload/uploadService";
 
 export default function AdmissionFormScreen() {
+  const dialog = useDialog();
   const { id } = useLocalSearchParams();
   const studentID = id ? parseInt(typeof id === "string" ? id : id[0]) : null;
   const isEditing = !!studentID;
@@ -48,91 +53,161 @@ export default function AdmissionFormScreen() {
 
   // --- Form State ---
   
-  // 1. Academic Details
-  const [academicYearId, setAcademicYearId] = useState<number | undefined>();
-  const [classId, setClassId] = useState<number | undefined>();
-  const [batchId, setBatchId] = useState<number | undefined>();
-  const [sectionId, setSectionId] = useState<number | undefined>();
-  const [studentGRNo, setStudentGRNo] = useState("");
-  const [uidNo, setUidNo] = useState("");
-  const [rollNo, setRollNo] = useState("");
+  
+  const { formData, updateFormData, currentStep, setCurrentStep, resetForm } = useAdmissionStore();
+  
+  // Extract all fields from formData with fallbacks
+  const academicYearId = formData.academicYearId ?? undefined;
+  const classId = formData.classId ?? undefined;
+  const batchId = formData.batchId ?? undefined;
+  const sectionId = formData.sectionId ?? undefined;
+  const studentGRNo = formData.studentGRNo ?? "";
+  const uidNo = formData.uidNo ?? "";
+  const rollNo = formData.rollNo ?? "";
+  const firstName = formData.firstName ?? "";
+  const middleName = formData.middleName ?? "";
+  const lastName = formData.lastName ?? "";
+  const firstNameSecondary = formData.firstNameSecondary ?? "";
+  const middleNameSecondary = formData.middleNameSecondary ?? "";
+  const lastNameSecondary = formData.lastNameSecondary ?? "";
+  const studentDisplayName = formData.studentDisplayName ?? "";
+  const gender = formData.gender ?? "Male";
+  const studentNumber = formData.studentNumber ?? "";
+  const studentWhatsappNo = formData.studentWhatsappNo ?? "";
+  const studentEmail = formData.studentEmail ?? "";
+  const dob = formData.dob ?? "";
+  const age = formData.age ?? "";
+  const bloodGroupId = formData.bloodGroupId ?? undefined;
+  const birthPlace = formData.birthPlace ?? "";
+  const birthPlaceTaluka = formData.birthPlaceTaluka ?? "";
+  const birthPlaceDistrict = formData.birthPlaceDistrict ?? "";
+  const religionId = formData.religionId ?? undefined;
+  const nationality = formData.nationality ?? "Indian";
+  const categoryId = formData.categoryId ?? undefined;
+  const caste = formData.caste ?? "";
+  const subCaste = formData.subCaste ?? "";
+  const aadhaarNo = formData.aadhaarNo ?? "";
+  const aparID = formData.aparID ?? undefined;
+  const penNo = formData.penNo ?? "";
+  const weight = formData.weight ?? "";
+  const height = formData.height ?? "";
+  const studentPhoto = formData.studentPhoto ?? "";
+  const ews = formData.ews ?? false;
+  const fatherName = formData.fatherName ?? "";
+  const fatherNumber = formData.fatherNumber ?? "";
+  const fatherOccupation = formData.fatherOccupation ?? "";
+  const fatherEducation = formData.fatherEducation ?? "";
+  const fatherEmail = formData.fatherEmail ?? "";
+  const motherName = formData.motherName ?? "";
+  const motherNumber = formData.motherNumber ?? "";
+  const motherOccupation = formData.motherOccupation ?? "";
+  const motherEducation = formData.motherEducation ?? "";
+  const motherEmail = formData.motherEmail ?? "";
+  const fatherPhoto = formData.fatherPhoto ?? "";
+  const motherPhoto = formData.motherPhoto ?? "";
+  const whatsappNumber = formData.whatsappNumber ?? "";
+  const sendSMSNotification = formData.sendSMSNotification ?? false;
+  const currentAddress = formData.currentAddress ?? "";
+  const currentCity = formData.currentCity ?? "";
+  const sameAsCurrentAddress = formData.sameAsCurrentAddress ?? false;
+  const permanentAddress = formData.permanentAddress ?? "";
+  const permanentCity = formData.permanentCity ?? "";
+  const transportFacility = formData.transportFacility ?? false;
+  const rte = formData.rte ?? false;
+  const studentType = formData.studentType ?? "New";
+  const studentFeesDate = formData.studentFeesDate ?? "";
+  const createdDate = formData.createdDate ?? new Date().toISOString().split("T")[0];
+  const admissionDate = formData.admissionDate ?? new Date().toISOString().split("T")[0];
+  const previousSchoolName = formData.previousSchoolName ?? "";
+  const previousSchoolCategory = formData.previousSchoolCategory ?? "";
+  const previousSchoolCityVillage = formData.previousSchoolCityVillage ?? "";
+  const previousSchoolType = formData.previousSchoolType ?? "";
+  const lastPercentage = formData.lastPercentage ?? "";
+  const status = formData.status ?? "Active";
+  const reference = formData.reference ?? "";
+  const siblingInfo = formData.siblingInfo ?? "";
+  const remarks = formData.remarks ?? "";
+  const studentShift = formData.studentShift ?? "Morning";
+  const hallTicketNo = formData.hallTicketNo ?? "";
+  const admissionFormNo = formData.admissionFormNo ?? "";
+  const mediumId = formData.mediumId ?? undefined;
 
-  // 2. Personal Details
-  const [firstName, setFirstName] = useState("");
-  const [middleName, setMiddleName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [firstNameSecondary, setFirstNameSecondary] = useState("");
-  const [middleNameSecondary, setMiddleNameSecondary] = useState("");
-  const [lastNameSecondary, setLastNameSecondary] = useState("");
-  const [studentDisplayName, setStudentDisplayName] = useState("");
-  const [gender, setGender] = useState("Male");
-  const [studentNumber, setStudentNumber] = useState("");
-  const [studentWhatsappNo, setStudentWhatsappNo] = useState("");
-  const [studentEmail, setStudentEmail] = useState("");
-  const [dob, setDob] = useState("");
-  const [age, setAge] = useState("");
-  const [bloodGroupId, setBloodGroupId] = useState<number | undefined>();
-  const [birthPlace, setBirthPlace] = useState("");
-  const [birthPlaceTaluka, setBirthPlaceTaluka] = useState("");
-  const [birthPlaceDistrict, setBirthPlaceDistrict] = useState("");
-  const [religionId, setReligionId] = useState<number | undefined>();
-  const [nationality, setNationality] = useState("Indian");
-  const [categoryId, setCategoryId] = useState<number | undefined>();
-  const [caste, setCaste] = useState("");
-  const [subCaste, setSubCaste] = useState("");
-  const [aadhaarNo, setAadhaarNo] = useState("");
-  const [aparID, setAparID] = useState("");
-  const [penNo, setPenNo] = useState("");
-  const [weight, setWeight] = useState("");
-  const [height, setHeight] = useState("");
-  const [studentPhoto, setStudentPhoto] = useState<string | null>(null);
-  const [ews, setEws] = useState(false);
-
-  // 3. Guardian Details
-  const [fatherName, setFatherName] = useState("");
-  const [fatherNumber, setFatherNumber] = useState("");
-  const [fatherOccupation, setFatherOccupation] = useState("");
-  const [fatherEducation, setFatherEducation] = useState("");
-  const [fatherEmail, setFatherEmail] = useState("");
-  const [motherName, setMotherName] = useState("");
-  const [motherNumber, setMotherNumber] = useState("");
-  const [motherOccupation, setMotherOccupation] = useState("");
-  const [motherEducation, setMotherEducation] = useState("");
-  const [motherEmail, setMotherEmail] = useState("");
-  const [fatherPhoto, setFatherPhoto] = useState<string | null>(null);
-  const [motherPhoto, setMotherPhoto] = useState<string | null>(null);
-  const [whatsappNumber, setWhatsappNumber] = useState("");
-  const [sendSMSNotification, setSendSMSNotification] = useState(false);
-
-  // 4. Address Details
-  const [currentAddress, setCurrentAddress] = useState("");
-  const [currentCity, setCurrentCity] = useState("");
-  const [sameAsCurrentAddress, setSameAsCurrentAddress] = useState(false);
-  const [permanentAddress, setPermanentAddress] = useState("");
-  const [permanentCity, setPermanentCity] = useState("");
-  const [transportFacility, setTransportFacility] = useState(false);
-
-  // 5. Admission Details
-  const [rte, setRte] = useState(false);
-  const [studentType, setStudentType] = useState("New");
-  const [studentFeesDate, setStudentFeesDate] = useState("");
-  const [createdDate, setCreatedDate] = useState(new Date().toISOString().split("T")[0]);
-  const [admissionDate, setAdmissionDate] = useState(new Date().toISOString().split("T")[0]);
-  const [previousSchoolName, setPreviousSchoolName] = useState("");
-  const [previousSchoolCategory, setPreviousSchoolCategory] = useState("");
-  const [previousSchoolCityVillage, setPreviousSchoolCityVillage] = useState("");
-  const [previousSchoolType, setPreviousSchoolType] = useState("");
-  const [lastPercentage, setLastPercentage] = useState("");
-  const [status, setStatus] = useState("Active");
-  const [reference, setReference] = useState("");
-  const [siblingInfo, setSiblingInfo] = useState("");
-  const [remarks, setRemarks] = useState("");
-  const [studentShift, setStudentShift] = useState("Morning");
-  const [hallTicketNo, setHallTicketNo] = useState("");
-  const [admissionFormNo, setAdmissionFormNo] = useState("");
-  const [mediumId, setMediumId] = useState<number | undefined>(undefined);
-
-  // --- Accordion State ---
+  // Helper setters for the components
+  const setAcademicYearId = (val: any) => updateFormData({ academicYearId: val });
+  const setClassId = (val: any) => updateFormData({ classId: val });
+  const setBatchId = (val: any) => updateFormData({ batchId: val });
+  const setSectionId = (val: any) => updateFormData({ sectionId: val });
+  const setStudentGRNo = (val: any) => updateFormData({ studentGRNo: val });
+  const setUidNo = (val: any) => updateFormData({ uidNo: val });
+  const setRollNo = (val: any) => updateFormData({ rollNo: val });
+  const setFirstName = (val: any) => updateFormData({ firstName: val });
+  const setMiddleName = (val: any) => updateFormData({ middleName: val });
+  const setLastName = (val: any) => updateFormData({ lastName: val });
+  const setFirstNameSecondary = (val: any) => updateFormData({ firstNameSecondary: val });
+  const setMiddleNameSecondary = (val: any) => updateFormData({ middleNameSecondary: val });
+  const setLastNameSecondary = (val: any) => updateFormData({ lastNameSecondary: val });
+  const setStudentDisplayName = (val: any) => updateFormData({ studentDisplayName: val });
+  const setGender = (val: any) => updateFormData({ gender: val });
+  const setStudentNumber = (val: any) => updateFormData({ studentNumber: val });
+  const setStudentWhatsappNo = (val: any) => updateFormData({ studentWhatsappNo: val });
+  const setStudentEmail = (val: any) => updateFormData({ studentEmail: val });
+  const setDob = (val: any) => updateFormData({ dob: val });
+  const setAge = (val: any) => updateFormData({ age: val });
+  const setBloodGroupId = (val: any) => updateFormData({ bloodGroupId: val });
+  const setBirthPlace = (val: any) => updateFormData({ birthPlace: val });
+  const setBirthPlaceTaluka = (val: any) => updateFormData({ birthPlaceTaluka: val });
+  const setBirthPlaceDistrict = (val: any) => updateFormData({ birthPlaceDistrict: val });
+  const setReligionId = (val: any) => updateFormData({ religionId: val });
+  const setNationality = (val: any) => updateFormData({ nationality: val });
+  const setCategoryId = (val: any) => updateFormData({ categoryId: val });
+  const setCaste = (val: any) => updateFormData({ caste: val });
+  const setSubCaste = (val: any) => updateFormData({ subCaste: val });
+  const setAadhaarNo = (val: any) => updateFormData({ aadhaarNo: val });
+  const setAparID = (val: any) => updateFormData({ aparID: val });
+  const setPenNo = (val: any) => updateFormData({ penNo: val });
+  const setWeight = (val: any) => updateFormData({ weight: val });
+  const setHeight = (val: any) => updateFormData({ height: val });
+  const setStudentPhoto = (val: any) => updateFormData({ studentPhoto: val });
+  const setEws = (val: any) => updateFormData({ ews: val });
+  const setFatherName = (val: any) => updateFormData({ fatherName: val });
+  const setFatherNumber = (val: any) => updateFormData({ fatherNumber: val });
+  const setFatherOccupation = (val: any) => updateFormData({ fatherOccupation: val });
+  const setFatherEducation = (val: any) => updateFormData({ fatherEducation: val });
+  const setFatherEmail = (val: any) => updateFormData({ fatherEmail: val });
+  const setMotherName = (val: any) => updateFormData({ motherName: val });
+  const setMotherNumber = (val: any) => updateFormData({ motherNumber: val });
+  const setMotherOccupation = (val: any) => updateFormData({ motherOccupation: val });
+  const setMotherEducation = (val: any) => updateFormData({ motherEducation: val });
+  const setMotherEmail = (val: any) => updateFormData({ motherEmail: val });
+  const setFatherPhoto = (val: any) => updateFormData({ fatherPhoto: val });
+  const setMotherPhoto = (val: any) => updateFormData({ motherPhoto: val });
+  const setWhatsappNumber = (val: any) => updateFormData({ whatsappNumber: val });
+  const setSendSMSNotification = (val: any) => updateFormData({ sendSMSNotification: val });
+  const setCurrentAddress = (val: any) => updateFormData({ currentAddress: val });
+  const setCurrentCity = (val: any) => updateFormData({ currentCity: val });
+  const setSameAsCurrentAddress = (val: any) => updateFormData({ sameAsCurrentAddress: val });
+  const setPermanentAddress = (val: any) => updateFormData({ permanentAddress: val });
+  const setPermanentCity = (val: any) => updateFormData({ permanentCity: val });
+  const setTransportFacility = (val: any) => updateFormData({ transportFacility: val });
+  const setRte = (val: any) => updateFormData({ rte: val });
+  const setStudentType = (val: any) => updateFormData({ studentType: val });
+  const setStudentFeesDate = (val: any) => updateFormData({ studentFeesDate: val });
+  const setCreatedDate = (val: any) => updateFormData({ createdDate: val });
+  const setAdmissionDate = (val: any) => updateFormData({ admissionDate: val });
+  const setPreviousSchoolName = (val: any) => updateFormData({ previousSchoolName: val });
+  const setPreviousSchoolCategory = (val: any) => updateFormData({ previousSchoolCategory: val });
+  const setPreviousSchoolCityVillage = (val: any) => updateFormData({ previousSchoolCityVillage: val });
+  const setPreviousSchoolType = (val: any) => updateFormData({ previousSchoolType: val });
+  const setLastPercentage = (val: any) => updateFormData({ lastPercentage: val });
+  const setStatus = (val: any) => updateFormData({ status: val });
+  const setReference = (val: any) => updateFormData({ reference: val });
+  const setSiblingInfo = (val: any) => updateFormData({ siblingInfo: val });
+  const setRemarks = (val: any) => updateFormData({ remarks: val });
+  const setStudentShift = (val: any) => updateFormData({ studentShift: val });
+  const setHallTicketNo = (val: any) => updateFormData({ hallTicketNo: val });
+  const setAdmissionFormNo = (val: any) => updateFormData({ admissionFormNo: val });
+  const setMediumId = (val: any) => updateFormData({ mediumId: val });
+// --- Accordion State ---
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     academic: true,
     personal: false,
@@ -142,10 +217,13 @@ export default function AdmissionFormScreen() {
   });
 
   const toggleSection = (section: string) => {
-    setExpandedSections(prev => ({
-      ...prev,
-      [section]: !prev[section]
-    }));
+    setExpandedSections(prev => {
+      if (prev[section]) return { ...prev, [section]: false };
+      const next = { ...prev };
+      for (const k in next) next[k] = false;
+      next[section] = true;
+      return next;
+    });
   };
 
   // --- API Hooks ---
@@ -280,7 +358,7 @@ export default function AdmissionFormScreen() {
         personal: prev.personal || !!newErrors.firstName || !!newErrors.lastName || !!newErrors.dob || !!newErrors.gender || !!newErrors.studentNumber,
         guardian: prev.guardian || !!newErrors.fatherName || !!newErrors.fatherNumber,
       }));
-      Alert.alert("Missing Fields", "Please complete all required fields highlighted in red.");
+      dialog.alert("Missing Fields", "Please complete all required fields highlighted in red.", "warning");
       scrollViewRef.current?.scrollTo({ y: 0, animated: true });
       return;
     }
@@ -371,18 +449,18 @@ export default function AdmissionFormScreen() {
         await studentUpdateMutation.mutateAsync({
           data: { ...payload, studentID: studentID as number } as any
         });
-        Alert.alert("Success", "Student Records Updated Successfully!");
+        dialog.alert("Success", "Student Records Updated Successfully!", "success");
       } else {
         await studentAddMutation.mutateAsync({
           data: payload as any
         });
-        Alert.alert("Success", "Student Admission Registered Successfully!");
+        dialog.alert("Success", "Student Admission Registered Successfully!", "success");
       }
       setLoading(false);
       router.back();
     } catch (error: any) {
       setLoading(false);
-      Alert.alert("Error", error.message || `Failed to ${isEditing ? "update" : "register"} student`);
+      dialog.alert("Error", error.message || `Failed to ${isEditing ? "update" : "register"} student`, "error");
     }
   };
 
@@ -520,6 +598,20 @@ export default function AdmissionFormScreen() {
   );
 
   const pickImage = async (setter: (uri: string) => void) => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
+    if (permissionResult.status !== 'granted') {
+      Alert.alert(
+        "Permission Required",
+        "Please allow access to your photo library to upload a profile picture.",
+        [
+          { text: "Cancel", style: "cancel" },
+          { text: "Open Settings", onPress: () => Linking.openSettings() }
+        ]
+      );
+      return;
+    }
+
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -540,7 +632,7 @@ export default function AdmissionFormScreen() {
         const photoUrl = await uploadProfileImage({ uri: asset.uri, name, type });
         setter(photoUrl);
       } catch (error: any) {
-        Alert.alert("Upload Failed", error.message || "Could not upload image");
+        dialog.alert("Upload Failed", error.message || "Could not upload image", "error");
       } finally {
         setLoading(false);
       }
@@ -552,7 +644,7 @@ export default function AdmissionFormScreen() {
       <Text className="text-[12px] font-black text-gray-450 mb-2 uppercase">{label}</Text>
       <TouchableOpacity 
         onPress={() => pickImage(setter)}
-        className="w-24 h-24 rounded-full border-2 border-dashed border-gray-300 items-center justify-center bg-gray-50 overflow-hidden"
+        className="w-[100px] h-[100px] rounded-full border-2 border-dashed border-gray-300 items-center justify-center bg-gray-50 overflow-hidden"
       >
         {photoUri ? (
           <Image source={{ uri: photoUri }} className="w-full h-full" />
@@ -760,49 +852,27 @@ export default function AdmissionFormScreen() {
       scrollable={false}
       rightAction={
         !isMobile ? (
-          <TouchableOpacity
+                    <PrimaryButton 
+            label={isEditing ? "Update" : "Register"}
             onPress={handleSubmit}
-            disabled={loading}
-            className="px-5 py-2.5 rounded-xl flex-row gap-2"
-            style={{ backgroundColor: Colors.accent }}
-            activeOpacity={0.8}
-          >
-            {loading ? (
-              <ActivityIndicator size="small" color="white" />
-            ) : (
-              <Text className="text-white font-black text-xs uppercase tracking-widest">
-                {isEditing ? "Update" : "Register"}
-              </Text>
-            )}
-          </TouchableOpacity>
+            isLoading={loading}
+          />
         ) : undefined
       }
     >
-      <ScrollView
-        ref={scrollViewRef}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
+      <FormLayout
+        ref={scrollViewRef as any}
         contentContainerStyle={{ paddingBottom: 40 }}
       >
         {formContent}
-      </ScrollView>
+      </FormLayout>
       {isMobile && (
         <View className="mb-10 mt-2">
-          <TouchableOpacity
+                    <PrimaryButton 
+            label={isEditing ? "Update" : "Register"}
             onPress={handleSubmit}
-            disabled={loading}
-            className="h-[52px] rounded-xl items-center justify-center shadow-lg flex-row gap-2"
-            style={{ backgroundColor: Colors.accent }}
-            activeOpacity={0.8}
-          >
-            {loading ? (
-              <ActivityIndicator size="small" color="white" />
-            ) : (
-              <Text className="text-white font-black text-xs uppercase tracking-widest">
-                {isEditing ? "Update Record" : "Register Student"}
-              </Text>
-            )}
-          </TouchableOpacity>
+            isLoading={loading}
+          />
         </View>
       )}
     </PremiumScreenLayout>

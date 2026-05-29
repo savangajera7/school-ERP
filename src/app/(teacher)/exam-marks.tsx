@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from "react";
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Alert, TextInput } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, TextInput } from "react-native";
+import { useDialog } from "@/components/ui/AppDialog";
 import { router } from "expo-router";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { PremiumCard } from "@/components/ui/premium";
@@ -23,6 +24,7 @@ import { useResponsive } from "@/hooks/useResponsive";
 
 export default function ExamMarksScreen() {
   const { isMobile } = useResponsive();
+  const { alert } = useDialog();
   const [selectedExamId, setSelectedExamId] = useState<number | null>(null);
   const [selectedSubjectId, setSelectedSubjectId] = useState<number | null>(null);
   const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
@@ -67,7 +69,7 @@ export default function ExamMarksScreen() {
 
   const handleSave = async () => {
     if (!selectedExamId || !selectedSubjectId) {
-      Alert.alert("Selection Required", "Please select an exam and a subject first.");
+      await alert("Selection Required", "Please select an exam and a subject first.", "warning");
       return;
     }
 

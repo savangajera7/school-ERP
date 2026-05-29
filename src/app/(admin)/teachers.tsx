@@ -12,8 +12,9 @@ import { HeaderActionButton } from "@/components/ui/HeaderActionButton";
 import { AppIcon, IconCircle } from "@/components/icons/AppIcon";
 import { usePermissions } from "@/hooks/usePermissions";
 import { ResponsiveDataList, EntityActionButtons, type TableColumn } from "@/components/shared";
-import { premiumCardShadow } from "@/constants/premiumStyles";
 import { useGetApiClassGet } from "@/api/generated/master-class/master-class";
+import { useDebounce } from "@/hooks/useDebounce";
+import { IconButton } from "@/components/ui/IconButton";
 import {
   usePostApiTeacherClassAssignmentAdd,
   useDeleteApiTeacherClassAssignmentRemove,
@@ -98,9 +99,10 @@ export default function AdminTeacherManagementScreen() {
 
   // ── Search ────────────────────────────────────────────────────────────────
   const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const filteredTeachers = useMemo(() => {
-    if (!searchQuery.trim()) return teachers;
-    const q = searchQuery.toLowerCase();
+    if (!debouncedSearchQuery.trim()) return teachers;
+    const q = debouncedSearchQuery.toLowerCase();
     return teachers.filter(
       (t) =>
         t.teacherName?.toLowerCase().includes(q) ||
@@ -108,7 +110,7 @@ export default function AdminTeacherManagementScreen() {
         t.subjectName?.toLowerCase().includes(q) ||
         t.mobileNo?.includes(q),
     );
-  }, [teachers, searchQuery]);
+  }, [teachers, debouncedSearchQuery]);
 
   // ── Mutations ─────────────────────────────────────────────────────────────
   const deleteTeacherMutation = useDeleteApiTeacherDeleteTeacher();
@@ -120,6 +122,7 @@ export default function AdminTeacherManagementScreen() {
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [teacherToDelete, setTeacherToDelete] = useState<TeacherWithDetails | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
 
   const handleDeleteClick = (teacher: TeacherWithDetails) => {
     setTeacherToDelete(teacher);
@@ -294,27 +297,27 @@ export default function AdminTeacherManagementScreen() {
       )}
 
       <View className="flex-row justify-end items-center px-4 py-2.5 bg-gray-50/50 gap-2.5 rounded-b-2xl border-t border-gray-100">
-        <TouchableOpacity
-          className="flex-row items-center gap-1.5 px-3 py-1.5 bg-blue-50 border border-blue-100 rounded-xl"
-          onPress={() => openPanel(item)} activeOpacity={0.7}
-        >
-          <AppIcon name="settings" size={12} color="#1A3C6E" />
-          <Text className="text-[10px] font-extrabold text-[#1A3C6E] uppercase">Permissions</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          className="flex-row items-center gap-1.5 px-3 py-1.5 bg-indigo-50 border border-indigo-100 rounded-xl"
-          onPress={() => router.push(`/(admin)/teacher-form?id=${item.teacherID}`)} activeOpacity={0.7}
-        >
-          <AppIcon name="edit" size={12} color="#4F46E5" />
-          <Text className="text-[10px] font-extrabold text-indigo-700 uppercase">Edit</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          className="flex-row items-center gap-1.5 px-3 py-1.5 bg-rose-50 border border-rose-100 rounded-xl"
-          onPress={() => handleDeleteClick(item)} activeOpacity={0.7}
-        >
-          <AppIcon name="delete" size={12} color="#E11D48" />
-          <Text className="text-[10px] font-extrabold text-rose-700 uppercase">Delete</Text>
-        </TouchableOpacity>
+        <View className="bg-blue-50 border border-blue-100 rounded-xl overflow-hidden">
+          <IconButton 
+            icon="settings" 
+            color="#1A3C6E" 
+            onPress={() => openPanel(item)}
+          />
+        </View>
+        <View className="bg-indigo-50 border border-indigo-100 rounded-xl overflow-hidden">
+          <IconButton 
+            icon="edit" 
+            color="#4F46E5" 
+            onPress={() => router.push(`/(admin)/teacher-form?id=${item.teacherID}`)}
+          />
+        </View>
+        <View className="bg-rose-50 border border-rose-100 rounded-xl overflow-hidden">
+          <IconButton 
+            icon="delete" 
+            color="#E11D48" 
+            onPress={() => handleDeleteClick(item)}
+          />
+        </View>
       </View>
     </TouchableOpacity>
   );

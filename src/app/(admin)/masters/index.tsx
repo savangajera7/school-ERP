@@ -1,8 +1,9 @@
 import React from "react";
-import { View } from "react-native";
+import { View, Platform } from "react-native";
 import { router } from "expo-router";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { ActionListRow } from "@/components/dashboard/ActionListRow";
+import { FormLayout } from "@/components/layout/FormLayout";
 
 export default function MastersMenuScreen() {
   const masterItems = [
@@ -24,9 +25,8 @@ export default function MastersMenuScreen() {
       hideBack={Platform.OS === 'web'}
       onBack={() => router.back()}
       fullWidth
-      bodyStyle={{ marginTop: 12 }}
     >
-      <View className="pb-10 gap-3">
+      <View className="pb-10 gap-3" style={{ marginTop: 32 }}>
         {masterItems.map((item) => (
           <ActionListRow
             key={item.route}

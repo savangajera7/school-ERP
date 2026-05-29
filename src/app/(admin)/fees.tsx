@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from "react";
-import { View, Text, TouchableOpacity, Alert } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
+import { useDialog } from "@/components/ui/AppDialog";
 import { router } from "expo-router";
 import { Colors } from "@/constants/colors";
 import { useGetApiFeesGetFeesList, useDeleteApiFeesDeleteFees } from "@/api/generated/fees/fees";
@@ -13,6 +14,7 @@ import { ResponsiveDataList, EntityActionButtons, type TableColumn } from "@/com
 
 export default function AdminFeesManagementScreen() {
   const [searchQuery, setSearchQuery] = useState("");
+  const { confirm, alert } = useDialog();
 
   const { data, isLoading, isError, error, refetch } = useGetApiFeesGetFeesList();
   const deleteFees = useDeleteApiFeesDeleteFees();
@@ -34,28 +36,19 @@ export default function AdminFeesManagementScreen() {
     });
   }, [fees, searchQuery]);
 
-  const handleDelete = (fee: any) => {
-    Alert.alert(
+  const handleDelete = async (fee: any) => {
+    const ok = await confirm(
       "Delete Fee Record",
       `Are you sure you want to remove the fee record for ${fee.studentName}?`,
-      [
-        { text: "Cancel", style: "cancel" },
-        { 
-          text: "Delete", 
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await deleteFees.mutateAsync({ 
-                data: { feesID: fee.feesID } 
-              });
-              refetch();
-            } catch (err: any) {
-              Alert.alert("Error", err.message || "Failed to delete fee record");
-            }
-          }
-        }
-      ]
+      { confirmLabel: "Delete", destructive: true }
     );
+    if (!ok) return;
+    try {
+      await deleteFees.mutateAsync({ data: { feesID: fee.feesID } });
+      refetch();
+    } catch (err: any) {
+      await alert("Error", err.message || "Failed to delete fee record", "error");
+    }
   };
 
   const tableColumns: TableColumn<any>[] = [
