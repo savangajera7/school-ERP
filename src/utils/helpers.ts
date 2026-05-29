@@ -54,3 +54,13 @@ export const formatCountdown = (seconds: number): string => {
   const secs = seconds % 60;
   return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
 };
+
+/**
+ * Deduplicates consecutive repeated words in a display name.
+ * e.g., "TESTING TESTING" -> "TESTING"
+ */
+export const formatDisplayName = (name?: string | null): string => {
+  if (!name) return "User";
+  const rawName = name.trim();
+  return Array.from(new Set(rawName.split(/\s+/))).join(" ");
+};

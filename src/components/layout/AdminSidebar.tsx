@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SchoolTheme } from "@/constants/theme";
 import { useAuth } from "@/hooks/useAuth";
 import { usePermissions } from "@/hooks/usePermissions";
+import { formatDisplayName } from "@/utils/helpers";
 import type { AppIconName } from "@/constants/appIcons";
 import { AppIcon } from "@/components/icons/AppIcon";
 
@@ -74,7 +75,7 @@ export function AdminSidebar() {
             <Text style={styles.brand}>Little Angel&apos;s</Text>
             <Text style={styles.role}>{roleLabel}</Text>
             <Text style={styles.user} numberOfLines={1}>
-              {userData?.name}
+              {formatDisplayName(userData?.name)}
             </Text>
           </View>
         )}

@@ -7,6 +7,7 @@ import { useAuthStore } from "@/store/authStore";
 import { usePermissions } from "@/hooks/usePermissions";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { ROLE_LABELS } from "@/constants/rolePermissions";
+import { formatDisplayName } from "@/utils/helpers";
 
 // ─── Active state helper ──────────────────────────────────────────────────────
 // Strips the route group prefix so /(admin)/teachers and /(app)/teachers both
@@ -184,7 +185,7 @@ export function DesktopSidebar() {
           {!isCollapsed && (
             <View className="flex-1">
               <Text className="text-xs font-black text-gray-800" numberOfLines={1}>
-                {userData?.name || firstName}
+                {formatDisplayName(userData?.name)}
               </Text>
               <Text className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">
                 {roleLabel || (role ? ROLE_LABELS[role] : "")}

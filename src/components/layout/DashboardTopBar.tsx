@@ -7,6 +7,8 @@ import { useTranslation, getGreetingKey } from "@/hooks/useTranslation";
 import { roleToRouteGroup } from "@/utils/roleRouting";
 import { AppIcon } from "@/components/icons/AppIcon";
 
+import { formatDisplayName } from "@/utils/helpers";
+
 type Props = {
   /** Override notification route (defaults by role group) */
   notificationsHref?: string;
@@ -24,7 +26,7 @@ export function DashboardTopBar({ notificationsHref }: Props) {
   const { unreadCount } = useNotifications();
   const { t, language, toggleLanguage } = useTranslation();
   const greeting = t[getGreetingKey()];
-  const displayName = (userData?.name || "User").toUpperCase();
+  const displayName = formatDisplayName(userData?.name).toUpperCase();
   const notifRoute = notificationsHref ?? notificationsRouteForRole(role);
 
   return (

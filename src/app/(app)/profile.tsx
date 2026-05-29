@@ -12,6 +12,7 @@ import type { StudentModel } from "@/api/model/studentModel";
 import { ROLE_LABELS } from "@/constants/rolePermissions";
 import { usePermissions } from "@/hooks/usePermissions";
 import { premiumCardShadow } from "@/constants/premiumStyles";
+import { formatDisplayName } from "@/utils/helpers";
 
 function extractList<T>(payload: unknown): T[] {
   if (!payload) return [];
@@ -59,7 +60,7 @@ export default function ProfileScreen() {
     return extractList<StudentModel>((studentsResponse as { data?: unknown })?.data);
   }, [studentsResponse]);
 
-  const initials = (userData?.name || "U")
+  const initials = formatDisplayName(userData?.name)
     .split(" ")
     .map((n: string) => n[0])
     .join("")
@@ -76,7 +77,7 @@ export default function ProfileScreen() {
       headerSlot={
         <View className="mt-4 items-center w-full">
           <ProfileAvatarPicker
-            name={userData?.name || "User"}
+            name={formatDisplayName(userData?.name)}
             avatarUri={userData?.avatar}
             initials={initials}
             size={96}
@@ -97,7 +98,7 @@ export default function ProfileScreen() {
             </Text>
           </View>
           
-          <InfoRow label="Full name" value={userData?.name || "—"} />
+          <InfoRow label="Full name" value={formatDisplayName(userData?.name)} />
           <InfoRow label="Email" value={userData?.email || "—"} />
           <InfoRow label="Mobile" value={userData?.mobile || "—"} />
           <InfoRow label="School" value={userData?.schoolName || "Little Angel's English School"} />
