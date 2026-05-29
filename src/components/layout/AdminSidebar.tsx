@@ -23,7 +23,6 @@ const MORE: { label: string; route: string; icon: AppIconName; perm?: string }[]
   { label: "Exams", route: "/(admin)/exams", icon: "exams", perm: "viewExams" },
   { label: "Reports", route: "/(app)/reports", icon: "reports", perm: "viewReports" },
   { label: "Alerts", route: "/(admin)/notifications", icon: "notifications", perm: "viewNotifications" },
-  { label: "Parents", route: "/(admin)/parents", icon: "parents", perm: "viewParents" },
   { label: "Masters", route: "/(admin)/masters", icon: "masters", perm: "manageMasters" },
 ];
 
