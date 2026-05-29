@@ -301,10 +301,21 @@ function normalizeAttendanceRow(row: Record<string, unknown>): AttendanceRow {
   const rollNumber =
     rollRaw != null && rollRaw !== "" ? (Number(rollRaw) || rollRaw) : undefined;
 
+  const studentPhoto = pickString(
+    c.studentPhoto,
+    row.StudentPhoto,
+    row.studentPhoto,
+    row.student_photo,
+    nested?.studentPhoto,
+    nested?.StudentPhoto,
+    nested?.student_photo
+  );
+
   return {
     ...c,
     studentID: studentID || c.studentID,
     studentName: studentName ?? c.studentName,
+    studentPhoto: studentPhoto ?? c.studentPhoto,
     firstName: firstName ?? c.firstName,
     lastName: lastName ?? c.lastName,
     classID: classID ?? c.classID,
@@ -357,6 +368,7 @@ export type AttendanceRow = {
   remarks?: string;
   studentName?: string;
   studentDisplayName?: string;
+  studentPhoto?: string;
   firstName?: string;
   lastName?: string;
   rollNo?: string | number;

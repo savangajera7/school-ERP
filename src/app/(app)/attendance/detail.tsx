@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { View, Text, TouchableOpacity, FlatList, TextInput } from "react-native";
+import { View, Text, TouchableOpacity, FlatList, TextInput, Image } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { useGetApiAttendanceGet } from "@/api/attendance";
@@ -17,7 +17,6 @@ import { PremiumLoader } from "@/components/ui/PremiumLoader";
 import { Colors } from "@/constants/colors";
 import { formatDisplayDate } from "@/utils/dateHelpers";
 import { AppIcon, GenderIcon } from "@/components/icons/AppIcon";
-import { premiumCardShadow } from "@/constants/premiumStyles";
 
 export default function AttendanceDetailScreen() {
   const access = useAttendanceAccess();
@@ -27,6 +26,7 @@ export default function AttendanceDetailScreen() {
   const date = String(params.date ?? "");
   const schoolID = useAuthStore((s) => s.userData?.schoolID);
   const [searchQuery, setSearchQuery] = useState("");
+  const [filter, setFilter] = useState<"all" | "present" | "absent" | "leave">("all");
 
   const queryParams = useMemo(
     () =>
@@ -43,13 +43,29 @@ export default function AttendanceDetailScreen() {
   const detail = useMemo(() => parseDetailView(data?.data), [data]);
 
   const filteredStudents = useMemo(() => {
+    let list = detail.students;
+
+    // Filter by status
+    if (filter !== "all") {
+      list = list.filter((s) => {
+        const st = normalizeAttendanceStatusFromApi(s.attendanceStatus);
+        if (filter === "present") return st === "Present";
+        if (filter === "absent") return st === "Absent";
+        return st === "Leave";
+      });
+    }
+
+    // Filter by search
     const q = searchQuery.toLowerCase().trim();
-    if (!q) return detail.students;
-    return detail.students.filter((s) =>
-      getAttendanceRowName(s).toLowerCase().includes(q) ||
-      String(getAttendanceRowRoll(s)).includes(q)
-    );
-  }, [detail.students, searchQuery]);
+    if (q) {
+      list = list.filter((s) =>
+        getAttendanceRowName(s).toLowerCase().includes(q) ||
+        String(getAttendanceRowRoll(s)).includes(q)
+      );
+    }
+
+    return list;
+  }, [detail.students, searchQuery, filter]);
 
   const counts = useMemo(() => {
     let present = 0, absent = 0, leave = 0;
@@ -66,6 +82,13 @@ export default function AttendanceDetailScreen() {
     return <AccessDenied message="No permission to view this class attendance." />;
   }
 
+  const filterChips: { key: typeof filter; label: string; count: number; color: string; bgActive: string; bgInactive: string }[] = [
+    { key: "all", label: "All", count: counts.total, color: "#1A3C6E", bgActive: "bg-[#1A3C6E]", bgInactive: "bg-white border-gray-200" },
+    { key: "present", label: "Present", count: counts.present, color: "#059669", bgActive: "bg-emerald-600", bgInactive: "bg-white border-emerald-200" },
+    { key: "absent", label: "Absent", count: counts.absent, color: "#DC2626", bgActive: "bg-rose-600", bgInactive: "bg-white border-rose-200" },
+    { key: "leave", label: "Leave", count: counts.leave, color: "#D97706", bgActive: "bg-amber-500", bgInactive: "bg-white border-amber-200" },
+  ];
+
   return (
     <PremiumScreenLayout
       title={`${className} — Detail`}
@@ -75,12 +98,7 @@ export default function AttendanceDetailScreen() {
       fullWidth
       rightAction={
         <TouchableOpacity
-          onPress={() =>
-            router.push({
-              pathname: "/(app)/attendance/mark",
-              params: { classId: String(classID), className, date, marked: "1" },
-            })
-          }
+          onPress={() => router.back()}
           className="flex-row items-center gap-1.5 px-3 py-2 rounded-xl"
           style={{ backgroundColor: Colors.accent }}
           activeOpacity={0.85}
@@ -90,46 +108,48 @@ export default function AttendanceDetailScreen() {
         </TouchableOpacity>
       }
     >
-      {/* Audit card */}
-      <View className="bg-white rounded-2xl border border-gray-100 p-4 mb-3 mx-1" style={premiumCardShadow}>
-        <View className="flex-row gap-4">
+      {/* Audit + Summary card */}
+      <View className="bg-white rounded-2xl border border-gray-100 p-4 mb-3 mx-3 mt-3" style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 6, elevation: 2 }}>
+        <View className="flex-row gap-4 mb-3">
           <View className="flex-1">
             <Text className="text-[10px] font-black uppercase text-gray-400 mb-0.5">Marked by</Text>
-            <Text className="text-sm font-extrabold text-gray-900">{detail.takenBy || "—"}</Text>
+            <Text className="text-[13px] font-extrabold text-gray-900">{detail.takenBy || "—"}</Text>
           </View>
           <View className="flex-1">
             <Text className="text-[10px] font-black uppercase text-gray-400 mb-0.5">Last updated</Text>
-            <Text className="text-sm font-semibold text-gray-700">{detail.lastUpdatedBy || "—"}</Text>
+            <Text className="text-[13px] font-semibold text-gray-700">{detail.lastUpdatedBy || "—"}</Text>
           </View>
         </View>
+
+        {/* Filter chips */}
+        {!isLoading && counts.total > 0 && (
+          <View className="flex-row gap-2 pt-3 border-t border-gray-100">
+            {filterChips.map((chip) => {
+              const active = filter === chip.key;
+              return (
+                <TouchableOpacity
+                  key={chip.key}
+                  onPress={() => setFilter(chip.key)}
+                  className={`flex-1 py-2 rounded-xl border items-center ${active ? chip.bgActive : chip.bgInactive}`}
+                  activeOpacity={0.8}
+                >
+                  <Text className={`text-[10px] font-black uppercase ${active ? 'text-white' : 'text-gray-500'}`}>
+                    {chip.label}
+                  </Text>
+                  <Text className={`text-[16px] font-black ${active ? 'text-white' : 'text-gray-800'}`}>
+                    {chip.count}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        )}
       </View>
 
-      {/* Summary chips */}
-      {!isLoading && counts.total > 0 && (
-        <View className="flex-row gap-2 mb-3 px-1">
-          <View className="flex-1 bg-white border border-gray-100 rounded-xl px-3 py-2.5" style={premiumCardShadow}>
-            <Text className="text-[10px] font-black uppercase text-gray-400">Total</Text>
-            <Text className="text-xl font-black text-gray-900">{counts.total}</Text>
-          </View>
-          <View className="flex-1 bg-white border border-emerald-100 rounded-xl px-3 py-2.5" style={premiumCardShadow}>
-            <Text className="text-[10px] font-black uppercase text-emerald-600">Present</Text>
-            <Text className="text-xl font-black text-emerald-700">{counts.present}</Text>
-          </View>
-          <View className="flex-1 bg-white border border-rose-100 rounded-xl px-3 py-2.5" style={premiumCardShadow}>
-            <Text className="text-[10px] font-black uppercase text-rose-600">Absent</Text>
-            <Text className="text-xl font-black text-rose-700">{counts.absent}</Text>
-          </View>
-          <View className="flex-1 bg-white border border-amber-100 rounded-xl px-3 py-2.5" style={premiumCardShadow}>
-            <Text className="text-[10px] font-black uppercase text-amber-600">Leave</Text>
-            <Text className="text-xl font-black text-amber-700">{counts.leave}</Text>
-          </View>
-        </View>
-      )}
-
       {/* Search */}
-      <View className="px-1 mb-3">
-        <View className="flex-row items-center bg-white border border-gray-200 rounded-xl px-3 h-11">
-          <AppIcon name="search" size={16} color="#9CA3AF" />
+      <View className="px-3 mb-3">
+        <View className="flex-row items-center bg-white border border-gray-200 rounded-xl px-3 h-10">
+          <AppIcon name="search" size={15} color="#9CA3AF" />
           <TextInput
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -137,6 +157,11 @@ export default function AttendanceDetailScreen() {
             className="flex-1 ml-2 text-sm font-semibold text-gray-800"
             placeholderTextColor="#9CA3AF"
           />
+          {searchQuery.length > 0 && (
+            <TouchableOpacity onPress={() => setSearchQuery("")}>
+              <AppIcon name="close" size={14} color="#9CA3AF" />
+            </TouchableOpacity>
+          )}
         </View>
       </View>
 
@@ -146,7 +171,8 @@ export default function AttendanceDetailScreen() {
         <FlatList
           data={filteredStudents}
           keyExtractor={(item) => String(item.studentID)}
-          contentContainerStyle={{ paddingBottom: 40, paddingHorizontal: 4 }}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 80 }}
           ListEmptyComponent={
             <View className="items-center py-12">
               <Text className="text-gray-400 font-semibold text-sm">No attendance data found.</Text>
@@ -156,49 +182,38 @@ export default function AttendanceDetailScreen() {
             const label = normalizeAttendanceStatusFromApi(item.attendanceStatus);
             const isPresent = label === "Present";
             const isLeave = label === "Leave";
+            const badgeBg = isPresent ? "bg-emerald-50 border-emerald-200" : isLeave ? "bg-amber-50 border-amber-200" : "bg-rose-50 border-rose-200";
+            const badgeText = isPresent ? "text-emerald-700" : isLeave ? "text-amber-700" : "text-rose-700";
+
             return (
-              <View
-                className="bg-white rounded-2xl mb-3 border border-gray-100"
-                style={premiumCardShadow}
-              >
-                <View className="p-4 flex-row items-center gap-3">
-                  <View className="relative">
-                    <View className="w-12 h-12 rounded-xl bg-gray-50 border border-gray-200 items-center justify-center">
-                      <GenderIcon gender={item.gender} size={24} />
-                    </View>
-                    {item.rollNumber != null && (
-                      <View className="absolute -top-1.5 -right-1.5 bg-amber-500 border border-white min-w-[20px] h-5 px-1 rounded-full items-center justify-center">
-                        <Text className="text-[9px] font-black text-white">{item.rollNumber}</Text>
-                      </View>
+              <View className="mx-3 mb-2">
+                <View
+                  className="bg-white rounded-xl border border-gray-100 p-2.5 flex-row items-center"
+                  style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.03, shadowRadius: 3, elevation: 1 }}
+                >
+                  {/* Photo */}
+                  <View className="w-10 h-10 rounded-full bg-gray-50 border border-gray-200 items-center justify-center overflow-hidden mr-2.5">
+                    {item.studentPhoto ? (
+                      <Image source={{ uri: item.studentPhoto }} style={{ width: 40, height: 40 }} resizeMode="cover" />
+                    ) : (
+                      <GenderIcon gender={item.gender} size={20} />
                     )}
                   </View>
 
-                  <View className="flex-1">
-                    <Text className="text-sm font-extrabold text-gray-900" numberOfLines={1}>
+                  {/* Name + Roll + Remark */}
+                  <View className="flex-1 mr-2">
+                    <Text className="text-[13px] font-bold text-gray-900" numberOfLines={1}>
                       {getAttendanceRowName(item)}
                     </Text>
-                    <Text className="text-xs text-gray-400 font-semibold mt-0.5">
+                    <Text className="text-[10px] text-gray-400 font-semibold">
                       Roll {getAttendanceRowRoll(item)}
+                      {item.remark ? ` · "${item.remark}"` : ""}
                     </Text>
-                    {item.remark ? (
-                      <Text className="text-xs text-gray-500 mt-0.5 italic">"{item.remark}"</Text>
-                    ) : null}
                   </View>
 
-                  <View
-                    className={`px-3 py-1.5 rounded-full border ${
-                      isPresent
-                        ? "bg-emerald-50 border-emerald-200"
-                        : isLeave
-                        ? "bg-amber-50 border-amber-200"
-                        : "bg-rose-50 border-rose-200"
-                    }`}
-                  >
-                    <Text
-                      className={`text-[10px] font-black uppercase ${
-                        isPresent ? "text-emerald-700" : isLeave ? "text-amber-700" : "text-rose-700"
-                      }`}
-                    >
+                  {/* Status badge */}
+                  <View className={`px-2.5 py-1.5 rounded-lg border ${badgeBg}`}>
+                    <Text className={`text-[10px] font-black uppercase ${badgeText}`}>
                       {label}
                     </Text>
                   </View>

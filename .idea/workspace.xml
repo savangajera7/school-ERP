@@ -6,39 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="973b64d6-6094-46c3-ae9b-d54eff11ffd3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/admission-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/admission-form.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/exam-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/exam-form.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/exams.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/exams.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/fees-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/fees-form.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/fees.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/fees.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/masters/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/masters/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/notice-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/notice-form.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/notices.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/notices.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/notifications.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/notifications.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/(admin)/students.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/students.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/teacher-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/teacher-form.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/teachers.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/teachers.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/timetable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/timetable.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/attendance/mark.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/attendance/mark.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/fees.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/fees.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/add-school.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(super-admin)/add-school.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/edit-school/[id].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(super-admin)/edit-school/[id].tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/role-rights/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(super-admin)/role-rights/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/roles/create.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(super-admin)/roles/create.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/roles/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(super-admin)/roles/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/schools.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(super-admin)/schools.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/settings.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(super-admin)/settings.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/users/[id].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(super-admin)/users/[id].tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/users/create.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(super-admin)/users/create.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(teacher)/exam-marks.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(teacher)/exam-marks.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/_layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/shared/MasterCrudScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/shared/MasterCrudScreen.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/shared/NoticeForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/shared/NoticeForm.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/shared/ResponsiveDataList.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/shared/ResponsiveDataList.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/attendance/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/attendance/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/attendance/mark.tsx" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/ui/PremiumDatePicker.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/PremiumDatePicker.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/hooks/useProfilePhotoUpload.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/useProfilePhotoUpload.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -146,7 +117,7 @@
       <workItem from="1779944396095" duration="18866000" />
       <workItem from="1779974923867" duration="17203000" />
       <workItem from="1780046256110" duration="8176000" />
-      <workItem from="1780076943081" duration="6121000" />
+      <workItem from="1780076943081" duration="7526000" />
     </task>
     <servers />
   </component>

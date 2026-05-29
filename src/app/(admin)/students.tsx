@@ -126,7 +126,17 @@ export default function AdminStudentManagementScreen() {
 
   const students = useMemo(() => {
     if (!searchResponse?.students) return [];
-    return searchResponse.students.map((s) => normalizeStudent(s as any));
+    const list = searchResponse.students.map((s) => normalizeStudent(s as any));
+    return list.sort((a, b) => {
+      const rollA = a.rollNo ? parseInt(String(a.rollNo), 10) : 999999;
+      const rollB = b.rollNo ? parseInt(String(b.rollNo), 10) : 999999;
+      const isA_NaN = isNaN(rollA);
+      const isB_NaN = isNaN(rollB);
+      if (isA_NaN && isB_NaN) return 0;
+      if (isA_NaN) return 1;
+      if (isB_NaN) return -1;
+      return rollA - rollB;
+    });
   }, [searchResponse]);
 
   const handleDeleteClick = (student: StudentModel) => {
