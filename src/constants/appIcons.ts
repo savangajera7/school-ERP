@@ -253,4 +253,6 @@ export const QUICK_ACTION_STYLES: Record<
   delete: { bg: "#FEE2E2", iconBg: "#FECACA", iconColor: "#DC2626" },
   bell: { bg: "#FEE2E2", iconBg: "#FECACA", iconColor: "#DC2626" },
   camera: { bg: "#F3F4F6", iconBg: "#E5E7EB", iconColor: "#6B7280" },
+  eye: { bg: "#F3F4F6", iconBg: "#E5E7EB", iconColor: "#6B7280" },
+  eyeOff: { bg: "#F3F4F6", iconBg: "#E5E7EB", iconColor: "#6B7280" },
 };

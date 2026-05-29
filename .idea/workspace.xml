@@ -6,166 +6,70 @@
   <component name="ChangeListManager">
     <list default="true" id="973b64d6-6094-46c3-ae9b-d54eff11ffd3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/0-schools-super-admin/0-schools-super-admin.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/0-schools-super-admin/0-schools-super-admin.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/1-login-no-token/1-login-no-token.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/1-login-no-token/1-login-no-token.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/10-teacher-attendance-admin-only/10-teacher-attendance-admin-only.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/10-teacher-attendance-admin-only/10-teacher-attendance-admin-only.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/10-timetable/10-timetable.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/10-timetable/10-timetable.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/11-syllabus/11-syllabus.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/11-syllabus/11-syllabus.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/2-master-academicyear/2-master-academicyear.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/2-master-academicyear/2-master-academicyear.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/2-master-batch/2-master-batch.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/2-master-batch/2-master-batch.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/2-master-bloodgroup/2-master-bloodgroup.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/2-master-bloodgroup/2-master-bloodgroup.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/2-master-category/2-master-category.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/2-master-category/2-master-category.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/2-master-religion/2-master-religion.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/2-master-religion/2-master-religion.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/2-verify-token/2-verify-token.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/2-verify-token/2-verify-token.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/3-student-crud/3-student-crud.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/3-student-crud/3-student-crud.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/4-admission/4-admission.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/4-admission/4-admission.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/4-change-password/4-change-password.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/4-change-password/4-change-password.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/5-homework-tracking/5-homework-tracking.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/5-homework-tracking/5-homework-tracking.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/6-teacher-class-assignment/6-teacher-class-assignment.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/6-teacher-class-assignment/6-teacher-class-assignment.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/6-teacher-permissions-admin-assigns-module-access-per-class/6-teacher-permissions-admin-assigns-module-access-per-class.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/6-teacher-permissions-admin-assigns-module-access-per-class/6-teacher-permissions-admin-assigns-module-access-per-class.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/7-classwork/7-classwork.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/7-classwork/7-classwork.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/8-notice/8-notice.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/8-notice/8-notice.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/9-student-attendance/9-student-attendance.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/9-student-attendance/9-student-attendance.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/downloads/downloads.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/downloads/downloads.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/exam/exam.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/exam/exam.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/fees/fees.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/fees/fees.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/leave-application/leave-application.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/leave-application/leave-application.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/master-class/master-class.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/master-class/master-class.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/master-medium/master-medium.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/master-medium/master-medium.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/master-section/master-section.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/master-section/master-section.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/money/money.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/money/money.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/notification/notification.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/notification/notification.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/parent/parent.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/parent/parent.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/result/result.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/result/result.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/role-rights/role-rights.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/role-rights/role-rights.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/role/role.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/role/role.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/subject/subject.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/subject/subject.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/teacher/teacher.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/teacher/teacher.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/uploded/uploded.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/uploded/uploded.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/user-device-token/user-device-token.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/user-device-token/user-device-token.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/generated/user/user.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/generated/user/user.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/academicYearModel.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/academicYearModel.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/apiResult.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/apiResult.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/attendanceMarkRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/attendanceMarkRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/attendanceStudentItemDto.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/attendanceStudentItemDto.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/batchModel.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/batchModel.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/bloodGroupModel.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/bloodGroupModel.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/categoryModel.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/categoryModel.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/classModel.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/classModel.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/classworkAddRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/classworkAddRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/classworkBulkStatusUpdateRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/classworkBulkStatusUpdateRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/classworkStatusUpdateRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/classworkStatusUpdateRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/classworkUpdateRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/classworkUpdateRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/deleteApiClassDeleteClassParams.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/deleteApiClassDeleteClassParams.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/deleteApiClassDeleteIdParams.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/deleteApiClassDeleteIdParams.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/deleteApiMediumDeleteIdParams.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/deleteApiMediumDeleteIdParams.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/deleteApiStudentDeleteIdParams.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/deleteApiStudentDeleteIdParams.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/deleteApiTeacherAttendanceDeleteIdParams.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/deleteApiTeacherAttendanceDeleteIdParams.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/deleteApiTeacherPermissionsRemoveParams.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/deleteApiTeacherPermissionsRemoveParams.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/examDeleteRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/examDeleteRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/examInsertRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/examInsertRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/examUpdateRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/examUpdateRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/feesDeleteRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/feesDeleteRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/feesInsertRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/feesInsertRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/feesUpdateRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/feesUpdateRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/forgotPasswordRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/forgotPasswordRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/getApiAttendanceGetParams.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/getApiAttendanceGetParams.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/getApiClassworkGetParams.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/getApiClassworkGetParams.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/getApiHomeworkGetParams.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/getApiHomeworkGetParams.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/getApiNoticeGetParams.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/getApiNoticeGetParams.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/getApiSchoolGetParams.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/getApiSchoolGetParams.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/getApiStudentGetParams.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/getApiStudentGetParams.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/getApiSyllabusGetParams.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/getApiSyllabusGetParams.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/getApiTeacherAttendanceGetIdParams.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/getApiTeacherAttendanceGetIdParams.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/getApiTeacherAttendanceGetParams.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/getApiTeacherAttendanceGetParams.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/getApiTeacherAttendanceGetTeacherAttendanceByIdIdParams.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/getApiTeacherAttendanceGetTeacherAttendanceByIdIdParams.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/getApiTeacherAttendanceGetTeacherAttendanceListParams.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/getApiTeacherAttendanceGetTeacherAttendanceListParams.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/getApiTeacherClassAssignmentGetParams.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/getApiTeacherClassAssignmentGetParams.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/getApiTimetableGetParams.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/getApiTimetableGetParams.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/homeworkAddRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/homeworkAddRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/homeworkBulkStatusUpdateRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/homeworkBulkStatusUpdateRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/homeworkStatusUpdateRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/homeworkStatusUpdateRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/homeworkUpdateRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/homeworkUpdateRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/leaveApplicationDeleteRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/leaveApplicationDeleteRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/leaveApplicationInsertRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/leaveApplicationInsertRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/leaveApplicationUpdateRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/leaveApplicationUpdateRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/loginRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/loginRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/mediumModel.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/mediumModel.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/moneyDeleteRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/moneyDeleteRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/moneyInsertRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/moneyInsertRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/moneyUpdateRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/moneyUpdateRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/noticeAddRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/noticeAddRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/noticeAttachmentDto.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/noticeAttachmentDto.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/noticeDeleteRequestDto.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/noticeDeleteRequestDto.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/noticeUpdateRequestDto.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/noticeUpdateRequestDto.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/notificationDeleteRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/notificationDeleteRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/notificationInsertRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/notificationInsertRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/notificationMarkReadRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/notificationMarkReadRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/notificationUpdateRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/notificationUpdateRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/parentDeleteRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/parentDeleteRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/parentsChangePasswordRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/parentsChangePasswordRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/postApiUplodedUploadDocumentBody.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/postApiUplodedUploadDocumentBody.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/postApiUplodedUploadImageBody.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/postApiUplodedUploadImageBody.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/postApiUplodedUploadMultipleFilesBody.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/postApiUplodedUploadMultipleFilesBody.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/problemDetails.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/problemDetails.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/putApiClassworkUpdateParams.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/putApiClassworkUpdateParams.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/religionModel.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/religionModel.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/resultDeleteRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/resultDeleteRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/resultInsertRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/resultInsertRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/resultUpdateRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/resultUpdateRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/roleDeleteRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/roleDeleteRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/roleInsertRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/roleInsertRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/roleRightsDeleteRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/roleRightsDeleteRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/roleRightsInsertRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/roleRightsInsertRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/roleRightsUpdateRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/roleRightsUpdateRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/roleUpdateRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/roleUpdateRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/schoolInsertRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/schoolInsertRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/schoolStatusChangeRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/schoolStatusChangeRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/schoolUpdateRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/schoolUpdateRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/sectionModel.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/sectionModel.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/studentBlacklistRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/studentBlacklistRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/studentChangePasswordRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/studentChangePasswordRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/studentModel.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/studentModel.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/studentSearchRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/studentSearchRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/subjectDeleteRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/subjectDeleteRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/subjectInsertRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/subjectInsertRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/subjectUpdateRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/subjectUpdateRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/syllabusAddRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/syllabusAddRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/syllabusAttachmentDto.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/syllabusAttachmentDto.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/syllabusDeleteRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/syllabusDeleteRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/syllabusUpdateRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/syllabusUpdateRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/teacherAttendanceDeleteRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/teacherAttendanceDeleteRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/teacherAttendanceInsertRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/teacherAttendanceInsertRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/teacherAttendanceItemDto.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/teacherAttendanceItemDto.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/teacherAttendanceMarkRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/teacherAttendanceMarkRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/teacherAttendanceUpdateRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/teacherAttendanceUpdateRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/teacherChangePasswordRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/teacherChangePasswordRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/teacherClassAssignmentAddRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/teacherClassAssignmentAddRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/teacherClassAssignmentRemoveRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/teacherClassAssignmentRemoveRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/teacherClassAssignmentUpdateRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/teacherClassAssignmentUpdateRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/teacherClassPermissionsRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/teacherClassPermissionsRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/teacherDeleteRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/teacherDeleteRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/teacherInsertRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/teacherInsertRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/teacherUpdateRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/teacherUpdateRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/timetableAddRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/timetableAddRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/timetableBulkAddRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/timetableBulkAddRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/timetableDeleteRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/timetableDeleteRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/timetablePeriodInputDto.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/timetablePeriodInputDto.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/timetableUpdateRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/timetableUpdateRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/userDeleteRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/userDeleteRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/userDeviceTokenDeleteRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/userDeviceTokenDeleteRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/userDeviceTokenInsertRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/userDeviceTokenInsertRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/userDeviceTokenUpdateRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/userDeviceTokenUpdateRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/userInsertRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/userInsertRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/model/userUpdateRequest.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/api/model/userUpdateRequest.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/timetable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/timetable.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/attendance.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/attendance.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(app)/student-profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/student-profile.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/ui/BackButton.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/BackButton.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/ui/ScreenHeader.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/ScreenHeader.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/_dashboardConfig.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/_dashboardConfig.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/_layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/attendance-form.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/attendance.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/change-password.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/dashboard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/menu.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/profile.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/reports.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/settings.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/settings.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/students.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/students.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/teachers.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/teachers.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/_dashboardConfig.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/_dashboardConfig.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/academic-setup.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/academic-setup.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/admission-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/admission-form.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/attendance-reports.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/attendance.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/dashboard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/inquiries.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/inquiries.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/masters.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/money.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/money.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/notification-compose.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/notification-compose.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/reports.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/reports.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/roles.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/roles.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/students.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/teacher-attendance.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/teacher-attendance.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/timetable.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/users.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/users.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(parent)/_dashboardConfig.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(parent)/_dashboardConfig.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(parent)/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(parent)/_layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(parent)/dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(parent)/dashboard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(parent)/exam-marks.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(parent)/profile.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(parent)/timetable.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/_dashboardConfig.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/_layout.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/add-school.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/dashboard.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/edit-school/[id].tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/menu.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/notifications.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/profile.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/role-rights/index.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/roles/create.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/roles/index.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/schools.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/settings.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/users/[id].tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/users/create.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(super-admin)/users/index.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(teacher)/_dashboardConfig.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(teacher)/_dashboardConfig.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(teacher)/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(teacher)/_layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(teacher)/dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(teacher)/dashboard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(teacher)/profile.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(teacher)/timetable.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/auth/RouteGuard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/auth/RouteGuard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/layout/AdminSidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/layout/AdminSidebar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/layout/ParentMenuScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/layout/ParentMenuScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/layout/TeacherMenuScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/layout/TeacherMenuScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/constants/appIcons.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/constants/appIcons.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/constants/rolePermissions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/constants/rolePermissions.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/hooks/useAuth.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/useAuth.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/swagger.json" beforeDir="false" afterPath="$PROJECT_DIR$/swagger.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/notifications/pushService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/notifications/pushService.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/roleRouting.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/roleRouting.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -272,7 +176,7 @@
       <workItem from="1779893064587" duration="612000" />
       <workItem from="1779944396095" duration="18866000" />
       <workItem from="1779974923867" duration="17203000" />
-      <workItem from="1780046256110" duration="2202000" />
+      <workItem from="1780046256110" duration="4726000" />
     </task>
     <servers />
   </component>

@@ -16,14 +16,14 @@ import type { QuickAction, ActivityItem } from "@/components/shared";
 import type { AppRoute } from "@/constants/rolePermissions";
 
 const QUICK_ACTIONS: (QuickAction & { route: AppRoute })[] = [
-  { title: "Attendance", icon: "attendance", route: "/(teacher)/attendance" as any },
+  { title: "Attendance", icon: "attendance", route: "/(app)/attendance" as any },
   { title: "Homework", icon: "homework", route: "/(teacher)/homework" as any },
   { title: "Classwork", icon: "classwork", route: "/(teacher)/classwork" as any },
   { title: "Notebook", icon: "notebook", route: "/(teacher)/notebook" as any },
   { title: "Exam Marks", icon: "exams", route: "/(teacher)/exam-marks" as any },
-  { title: "Timetable", icon: "timetable", route: "/(teacher)/timetable" as any },
+  { title: "Timetable", icon: "timetable", route: "/(admin)/timetable" as any },
   { title: "Post Notice", icon: "notices", route: "/(teacher)/notice" as any },
-  { title: "Profile", icon: "profile", route: "/(teacher)/profile" as any },
+  { title: "Profile", icon: "profile", route: "/(app)/profile" as any },
 ];
 
 const RECENT_ACTIVITY: ActivityItem[] = [
@@ -62,7 +62,7 @@ export default function TeacherDashboardScreen() {
           subtitle="Assigned grade rooms"
           backgroundColor="#F3E8FF"
           textColor="#7E22CE"
-          onPress={() => router.push("/(teacher)/timetable")}
+          onPress={() => router.push("/(admin)/timetable")}
         />
         <StatCard
           icon="subjects"
@@ -80,7 +80,7 @@ export default function TeacherDashboardScreen() {
           subtitle="Today's submission"
           backgroundColor="#DCFCE7"
           textColor="#15803D"
-          onPress={() => router.push("/(teacher)/attendance")}
+          onPress={() => router.push("/(app)/attendance")}
         />
       </View>
 

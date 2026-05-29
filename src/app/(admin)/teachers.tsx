@@ -267,7 +267,7 @@ export default function AdminTeacherManagementScreen() {
             </View>
           ) : null}
           <View className="flex-row items-center gap-1.5">
-            <AppIcon name="phone" size={12} color="#6B7280" />
+            <AppIcon name="call" size={12} color="#6B7280" />
             <Text className="text-[12px] font-semibold text-gray-500 flex-1" numberOfLines={1}>{item.mobileNo || "No phone"}</Text>
           </View>
         </View>

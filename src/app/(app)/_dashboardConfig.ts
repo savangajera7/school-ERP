@@ -3,17 +3,17 @@ import type { QuickAction, ActivityItem } from "@/components/shared";
 import type { AppIconName } from "@/constants/appIcons";
 
 export const QUICK_ACTIONS: (QuickAction & { route: AppRoute })[] = [
-  { title: "Admission", icon: "admission", route: "/(app)/admission-form" as any },
-  { title: "Students", icon: "students", route: "/(app)/students" as any },
-  { title: "Masters", icon: "masters", route: "/(admin)/masters" as any },
-  { title: "Teachers", icon: "teachers", route: "/(admin)/teachers" as any },
-  { title: "Parents", icon: "parents", route: "/(admin)/parents" as any },
-  { title: "Timetable", icon: "timetable", route: "/(admin)/timetable" as any },
-  { title: "Attendance", icon: "attendance", route: "/(app)/attendance" as any },
-  { title: "Exams", icon: "exams", route: "/(admin)/exams" as any },
-  { title: "Fees", icon: "fees", route: "/(admin)/fees" as any },
-  { title: "Notices", icon: "notices", route: "/(app)/notices" as any },
-  { title: "Reports", icon: "reports", route: "/(app)/attendance-reports" as any },
+  { title: "Admission", icon: "admission", route: "/(admin)/admission-form" },
+  { title: "Students", icon: "students", route: "/(admin)/students" },
+  { title: "Masters", icon: "masters", route: "/(admin)/masters" },
+  { title: "Teachers", icon: "teachers", route: "/(admin)/teachers" },
+  { title: "Parents", icon: "parents", route: "/(admin)/parents" },
+  { title: "Timetable", icon: "timetable", route: "/(admin)/timetable" },
+  { title: "Attendance", icon: "attendance", route: "/(app)/attendance" },
+  { title: "Exams", icon: "exams", route: "/(admin)/exams" },
+  { title: "Fees", icon: "fees", route: "/(admin)/fees" },
+  { title: "Notices", icon: "notices", route: "/(app)/notices" },
+  { title: "Reports", icon: "reports", route: "/(app)/attendance/reports" },
 ];
 
 export const RECENT_ACTIVITY: ActivityItem[] = [
@@ -65,7 +65,7 @@ export const getOperationalIndicators = (
     valueColorClass: "text-sky-600",
     target: "1,500 Max Cap",
     btnText: "Manage",
-    route: "/(app)/students" as any,
+    route: "/(admin)/students" as any,
     rowBgClass: "bg-white",
   },
   {
@@ -78,7 +78,7 @@ export const getOperationalIndicators = (
     valueColorClass: "text-emerald-600",
     target: "100% Target",
     btnText: "Registry",
-    route: "/(app)/attendance" as any,
+    route: "/(app)/attendance",
     rowBgClass: "bg-gray-50/10",
   },
   {
@@ -91,7 +91,7 @@ export const getOperationalIndicators = (
     valueColorClass: "text-purple-600",
     target: "50 Optimal",
     btnText: "Directory",
-    route: "/(app)/teachers" as any,
+    route: "/(admin)/teachers",
     rowBgClass: "bg-white",
   },
   {
@@ -104,7 +104,7 @@ export const getOperationalIndicators = (
     valueColorClass: "text-cyan-600",
     target: "100% Target",
     btnText: "Reports",
-    route: "/(app)/attendance-reports" as any,
+    route: "/(app)/attendance/reports",
     rowBgClass: "bg-gray-50/10",
   },
 ];

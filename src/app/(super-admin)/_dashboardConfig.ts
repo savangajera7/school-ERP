@@ -3,10 +3,10 @@ import type { QuickAction, ActivityItem } from "@/components/shared";
 import type { AppIconName } from "@/constants/appIcons";
 
 export const QUICK_ACTIONS: (QuickAction & { route: AppRoute })[] = [
-  { title: "Manage Schools", icon: "school", route: "/(super-admin)/schools" as any },
-  { title: "User Management", icon: "users", route: "/(super-admin)/users" as any },
-  { title: "Role Definitions", icon: "roles", route: "/(super-admin)/roles" as any },
-  { title: "Platform Settings", icon: "settings", route: "/(super-admin)/settings" as any },
+  { title: "Manage Schools", icon: "school", route: "/(super-admin)/schools" },
+  { title: "User Management", icon: "users", route: "/(super-admin)/users" },
+  { title: "Role Definitions", icon: "roles", route: "/(super-admin)/roles" },
+  { title: "Platform Settings", icon: "settings", route: "/(super-admin)/settings" },
 ];
 
 export const RECENT_ACTIVITY: ActivityItem[] = [

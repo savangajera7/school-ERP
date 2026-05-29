@@ -22,30 +22,17 @@ export const ROLE_IDS = {
 export type AppRoute =
   | "/(app)/dashboard"
   | "/(app)/menu"
-  | "/(app)/students"
   | "/(app)/student-profile"
   | "/(app)/attendance"
-  | "/(app)/attendance-reports"
-  | "/(app)/teacher-attendance"
+  | "/(app)/attendance/reports"
   | "/(app)/fees"
-  | "/(app)/money"
   | "/(app)/exams"
   | "/(app)/subjects"
-  | "/(app)/teachers"
-  | "/(app)/parents"
   | "/(app)/notices"
   | "/(app)/notice-compose"
   | "/(app)/notifications"
-  | "/(app)/notification-compose"
-  | "/(app)/timetable"
-  | "/(app)/inquiries"
   | "/(app)/reports"
-  | "/(app)/academic-setup"
-  | "/(app)/masters"
-  | "/(app)/admission-form"
   | "/(app)/leave"
-  | "/(app)/roles"
-  | "/(app)/users"
   | "/(app)/parent-results"
   | "/(app)/profile"
   | "/(app)/change-password"
@@ -63,15 +50,31 @@ export type AppRoute =
   | "/(admin)/parents"
   | "/(admin)/fees"
   | "/(admin)/exams"
-  | "/(admin)/attendance"
-  | "/(admin)/attendance-form"
   | "/(admin)/notices"
   | "/(admin)/notifications"
   | "/(admin)/timetable"
-  | "/(admin)/reports"
   | "/(admin)/masters"
+  | "/(admin)/roles"
+  | "/(admin)/users"
+  | "/(admin)/money"
+  | "/(admin)/admission-form"
+  | "/(admin)/inquiries"
+  | "/(admin)/academic-setup"
+  | "/(admin)/teacher-attendance"
+  | "/(admin)/notification-compose"
   | "/(admin)/settings"
-  | "/(admin)/profile";
+  | "/(super-admin)/dashboard"
+  | "/(super-admin)/menu"
+  | "/(super-admin)/schools"
+  | "/(super-admin)/add-school"
+  | "/(super-admin)/edit-school/[id]"
+  | "/(super-admin)/settings"
+  | "/(super-admin)/role-rights"
+  | "/(super-admin)/roles"
+  | "/(super-admin)/roles/create"
+  | "/(super-admin)/users"
+  | "/(super-admin)/users/create"
+  | "/(super-admin)/users/[id]";
 
 export type Permission =
   | "viewDashboard"
@@ -245,21 +248,20 @@ export const ROUTE_ACCESS: Record<Role, AppRoute[]> = {
   super_admin: [
     "/(app)/dashboard",
     "/(app)/menu",
-    "/(app)/students",
     "/(app)/student-profile",
     "/(app)/attendance",
-    "/(app)/attendance-reports",
-    "/(app)/teacher-attendance",
-    "/(app)/money",
+    "/(app)/attendance/reports",
+    "/(admin)/teacher-attendance",
+    "/(admin)/money",
     "/(app)/subjects",
-    "/(app)/admission-form",
+    "/(admin)/admission-form",
     "/(app)/leave",
-    "/(app)/roles",
-    "/(app)/users",
+    "/(admin)/roles",
+    "/(admin)/users",
     "/(app)/profile",
     "/(app)/change-password",
-    "/(app)/academic-setup",
-    "/(app)/inquiries",
+    "/(admin)/academic-setup",
+    "/(admin)/inquiries",
     "/(admin)/teachers",
     "/(admin)/parents",
     "/(admin)/fees",
@@ -267,28 +269,38 @@ export const ROUTE_ACCESS: Record<Role, AppRoute[]> = {
     "/(admin)/notices",
     "/(admin)/notifications",
     "/(admin)/timetable",
-    "/(admin)/reports",
+    "/(app)/reports",
     "/(admin)/masters",
     "/(admin)/dashboard",
     "/(admin)/students",
-    "/(admin)/attendance",
+    "/(super-admin)/dashboard",
+    "/(super-admin)/menu",
+    "/(super-admin)/schools",
+    "/(super-admin)/add-school",
+    "/(super-admin)/edit-school/[id]",
+    "/(super-admin)/settings",
+    "/(super-admin)/role-rights",
+    "/(super-admin)/roles",
+    "/(super-admin)/roles/create",
+    "/(super-admin)/users",
+    "/(super-admin)/users/create",
+    "/(super-admin)/users/[id]",
   ],
   admin: [
     "/(app)/dashboard",
     "/(app)/menu",
-    "/(app)/students",
     "/(app)/student-profile",
     "/(app)/attendance",
-    "/(app)/attendance-reports",
-    "/(app)/teacher-attendance",
-    "/(app)/money",
+    "/(app)/attendance/reports",
+    "/(admin)/teacher-attendance",
+    "/(admin)/money",
     "/(app)/subjects",
-    "/(app)/admission-form",
+    "/(admin)/admission-form",
     "/(app)/leave",
     "/(app)/profile",
     "/(app)/change-password",
-    "/(app)/academic-setup",
-    "/(app)/inquiries",
+    "/(admin)/academic-setup",
+    "/(admin)/inquiries",
     "/(admin)/teachers",
     "/(admin)/parents",
     "/(admin)/fees",
@@ -296,26 +308,23 @@ export const ROUTE_ACCESS: Record<Role, AppRoute[]> = {
     "/(admin)/notices",
     "/(admin)/notifications",
     "/(admin)/timetable",
-    "/(admin)/reports",
+    "/(app)/reports",
     "/(admin)/masters",
     "/(admin)/dashboard",
     "/(admin)/students",
-    "/(admin)/attendance",
-    "/(admin)/attendance-form",
   ],
   teacher: [
     "/(app)/dashboard",
     "/(app)/menu",
-    "/(app)/students",
+    "/(admin)/students",
     "/(app)/student-profile",
     "/(app)/attendance",
-    "/(app)/attendance-reports",
+    "/(app)/attendance/reports",
     "/(app)/exams",
     "/(app)/subjects",
     "/(app)/notices",
     "/(app)/notice-compose",
     "/(app)/notifications",
-    "/(app)/timetable",
     "/(app)/leave",
     "/(app)/profile",
     "/(app)/change-password",
@@ -334,7 +343,6 @@ export const ROUTE_ACCESS: Record<Role, AppRoute[]> = {
     "/(app)/notices",
     "/(app)/fees",
     "/(app)/parent-results",
-    "/(app)/timetable",
     "/(app)/leave",
     "/(app)/profile",
     "/(app)/change-password",
@@ -374,26 +382,26 @@ export type NavMenuItem = {
 
 export const NAV_MENU: NavMenuItem[] = [
   { label: "Dashboard",    route: "/(app)/dashboard",          icon: "home",            permission: "viewDashboard" },
-  { label: "Students",     route: "/(app)/students",           icon: "students",        permission: "viewStudents" },
-  { label: "Admission",    route: "/(app)/admission-form",     icon: "admission",       permission: "manageStudents" },
+  { label: "Students",     route: "/(admin)/students",           icon: "students",        permission: "viewStudents" },
+  { label: "Admission",    route: "/(admin)/admission-form",     icon: "admission",       permission: "manageStudents" },
   { label: "Teachers",     route: "/(admin)/teachers",         icon: "teachers",        permission: "viewTeachers" },
   { label: "Attendance",   route: "/(app)/attendance",         icon: "attendance",      permission: "markStudentAttendance" },
-  { label: "Att. Reports", route: "/(app)/attendance-reports", icon: "attendanceReport",permission: "viewAttendanceReports" },
-  { label: "Staff Attend.",route: "/(app)/teacher-attendance", icon: "staffAttendance", permission: "manageStaffAttendance" },
+  { label: "Att. Reports", route: "/(app)/attendance/reports", icon: "attendanceReport",permission: "viewAttendanceReports" },
+  { label: "Staff Attend.",route: "/(admin)/teacher-attendance", icon: "staffAttendance", permission: "manageStaffAttendance" },
   { label: "Fees",         route: "/(admin)/fees",             icon: "fees",            permission: "viewFees" },
-  { label: "Accounts",     route: "/(app)/money",              icon: "accounts",        permission: "viewMoney" },
+  { label: "Accounts",     route: "/(admin)/money",              icon: "accounts",        permission: "viewMoney" },
   { label: "Exams",        route: "/(admin)/exams",            icon: "exams",           permission: "viewExams" },
   { label: "Subjects",     route: "/(app)/subjects",           icon: "subjects",        permission: "viewSubjects" },
   { label: "Notices",      route: "/(admin)/notices",          icon: "notices",         permission: "viewNotices" },
   { label: "Notifications",route: "/(admin)/notifications",    icon: "notifications",   permission: "viewNotifications" },
   { label: "Timetable",    route: "/(admin)/timetable",        icon: "timetable",       permission: "viewTimetable" },
   { label: "Leave",        route: "/(app)/leave",              icon: "leave",           permission: "applyLeave" },
-  { label: "Inquiries",    route: "/(app)/inquiries",          icon: "inquiries",       permission: "manageInquiries" },
-  { label: "Reports",      route: "/(admin)/reports",          icon: "reports",         permission: "viewReports" },
-  { label: "Academic",     route: "/(app)/academic-setup",     icon: "academic",        permission: "manageAcademic" },
+  { label: "Inquiries",    route: "/(admin)/inquiries",          icon: "inquiries",       permission: "manageInquiries" },
+  { label: "Reports",      route: "/(app)/reports",          icon: "reports",         permission: "viewReports" },
+  { label: "Academic",     route: "/(admin)/academic-setup",     icon: "academic",        permission: "manageAcademic" },
   { label: "Masters",      route: "/(admin)/masters",          icon: "masters",         permission: "manageMasters" },
-  { label: "Users",        route: "/(app)/users",              icon: "users",           permission: "manageUsers" },
-  { label: "Roles",        route: "/(app)/roles",              icon: "roles",           permission: "manageRoles" },
+  { label: "Users",        route: "/(admin)/users",              icon: "users",           permission: "manageUsers" },
+  { label: "Roles",        route: "/(admin)/roles",              icon: "roles",           permission: "manageRoles" },
   { label: "My Results",   route: "/(app)/parent-results",     icon: "results",         permission: "viewOwnResults" },
 ];
 
@@ -439,37 +447,37 @@ export const MOBILE_TABS_BY_ROLE: Record<
 > = {
   super_admin: [
     { label: "Menu", icon: "menu", route: "/(app)/menu" },
-    { label: "Search", icon: "search", route: "/(app)/students" },
+    { label: "Search", icon: "search", route: "/(admin)/students" },
     { label: "Home", icon: "home", route: "/(app)/dashboard" },
-    { label: "Time Table", icon: "timetable", route: "/(app)/timetable" },
+    { label: "Time Table", icon: "timetable", route: "/(admin)/timetable" },
     { label: "Profile", icon: "profile", route: "/(app)/profile" },
   ],
   admin: [
     { label: "Menu", icon: "menu", route: "/(app)/menu" },
-    { label: "Search", icon: "search", route: "/(app)/students" },
+    { label: "Search", icon: "search", route: "/(admin)/students" },
     { label: "Home", icon: "home", route: "/(app)/dashboard" },
     { label: "Class", icon: "attendance", route: "/(app)/attendance" },
     { label: "Profile", icon: "profile", route: "/(app)/profile" },
   ],
   teacher: [
     { label: "Menu", icon: "menu", route: "/(app)/menu" },
-    { label: "Search", icon: "search", route: "/(app)/students" },
+    { label: "Search", icon: "search", route: "/(admin)/students" },
     { label: "Home", icon: "home", route: "/(app)/dashboard" },
-    { label: "Time Table", icon: "timetable", route: "/(app)/timetable" },
+    { label: "Time Table", icon: "timetable", route: "/(admin)/timetable" },
     { label: "Profile", icon: "profile", route: "/(app)/profile" },
   ],
   parent: [
     { label: "Menu", icon: "menu", route: "/(app)/menu" },
     { label: "Notices", icon: "notices", route: "/(app)/notices" },
     { label: "Home", icon: "home", route: "/(app)/dashboard" },
-    { label: "Time Table", icon: "timetable", route: "/(app)/timetable" },
+    { label: "Time Table", icon: "timetable", route: "/(admin)/timetable" },
     { label: "Profile", icon: "profile", route: "/(app)/profile" },
   ],
   student: [
     { label: "Menu", icon: "menu", route: "/(app)/menu" },
     { label: "Notices", icon: "notices", route: "/(app)/notices" },
     { label: "Home", icon: "home", route: "/(app)/dashboard" },
-    { label: "Time Table", icon: "timetable", route: "/(app)/timetable" },
+    { label: "Time Table", icon: "timetable", route: "/(admin)/timetable" },
     { label: "Profile", icon: "profile", route: "/(app)/profile" },
   ],
 };

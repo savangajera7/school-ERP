@@ -10,7 +10,7 @@ import { AppIcon } from "@/components/icons/AppIcon";
 
 const PRIMARY: { label: string; route: string; icon: AppIconName }[] = [
   { label: "Dashboard", route: "/(admin)/dashboard", icon: "home" },
-  { label: "Students", route: "/(app)/students", icon: "students" },
+  { label: "Students", route: "/(admin)/students", icon: "students" },
   { label: "Teachers", route: "/(admin)/teachers", icon: "teachers" },
   { label: "Notices", route: "/(admin)/notices", icon: "notices" },
   { label: "Settings", route: "/(admin)/settings", icon: "settings" },
@@ -20,7 +20,7 @@ const MORE: { label: string; route: string; icon: AppIconName; perm?: string }[]
   { label: "Fees", route: "/(admin)/fees", icon: "fees", perm: "viewFees" },
   { label: "Attendance", route: "/(app)/attendance", icon: "attendance", perm: "markStudentAttendance" },
   { label: "Exams", route: "/(admin)/exams", icon: "exams", perm: "viewExams" },
-  { label: "Reports", route: "/(admin)/reports", icon: "reports", perm: "viewReports" },
+  { label: "Reports", route: "/(app)/reports", icon: "reports", perm: "viewReports" },
   { label: "Alerts", route: "/(admin)/notifications", icon: "notifications", perm: "viewNotifications" },
   { label: "Parents", route: "/(admin)/parents", icon: "parents", perm: "viewParents" },
   { label: "Masters", route: "/(admin)/masters", icon: "masters", perm: "manageMasters" },

@@ -25,14 +25,14 @@ export default function AdminSettingsScreen() {
       <ResponsiveScreen tabBarPadding={ROLE_TAB_BAR_HEIGHT}>
         <TouchableOpacity
           style={styles.row}
-          onPress={() => router.push("/(admin)/profile" as never)}
+          onPress={() => router.push("/(app)/profile" as never)}
         >
           <Text style={[styles.label, { fontSize: bodySize }]}>Profile</Text>
           <AppIcon name="chevronRight" size={20} color="#9CA3AF" />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.row}
-          onPress={() => router.push("/(admin)/change-password" as never)}
+          onPress={() => router.push("/(app)/change-password" as never)}
         >
           <Text style={[styles.label, { fontSize: bodySize }]}>Change password</Text>
           <AppIcon name="chevronRight" size={20} color="#9CA3AF" />

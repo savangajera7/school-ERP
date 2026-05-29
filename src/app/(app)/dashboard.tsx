@@ -94,7 +94,7 @@ export default function DashboardScreen() {
             subtitle="Active enrollment"
             backgroundColor="#E0F2FE"
             textColor="#0369A1"
-            onPress={() => router.push("/(app)/students")}
+            onPress={() => router.push("/(admin)/students")}
           />
           <StatCard
             icon="check"
@@ -121,7 +121,7 @@ export default function DashboardScreen() {
             subtitle="Faculty registry"
             backgroundColor="#CFFAFE"
             textColor="#0E7490"
-            onPress={() => router.push("/(app)/attendance-reports")}
+            onPress={() => router.push("/(app)/attendance/reports")}
           />
         </View>
       ) : (

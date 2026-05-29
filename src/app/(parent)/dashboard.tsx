@@ -19,12 +19,12 @@ const QUICK_ACTIONS: (QuickAction & { route: AppRoute })[] = [
   { title: "Attendance", icon: "attendance", route: "/(parent)/attendance" as any },
   { title: "Fees", icon: "fees", route: "/(parent)/fees" as any },
   { title: "Exams", icon: "exams", route: "/(parent)/exam" as any },
-  { title: "Exam Marks", icon: "exams", route: "/(parent)/exam-marks" as any },
+  { title: "Exam Marks", icon: "exams", route: "/(parent)/result" as any },
   { title: "Results", icon: "results", route: "/(parent)/result" as any },
   { title: "Timetable", icon: "timetable", route: "/(parent)/timetable" as any },
   { title: "Notices", icon: "notices", route: "/(parent)/notices" as any },
   { title: "Syllabus", icon: "syllabus", route: "/(parent)/syllabus" as any },
-  { title: "Profile", icon: "profile", route: "/(parent)/profile" as any },
+  { title: "Profile", icon: "profile", route: "/(app)/profile" as any },
 ];
 
 const RECENT_ACTIVITY: ActivityItem[] = [

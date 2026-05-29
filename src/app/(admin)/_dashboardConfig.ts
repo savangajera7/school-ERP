@@ -2,8 +2,8 @@ import type { AppRoute } from "@/constants/rolePermissions";
 import type { QuickAction, ActivityItem } from "@/components/shared";
 
 export const QUICK_ACTIONS: (QuickAction & { route: AppRoute })[] = [
-  { title: "Admission", icon: "admission", route: "/(app)/admission-form" as any },
-  { title: "Students", icon: "students", route: "/(app)/students" as any },
+  { title: "Admission", icon: "admission", route: "/(admin)/admission-form" as any },
+  { title: "Students", icon: "students", route: "/(admin)/students" as any },
   { title: "Masters", icon: "masters", route: "/(admin)/masters" as any },
   { title: "Teachers", icon: "teachers", route: "/(admin)/teachers" as any },
   { title: "Parents", icon: "parents", route: "/(admin)/parents" as any },
@@ -12,7 +12,7 @@ export const QUICK_ACTIONS: (QuickAction & { route: AppRoute })[] = [
   { title: "Exams", icon: "exams", route: "/(admin)/exams" as any },
   { title: "Fees", icon: "fees", route: "/(admin)/fees" as any },
   { title: "Notices", icon: "notices", route: "/(admin)/notices" as any },
-  { title: "Reports", icon: "reports", route: "/(admin)/reports" as any },
+  { title: "Reports", icon: "reports", route: "/(app)/reports" as any },
 ];
 
 export const RECENT_ACTIVITY: ActivityItem[] = [

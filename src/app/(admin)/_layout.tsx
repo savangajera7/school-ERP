@@ -4,11 +4,11 @@ import { SchoolTheme } from "@/constants/theme";
 import type { TabDef } from "@/components/layout/RoleTabBar";
 
 const ADMIN_TABS: TabDef[] = [
-  { name: "menu", title: "Menu", icon: "menu", href: "/(admin)/menu" },
-  { name: "search", title: "Search", icon: "search", href: "/(app)/students" },
+  { name: "menu", title: "Menu", icon: "menu", href: "/(app)/menu" },
+  { name: "search", title: "Search", icon: "search", href: "/(admin)/students" },
   { name: "dashboard", title: "Home", icon: "home", href: "/(admin)/dashboard", center: true },
   { name: "timetable", title: "Time Table", icon: "timetable", href: "/(admin)/timetable" },
-  { name: "profile", title: "Profile", icon: "profile", href: "/(admin)/profile" },
+  { name: "profile", title: "Profile", icon: "profile", href: "/(app)/profile" },
 ];
 
 const TAB_ROUTES = ["menu", "students", "dashboard", "timetable", "profile"];

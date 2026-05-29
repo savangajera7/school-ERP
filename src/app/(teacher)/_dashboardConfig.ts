@@ -2,13 +2,13 @@ import type { AppRoute } from "@/constants/rolePermissions";
 import type { QuickAction, ActivityItem } from "@/components/shared";
 
 export const QUICK_ACTIONS: (QuickAction & { route: AppRoute })[] = [
-  { title: "Students", icon: "students", route: "/(app)/students" as any },
+  { title: "Students", icon: "students", route: "/(admin)/students" as any },
   { title: "Timetable", icon: "timetable", route: "/(teacher)/timetable" as any },
   { title: "Attendance", icon: "attendance", route: "/(teacher)/attendance" as any },
   { title: "Homework", icon: "homework", route: "/(teacher)/homework" as any },
   { title: "Classwork", icon: "classwork", route: "/(teacher)/classwork" as any },
   { title: "Notices", icon: "notices", route: "/(app)/notices" as any },
-  { title: "Reports", icon: "reports", route: "/(app)/attendance-reports" as any },
+  { title: "Reports", icon: "reports", route: "/(app)/attendance/reports" as any },
 ];
 
 export const RECENT_ACTIVITY: ActivityItem[] = [

@@ -36,9 +36,9 @@ export default function ReportsScreen() {
   }, [studentsData, feesData, attendanceData, resultsData]);
 
   const links: { title: string; route: string; icon: AppIconName }[] = [
-    { title: "Attendance Reports", route: "/(app)/attendance-reports", icon: "attendanceReport" },
+    { title: "Attendance Reports", route: "/(app)/attendance/reports", icon: "attendanceReport" },
     { title: "Fees", route: "/(app)/fees", icon: "fees" },
-    { title: "Students", route: "/(app)/students", icon: "students" },
+    { title: "Students", route: "/(admin)/students", icon: "students" },
     { title: "Exams", route: "/(app)/exams", icon: "exams" },
   ];
 

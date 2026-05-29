@@ -8,7 +8,7 @@ const SUPER_ADMIN_TABS: TabDef[] = [
   { name: "users", title: "Users", icon: "users", href: "/(super-admin)/users" },
   { name: "dashboard", title: "Home", icon: "home", href: "/(super-admin)/dashboard", center: true },
   { name: "roles", title: "Roles", icon: "roles", href: "/(super-admin)/roles" },
-  { name: "profile", title: "Profile", icon: "profile", href: "/(super-admin)/profile" },
+  { name: "profile", title: "Profile", icon: "profile", href: "/(app)/profile" },
 ];
 
 const TAB_ROUTES = ["menu", "dashboard", "users", "roles", "profile"];
