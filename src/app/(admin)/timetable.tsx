@@ -222,7 +222,7 @@ export default function TimetableScreen() {
   const { isMobile } = useResponsive();
   const queryClient = useQueryClient();
 
-  const canEdit = isSchoolAdmin || isAdmin || isTeacher;
+  const canEdit = isSchoolAdmin || isAdmin;
   const isViewOnly = isParent || isStudent;
 
   // ── Selectors ─────────────────────────────────────────────────────────────

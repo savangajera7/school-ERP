@@ -11,7 +11,7 @@ const LINKS: { title: string; href: string; icon: AppIconName; desc: string; cat
   { title: "Homework", href: "/(parent)/homework", icon: "homework", desc: "View daily student assignments", category: "Academic" },
   { title: "Attendance", href: "/(parent)/attendance", icon: "attendance", desc: "Track daily presence records", category: "Academic" },
   { title: "Syllabus", href: "/(parent)/syllabus", icon: "syllabus", desc: "Curriculum and course content", category: "Academic" },
-  { title: "Timetable", href: "/(parent)/timetable", icon: "timetable", desc: "Weekly class schedule", category: "Academic" },
+  { title: "Timetable", href: "/(admin)/timetable", icon: "timetable", desc: "Weekly class schedule", category: "Academic" },
   { title: "Exam Marks", href: "/(parent)/result", icon: "exams", desc: "Subject-wise assessment scores", category: "Academic" },
   { title: "Results", href: "/(parent)/result", icon: "results", desc: "Final examination reports", category: "Academic" },
   { title: "Fees & Dues", href: "/(parent)/fees", icon: "fees", desc: "Payment history and pending dues", category: "Finance" },

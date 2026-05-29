@@ -15,16 +15,16 @@ import type { AppIconName } from "@/constants/appIcons";
 import type { AppRoute } from "@/constants/rolePermissions";
 
 const QUICK_ACTIONS: (QuickAction & { route: AppRoute })[] = [
-  { title: "Homework", icon: "homework", route: "/(parent)/homework" as any },
-  { title: "Attendance", icon: "attendance", route: "/(parent)/attendance" as any },
-  { title: "Fees", icon: "fees", route: "/(parent)/fees" as any },
-  { title: "Exams", icon: "exams", route: "/(parent)/exam" as any },
-  { title: "Exam Marks", icon: "exams", route: "/(parent)/result" as any },
-  { title: "Results", icon: "results", route: "/(parent)/result" as any },
-  { title: "Timetable", icon: "timetable", route: "/(parent)/timetable" as any },
-  { title: "Notices", icon: "notices", route: "/(parent)/notices" as any },
-  { title: "Syllabus", icon: "syllabus", route: "/(parent)/syllabus" as any },
-  { title: "Profile", icon: "profile", route: "/(app)/profile" as any },
+  { title: "Homework", icon: "homework", route: "/(parent)/homework" },
+  { title: "Attendance", icon: "attendance", route: "/(parent)/attendance" },
+  { title: "Fees", icon: "fees", route: "/(parent)/fees" },
+  { title: "Exams", icon: "exams", route: "/(parent)/exam" },
+  { title: "Exam Marks", icon: "exams", route: "/(parent)/result" },
+  { title: "Results", icon: "results", route: "/(parent)/result" },
+  { title: "Timetable", icon: "timetable", route: "/(admin)/timetable" },
+  { title: "Notices", icon: "notices", route: "/(parent)/notices" },
+  { title: "Syllabus", icon: "syllabus", route: "/(parent)/syllabus" },
+  { title: "Profile", icon: "profile", route: "/(app)/profile" },
 ];
 
 const RECENT_ACTIVITY: ActivityItem[] = [

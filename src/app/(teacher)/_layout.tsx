@@ -7,7 +7,7 @@ const TEACHER_TABS: TabDef[] = [
   { name: "menu", title: "Menu", icon: "menu", href: "/(teacher)/menu" },
   { name: "search", title: "Search", icon: "search", href: "/(admin)/students" },
   { name: "dashboard", title: "Home", icon: "home", href: "/(teacher)/dashboard", center: true },
-  { name: "timetable", title: "Time Table", icon: "timetable", href: "/(teacher)/timetable" },
+  { name: "timetable", title: "Time Table", icon: "timetable", href: "/(admin)/timetable" },
   { name: "profile", title: "Profile", icon: "profile", href: "/(app)/profile" },
 ];
 

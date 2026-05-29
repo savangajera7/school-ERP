@@ -44,6 +44,9 @@ export type AppRoute =
   | "/(parent)/syllabus"
   | "/(parent)/attendance"
   | "/(parent)/fees"
+  | "/(parent)/exam"
+  | "/(parent)/result"
+  | "/(parent)/notices"
   | "/(admin)/dashboard"
   | "/(admin)/students"
   | "/(admin)/teachers"
@@ -350,6 +353,9 @@ export const ROUTE_ACCESS: Record<Role, AppRoute[]> = {
     "/(parent)/syllabus",
     "/(parent)/attendance",
     "/(parent)/fees",
+    "/(parent)/exam",
+    "/(parent)/result",
+    "/(parent)/notices",
     "/(admin)/notices",
     "/(admin)/notifications",
     "/(admin)/timetable",
