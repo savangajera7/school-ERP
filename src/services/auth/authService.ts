@@ -16,7 +16,7 @@ export const authService = {
       const apiData = response.data.data;
       const schoolID = Number(apiData.schoolID ?? apiData.SchoolID) || undefined;
       return {
-        accessToken: String(apiData.accessToken ?? apiData.token ?? ""),
+        accessToken: String((response.data as any).token ?? apiData.accessToken ?? apiData.token ?? ""),
         refreshToken: String(apiData.refreshToken ?? ""),
         user: {
           id: apiData.studentID?.toString() ?? apiData.userID?.toString() ?? apiData.id?.toString() ?? "0",

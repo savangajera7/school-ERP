@@ -7,7 +7,6 @@ const axiosInstance = axios.create({
   timeout: API_TIMEOUT,
   headers: {
     "Content-Type": "application/json",
-    "ApiKey": "d27c0d6f-obnk-9888-qucj-0953543d4733",
   },
 });
 
@@ -23,11 +22,13 @@ axiosInstance.interceptors.request.use(
   (error: any) => Promise.reject(error)
 );
 
-// Response interceptor — handle 401
+// Response interceptor — handle 401 (token expired/invalid)
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => response,
   async (error: any) => {
-    if (error.response?.status === 401 || error.response?.status === 403) {
+    // Only logout on 401 (Unauthorized = token invalid/expired)
+    // Do NOT logout on 403 (Forbidden = valid token but insufficient role)
+    if (error.response?.status === 401) {
       const { logout } = useAuthStore.getState();
       logout();
     }

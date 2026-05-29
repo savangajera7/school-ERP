@@ -39,7 +39,8 @@ export function useAuth() {
           data: { userName: email, password },
         });
         const envelope = (response as { data?: Record<string, unknown> })?.data ?? {};
-        const token = String(envelope.token ?? "");
+        const innerData = (envelope.data ?? envelope) as Record<string, unknown>;
+        const token = String(innerData.token ?? innerData.accessToken ?? envelope.token ?? envelope.accessToken ?? "");
         const u = (envelope.data ?? envelope) as {
           userID?: number;
           schoolID?: number;
