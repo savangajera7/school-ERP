@@ -6,21 +6,26 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
+  TextInput,
 } from "react-native";
 import { Redirect, router, useLocalSearchParams } from "expo-router";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
-import { useGetApiAttendanceGet, usePostApiAttendanceMark, usePutApiAttendanceUpdate } from "@/api/attendance";
+import {
+  useGetApiAttendanceGet,
+  usePostApiAttendanceMark,
+  usePutApiAttendanceUpdate,
+} from "@/api/attendance";
 import {
   buildClassStudentsLoadParams,
   buildClassAbsentOnlyMarkRequest,
   parseStudentsView,
   normalizeAttendanceStatusFromApi,
-  isPresentStatus,
   getGetApiAttendanceGetQueryKey,
   isFutureDate,
+  getAttendanceRowName,
+  getAttendanceRowRoll,
 } from "@/api/attendance";
 import type { MarkStatus } from "@/components/attendance/StudentMarkRow";
-import { StudentMarkRow } from "@/components/attendance/StudentMarkRow";
 import { AttendanceSummaryChips } from "@/components/attendance/AttendanceSummaryChips";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/Toast";
@@ -30,6 +35,41 @@ import { AccessDenied } from "@/components/auth/AccessDenied";
 import { Colors } from "@/constants/colors";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
 import { getApiErrorMessage } from "@/utils/recordHelpers";
+import { AppIcon, GenderIcon } from "@/components/icons/AppIcon";
+import { premiumCardShadow } from "@/constants/premiumStyles";
+
+const STATUS_CONFIG = {
+  Present: {
+    label: "P",
+    full: "Present",
+    active: "bg-emerald-600 border-emerald-600",
+    inactive: "bg-white border-gray-200",
+    activeText: "text-white",
+    inactiveText: "text-gray-400",
+    badge: "bg-emerald-50 border-emerald-200",
+    badgeText: "text-emerald-700",
+  },
+  Absent: {
+    label: "A",
+    full: "Absent",
+    active: "bg-rose-600 border-rose-600",
+    inactive: "bg-white border-gray-200",
+    activeText: "text-white",
+    inactiveText: "text-gray-400",
+    badge: "bg-rose-50 border-rose-200",
+    badgeText: "text-rose-700",
+  },
+  Leave: {
+    label: "L",
+    full: "Leave",
+    active: "bg-amber-500 border-amber-500",
+    inactive: "bg-white border-gray-200",
+    activeText: "text-white",
+    inactiveText: "text-gray-400",
+    badge: "bg-amber-50 border-amber-200",
+    badgeText: "text-amber-700",
+  },
+} as const;
 
 export default function MarkAttendanceScreen() {
   const access = useAttendanceAccess();
@@ -51,6 +91,7 @@ export default function MarkAttendanceScreen() {
 
   const [attendanceMap, setAttendanceMap] = useState<Record<number, MarkStatus>>({});
   const [remarks, setRemarks] = useState<Record<number, string>>({});
+  const [searchQuery, setSearchQuery] = useState("");
 
   const queryParams = useMemo(
     () => (classID ? buildClassStudentsLoadParams(classID, date, userData?.schoolID) : undefined),
@@ -67,6 +108,15 @@ export default function MarkAttendanceScreen() {
 
   const { students } = useMemo(() => parseStudentsView(data?.data), [data]);
 
+  const filteredStudents = useMemo(() => {
+    const q = searchQuery.toLowerCase().trim();
+    if (!q) return students;
+    return students.filter((s) =>
+      getAttendanceRowName(s).toLowerCase().includes(q) ||
+      String(getAttendanceRowRoll(s)).includes(q)
+    );
+  }, [students, searchQuery]);
+
   useEffect(() => {
     const next: Record<number, MarkStatus> = {};
     const nextRemarks: Record<number, string> = {};
@@ -82,9 +132,7 @@ export default function MarkAttendanceScreen() {
   }, [students]);
 
   const counts = useMemo(() => {
-    let present = 0;
-    let absent = 0;
-    let leave = 0;
+    let present = 0, absent = 0, leave = 0;
     students.forEach((s) => {
       const st = attendanceMap[s.studentID!] ?? "Present";
       if (st === "Absent") absent++;
@@ -94,12 +142,8 @@ export default function MarkAttendanceScreen() {
     return { present, absent, leave };
   }, [students, attendanceMap]);
 
-  if (access.isAttendanceReadOnly) {
-    return <Redirect href="/(parent)/attendance" />;
-  }
-  if (!classID || Number.isNaN(classID)) {
-    return <Redirect href="/(app)/attendance" />;
-  }
+  if (access.isAttendanceReadOnly) return <Redirect href="/(parent)/attendance" />;
+  if (!classID || Number.isNaN(classID)) return <Redirect href="/(app)/attendance" />;
   if (!access.canMarkClass(classID)) {
     return (
       <AccessDenied message="You do not have attendance permission for this class. Contact school admin." />
@@ -108,9 +152,7 @@ export default function MarkAttendanceScreen() {
 
   const markAllPresent = () => {
     const next: Record<number, MarkStatus> = {};
-    students.forEach((s) => {
-      if (s.studentID) next[s.studentID] = "Present";
-    });
+    students.forEach((s) => { if (s.studentID) next[s.studentID] = "Present"; });
     setAttendanceMap(next);
     setRemarks({});
   };
@@ -143,13 +185,11 @@ export default function MarkAttendanceScreen() {
 
         await queryClient.invalidateQueries({ queryKey: getGetApiAttendanceGetQueryKey() });
 
-        const body = (res as { data?: { message?: string; sessionID?: string } })?.data;
+        const body = (res as { data?: { message?: string } })?.data;
         const msg =
           typeof body === "object" && body && "message" in body && body.message
             ? String(body.message)
-            : alreadyMarked
-              ? "Attendance updated."
-              : "Attendance saved.";
+            : alreadyMarked ? "Attendance updated." : "Attendance saved.";
 
         showToast(msg, "success");
         router.replace("/(app)/attendance");
@@ -172,32 +212,111 @@ export default function MarkAttendanceScreen() {
     void doSave();
   };
 
+  const renderStudentCard = ({ item }: { item: typeof students[0] }) => {
+    const sid = item.studentID!;
+    const status = attendanceMap[sid] ?? "Present";
+    const cfg = STATUS_CONFIG[status];
+    const showRemark = status !== "Present";
+
+    return (
+      <View
+        className="bg-white rounded-2xl mb-3 border border-gray-100"
+        style={premiumCardShadow}
+      >
+        <View className="p-4 flex-row items-center gap-3">
+          <View className="relative">
+            <View className="w-12 h-12 rounded-xl bg-gray-50 border border-gray-200 items-center justify-center">
+              <GenderIcon gender={item.gender} size={24} />
+            </View>
+            {item.rollNumber != null && (
+              <View className="absolute -top-1.5 -right-1.5 bg-amber-500 border border-white min-w-[20px] h-5 px-1 rounded-full items-center justify-center">
+                <Text className="text-[9px] font-black text-white">{item.rollNumber}</Text>
+              </View>
+            )}
+          </View>
+
+          <View className="flex-1">
+            <View className="flex-row items-center justify-between mb-1">
+              <Text className="text-sm font-extrabold text-gray-900 flex-1" numberOfLines={1}>
+                {getAttendanceRowName(item)}
+              </Text>
+              <View className={`px-2.5 py-1 rounded-lg border ${cfg.badge}`}>
+                <Text className={`text-[9px] font-black uppercase ${cfg.badgeText}`}>
+                  {cfg.full}
+                </Text>
+              </View>
+            </View>
+            <Text className="text-xs text-gray-400 font-semibold">
+              Roll {getAttendanceRowRoll(item)}
+            </Text>
+          </View>
+        </View>
+
+        {/* Status buttons */}
+        <View className="flex-row gap-2 px-4 pb-3">
+          {(["Present", "Absent", "Leave"] as MarkStatus[]).map((opt) => {
+            const c = STATUS_CONFIG[opt];
+            const active = status === opt;
+            return (
+              <TouchableOpacity
+                key={`${sid}-${opt}`}
+                onPress={() => setAttendanceMap((prev) => ({ ...prev, [sid]: opt }))}
+                className={`flex-1 py-2.5 rounded-xl border items-center ${active ? c.active : c.inactive}`}
+                activeOpacity={0.85}
+              >
+                <Text className={`text-xs font-black uppercase ${active ? c.activeText : c.inactiveText}`}>
+                  {c.label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+
+        {/* Remark input for non-present */}
+        {showRemark && (
+          <View className="px-4 pb-4">
+            <TextInput
+              value={remarks[sid] ?? ""}
+              onChangeText={(text) => setRemarks((prev) => ({ ...prev, [sid]: text }))}
+              placeholder="Remark (optional)"
+              className="h-10 border border-gray-200 rounded-xl px-3 text-sm bg-gray-50 font-semibold text-gray-800"
+            />
+          </View>
+        )}
+      </View>
+    );
+  };
+
   return (
     <PremiumScreenLayout
       title={className}
       subtitle={`${date} · ${alreadyMarked ? "Update" : "Mark"} attendance`}
       onBack={() => router.back()}
       scrollable={false}
-      bodyStyle={{ flex: 1, paddingHorizontal: 0 }}
+      fullWidth
       rightAction={
         <TouchableOpacity
           onPress={handleSave}
           disabled={isSaving || isLoading}
-          className="px-4 py-2.5 rounded-xl"
+          className="flex-row items-center gap-1.5 px-4 py-2.5 rounded-xl"
           style={{ backgroundColor: Colors.accent }}
           activeOpacity={0.85}
         >
           {isSaving ? (
             <ActivityIndicator color="#fff" size="small" />
           ) : (
-            <Text className="text-white font-black text-xs uppercase">
-              {alreadyMarked ? "Update" : "Save"}
-            </Text>
+            <>
+              <AppIcon name="save" size={14} color="#fff" />
+              <Text className="text-white font-black text-xs uppercase">
+                {alreadyMarked ? "Update" : "Save"}
+              </Text>
+            </>
           )}
         </TouchableOpacity>
       }
     >
-      <View className="px-1 mb-2 flex-row justify-between items-center">
+      {/* Summary chips */}
+      <View className="px-1 mb-2">
         <AttendanceSummaryChips
           present={counts.present}
           absent={counts.absent}
@@ -205,13 +324,17 @@ export default function MarkAttendanceScreen() {
         />
       </View>
 
-      <TouchableOpacity onPress={markAllPresent} className="mb-3 px-1">
-        <Text className="text-emerald-700 font-black text-xs uppercase">
-          ✓ Mark all present (clear exceptions)
-        </Text>
-      </TouchableOpacity>
-
+      {/* Quick actions */}
       <View className="flex-row gap-2 mb-3 px-1">
+        <TouchableOpacity
+          onPress={markAllPresent}
+          className="flex-row items-center gap-1.5 px-3 py-2 rounded-xl bg-emerald-50 border border-emerald-100"
+          activeOpacity={0.7}
+        >
+          <AppIcon name="check" size={13} color="#059669" />
+          <Text className="text-[11px] font-extrabold text-emerald-700 uppercase">All Present</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity
           onPress={() =>
             router.push({
@@ -219,10 +342,13 @@ export default function MarkAttendanceScreen() {
               params: { classId: String(classID), className, date },
             })
           }
-          className="flex-1 py-2 rounded-xl bg-white border border-gray-200 items-center"
+          className="flex-row items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-gray-200"
+          activeOpacity={0.7}
         >
-          <Text className="text-xs font-bold text-gray-600">View detail</Text>
+          <AppIcon name="profile" size={13} color="#6B7280" />
+          <Text className="text-[11px] font-extrabold text-gray-600 uppercase">Detail</Text>
         </TouchableOpacity>
+
         <TouchableOpacity
           onPress={() =>
             router.push({
@@ -230,48 +356,51 @@ export default function MarkAttendanceScreen() {
               params: { classId: String(classID), date },
             })
           }
-          className="flex-1 py-2 rounded-xl bg-white border border-gray-200 items-center"
+          className="flex-row items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-gray-200"
+          activeOpacity={0.7}
         >
-          <Text className="text-xs font-bold text-gray-600">History</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() =>
-            router.push({
-              pathname: "/(app)/attendance/monthly",
-              params: { classId: String(classID), className },
-            })
-          }
-          className="flex-1 py-2 rounded-xl bg-white border border-gray-200 items-center"
-        >
-          <Text className="text-xs font-bold text-gray-600">Monthly</Text>
+          <AppIcon name="reports" size={13} color="#6B7280" />
+          <Text className="text-[11px] font-extrabold text-gray-600 uppercase">History</Text>
         </TouchableOpacity>
       </View>
 
+      {/* Search */}
+      <View className="px-1 mb-3">
+        <View className="flex-row items-center bg-white border border-gray-200 rounded-xl px-3 h-11">
+          <AppIcon name="search" size={16} color="#9CA3AF" />
+          <TextInput
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholder="Search student by name or roll..."
+            className="flex-1 ml-2 text-sm font-semibold text-gray-800"
+            placeholderTextColor="#9CA3AF"
+          />
+          {searchQuery.length > 0 && (
+            <TouchableOpacity onPress={() => setSearchQuery("")}>
+              <AppIcon name="close" size={16} color="#9CA3AF" />
+            </TouchableOpacity>
+          )}
+        </View>
+      </View>
+
+      {/* Student list */}
       {isLoading ? (
         <SkeletonLoader variant="card" rows={6} />
       ) : (
         <FlatList
-          data={students}
+          data={filteredStudents}
           keyExtractor={(item) => String(item.studentID)}
-          contentContainerStyle={{ paddingBottom: 100 }}
+          contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 4 }}
           onRefresh={refetch}
           refreshing={false}
-          renderItem={({ item }) => {
-            const sid = item.studentID!;
-            return (
-              <StudentMarkRow
-                student={item}
-                status={attendanceMap[sid] ?? "Present"}
-                remark={remarks[sid] ?? ""}
-                onStatusChange={(st) =>
-                  setAttendanceMap((prev) => ({ ...prev, [sid]: st }))
-                }
-                onRemarkChange={(text) =>
-                  setRemarks((prev) => ({ ...prev, [sid]: text }))
-                }
-              />
-            );
-          }}
+          ListEmptyComponent={
+            <View className="items-center py-12">
+              <Text className="text-gray-400 font-semibold text-sm">
+                {searchQuery ? "No students match your search." : "No students in this class."}
+              </Text>
+            </View>
+          }
+          renderItem={renderStudentCard}
         />
       )}
     </PremiumScreenLayout>

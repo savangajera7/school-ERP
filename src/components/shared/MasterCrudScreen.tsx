@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, FlatList, TextInput, TouchableOpacity, Alert } from "react-native";
+import { View, Text, FlatList, TextInput, TouchableOpacity, Alert, Platform } from "react-native";
 import { router } from "expo-router";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { Card } from "@/components/ui/Card";
@@ -156,8 +156,8 @@ export function MasterCrudScreen({
       subtitle={subtitle}
       onBack={() => router.back()}
       scrollable={false}
-      flatHeader
-      bodyStyle={{ marginTop: 12 }}
+      fullWidth
+      hideBack={Platform.OS === 'web'}
     >
       <Card className="p-4 mb-6" style={premiumCardShadow}>
         <View className="flex-row gap-3">
@@ -203,20 +203,25 @@ export function MasterCrudScreen({
             <MobileDataCard
               title={item[nameField]}
               subtitle={getSubtitle(item)}
-              icon={<IconCircle name={iconName} size={40} iconSize={20} />}
+              icon={<AppIcon name={iconName} size={26} color="#134A8C" active />}
+              noAccent
               actions={
-                <View className="flex-row gap-2 ml-auto">
+                <View className="flex-row gap-2">
                   <TouchableOpacity
                     onPress={() => startEdit(item)}
-                    className="bg-blue-50 p-2 rounded-lg"
+                    activeOpacity={0.7}
+                    className="flex-row items-center gap-1.5 px-3 py-1.5 bg-indigo-50 border border-indigo-100 rounded-xl"
                   >
-                    <AppIcon name="edit" size={18} color="#3B82F6" />
+                    <AppIcon name="edit" size={12} color="#4F46E5" />
+                    <Text className="text-[10px] font-extrabold text-indigo-700 uppercase">Edit</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => handleDelete(item[idField])}
-                    className="bg-red-50 p-2 rounded-lg"
+                    activeOpacity={0.7}
+                    className="flex-row items-center gap-1.5 px-3 py-1.5 bg-rose-50 border border-rose-100 rounded-xl"
                   >
-                    <AppIcon name="delete" size={18} color="#EF4444" />
+                    <AppIcon name="delete" size={12} color="#E11D48" />
+                    <Text className="text-[10px] font-extrabold text-rose-700 uppercase">Delete</Text>
                   </TouchableOpacity>
                 </View>
               }

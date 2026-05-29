@@ -12,6 +12,7 @@ import { HeaderActionButton } from "@/components/ui/HeaderActionButton";
 import { AppIcon, IconCircle } from "@/components/icons/AppIcon";
 import { usePermissions } from "@/hooks/usePermissions";
 import { ResponsiveDataList, EntityActionButtons, type TableColumn } from "@/components/shared";
+import { premiumCardShadow } from "@/constants/premiumStyles";
 import { useGetApiClassGet } from "@/api/generated/master-class/master-class";
 import {
   usePostApiTeacherClassAssignmentAdd,
@@ -23,6 +24,10 @@ import {
   usePostApiTeacherPermissionsSet,
   getGetApiTeacherPermissionsAllQueryKey,
 } from "@/api/generated/6-teacher-permissions-admin-assigns-module-access-per-class/6-teacher-permissions-admin-assigns-module-access-per-class";
+import {
+  useGetApiTeacherGetTeacherList,
+  getGetApiTeacherGetTeacherListQueryKey,
+} from "@/api/generated/teacher/teacher";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -82,13 +87,13 @@ export default function AdminTeacherManagementScreen() {
   const queryClient = useQueryClient();
 
   // ── Data ──────────────────────────────────────────────────────────────────
-  const { data: teachersRaw, isLoading, isError, error, refetch } = useGetApiTeacherPermissionsAll();
+  const { data: teachersRaw, isLoading, isError, error, refetch } = useGetApiTeacherGetTeacherList();
   const { data: classesRaw } = useGetApiClassGet();
   const allClasses = useMemo(() => parseApiList<any>(classesRaw?.data), [classesRaw]);
 
   const teachers: TeacherWithDetails[] = useMemo(() => {
     const raw = (teachersRaw as any)?.data?.data ?? (teachersRaw as any)?.data ?? [];
-    return Array.isArray(raw) ? raw : [];
+    return Array.isArray(raw) ? raw.map((t: any) => ({ ...t, classPermissions: t.classPermissions || [] })) : [];
   }, [teachersRaw]);
 
   // ── Search ────────────────────────────────────────────────────────────────
@@ -127,6 +132,7 @@ export default function AdminTeacherManagementScreen() {
     try {
       await deleteTeacherMutation.mutateAsync({ data: { teacherID: teacherToDelete.teacherID } });
       queryClient.invalidateQueries({ queryKey: getGetApiTeacherPermissionsAllQueryKey() });
+      queryClient.invalidateQueries({ queryKey: getGetApiTeacherGetTeacherListQueryKey() });
       setDeleteModalVisible(false);
       setTeacherToDelete(null);
     } catch (e: any) {
@@ -182,6 +188,7 @@ export default function AdminTeacherManagementScreen() {
         },
       });
       queryClient.invalidateQueries({ queryKey: getGetApiTeacherPermissionsAllQueryKey() });
+      queryClient.invalidateQueries({ queryKey: getGetApiTeacherGetTeacherListQueryKey() });
     } catch (_e) {
       // silent — user can retry
     } finally {
@@ -196,6 +203,7 @@ export default function AdminTeacherManagementScreen() {
         data: { teacherID: selectedTeacher.teacherID, classIDs: [classID] },
       });
       queryClient.invalidateQueries({ queryKey: getGetApiTeacherPermissionsAllQueryKey() });
+      queryClient.invalidateQueries({ queryKey: getGetApiTeacherGetTeacherListQueryKey() });
       const cls = allClasses.find((c: any) => c.classID === classID);
       const newPerm: ClassPermission = {
         classID, className: cls?.className ?? "",
@@ -217,6 +225,7 @@ export default function AdminTeacherManagementScreen() {
         data: { teacherID: selectedTeacher.teacherID, classID: removeClassModal.classID },
       });
       queryClient.invalidateQueries({ queryKey: getGetApiTeacherPermissionsAllQueryKey() });
+      queryClient.invalidateQueries({ queryKey: getGetApiTeacherGetTeacherListQueryKey() });
       setLocalPerms((prev) => { const n = { ...prev }; delete n[removeClassModal.classID]; return n; });
       setSelectedTeacher((prev) => prev ? {
         ...prev,
@@ -239,8 +248,8 @@ export default function AdminTeacherManagementScreen() {
   const renderTeacherCard = (item: TeacherWithDetails) => (
     <TouchableOpacity
       activeOpacity={0.9}
-      className="bg-white rounded-2xl mb-4 border border-gray-100"
-      style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, shadowRadius: 10, elevation: 2 }}
+      className="bg-white rounded-2xl mb-3 border border-gray-100"
+      style={premiumCardShadow}
     >
       <View className="p-4 border-b border-gray-50 flex-row gap-3 rounded-t-2xl bg-white">
         <View className="relative">
@@ -284,7 +293,7 @@ export default function AdminTeacherManagementScreen() {
         </View>
       )}
 
-      <View className="flex-row justify-end items-center px-4 py-2.5 bg-gray-50/50 gap-2 rounded-b-2xl">
+      <View className="flex-row justify-end items-center px-4 py-2.5 bg-gray-50/50 gap-2.5 rounded-b-2xl border-t border-gray-100">
         <TouchableOpacity
           className="flex-row items-center gap-1.5 px-3 py-1.5 bg-blue-50 border border-blue-100 rounded-xl"
           onPress={() => openPanel(item)} activeOpacity={0.7}

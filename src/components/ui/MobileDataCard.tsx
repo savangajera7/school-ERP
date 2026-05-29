@@ -56,7 +56,7 @@ export function MobileDataCard({
     <Wrapper
       onPress={onPress}
       activeOpacity={onPress ? 0.7 : 1}
-      className="bg-white rounded-2xl border border-gray-100 p-4 mb-3"
+      className="bg-white rounded-2xl mb-3 border border-gray-100"
       style={premiumCardShadow}
     >
       {/* Accent Line (Subtle) */}
@@ -71,52 +71,62 @@ export function MobileDataCard({
             backgroundColor: accentColor || Colors.primary,
             borderTopRightRadius: 4,
             borderBottomRightRadius: 4,
+            zIndex: 10
           }} 
         />
       )}
 
-      {/* Header */}
-      <View className="flex-row items-center justify-between mb-3">
-        <View className="flex-row items-center gap-3 flex-1">
-          {icon && <View>{icon}</View>}
-          <View className="flex-1">
-            <Text className="text-[15px] font-bold text-gray-900" numberOfLines={1}>
+      {/* Top Body Area */}
+      <View className="p-4 flex-row gap-3 rounded-t-2xl bg-white">
+        {icon && (
+          <View className="w-14 h-14 rounded-2xl bg-gray-50 border border-gray-200 items-center justify-center overflow-hidden">
+            {icon}
+          </View>
+        )}
+        <View className="flex-1 justify-center">
+          <View className="flex-row items-center justify-between mb-1.5 gap-2">
+            <Text className="text-sm font-extrabold text-gray-900 uppercase flex-1" numberOfLines={1}>
               {title}
             </Text>
-            {subtitle && (
-              <Text className="text-[12px] text-gray-400 font-semibold mt-0.5" numberOfLines={1}>
-                {subtitle}
-              </Text>
-            )}
+            {badge && <View>{badge}</View>}
           </View>
+
+          {subtitle && (
+            <Text className="text-[12px] text-gray-500 font-bold mb-1.5" numberOfLines={1}>
+              {subtitle}
+            </Text>
+          )}
+
+          {/* Data Fields */}
+          {fields && fields.length > 0 && (
+            <View className="gap-1 mt-1">
+              {fields.map((field, idx) => (
+                <View key={idx} className="flex-row justify-between items-center">
+                  <Text className="text-[11px] text-gray-400 font-bold">{field.label}:</Text>
+                  {typeof field.value === "string" ? (
+                    <Text
+                      className={`text-[11px] font-extrabold ${
+                        field.highlight ? highlightColors[field.highlight] : "text-gray-700"
+                      }`}
+                    >
+                      {field.value}
+                    </Text>
+                  ) : (
+                    field.value
+                  )}
+                </View>
+              ))}
+            </View>
+          )}
         </View>
-        {badge && <View className="ml-2">{badge}</View>}
       </View>
 
-      {/* Data Fields */}
-      {fields && fields.length > 0 && (
-        <View className="bg-gray-50/50 rounded-xl p-3 gap-2 mb-3">
-          {fields.map((field, idx) => (
-            <View key={idx} className="flex-row justify-between items-center">
-              <Text className="text-[12px] text-gray-400 font-semibold">{field.label}</Text>
-              {typeof field.value === "string" ? (
-                <Text
-                  className={`text-[12px] font-bold ${
-                    field.highlight ? highlightColors[field.highlight] : "text-gray-700"
-                  }`}
-                >
-                  {field.value}
-                </Text>
-              ) : (
-                field.value
-              )}
-            </View>
-          ))}
+      {/* Actions Footer */}
+      {actions && (
+        <View className="flex-row justify-end items-center px-4 py-3 bg-slate-50 border-t border-gray-100 gap-2.5 rounded-b-2xl">
+          {actions}
         </View>
       )}
-
-      {/* Actions */}
-      {actions && <View className="flex-row gap-2">{actions}</View>}
     </Wrapper>
   );
 }

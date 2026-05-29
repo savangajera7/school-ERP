@@ -1,15 +1,21 @@
-import React, { useMemo } from "react";
-import { View, Text, ScrollView } from "react-native";
+import React, { useMemo, useState } from "react";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { useGetApiAttendanceGet } from "@/api/attendance";
-import { buildAttendanceViewParams, parseAttendanceList } from "@/api/attendance";
+import { buildAttendanceViewParams, normalizeAttendanceStatusFromApi } from "@/api/attendance";
 import { useAuthStore } from "@/store/authStore";
 import { useAttendanceAccess } from "@/hooks/useAttendanceAccess";
 import { AccessDenied } from "@/components/auth/AccessDenied";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
 import { Colors } from "@/constants/colors";
-import { getAttendanceRowName, normalizeAttendanceStatusFromApi } from "@/api/attendance";
+import { premiumCardShadow } from "@/constants/premiumStyles";
+import { AppIcon } from "@/components/icons/AppIcon";
+
+const MONTH_NAMES = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
 
 export default function ClassMonthlyReportScreen() {
   const access = useAttendanceAccess();
@@ -17,8 +23,8 @@ export default function ClassMonthlyReportScreen() {
   const classID = parseInt(String(params.classId ?? ""), 10);
   const className = String(params.className ?? "Class");
   const now = new Date();
-  const month = now.getMonth() + 1;
-  const year = now.getFullYear();
+  const [month, setMonth] = useState(now.getMonth() + 1);
+  const [year, setYear] = useState(now.getFullYear());
   const schoolID = useAuthStore((s) => s.userData?.schoolID);
 
   const queryParams = useMemo(
@@ -33,20 +39,30 @@ export default function ClassMonthlyReportScreen() {
     query: { enabled: !!classID },
   });
 
-  const rows = useMemo(() => parseAttendanceList(data?.data), [data]);
-
+  // The class-monthly view returns a summary object, not a list
   const summary = useMemo(() => {
-    let present = 0;
-    let absent = 0;
-    let leave = 0;
-    rows.forEach((r) => {
-      const s = normalizeAttendanceStatusFromApi(r.attendanceStatus);
-      if (s === "Present") present++;
-      else if (s === "Absent") absent++;
-      else if (s === "Leave") leave++;
-    });
-    return { present, absent, leave, total: rows.length };
-  }, [rows]);
+    const raw = (data?.data as any)?.data ?? data?.data ?? {};
+    return {
+      totalStudents: Number(raw?.totalStudents ?? raw?.TotalStudents ?? 0),
+      present: Number(raw?.summary?.present ?? raw?.Present ?? 0),
+      absent: Number(raw?.summary?.absent ?? raw?.Absent ?? 0),
+      leave: Number(raw?.summary?.leave ?? raw?.Leave ?? raw?.leave ?? 0),
+      month: String(raw?.month ?? raw?.Month ?? MONTH_NAMES[month - 1]),
+      year: Number(raw?.year ?? raw?.Year ?? year),
+    };
+  }, [data, month, year]);
+
+  const total = summary.present + summary.absent + summary.leave;
+  const pct = total > 0 ? Math.round((summary.present / total) * 100) : 0;
+
+  const shiftMonth = (delta: number) => {
+    let m = month + delta;
+    let y = year;
+    if (m < 1) { m = 12; y -= 1; }
+    else if (m > 12) { m = 1; y += 1; }
+    setMonth(m);
+    setYear(y);
+  };
 
   if (!access.isSchoolAdmin && !access.canMarkClass(classID)) {
     return <AccessDenied />;
@@ -55,38 +71,155 @@ export default function ClassMonthlyReportScreen() {
   return (
     <PremiumScreenLayout
       title={`${className} — Monthly`}
-      subtitle={`${month}/${year}`}
+      subtitle="Class attendance summary"
       onBack={() => router.back()}
     >
+      {/* Month navigator */}
+      <View
+        className="bg-white rounded-2xl border border-gray-100 p-4 mb-4"
+        style={premiumCardShadow}
+      >
+        <View className="flex-row items-center justify-between">
+          <TouchableOpacity
+            onPress={() => shiftMonth(-1)}
+            className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-200 items-center justify-center"
+          >
+            <Text className="font-black text-[#1A3C6E] text-lg">‹</Text>
+          </TouchableOpacity>
+          <View className="items-center">
+            <Text className="text-base font-black text-gray-900">
+              {MONTH_NAMES[month - 1]}
+            </Text>
+            <Text className="text-xs font-bold text-gray-400">{year}</Text>
+          </View>
+          <TouchableOpacity
+            onPress={() => shiftMonth(1)}
+            className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-200 items-center justify-center"
+          >
+            <Text className="font-black text-[#1A3C6E] text-lg">›</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
       {isLoading ? (
         <PremiumLoader color={Colors.primary} />
       ) : (
-        <ScrollView>
-          <View className="flex-row flex-wrap gap-2 mb-4">
-            <Stat label="Records" value={String(summary.total)} />
-            <Stat label="Present" value={String(summary.present)} />
-            <Stat label="Absent" value={String(summary.absent)} />
-            <Stat label="Leave" value={String(summary.leave)} />
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {/* Stats grid */}
+          <View className="flex-row flex-wrap gap-3 mb-4">
+            <StatCard label="Total Students" value={summary.totalStudents} color="#1A3C6E" />
+            <StatCard label="Present" value={summary.present} color="#059669" />
+            <StatCard label="Absent" value={summary.absent} color="#DC2626" />
+            <StatCard label="Leave" value={summary.leave} color="#D97706" />
           </View>
-          {rows.map((r, i) => (
-            <View key={i} className="bg-white border border-gray-100 rounded-xl px-4 py-3 mb-2">
-              <Text className="font-black text-gray-900">{getAttendanceRowName(r)}</Text>
-              <Text className="text-xs text-gray-500">
-                {r.attendanceDate?.slice(0, 10)} · {normalizeAttendanceStatusFromApi(r.attendanceStatus)}
-              </Text>
+
+          {/* Attendance % card */}
+          <View
+            className="bg-white rounded-2xl border border-gray-100 p-5 mb-4 items-center"
+            style={premiumCardShadow}
+          >
+            <Text className="text-[10px] font-black uppercase text-gray-400 mb-2">
+              Attendance Rate
+            </Text>
+            <Text className="text-5xl font-black text-[#1A3C6E]">{pct}%</Text>
+            <View className="w-full mt-4 bg-gray-100 rounded-full h-3 overflow-hidden">
+              <View
+                className="h-full rounded-full bg-emerald-500"
+                style={{ width: `${pct}%` }}
+              />
             </View>
-          ))}
+            <View className="flex-row justify-between w-full mt-2">
+              <Text className="text-[10px] font-bold text-gray-400">0%</Text>
+              <Text className="text-[10px] font-bold text-gray-400">100%</Text>
+            </View>
+          </View>
+
+          {/* Breakdown bar */}
+          {total > 0 && (
+            <View
+              className="bg-white rounded-2xl border border-gray-100 p-4 mb-4"
+              style={premiumCardShadow}
+            >
+              <Text className="text-[10px] font-black uppercase text-gray-400 mb-3">
+                Breakdown
+              </Text>
+              <View className="flex-row h-4 rounded-full overflow-hidden bg-gray-100">
+                <View style={{ flex: summary.present / total, backgroundColor: "#10B981" }} />
+                <View style={{ flex: summary.absent / total, backgroundColor: "#EF4444" }} />
+                <View style={{ flex: summary.leave / total, backgroundColor: "#F59E0B" }} />
+              </View>
+              <View className="flex-row justify-between mt-2">
+                <Text className="text-[10px] font-bold text-emerald-600">
+                  P {summary.present}
+                </Text>
+                <Text className="text-[10px] font-bold text-rose-600">
+                  A {summary.absent}
+                </Text>
+                <Text className="text-[10px] font-bold text-amber-600">
+                  L {summary.leave}
+                </Text>
+              </View>
+            </View>
+          )}
+
+          {/* Quick actions */}
+          <View className="flex-row gap-2 mb-4">
+            <TouchableOpacity
+              onPress={() =>
+                router.push({
+                  pathname: "/(app)/attendance/mark",
+                  params: {
+                    classId: String(classID),
+                    className,
+                    date: new Date().toISOString().split("T")[0],
+                    marked: "0",
+                  },
+                })
+              }
+              className="flex-1 flex-row items-center justify-center gap-2 py-3 rounded-xl bg-[#1A3C6E] border border-[#1A3C6E]"
+              activeOpacity={0.85}
+            >
+              <AppIcon name="attendance" size={14} color="#fff" />
+              <Text className="text-white text-xs font-black uppercase">Mark Today</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() =>
+                router.push({
+                  pathname: "/(app)/attendance/history",
+                  params: { classId: String(classID) },
+                })
+              }
+              className="flex-1 flex-row items-center justify-center gap-2 py-3 rounded-xl bg-white border border-gray-200"
+              activeOpacity={0.85}
+            >
+              <AppIcon name="reports" size={14} color="#6B7280" />
+              <Text className="text-gray-600 text-xs font-black uppercase">History</Text>
+            </TouchableOpacity>
+          </View>
         </ScrollView>
       )}
     </PremiumScreenLayout>
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function StatCard({
+  label,
+  value,
+  color,
+}: {
+  label: string;
+  value: number;
+  color: string;
+}) {
   return (
-    <View className="bg-white border border-gray-150 rounded-xl px-4 py-3 min-w-[45%] flex-1">
+    <View
+      className="bg-white border border-gray-100 rounded-xl px-4 py-3 min-w-[45%] flex-1"
+      style={premiumCardShadow}
+    >
       <Text className="text-[10px] font-black uppercase text-gray-400">{label}</Text>
-      <Text className="text-xl font-black text-gray-900">{value}</Text>
+      <Text className="text-2xl font-black mt-1" style={{ color }}>
+        {value}
+      </Text>
     </View>
   );
 }

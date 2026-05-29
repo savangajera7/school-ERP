@@ -6,9 +6,16 @@
   <component name="ChangeListManager">
     <list default="true" id="973b64d6-6094-46c3-ae9b-d54eff11ffd3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/layout/AdminSidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/layout/AdminSidebar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/layout/DashboardTopBar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/layout/DashboardTopBar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/helpers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/helpers.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/masters/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/masters/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/teacher-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/teacher-form.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/teachers.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/teachers.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/attendance/detail.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/attendance/detail.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/attendance/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/attendance/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/attendance/mark.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/attendance/mark.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/attendance/monthly.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/attendance/monthly.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(parent)/attendance.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(parent)/attendance.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/shared/MasterCrudScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/shared/MasterCrudScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/MobileDataCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/MobileDataCard.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -116,7 +123,7 @@
       <workItem from="1779944396095" duration="18866000" />
       <workItem from="1779974923867" duration="17203000" />
       <workItem from="1780046256110" duration="8176000" />
-      <workItem from="1780076943081" duration="363000" />
+      <workItem from="1780076943081" duration="2117000" />
     </task>
     <servers />
   </component>

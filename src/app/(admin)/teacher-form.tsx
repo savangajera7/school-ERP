@@ -14,7 +14,6 @@ import {
   usePutApiTeacherUpdateTeacher,
   useGetApiTeacherGetTeacherByIdId,
 } from "@/api/generated/teacher/teacher";
-import { useGetApiRoleGetRoleList } from "@/api/generated/role/role";
 import { parseApiData, parseApiList, toCamelCaseRow } from "@/utils/apiResponse";
 import { useAuthStore } from "@/store/authStore";
 import { uploadProfileImage, resolveMediaUrl } from "@/services/upload/uploadService";
@@ -60,19 +59,15 @@ export default function TeacherFormScreen() {
   const [salary, setSalary]                 = useState("");
   const [address, setAddress]               = useState("");
   const [subjectName, setSubjectName]       = useState("");
-  const [roleID, setRoleID]                 = useState<number | undefined>();
   const [photo, setPhoto]                   = useState<string | null>(null);
 
   // ── API hooks ─────────────────────────────────────────────────────────────
   const insertTeacher = usePostApiTeacherInsertTeacher();
   const updateTeacher = usePutApiTeacherUpdateTeacher();
-  const { data: rolesData } = useGetApiRoleGetRoleList();
   const { data: teacherResponse, isLoading: loadingTeacher } =
     useGetApiTeacherGetTeacherByIdId(teacherID as number, {
       query: { enabled: isEditing },
     });
-
-  const roles = parseApiList(rolesData?.data);
 
   useEffect(() => {
     if (teacherResponse?.data) {
@@ -92,7 +87,6 @@ export default function TeacherFormScreen() {
       setSalary(String(t.salary || ""));
       setAddress(t.address || "");
       setSubjectName(t.subjectName || "");
-      setRoleID(t.roleID || undefined);
       setPhoto(resolveMediaUrl(t.photo) ?? null);
     }
   }, [teacherResponse]);
@@ -158,7 +152,6 @@ export default function TeacherFormScreen() {
       salary: parseFloat(salary) || 0,
       address,
       subjectName,
-      roleID: roleID || undefined,
       photo: photo ?? "",
       createdBy: parseInt(userData?.id || "0"),
     };
@@ -231,7 +224,7 @@ export default function TeacherFormScreen() {
     const hasError = errorKey ? !!errors[errorKey] : false;
     return (
       <View className="flex-1 min-w-[280px]">
-        <Text className={`text-[10px] font-black ${hasError ? "text-red-500" : "text-gray-500"} mb-1.5 uppercase tracking-wide`}>
+        <Text className={`text-[12px] font-black ${hasError ? "text-red-500" : "text-gray-500"} mb-1.5 uppercase`}>
           {label}{opts?.required ? " *" : ""}
         </Text>
         <TextInput
@@ -267,7 +260,7 @@ export default function TeacherFormScreen() {
     onSelect: (v: string) => void,
   ) => (
     <View className="flex-1 min-w-[280px]">
-      <Text style={styles.label}>{label}</Text>
+      <Text className="text-[12px] font-black text-gray-500 mb-1.5 uppercase">{label}</Text>
       <View className="flex-row bg-gray-50 border border-gray-200 rounded-xl overflow-hidden h-[48px] p-0.5">
         {options.map((opt) => (
           <TouchableOpacity
@@ -280,36 +273,6 @@ export default function TeacherFormScreen() {
             </Text>
           </TouchableOpacity>
         ))}
-      </View>
-    </View>
-  );
-
-  const renderRoleDropdown = () => (
-    <View className="flex-1 min-w-[280px]">
-      <Text style={styles.label}>Role</Text>
-      <View className="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden h-[48px]">
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ alignItems: "center", paddingHorizontal: 10 }}
-        >
-          {roles.map((r: any, idx: number) => {
-            const rid = r.roleID ?? r.id ?? r.RoleID ?? r.roleId;
-            const rname = r.roleName ?? r.name ?? r.RoleName;
-            if (!rname) return null;
-            return (
-              <TouchableOpacity
-                key={rid ?? idx}
-                onPress={() => setRoleID(rid)}
-                className={`px-3 py-1.5 rounded-lg mr-2 ${roleID === rid ? "bg-[#1A3C6E]" : "bg-gray-200"}`}
-              >
-                <Text className={`text-[11px] font-bold ${roleID === rid ? "text-white" : "text-gray-600"}`}>
-                  {rname}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
       </View>
     </View>
   );
@@ -327,8 +290,9 @@ export default function TeacherFormScreen() {
       title={isEditing ? "Edit Teacher" : "New Teacher"}
       subtitle={isEditing ? "Modify faculty member details" : "Register a new faculty member"}
       onBack={() => router.back()}
-      flatHeader
       keyboard
+      fullWidth
+      hideBack
       scrollable={false}
       rightAction={
         !isMobile ? (
@@ -366,7 +330,7 @@ export default function TeacherFormScreen() {
 
               {/* Photo */}
               <View className="items-center mb-6">
-                <Text style={styles.label} className="mb-2">Profile Photo</Text>
+                <Text className="text-[12px] font-black text-gray-500 mb-2 uppercase">Profile Photo</Text>
                 <TouchableOpacity
                   onPress={pickPhoto}
                   disabled={uploadingPhoto}
@@ -392,26 +356,26 @@ export default function TeacherFormScreen() {
               </View>
 
               {/* Name row */}
-              <View className={`flex-row flex-wrap gap-4 mb-4 ${isMobile ? "flex-col" : ""}`}>
+              <View className={`flex-row flex-wrap gap-5 ${isMobile ? "flex-col" : ""}`}>
                 {renderField("First Name", firstName, setFirstName, "John", { required: true }, "firstName")}
                 {renderField("Middle Name", middleName, setMiddleName, "Kumar")}
                 {renderField("Last Name", lastName, setLastName, "Doe", { required: true }, "lastName")}
               </View>
 
               {/* Code + Gender */}
-              <View className={`flex-row flex-wrap gap-4 mb-4 ${isMobile ? "flex-col" : ""}`}>
+              <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>
                 {renderField("Staff ID / Code", teacherCode, setTeacherCode, "T-001", { required: true }, "teacherCode")}
                 {renderToggle("Gender", gender, ["Male", "Female", "Other"], setGender)}
               </View>
 
               {/* Mobile + Email */}
-              <View className={`flex-row flex-wrap gap-4 mb-4 ${isMobile ? "flex-col" : ""}`}>
+              <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>
                 {renderField("Mobile Number", mobileNo, setMobileNo, "9876543210", { keyboard: "phone-pad", maxLength: 10, required: true }, "mobileNo")}
                 {renderField("Email Address", email, setEmail, "john.doe@school.com", { keyboard: "email-address" })}
               </View>
 
               {/* Address */}
-              <View className="mb-4">
+              <View className="mt-5">
                 {renderField("Address", address, setAddress, "Full residential address", { multiline: true })}
               </View>
             </View>
@@ -426,19 +390,19 @@ export default function TeacherFormScreen() {
             <View className="mt-6 pt-6 border-t border-gray-100">
 
               {/* Subject + Qualification */}
-              <View className={`flex-row flex-wrap gap-4 mb-4 ${isMobile ? "flex-col" : ""}`}>
+              <View className={`flex-row flex-wrap gap-5 ${isMobile ? "flex-col" : ""}`}>
                 {renderField("Primary Subject", subjectName, setSubjectName, "Mathematics")}
                 {renderField("Qualification", qualification, setQualification, "B.Ed, M.Sc")}
               </View>
 
               {/* Experience + Salary */}
-              <View className={`flex-row flex-wrap gap-4 mb-4 ${isMobile ? "flex-col" : ""}`}>
+              <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>
                 {renderField("Experience (Years)", experienceYear, setExperienceYear, "5", { keyboard: "numeric" })}
                 {renderField("Salary (₹)", salary, setSalary, "25000", { keyboard: "decimal-pad" })}
               </View>
 
-              {/* Joining Date + Role */}
-              <View className={`flex-row flex-wrap gap-4 mb-4 ${isMobile ? "flex-col" : ""}`}>
+              {/* Joining Date */}
+              <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>
                 <View className="flex-1 min-w-[280px]">
                   <PremiumDatePicker
                     label="Joining Date"
@@ -447,7 +411,6 @@ export default function TeacherFormScreen() {
                     placeholder="Select joining date"
                   />
                 </View>
-                {renderRoleDropdown()}
               </View>
             </View>
           )}
@@ -468,10 +431,10 @@ export default function TeacherFormScreen() {
                 </Text>
               </View>
 
-              <View className={`flex-row flex-wrap gap-4 ${isMobile ? "flex-col" : ""}`}>
+              <View className={`flex-row flex-wrap gap-5 ${isMobile ? "flex-col" : ""}`}>
                 {/* Email shown read-only for reference */}
                 <View className="flex-1 min-w-[280px]">
-                  <Text style={styles.label}>Login Email (same as above)</Text>
+                  <Text className="text-[12px] font-black text-gray-500 mb-1.5 uppercase">Login Email (same as above)</Text>
                   <View className="h-[48px] bg-gray-100 border border-gray-200 rounded-xl px-4 justify-center">
                     <Text className="text-sm font-semibold text-gray-500">{email || "—"}</Text>
                   </View>
@@ -479,7 +442,7 @@ export default function TeacherFormScreen() {
 
                 {/* Password */}
                 <View className="flex-1 min-w-[280px]">
-                  <Text className={`text-[10px] font-black ${errors.password ? "text-red-500" : "text-gray-500"} mb-1.5 uppercase tracking-wide`}>
+                  <Text className={`text-[12px] font-black ${errors.password ? "text-red-500" : "text-gray-500"} mb-1.5 uppercase`}>
                     Password{!isEditing ? " *" : ""}
                   </Text>
                   <View className={`flex-row items-center ${errors.password ? "bg-red-50 border-red-400" : "bg-gray-50 border-gray-200"} border rounded-xl overflow-hidden h-[48px]`}>

@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native";
+import { View, Platform } from "react-native";
 import { router } from "expo-router";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { ActionListRow } from "@/components/dashboard/ActionListRow";
@@ -21,11 +21,12 @@ export default function MastersMenuScreen() {
     <PremiumScreenLayout
       title="Master Data"
       subtitle="Configure school-wide parameters"
-      hideBack={false}
+      hideBack={Platform.OS === 'web'}
       onBack={() => router.back()}
+      fullWidth
       bodyStyle={{ marginTop: 12 }}
     >
-      <View className="pb-10">
+      <View className="pb-10 gap-3">
         {masterItems.map((item) => (
           <ActionListRow
             key={item.route}
