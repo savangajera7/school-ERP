@@ -24,14 +24,18 @@ function notificationsRouteForRole(role: ReturnType<typeof useAuthStore.getState
 export function DashboardTopBar({ notificationsHref }: Props) {
   const { userData, role } = useAuthStore();
   const { unreadCount } = useNotifications();
-  const { t, language, toggleLanguage } = useTranslation();
+  const { t } = useTranslation();
   const greeting = t[getGreetingKey()];
   const displayName = formatDisplayName(userData?.name).toUpperCase();
   const notifRoute = notificationsHref ?? notificationsRouteForRole(role);
 
   return (
     <View style={styles.row}>
-      <View style={styles.userBlock}>
+      <TouchableOpacity 
+        style={styles.userBlock}
+        activeOpacity={0.8}
+        onPress={() => router.push("/(app)/profile")}
+      >
         <View style={styles.avatarWrap}>
           {userData?.avatar ? (
             <Image source={{ uri: userData.avatar }} style={styles.avatar} />
@@ -47,7 +51,7 @@ export function DashboardTopBar({ notificationsHref }: Props) {
           </Text>
           <Text style={styles.greeting}>{greeting}</Text>
         </View>
-      </View>
+      </TouchableOpacity>
 
       <View style={styles.actions}>
         <TouchableOpacity
@@ -63,14 +67,7 @@ export function DashboardTopBar({ notificationsHref }: Props) {
           ) : null}
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.actionBtn}
-          onPress={toggleLanguage}
-          activeOpacity={0.8}
-        >
-          <AppIcon name="language" size={22} color="#111827" />
-          <Text style={styles.langHint}>{language === "gu" ? "ગુ" : "EN"}</Text>
-        </TouchableOpacity>
+
       </View>
     </View>
   );

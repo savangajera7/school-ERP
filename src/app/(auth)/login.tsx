@@ -33,7 +33,7 @@ export default function LoginScreen() {
   const insets = useSafeAreaInsets();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const role = useAuthStore((state) => state.role);
-  const { t, language, setLanguage } = useTranslation();
+  const { t } = useTranslation();
   const { signInWithApi, apiLoginMutation } = useAuth();
   const [loginError, setLoginError] = React.useState<string | null>(null);
   const [rememberMe, setRememberMe] = React.useState(false);
@@ -175,20 +175,7 @@ export default function LoginScreen() {
                    colors={[Colors.gradientStart, Colors.gradientEnd]} 
                    style={[styles.mobileHeader, { paddingTop: insets.top + 20 }]}
                  >
-                <View style={styles.langRow}>
-                  <TouchableOpacity
-                    style={[styles.langChip, language === "gu" && styles.langChipActive]}
-                    onPress={() => setLanguage("gu")}
-                  >
-                    <Text style={[styles.langChipText, language === "gu" && styles.langChipTextActive]}>ગુજરાતી</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={[styles.langChip, language === "en" && styles.langChipActive]}
-                    onPress={() => setLanguage("en")}
-                  >
-                    <Text style={[styles.langChipText, language === "en" && styles.langChipTextActive]}>English</Text>
-                  </TouchableOpacity>
-                </View>
+
                 <AppBrandLogo
                   size="lg"
                   variant="stacked"

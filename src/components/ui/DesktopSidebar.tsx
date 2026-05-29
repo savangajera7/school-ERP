@@ -168,41 +168,48 @@ export function DesktopSidebar() {
 
       {/* ── User + logout ── */}
       <View
-        className={`pt-4 border-t border-gray-50 ${
+        className={`pt-4 border-t border-gray-100 ${
           isCollapsed ? "px-2 items-center" : "px-4"
         }`}
       >
-        <View
-          className={`flex-row items-center mb-3 ${
+        <TouchableOpacity
+          onPress={() => router.push("/(app)/profile")}
+          activeOpacity={0.8}
+          className={`flex-row items-center mb-3 bg-gray-50 rounded-2xl border border-gray-100 p-2 ${
             isCollapsed ? "justify-center" : "gap-3"
           }`}
         >
-          <View className="w-9 h-9 rounded-xl bg-[#134A8C]/10 items-center justify-center">
-            <Text className="text-sm font-black text-[#134A8C]">
-              {firstName.charAt(0).toUpperCase()}
-            </Text>
+          <View className="w-9 h-9 rounded-xl bg-white shadow-sm items-center justify-center border border-gray-100">
+            {userData?.avatar ? (
+              <Image source={{ uri: userData.avatar }} className="w-full h-full rounded-xl" />
+            ) : (
+              <Text className="text-sm font-black text-[#134A8C]">
+                {firstName.charAt(0).toUpperCase()}
+              </Text>
+            )}
           </View>
           {!isCollapsed && (
             <View className="flex-1">
-              <Text className="text-xs font-black text-gray-800" numberOfLines={1}>
+              <Text className="text-[13px] font-black text-gray-800" numberOfLines={1}>
                 {formatDisplayName(userData?.name)}
               </Text>
-              <Text className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">
+              <Text className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-0.5">
                 {roleLabel || (role ? ROLE_LABELS[role] : "")}
               </Text>
             </View>
           )}
-        </View>
+        </TouchableOpacity>
         <TouchableOpacity
           onPress={logout}
-          className={`flex-row items-center bg-rose-50 rounded-xl border border-rose-100 py-2 ${
-            isCollapsed ? "justify-center px-2 w-9 h-9" : "px-3 gap-2"
+          className={`flex-row items-center bg-white rounded-xl border border-gray-200 py-2.5 ${
+            isCollapsed ? "justify-center px-2 w-10 h-10 mx-auto" : "px-3 gap-2"
           }`}
+          style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.03, shadowRadius: 4, elevation: 1 }}
           activeOpacity={0.8}
         >
-          <AppIcon name="logout" size={16} color="#E11D48" />
+          <AppIcon name="logout" size={16} color="#6B7280" />
           {!isCollapsed && (
-            <Text className="text-[11px] font-black text-rose-600 uppercase tracking-wide">
+            <Text className="text-[11px] font-black text-gray-600 uppercase tracking-widest">
               Sign Out
             </Text>
           )}

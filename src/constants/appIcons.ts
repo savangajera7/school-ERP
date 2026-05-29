@@ -78,7 +78,9 @@ export type AppIconName =
   | "bell"
   | "camera"
   | "eye"
-  | "eyeOff";
+  | "eyeOff"
+  | "moon"
+  | "sun";
 
 type IconPair = { outline: IoniconsName; filled: IoniconsName };
 
@@ -160,6 +162,8 @@ export const APP_ICONS: Record<AppIconName, IconPair> = {
   camera: { outline: "camera-outline", filled: "camera" },
   eye: { outline: "eye-outline", filled: "eye" },
   eyeOff: { outline: "eye-off-outline", filled: "eye-off" },
+  moon: { outline: "moon-outline", filled: "moon" },
+  sun: { outline: "sunny-outline", filled: "sunny" },
 };
 
 export function resolveIconName(
@@ -255,4 +259,6 @@ export const QUICK_ACTION_STYLES: Record<
   camera: { bg: "#F3F4F6", iconBg: "#E5E7EB", iconColor: "#6B7280" },
   eye: { bg: "#F3F4F6", iconBg: "#E5E7EB", iconColor: "#6B7280" },
   eyeOff: { bg: "#F3F4F6", iconBg: "#E5E7EB", iconColor: "#6B7280" },
+  moon: { bg: "#F5F3FF", iconBg: "#DDD6FE", iconColor: "#6D28D9" },
+  sun: { bg: "#FEF3C7", iconBg: "#FDE68A", iconColor: "#B45309" },
 };

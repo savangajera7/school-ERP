@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { View, Text, TouchableOpacity, ActivityIndicator, Platform } from "react-native";
 import { router } from "expo-router";
+import { useColorScheme } from "nativewind";
 import { useAuthStore } from "@/store/authStore";
 import { AppIcon } from "@/components/icons/AppIcon";
 import { Colors } from "@/constants/colors";
@@ -46,7 +47,8 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 }
 
 export default function ProfileScreen() {
-  const { userData, role, logout, language } = useAuthStore();
+  const { userData, role, logout } = useAuthStore();
+  const { colorScheme, toggleColorScheme } = useColorScheme();
   const { roleLabel } = usePermissions();
 
   const isParent = role === "parent";
@@ -103,7 +105,7 @@ export default function ProfileScreen() {
           <InfoRow label="Mobile" value={userData?.mobile || "—"} />
           <InfoRow label="School" value={userData?.schoolName || "Little Angel's English School"} />
           <InfoRow label="User ID" value={userData?.id || "—"} />
-          <InfoRow label="Language" value={language === "gu" ? "ગુજરાતી" : "English"} />
+
           
         </View>
 
@@ -203,6 +205,24 @@ export default function ProfileScreen() {
               Settings & Security
             </Text>
           </View>
+
+          <TouchableOpacity
+            onPress={toggleColorScheme}
+            activeOpacity={0.8}
+            className="flex-row items-center justify-between py-4 border-b border-gray-50"
+          >
+            <View className="flex-row items-center gap-3">
+              <View className={`w-8 h-8 rounded-lg items-center justify-center ${colorScheme === 'dark' ? 'bg-indigo-50' : 'bg-amber-50'}`}>
+                <AppIcon name={colorScheme === "dark" ? "moon" : "sun"} size={16} color={colorScheme === 'dark' ? '#6366F1' : '#D97706'} active />
+              </View>
+              <Text className="text-sm font-black text-gray-700">Dark Mode</Text>
+            </View>
+            <View className="bg-gray-100 px-3 py-1 rounded-full">
+              <Text className="text-[10px] font-black uppercase text-gray-500">
+                {colorScheme === "dark" ? "ON" : "OFF"}
+              </Text>
+            </View>
+          </TouchableOpacity>
 
           {(role === "parent" || role === "teacher" || role === "student") && (
             <TouchableOpacity
