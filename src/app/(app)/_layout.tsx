@@ -1,6 +1,7 @@
 import React from "react";
 import { View } from "react-native";
 import { Stack, usePathname } from "expo-router";
+import { useColorScheme } from "nativewind";
 import { useResponsive } from "@/hooks/useResponsive";
 import { DesktopSidebar } from "@/components/ui/DesktopSidebar";
 import { BottomTabBar } from "@/components/ui/BottomTabBar";
@@ -13,9 +14,12 @@ export default function AppLayout() {
   const pathname = usePathname();
   const role = useAuthStore((s) => s.role);
   const showMobileTabs = isMobile && isMobileTabRoute(pathname, role);
+  const { colorScheme } = useColorScheme();
+
+  const bg = colorScheme === "dark" ? "#0F172A" : "#F8FAFC";
 
   return (
-    <View style={{ flex: 1, flexDirection: "row", backgroundColor: "#F8FAFC" }}>
+    <View style={{ flex: 1, flexDirection: "row", backgroundColor: bg }}>
       {/* Single unified sidebar — role-aware nav items via usePermissions */}
       {!isMobile && <DesktopSidebar />}
 
@@ -24,7 +28,7 @@ export default function AppLayout() {
           <Stack
             screenOptions={{
               headerShown: false,
-              contentStyle: { backgroundColor: "#F8FAFC" },
+              contentStyle: { backgroundColor: bg },
               animation: "fade",
             }}
           />

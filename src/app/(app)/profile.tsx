@@ -37,9 +37,9 @@ function studentName(s: StudentModel): string {
 
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
-    <View className="flex-row justify-between items-center py-3 border-b border-gray-50">
-      <Text className="text-[11px] font-bold text-gray-400 uppercase tracking-wide">{label}</Text>
-      <Text className="text-sm font-black text-gray-800 text-right flex-1 ml-4" numberOfLines={2}>
+    <View className="flex-row justify-between items-center py-3 border-b border-gray-50 dark:border-slate-700/50">
+      <Text className="text-[11px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-wide">{label}</Text>
+      <Text className="text-sm font-black text-gray-800 dark:text-slate-100 text-right flex-1 ml-4" numberOfLines={2}>
         {value || "—"}
       </Text>
     </View>
@@ -90,12 +90,12 @@ export default function ProfileScreen() {
       <View className="pb-10">
         {/* Account details */}
         <View 
-          className="bg-white rounded-3xl border border-gray-100 p-6 mb-4" 
+          className="bg-white dark:bg-slate-800 rounded-3xl border border-gray-100 dark:border-slate-700/50 p-6 mb-4" 
           style={premiumCardShadow}
         >
           <View className="flex-row items-center gap-2 mb-4">
             <AppIcon name="profile" size={16} color={Colors.primary} active />
-            <Text className="text-[11px] font-black text-gray-400 uppercase tracking-widest">
+            <Text className="text-[11px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest">
               Account Details
             </Text>
           </View>
@@ -112,18 +112,18 @@ export default function ProfileScreen() {
         {/* Parent: linked children */}
         {isParent && (
           <View
-            className="bg-white rounded-3xl border border-gray-100 p-6 mb-4"
+            className="bg-white dark:bg-slate-800 rounded-3xl border border-gray-100 dark:border-slate-700/50 p-6 mb-4"
             style={premiumCardShadow}
           >
             <View className="flex-row items-center justify-between mb-5">
               <View className="flex-row items-center gap-2">
                 <AppIcon name="students" size={16} color={Colors.primary} active />
-                <Text className="text-[11px] font-black text-gray-400 uppercase tracking-widest">
+                <Text className="text-[11px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest">
                   My Children
                 </Text>
               </View>
-              <View className="bg-sky-50 px-2.5 py-1 rounded-full border border-sky-100">
-                <Text className="text-[10px] font-black text-sky-700">
+              <View className="bg-sky-50 dark:bg-sky-900/30 px-2.5 py-1 rounded-full border border-sky-100 dark:border-sky-800/30">
+                <Text className="text-[10px] font-black text-sky-700 dark:text-sky-400">
                   {children.length} linked
                 </Text>
               </View>
@@ -156,9 +156,9 @@ export default function ProfileScreen() {
                       } as never)
                     }
                     activeOpacity={0.8}
-                    className="flex-row items-center gap-4 p-4 rounded-2xl bg-[#F8FAFC] border border-gray-100"
+                    className="flex-row items-center gap-4 p-4 rounded-2xl bg-[#F8FAFC] dark:bg-slate-700/30 border border-gray-100 dark:border-slate-700/50"
                   >
-                    <View className="w-12 h-12 rounded-xl bg-white border border-sky-100 items-center justify-center">
+                    <View className="w-12 h-12 rounded-xl bg-white dark:bg-slate-800 border border-sky-100 dark:border-slate-700 items-center justify-center">
                       <AppIcon
                         name={child.gender === "Female" ? "female" : "male"}
                         size={24}
@@ -167,8 +167,8 @@ export default function ProfileScreen() {
                       />
                     </View>
                     <View className="flex-1">
-                      <Text className="text-sm font-black text-gray-800">{studentName(child)}</Text>
-                      <Text className="text-[11px] font-bold text-gray-400 mt-0.5">
+                      <Text className="text-sm font-black text-gray-800 dark:text-slate-100">{studentName(child)}</Text>
+                      <Text className="text-[11px] font-bold text-gray-400 dark:text-slate-500 mt-0.5">
                         Class {child.classID ?? "—"} · Roll {child.rollNo ?? "—"}
                       </Text>
                       {child.studentGRNo ? (
@@ -189,19 +189,19 @@ export default function ProfileScreen() {
               activeOpacity={0.8}
             >
               <AppIcon name="results" size={18} color="#134A8C" active />
-              <Text className="text-xs font-black text-[#134A8C] uppercase tracking-wide">View academic results</Text>
+              <Text className="text-xs font-black text-[#134A8C] dark:text-[#60A5FA] uppercase tracking-wide">View academic results</Text>
             </TouchableOpacity>
           </View>
         )}
 
         {/* Settings & Security */}
         <View 
-          className="bg-white rounded-3xl border border-gray-100 p-6 mb-6" 
+          className="bg-white dark:bg-slate-800 rounded-3xl border border-gray-100 dark:border-slate-700/50 p-6 mb-6" 
           style={premiumCardShadow}
         >
           <View className="flex-row items-center gap-2 mb-5">
             <AppIcon name="settings" size={16} color={Colors.primary} active />
-            <Text className="text-[11px] font-black text-gray-400 uppercase tracking-widest">
+            <Text className="text-[11px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest">
               Settings & Security
             </Text>
           </View>
@@ -209,16 +209,16 @@ export default function ProfileScreen() {
           <TouchableOpacity
             onPress={toggleColorScheme}
             activeOpacity={0.8}
-            className="flex-row items-center justify-between py-4 border-b border-gray-50"
+            className="flex-row items-center justify-between py-4 border-b border-gray-50 dark:border-slate-700/50"
           >
             <View className="flex-row items-center gap-3">
-              <View className={`w-8 h-8 rounded-lg items-center justify-center ${colorScheme === 'dark' ? 'bg-indigo-50' : 'bg-amber-50'}`}>
+              <View className={`w-8 h-8 rounded-lg items-center justify-center ${colorScheme === 'dark' ? 'bg-indigo-900/30' : 'bg-amber-50'}`}>
                 <AppIcon name={colorScheme === "dark" ? "moon" : "sun"} size={16} color={colorScheme === 'dark' ? '#6366F1' : '#D97706'} active />
               </View>
-              <Text className="text-sm font-black text-gray-700">Dark Mode</Text>
+              <Text className="text-sm font-black text-gray-700 dark:text-slate-200">Dark Mode</Text>
             </View>
-            <View className="bg-gray-100 px-3 py-1 rounded-full">
-              <Text className="text-[10px] font-black uppercase text-gray-500">
+            <View className="bg-gray-100 dark:bg-slate-700 px-3 py-1 rounded-full">
+              <Text className="text-[10px] font-black uppercase text-gray-500 dark:text-slate-400">
                 {colorScheme === "dark" ? "ON" : "OFF"}
               </Text>
             </View>
@@ -228,13 +228,13 @@ export default function ProfileScreen() {
             <TouchableOpacity
               onPress={() => router.push("/(app)/change-password")}
               activeOpacity={0.8}
-              className="flex-row items-center justify-between py-4 border-b border-gray-50"
+              className="flex-row items-center justify-between py-4 border-b border-gray-50 dark:border-slate-700/50"
             >
               <View className="flex-row items-center gap-3">
-                <View className="w-8 h-8 rounded-lg bg-orange-50 items-center justify-center">
+                <View className="w-8 h-8 rounded-lg bg-orange-50 dark:bg-orange-900/30 items-center justify-center">
                   <AppIcon name="lock" size={16} color="#F59E0B" active />
                 </View>
-                <Text className="text-sm font-black text-gray-700">Change Password</Text>
+                <Text className="text-sm font-black text-gray-700 dark:text-slate-200">Change Password</Text>
               </View>
               <AppIcon name="chevronRight" size={14} color="#D1D5DB" />
             </TouchableOpacity>
@@ -246,7 +246,7 @@ export default function ProfileScreen() {
             className="flex-row items-center justify-between py-4"
           >
             <View className="flex-row items-center gap-3">
-              <View className="w-8 h-8 rounded-lg bg-rose-50 items-center justify-center">
+              <View className="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-900/30 items-center justify-center">
                 <AppIcon name="logout" size={16} color="#E11D48" active />
               </View>
               <Text className="text-sm font-black text-rose-600">Sign Out</Text>

@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { router } from "expo-router";
+import { useColorScheme } from "nativewind";
 import type { AppIconName } from "@/constants/appIcons";
 import { QUICK_ACTION_STYLES } from "@/constants/appIcons";
 import { AppIcon } from "@/components/icons/AppIcon";
@@ -21,6 +22,8 @@ type Props = {
 
 export function QuickActionGrid({ items, mobileColumns = 4 }: Props) {
   const { isMobile, isTablet, isWeb, bodySize } = useResponsive();
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === "dark";
   const columns = isWeb ? 6 : isTablet ? 5 : mobileColumns;
   const itemWidth = `${100 / columns}%` as const;
 
@@ -38,7 +41,7 @@ export function QuickActionGrid({ items, mobileColumns = 4 }: Props) {
             <View
               style={[
                 styles.iconBox,
-                { backgroundColor: preset?.iconBg ?? "#E5E7EB" },
+                { backgroundColor: preset?.iconBg ?? (isDark ? "#334155" : "#E5E7EB") },
               ]}
             >
               <AppIcon
@@ -49,7 +52,7 @@ export function QuickActionGrid({ items, mobileColumns = 4 }: Props) {
               />
             </View>
             <Text
-              style={[styles.label, { fontSize: isMobile ? 10 : bodySize }]}
+              style={[styles.label, { fontSize: isMobile ? 10 : bodySize, color: isDark ? SchoolTheme.textDark : SchoolTheme.text }]}
               numberOfLines={2}
             >
               {action.title}
@@ -85,7 +88,6 @@ const styles = StyleSheet.create({
   },
   label: {
     fontWeight: "700",
-    color: SchoolTheme.text,
     textAlign: "center",
     lineHeight: 14,
     width: "100%",

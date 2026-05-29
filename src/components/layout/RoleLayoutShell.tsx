@@ -2,6 +2,7 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Stack } from "expo-router";
 import { usePathname } from "expo-router";
+import { useColorScheme } from "nativewind";
 import { useResponsive } from "@/hooks/useResponsive";
 import { RoleTabBar, ROLE_TAB_BAR_HEIGHT, type TabDef } from "@/components/layout/RoleTabBar";
 import { DesktopSidebar } from "@/components/ui/DesktopSidebar";
@@ -24,6 +25,9 @@ export function RoleLayoutShell({
 }: Props) {
   const pathname = usePathname();
   const { isMobile, isTablet, isWeb } = useResponsive();
+  const { colorScheme } = useColorScheme();
+
+  const bg = colorScheme === "dark" ? "#0F172A" : "#F4F6FA";
 
   // Show sidebar on tablet/web for roles that have one (admin, super_admin).
   // teacher/parent/student have no desktop sidebar — sidebar prop signals intent.
@@ -35,7 +39,7 @@ export function RoleLayoutShell({
     tabRoutes.some((r) => pathname.includes(r) || pathname.endsWith(r));
 
   return (
-    <View style={styles.root}>
+    <View style={[styles.root, { backgroundColor: bg }]}>
       {/* Single unified sidebar — nav items are role-aware inside DesktopSidebar */}
       {showSidebar && <DesktopSidebar />}
 
@@ -43,7 +47,7 @@ export function RoleLayoutShell({
         <Stack
           screenOptions={{
             headerShown: false,
-            contentStyle: { backgroundColor: "#F4F6FA" },
+            contentStyle: { backgroundColor: bg },
             animation: "fade",
           }}
         />
@@ -62,7 +66,7 @@ export function tabBarPadding(showTabs: boolean): number {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, flexDirection: "row", backgroundColor: "#F4F6FA" },
+  root: { flex: 1, flexDirection: "row" },
   main: { flex: 1 },
   tabOverlay: {
     position: "absolute",

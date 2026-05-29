@@ -127,7 +127,6 @@ export function PremiumScreenLayout({
     <MobileScreenShell
       withTabBar={withTabBar && isMobile}
       edges={["left", "right"]}
-      backgroundColor={SchoolTheme.background}
     >
       <StatusBar style={flatHeader ? "dark" : "light"} translucent backgroundColor="transparent" />
       <View style={styles.flex}>{wrapped}</View>

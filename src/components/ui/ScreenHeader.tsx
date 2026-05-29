@@ -7,6 +7,7 @@ import { Colors } from "@/constants/colors";
 import { useResponsive } from "@/hooks/useResponsive";
 import { AppIcon } from "@/components/icons/AppIcon";
 import { DashboardTopBar } from "@/components/layout/DashboardTopBar";
+import { useColorScheme } from "nativewind";
 
 interface ScreenHeaderProps {
   title: string;
@@ -39,6 +40,7 @@ export function ScreenHeader({
 }: ScreenHeaderProps) {
   const { isMobile } = useResponsive();
   const insets = useSafeAreaInsets();
+  const { colorScheme } = useColorScheme();
 
   const handleBack = () => {
     if (onBack) {
@@ -54,10 +56,21 @@ export function ScreenHeader({
   };
 
   if (flat) {
+    const flatBg = colorScheme === "dark" ? "#1E293B" : "#FFFFFF";
+    const flatBorder = colorScheme === "dark" ? "#334155" : "#F3F4F6";
+    const titleColor = colorScheme === "dark" ? "#F1F5F9" : "#111827";
+    const subtitleColor = colorScheme === "dark" ? "#94A3B8" : "#9CA3AF";
+    const backBg = colorScheme === "dark" ? "#0F172A" : "#F9FAFB";
+    const backBorder = colorScheme === "dark" ? "#334155" : "#E5E7EB";
+    const backIcon = colorScheme === "dark" ? "#94A3B8" : "#374151";
     return (
       <View
-        className="bg-white border-b border-gray-100 justify-center z-10"
         style={{
+          backgroundColor: flatBg,
+          borderBottomWidth: 1,
+          borderBottomColor: flatBorder,
+          justifyContent: "center",
+          zIndex: 10,
           paddingHorizontal: isMobile ? 16 : 32,
           paddingTop: (insets.top || 0) + (isMobile ? 14 : 18),
           paddingBottom: isMobile ? 14 : 18,
@@ -68,24 +81,25 @@ export function ScreenHeader({
             {!hideBack && (
               <TouchableOpacity
                 onPress={handleBack}
-                className="w-10 h-10 bg-gray-50 rounded-xl items-center justify-center border border-gray-200"
+                style={{ backgroundColor: backBg, borderWidth: 1, borderColor: backBorder }}
+                className="w-10 h-10 rounded-xl items-center justify-center"
                 activeOpacity={0.7}
               >
-                <AppIcon name="chevronBack" size={22} color="#374151" />
+                <AppIcon name="chevronBack" size={22} color={backIcon} />
               </TouchableOpacity>
             )}
             <View className="flex-1">
               <Text
-                className="font-black text-gray-900"
-                style={{ fontSize: isMobile ? 20 : 24 }}
+                style={{ fontSize: isMobile ? 20 : 24, color: titleColor }}
+                className="font-black"
                 numberOfLines={1}
               >
                 {title}
               </Text>
               {subtitle && (
                 <Text
-                  className="text-gray-400 font-semibold mt-0.5"
-                  style={{ fontSize: isMobile ? 11 : 13 }}
+                  style={{ fontSize: isMobile ? 11 : 13, color: subtitleColor }}
+                  className="font-semibold mt-0.5"
                   numberOfLines={1}
                 >
                   {subtitle}

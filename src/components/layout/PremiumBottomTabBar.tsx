@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, TouchableOpacity, Platform, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { usePathname, router } from "expo-router";
+import { useColorScheme } from "nativewind";
 import { SchoolTheme } from "@/constants/theme";
 import type { AppIconName } from "@/constants/appIcons";
 import { AppIcon } from "@/components/icons/AppIcon";
@@ -42,12 +43,14 @@ function isActive(pathname: string, href: string): boolean {
 export function PremiumBottomTabBar({ tabs, accent = SchoolTheme.primary }: Props) {
   const pathname = usePathname();
   const insets = useSafeAreaInsets();
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === "dark";
   const bottomPad = Math.max(insets.bottom, Platform.OS === "ios" ? 10 : 8);
   const centerIndex = tabs.findIndex((t) => t.center);
   const centerIdx = centerIndex >= 0 ? centerIndex : Math.floor(tabs.length / 2);
 
   return (
-    <View style={[styles.bar, { paddingBottom: bottomPad }]}>
+    <View style={[styles.bar, { paddingBottom: bottomPad, backgroundColor: isDark ? SchoolTheme.cardDark : "#FFFFFF", borderTopColor: isDark ? SchoolTheme.borderDark : "#E8ECF1" }]}>
       <View style={styles.row}>
         {tabs.map((tab, index) => {
           const active = isActive(pathname, tab.href);
@@ -64,12 +67,12 @@ export function PremiumBottomTabBar({ tabs, accent = SchoolTheme.primary }: Prop
                 <View
                   style={[
                     styles.centerBtn,
-                    active && { backgroundColor: accent, borderColor: "#fff" },
+                    active && { backgroundColor: accent, borderColor: isDark ? SchoolTheme.cardDark : "#fff" },
                   ]}
                 >
                   <AppIcon name={tab.icon} size={28} color="#fff" active />
                 </View>
-                <Text style={[styles.centerLabel, active && { color: accent, fontWeight: "800" }]}>
+                <Text style={[styles.centerLabel, active && { color: accent, fontWeight: "800" }, { color: isDark ? SchoolTheme.textSecondaryDark : "#9CA3AF" }]}>
                   {tab.label}
                 </Text>
               </TouchableOpacity>
@@ -87,7 +90,7 @@ export function PremiumBottomTabBar({ tabs, accent = SchoolTheme.primary }: Prop
                 <AppIcon
                   name={tab.icon}
                   size={active ? 26 : 24}
-                  color={active ? accent : "#9CA3AF"}
+                  color={active ? accent : (isDark ? SchoolTheme.textSecondaryDark : "#9CA3AF")}
                   active={active}
                 />
                 {active ? <View style={[styles.activeDot, { backgroundColor: accent }]} /> : null}
@@ -99,7 +102,7 @@ export function PremiumBottomTabBar({ tabs, accent = SchoolTheme.primary }: Prop
                   </View>
                 ) : null}
               </View>
-              <Text style={[styles.sideLabel, active && { color: accent, fontWeight: "800" }]}>
+              <Text style={[styles.sideLabel, active && { color: accent, fontWeight: "800" }, { color: isDark ? SchoolTheme.textSecondaryDark : "#9CA3AF" }]}>
                 {tab.label}
               </Text>
             </TouchableOpacity>

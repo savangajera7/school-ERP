@@ -42,7 +42,7 @@ export function StatCard({
       onPress={onPress}
       disabled={!onPress}
       activeOpacity={0.7}
-      className="bg-white border border-gray-100 rounded-2xl p-4"
+      className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 rounded-2xl p-4"
       style={{
         width: isMobile ? "47.5%" : "23.5%",
         ...premiumCardShadow,
@@ -56,14 +56,14 @@ export function StatCard({
           color={textColor}
         />
       </View>
-      <Text className="text-gray-400 text-[10px] font-black uppercase tracking-wider mb-0.5">
+      <Text className="text-gray-400 dark:text-slate-400 text-[10px] font-black uppercase tracking-wider mb-0.5">
         {label}
       </Text>
       <Text className="text-2xl font-black" style={{ color: textColor }}>
         {value}
       </Text>
       <Text
-        className="text-[11px] font-semibold text-gray-400 mt-1"
+        className="text-[11px] font-semibold text-gray-400 dark:text-slate-500 mt-1"
         numberOfLines={1}
       >
         {subtitle}

@@ -14,19 +14,25 @@ type Props = {
   backgroundColor?: string;
 };
 
+import { useColorScheme } from "nativewind";
+
 export function MobileScreenShell({
   children,
   withTabBar = false,
   edges = ["left", "right"],
   style,
-  backgroundColor = SchoolTheme.background,
+  backgroundColor,
 }: Props) {
   const { height, isMobile } = useResponsive();
+  const { colorScheme } = useColorScheme();
   const tabPad = withTabBar && isMobile ? PREMIUM_TAB_BAR_HEIGHT + 16 : 0;
   const minH = isMobile ? height - tabPad : undefined;
 
+  // Default to theme background in light mode, slate-900 in dark mode
+  const resolvedBg = backgroundColor ?? (colorScheme === "dark" ? "#0F172A" : SchoolTheme.background);
+
   return (
-    <SafeAreaView style={[styles.safe, { backgroundColor }]} edges={edges}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: resolvedBg }]} edges={edges}>
       <View style={[styles.inner, { minHeight: minH, paddingBottom: tabPad }, style]}>
         {children}
       </View>

@@ -27,14 +27,12 @@ export function SectionCard({
 }: SectionCardProps) {
   return (
     <View
-      className="bg-white border border-gray-100 rounded-2xl mb-4 overflow-hidden"
-      style={{
-        ...premiumCardShadow,
-      }}
+      className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 rounded-2xl mb-4 overflow-hidden"
+      style={{ ...premiumCardShadow }}
     >
-      <View className="flex-row items-center gap-2 px-5 pt-5 pb-4 border-b border-gray-50">
+      <View className="flex-row items-center gap-2 px-5 pt-5 pb-4 border-b border-gray-50 dark:border-slate-700/50">
         <AppIcon name={icon} size={20} color="#134A8C" active />
-        <Text className="text-gray-900 font-black text-[14px] uppercase tracking-wide flex-1">
+        <Text className="text-gray-900 dark:text-slate-100 font-black text-[14px] uppercase tracking-wide flex-1">
           {title}
         </Text>
         <View className="w-1 h-4 bg-[#F5921E] rounded-full" />
@@ -43,3 +41,4 @@ export function SectionCard({
     </View>
   );
 }
+

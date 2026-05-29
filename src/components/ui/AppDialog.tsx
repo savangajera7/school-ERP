@@ -31,8 +31,10 @@ import {
   StyleSheet,
   ScrollView,
 } from "react-native";
+import { useColorScheme } from "nativewind";
 import { Colors } from "@/constants/colors";
 import { premiumCardShadow } from "@/constants/premiumStyles";
+import { SchoolTheme } from "@/constants/theme";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -86,6 +88,8 @@ export function AppDialogProvider({ children }: { children: React.ReactNode }) {
     inputValue: "",
     loading: false,
   });
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === "dark";
 
   const resolveRef = useRef<((result: { confirmed: boolean; inputValue?: string }) => void) | null>(null);
 
@@ -161,12 +165,12 @@ export function AppDialogProvider({ children }: { children: React.ReactNode }) {
   }[state.variant ?? "info"];
 
   const variantBg = {
-    info: "#EFF6FF",
-    success: "#ECFDF5",
-    error: "#FEF2F2",
-    warning: "#FFFBEB",
-    confirm: "#EFF6FF",
-    input: "#EFF6FF",
+    info: isDark ? "#1E3A5F" : "#EFF6FF",
+    success: isDark ? "#064E3B" : "#ECFDF5",
+    error: isDark ? "#7F1D1D" : "#FEF2F2",
+    warning: isDark ? "#78350F" : "#FFFBEB",
+    confirm: isDark ? "#1E3A5F" : "#EFF6FF",
+    input: isDark ? "#1E3A5F" : "#EFF6FF",
   }[state.variant ?? "info"];
 
   return (
@@ -187,7 +191,7 @@ export function AppDialogProvider({ children }: { children: React.ReactNode }) {
         >
           <TouchableOpacity
             activeOpacity={1}
-            style={[styles.card, premiumCardShadow as any]}
+            style={[styles.card, premiumCardShadow as any, { backgroundColor: isDark ? SchoolTheme.cardDark : "#fff", borderColor: isDark ? SchoolTheme.borderDark : "#F3F4F6" }]}
             onPress={() => {}}
           >
             {/* Icon circle */}
@@ -204,7 +208,7 @@ export function AppDialogProvider({ children }: { children: React.ReactNode }) {
 
             {/* Message */}
             {!!state.message && (
-              <Text style={styles.message}>{state.message}</Text>
+              <Text style={[styles.message, { color: isDark ? SchoolTheme.textSecondaryDark : "#4B5563" }]}>{state.message}</Text>
             )}
 
             {/* Input field */}
@@ -218,6 +222,7 @@ export function AppDialogProvider({ children }: { children: React.ReactNode }) {
                 style={[
                   styles.input,
                   state.inputMultiline && styles.inputMultiline,
+                  { backgroundColor: isDark ? "#1E293B" : "#F9FAFB", borderColor: isDark ? SchoolTheme.borderDark : "#E5E7EB", color: isDark ? SchoolTheme.textDark : "#1F2937" }
                 ]}
                 autoFocus
               />
@@ -248,7 +253,7 @@ export function AppDialogProvider({ children }: { children: React.ReactNode }) {
                           backgroundColor: Colors.primary,
                         },
                         isDestructive && { backgroundColor: "#DC2626" },
-                        isCancel && styles.btnCancel,
+                        isCancel && [styles.btnCancel, { backgroundColor: isDark ? "#1E293B" : "#F9FAFB", borderColor: isDark ? SchoolTheme.borderDark : "#E5E7EB" }],
                         (state.buttons?.length ?? 0) === 1 && styles.btnFull,
                       ]}
                       activeOpacity={0.8}
@@ -257,7 +262,7 @@ export function AppDialogProvider({ children }: { children: React.ReactNode }) {
                         style={[
                           styles.btnText,
                           (isPrimary || isDestructive) && styles.btnTextPrimary,
-                          isCancel && styles.btnTextCancel,
+                          isCancel && [styles.btnTextCancel, { color: isDark ? SchoolTheme.textSecondaryDark : "#6B7280" }],
                         ]}
                       >
                         {btn.label}

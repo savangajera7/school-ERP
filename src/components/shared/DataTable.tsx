@@ -1,6 +1,8 @@
 import React from "react";
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, type DimensionValue } from "react-native";
+import { useColorScheme } from "nativewind";
 import { premiumCardShadow } from "@/constants/premiumStyles";
+import { SchoolTheme } from "@/constants/theme";
 
 export interface TableColumn<T> {
   key: string;
@@ -26,28 +28,62 @@ export function DataTable<T>({
   onRowPress,
   isLoading,
 }: DataTableProps<T>) {
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === "dark";
+
   if (isLoading) {
     return (
-      <View className="bg-white rounded-2xl p-6 border border-gray-100" style={premiumCardShadow}>
-        <Text className="text-gray-400 text-center font-bold">Loading table data...</Text>
+      <View 
+        className="rounded-2xl p-6 border overflow-hidden flex-1" 
+        style={[
+          premiumCardShadow,
+          {
+            backgroundColor: isDark ? SchoolTheme.cardDark : "#FFFFFF",
+            borderColor: isDark ? SchoolTheme.borderDark : "#F3F4F6"
+          }
+        ]}
+      >
+        <Text className="text-center font-bold" style={{ color: isDark ? SchoolTheme.textSecondaryDark : "#9CA3AF" }}>
+          Loading table data...
+        </Text>
       </View>
     );
   }
 
   if (!data || data.length === 0) {
     return (
-      <View className="bg-white rounded-2xl p-6 border border-gray-100" style={premiumCardShadow}>
-        <Text className="text-gray-400 text-center font-bold">No data available.</Text>
+      <View 
+        className="rounded-2xl p-6 border overflow-hidden flex-1" 
+        style={[
+          premiumCardShadow,
+          {
+            backgroundColor: isDark ? SchoolTheme.cardDark : "#FFFFFF",
+            borderColor: isDark ? SchoolTheme.borderDark : "#F3F4F6"
+          }
+        ]}
+      >
+        <Text className="text-center font-bold" style={{ color: isDark ? SchoolTheme.textSecondaryDark : "#9CA3AF" }}>
+          No data available.
+        </Text>
       </View>
     );
   }
 
   return (
-    <View className="bg-white rounded-2xl border border-gray-100 overflow-hidden flex-1" style={premiumCardShadow}>
+    <View 
+      className="rounded-2xl border overflow-hidden flex-1" 
+      style={[
+        premiumCardShadow,
+        {
+          backgroundColor: isDark ? SchoolTheme.cardDark : "#FFFFFF",
+          borderColor: isDark ? SchoolTheme.borderDark : "#F3F4F6"
+        }
+      ]}
+    >
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ minWidth: '100%' }}>
         <View style={styles.tableContainer}>
           {/* Header Row */}
-          <View style={styles.headerRow}>
+          <View style={[styles.headerRow, { backgroundColor: isDark ? "#1E293B" : "#F4F8FC", borderBottomColor: isDark ? SchoolTheme.borderDark : "#F3F4F6" }]}>
             {columns.map((col, idx) => (
               <View
                 key={`header-${col.key}-${idx}`}
@@ -58,7 +94,7 @@ export function DataTable<T>({
                   { alignItems: col.align === "right" ? "flex-end" : col.align === "center" ? "center" : "flex-start" }
                 ]}
               >
-                <Text className="font-black text-gray-400 text-[11px] uppercase tracking-wider">
+                <Text className="font-black text-[11px] uppercase tracking-wider" style={{ color: isDark ? SchoolTheme.textSecondaryDark : "#9CA3AF" }}>
                   {col.header}
                 </Text>
               </View>
@@ -70,7 +106,16 @@ export function DataTable<T>({
             const isEven = rowIndex % 2 === 0;
             const rowContent = (
               <View
-                style={[styles.row, isEven ? styles.rowEven : styles.rowOdd]}
+                style={[
+                  styles.row, 
+                  isEven ? styles.rowEven : styles.rowOdd,
+                  { 
+                    borderBottomColor: isDark ? SchoolTheme.borderDark : "#F3F4F6",
+                    backgroundColor: isEven 
+                      ? (isDark ? SchoolTheme.cardDark : "#FFFFFF") 
+                      : (isDark ? "rgba(30, 41, 59, 0.5)" : "rgba(249, 250, 251, 0.5)")
+                  }
+                ]}
               >
                 {columns.map((col, colIndex) => {
                   return (
@@ -86,7 +131,7 @@ export function DataTable<T>({
                       {col.render ? (
                         col.render(rowItem, rowIndex)
                       ) : (
-                        <Text className="text-sm font-semibold text-gray-700" numberOfLines={1}>
+                        <Text className="text-sm font-semibold" numberOfLines={1} style={{ color: isDark ? SchoolTheme.textDark : "#374151" }}>
                           {String((rowItem as any)[col.key] || "-")}
                         </Text>
                       )}
@@ -123,9 +168,7 @@ const styles = StyleSheet.create({
   },
   headerRow: {
     flexDirection: "row",
-    backgroundColor: "#F4F8FC",
     borderBottomWidth: 1,
-    borderBottomColor: "#F3F4F6",
     paddingVertical: 12,
     paddingHorizontal: 16,
   },
@@ -134,7 +177,6 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#F3F4F6",
   },
   rowEven: {
     backgroundColor: "#FFFFFF",

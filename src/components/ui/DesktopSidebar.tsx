@@ -59,7 +59,7 @@ export function DesktopSidebar() {
 
   return (
     <View
-      className="bg-white border-r border-gray-150"
+      className="bg-white dark:bg-slate-900 border-r border-gray-150 dark:border-slate-800"
       style={{
         width: sidebarWidth,
         paddingTop: (insets.top || 0) + 16,
@@ -68,15 +68,15 @@ export function DesktopSidebar() {
     >
       {/* ── Brand / collapse header ── */}
       {isCollapsed ? (
-        <View className="pb-5 mb-2 border-b border-gray-100 px-2 items-center gap-3">
+        <View className="pb-5 mb-2 border-b border-gray-100 dark:border-slate-800 px-2 items-center gap-3">
           <TouchableOpacity
             onPress={toggleCollapse}
-            className="w-9 h-9 bg-gray-50 border border-gray-200 rounded-xl items-center justify-center"
+            className="w-9 h-9 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl items-center justify-center"
             activeOpacity={0.8}
           >
             <AppIcon name="expand" size={14} color="#6B7280" />
           </TouchableOpacity>
-          <View className="w-10 h-10 rounded-xl bg-white border border-gray-100 overflow-hidden items-center justify-center p-0.5">
+          <View className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 overflow-hidden items-center justify-center p-0.5">
             <Image
               source={{ uri: "https://little-angle.mahispark.com/images/logo.png" }}
               className="w-8 h-8"
@@ -85,9 +85,9 @@ export function DesktopSidebar() {
           </View>
         </View>
       ) : (
-        <View className="flex-row items-center justify-between pb-5 mb-2 border-b border-gray-100 px-5">
+        <View className="flex-row items-center justify-between pb-5 mb-2 border-b border-gray-100 dark:border-slate-800 px-5">
           <View className="flex-row items-center gap-3 flex-1">
-            <View className="w-10 h-10 rounded-xl bg-white border border-gray-100 overflow-hidden items-center justify-center p-0.5">
+            <View className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 overflow-hidden items-center justify-center p-0.5">
               <Image
                 source={{ uri: "https://little-angle.mahispark.com/images/logo.png" }}
                 className="w-8 h-8"
@@ -95,7 +95,7 @@ export function DesktopSidebar() {
               />
             </View>
             <View className="flex-1">
-              <Text className="text-[13px] font-black text-gray-900 tracking-wide">
+              <Text className="text-[13px] font-black text-gray-900 dark:text-slate-100 tracking-wide">
                 Little Angel's
               </Text>
               <Text className="text-[9px] font-black text-[#F5921E] uppercase tracking-widest">
@@ -105,7 +105,7 @@ export function DesktopSidebar() {
           </View>
           <TouchableOpacity
             onPress={toggleCollapse}
-            className="w-8 h-8 bg-gray-50 border border-gray-200 rounded-xl items-center justify-center ml-2"
+            className="w-8 h-8 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl items-center justify-center ml-2"
             activeOpacity={0.8}
           >
             <AppIcon name="collapse" size={14} color="#6B7280" />
@@ -128,7 +128,7 @@ export function DesktopSidebar() {
               activeOpacity={0.7}
               className={`flex-row items-center rounded-xl py-2.5 relative ${
                 isCollapsed ? "justify-center px-1" : "px-3 gap-3"
-              } ${active ? "bg-[#134A8C]/10" : ""}`}
+              } ${active ? "bg-[#134A8C]/10 dark:bg-slate-800" : ""}`}
               style={{ minHeight: 44 }}
             >
               <AppIcon
@@ -140,7 +140,7 @@ export function DesktopSidebar() {
               {!isCollapsed && (
                 <Text
                   className={`text-[13px] flex-1 ${
-                    active ? "font-black text-[#134A8C]" : "font-bold text-gray-500"
+                    active ? "font-black text-[#134A8C] dark:text-[#60A5FA]" : "font-bold text-gray-500 dark:text-slate-400"
                   }`}
                 >
                   {item.label}
@@ -168,32 +168,32 @@ export function DesktopSidebar() {
 
       {/* ── User + logout ── */}
       <View
-        className={`pt-4 border-t border-gray-100 ${
+        className={`pt-4 border-t border-gray-100 dark:border-slate-800 ${
           isCollapsed ? "px-2 items-center" : "px-4"
         }`}
       >
         <TouchableOpacity
           onPress={() => router.push("/(app)/profile")}
           activeOpacity={0.8}
-          className={`flex-row items-center mb-3 bg-gray-50 rounded-2xl border border-gray-100 p-2 ${
+          className={`flex-row items-center mb-3 bg-gray-50 dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 p-2 ${
             isCollapsed ? "justify-center" : "gap-3"
           }`}
         >
-          <View className="w-9 h-9 rounded-xl bg-white shadow-sm items-center justify-center border border-gray-100">
+          <View className="w-9 h-9 rounded-xl bg-white dark:bg-slate-700 shadow-sm items-center justify-center border border-gray-100 dark:border-slate-600">
             {userData?.avatar ? (
               <Image source={{ uri: userData.avatar }} className="w-full h-full rounded-xl" />
             ) : (
-              <Text className="text-sm font-black text-[#134A8C]">
+              <Text className="text-sm font-black text-[#134A8C] dark:text-[#60A5FA]">
                 {firstName.charAt(0).toUpperCase()}
               </Text>
             )}
           </View>
           {!isCollapsed && (
             <View className="flex-1">
-              <Text className="text-[13px] font-black text-gray-800" numberOfLines={1}>
+              <Text className="text-[13px] font-black text-gray-800 dark:text-slate-100" numberOfLines={1}>
                 {formatDisplayName(userData?.name)}
               </Text>
-              <Text className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-0.5">
+              <Text className="text-[10px] font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest mt-0.5">
                 {roleLabel || (role ? ROLE_LABELS[role] : "")}
               </Text>
             </View>
@@ -201,7 +201,7 @@ export function DesktopSidebar() {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={logout}
-          className={`flex-row items-center bg-white rounded-xl border border-gray-200 py-2.5 ${
+          className={`flex-row items-center bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 py-2.5 ${
             isCollapsed ? "justify-center px-2 w-10 h-10 mx-auto" : "px-3 gap-2"
           }`}
           style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.03, shadowRadius: 4, elevation: 1 }}
@@ -209,7 +209,7 @@ export function DesktopSidebar() {
         >
           <AppIcon name="logout" size={16} color="#6B7280" />
           {!isCollapsed && (
-            <Text className="text-[11px] font-black text-gray-600 uppercase tracking-widest">
+            <Text className="text-[11px] font-black text-gray-600 dark:text-slate-400 uppercase tracking-widest">
               Sign Out
             </Text>
           )}
