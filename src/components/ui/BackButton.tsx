@@ -12,7 +12,16 @@ export const BackButton: React.FC<BackButtonProps> = ({ light = false }) => {
   const color = light ? "#fff" : SchoolTheme.primary;
   return (
     <TouchableOpacity
-      onPress={() => router.back()}
+      onPress={() => {
+        if (router.canGoBack()) {
+          router.back();
+        } else {
+          const { useAuthStore } = require("@/store/authStore");
+          const { getHomeRoute } = require("@/utils/roleRouting");
+          const role = useAuthStore.getState().role;
+          router.replace(getHomeRoute(role));
+        }
+      }}
       className="flex-row items-center gap-1"
       style={Platform.OS === "web" ? ({ cursor: "pointer" } as object) : undefined}
       hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}

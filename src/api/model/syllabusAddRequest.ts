@@ -15,12 +15,14 @@
  * 2. Authorize in Swagger (paste token only)
  * 3. GET /api/Login/Profile to verify
  *
- * **Student:** yash@gmail.com / 123 | **Admin:** admin / admin123
+ * **Login body:** { "userName": "superadmin", "password": "123" }
  * OpenAPI spec version: v1
  */
 import type { SyllabusAttachmentDto } from './syllabusAttachmentDto';
 
 export interface SyllabusAddRequest {
+  /** @nullable */
+  schoolID?: number | null;
   classID?: number;
   /** @nullable */
   batchID?: number | null;

@@ -36,7 +36,7 @@ export function useAuth() {
     ): Promise<{ ok: boolean; error?: string }> => {
       try {
         const response = await apiLoginMutation.mutateAsync({
-          data: { userName: email, email, password },
+          data: { userName: email, password },
         });
         const envelope = (response as { data?: Record<string, unknown> })?.data ?? {};
         const token = String(envelope.token ?? "");

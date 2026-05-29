@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Platform, Linking } from "react-native";
+import { View, Text, TouchableOpacity, Platform, Linking, ScrollView } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useResponsive } from "@/hooks/useResponsive";
 import { Card } from "@/components/ui/Card";
@@ -65,7 +65,16 @@ export default function StudentProfileScreen() {
         </ScrollView>
         <View className="flex-row gap-4">
           <TouchableOpacity 
-            onPress={() => router.back()} 
+            onPress={() => {
+              if (router.canGoBack()) {
+                router.back();
+              } else {
+                const { useAuthStore } = require("@/store/authStore");
+                const { getHomeRoute } = require("@/utils/roleRouting");
+                const role = useAuthStore.getState().role;
+                router.replace(getHomeRoute(role));
+              }
+            }} 
             className="px-6 py-3 bg-gray-100 rounded-xl"
             activeOpacity={0.8}
           >
@@ -94,7 +103,16 @@ export default function StudentProfileScreen() {
         </ScrollView>
         <View className="flex-row gap-4">
           <TouchableOpacity 
-            onPress={() => router.back()} 
+            onPress={() => {
+              if (router.canGoBack()) {
+                router.back();
+              } else {
+                const { useAuthStore } = require("@/store/authStore");
+                const { getHomeRoute } = require("@/utils/roleRouting");
+                const role = useAuthStore.getState().role;
+                router.replace(getHomeRoute(role));
+              }
+            }} 
             className="px-6 py-3 bg-gray-100 rounded-xl"
             activeOpacity={0.8}
           >

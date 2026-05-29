@@ -448,7 +448,7 @@ export const MOBILE_TABS_BY_ROLE: Record<
     { label: "Menu", icon: "menu", route: "/(app)/menu" },
     { label: "Search", icon: "search", route: "/(app)/students" },
     { label: "Home", icon: "home", route: "/(app)/dashboard" },
-    { label: "Time Table", icon: "timetable", route: "/(app)/timetable" },
+    { label: "Class", icon: "attendance", route: "/(app)/attendance" },
     { label: "Profile", icon: "profile", route: "/(app)/profile" },
   ],
   teacher: [

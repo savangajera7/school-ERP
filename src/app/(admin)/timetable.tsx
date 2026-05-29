@@ -20,8 +20,8 @@ import {
 import { useGetApiClassGet } from "@/api/generated/master-class/master-class";
 import {
   useGetApiTeacherGetTeacherList,
-  useGetApiTeacherPermissionsTeacherId,
 } from "@/api/generated/teacher/teacher";
+import { useGetApiTeacherPermissionsTeacherId } from "@/api/generated/6-teacher-permissions-admin-assigns-module-access-per-class/6-teacher-permissions-admin-assigns-module-access-per-class";
 import { useGetApiSubjectGetSubjectList } from "@/api/generated/subject/subject";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -235,7 +235,7 @@ export default function TimetableScreen() {
   const { data: classesRaw } = useGetApiClassGet();
   
   const { data: teacherPermissionsData } = useGetApiTeacherPermissionsTeacherId(
-    Number(userData?.userId || 0),
+    Number(userData?.id || 0),
     { query: { enabled: isTeacher } }
   );
 
@@ -256,14 +256,21 @@ export default function TimetableScreen() {
   const teachers = useMemo(() => parseApiList<any>(teachersRaw?.data), [teachersRaw]);
 
   const { data: subjectsRaw } = useGetApiSubjectGetSubjectList();
-  const subjects = useMemo(() => parseApiList<any>(subjectsRaw?.data), [subjectsRaw]);
+  const subjects = useMemo(() => {
+    const list = parseApiList<any>(subjectsRaw?.data);
+    return list.filter((s: any) => 
+      s.subjectName && 
+      s.subjectName.trim().length > 0 && 
+      s.subjectName.trim().toLowerCase() !== "show subject"
+    );
+  }, [subjectsRaw]);
 
   // Auto-select first class for admin & teacher
   React.useEffect(() => {
     if (classes.length > 0 && selectedClassID === null && (isSchoolAdmin || isAdmin || isTeacher)) {
       setSelectedClassID(classes[0].classID);
     }
-  }, [classes]);
+  }, [classes, selectedClassID, isSchoolAdmin, isAdmin, isTeacher]);
 
   // ── Timetable query params ────────────────────────────────────────────────
   const queryParams = useMemo(() => {
@@ -273,7 +280,7 @@ export default function TimetableScreen() {
     }
     // admin & teacher
     if (!selectedClassID) return null;
-    return { View: "student", ClassID: selectedClassID, Day: selectedDay };
+    return { ClassID: selectedClassID, Day: selectedDay };
   }, [isViewOnly, selectedClassID, selectedDay]);
 
   const { data: timetableRaw, isLoading, isError, refetch } = useGetApiTimetableGet(
@@ -376,7 +383,7 @@ export default function TimetableScreen() {
           },
         });
       }
-      queryClient.invalidateQueries({ queryKey: getGetApiTimetableGetQueryKey(queryParams ?? undefined) });
+      queryClient.invalidateQueries({ queryKey: ['/api/timetable/get'] });
       setFormVisible(false);
     } catch (e: any) {
       Alert.alert("Error", e?.message || "Failed to save period");
@@ -394,7 +401,7 @@ export default function TimetableScreen() {
     setIsDeleting(true);
     try {
       await deleteMutation.mutateAsync({ data: { timetableID: deleteTarget.timetableID } });
-      queryClient.invalidateQueries({ queryKey: getGetApiTimetableGetQueryKey(queryParams ?? undefined) });
+      queryClient.invalidateQueries({ queryKey: ['/api/timetable/get'] });
       setDeleteTarget(null);
     } catch (e: any) {
       Alert.alert("Error", e?.message || "Failed to delete period");

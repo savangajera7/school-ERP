@@ -15,7 +15,7 @@
  * 2. Authorize in Swagger (paste token only)
  * 3. GET /api/Login/Profile to verify
  *
- * **Student:** yash@gmail.com / 123 | **Admin:** admin / admin123
+ * **Login body:** { "userName": "superadmin", "password": "123" }
  * OpenAPI spec version: v1
  */
 import {
@@ -94,7 +94,7 @@ export const getPostApiTeacherClassAssignmentAddUrl = () => {
 
 
 
-  return `/api/teacher/class/assignment/add`
+  return `/api/TeacherClassAssignment/add`
 }
 
 export const postApiTeacherClassAssignmentAdd = async (teacherClassAssignmentAddRequest?: TeacherClassAssignmentAddRequest, options?: RequestInit): Promise<postApiTeacherClassAssignmentAddResponse> => {
@@ -201,7 +201,7 @@ export const getGetApiTeacherClassAssignmentGetUrl = (params?: GetApiTeacherClas
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/api/teacher/class/assignment/get?${stringifiedParams}` : `/api/teacher/class/assignment/get`
+  return stringifiedParams.length > 0 ? `/api/TeacherClassAssignment/get?${stringifiedParams}` : `/api/TeacherClassAssignment/get`
 }
 
 export const getApiTeacherClassAssignmentGet = async (params?: GetApiTeacherClassAssignmentGetParams, options?: RequestInit): Promise<getApiTeacherClassAssignmentGetResponse> => {
@@ -221,7 +221,7 @@ export const getApiTeacherClassAssignmentGet = async (params?: GetApiTeacherClas
 
 export const getGetApiTeacherClassAssignmentGetQueryKey = (params?: GetApiTeacherClassAssignmentGetParams,) => {
     return [
-    `/api/teacher/class/assignment/get`, ...(params ? [params] : [])
+    `/api/TeacherClassAssignment/get`, ...(params ? [params] : [])
     ] as const;
     }
 
@@ -332,7 +332,7 @@ export const getDeleteApiTeacherClassAssignmentRemoveUrl = () => {
 
 
 
-  return `/api/teacher/class/assignment/remove`
+  return `/api/TeacherClassAssignment/remove`
 }
 
 export const deleteApiTeacherClassAssignmentRemove = async (teacherClassAssignmentRemoveRequest?: TeacherClassAssignmentRemoveRequest, options?: RequestInit): Promise<deleteApiTeacherClassAssignmentRemoveResponse> => {
@@ -432,7 +432,7 @@ export const getPutApiTeacherClassAssignmentUpdateUrl = () => {
 
 
 
-  return `/api/teacher/class/assignment/update`
+  return `/api/TeacherClassAssignment/update`
 }
 
 export const putApiTeacherClassAssignmentUpdate = async (teacherClassAssignmentUpdateRequest?: TeacherClassAssignmentUpdateRequest, options?: RequestInit): Promise<putApiTeacherClassAssignmentUpdateResponse> => {

@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "School Management API",
-    "description": "### API flow (all modules)\n| Action | HTTP | Route |\n| Get All | GET | /api/{Controller}/Get |\n| Get By ID | GET | /api/{Controller}/GetByID/{id} |\n| Add | POST | /api/{Controller}/Add |\n| Update | PUT | /api/{Controller}/Update |\n| Delete | DELETE | /api/{Controller}/Delete/{id} |\n\n### JWT\n1. POST /api/Login/Login → copy token\n2. Authorize in Swagger (paste token only)\n3. GET /api/Login/Profile to verify\n\n**Student:** yash@gmail.com / 123 | **Admin:** admin / admin123",
+    "description": "### API flow (all modules)\n| Action | HTTP | Route |\n| Get All | GET | /api/{Controller}/Get |\n| Get By ID | GET | /api/{Controller}/GetByID/{id} |\n| Add | POST | /api/{Controller}/Add |\n| Update | PUT | /api/{Controller}/Update |\n| Delete | DELETE | /api/{Controller}/Delete/{id} |\n\n### JWT\n1. POST /api/Login/Login → copy token\n2. Authorize in Swagger (paste token only)\n3. GET /api/Login/Profile to verify\n\n**Login body:** { \"userName\": \"superadmin\", \"password\": \"123\" }",
     "version": "v1"
   },
   "paths": {
@@ -2811,6 +2811,18 @@
         }
       }
     },
+    "/api/Login/navigation": {
+      "get": {
+        "tags": [
+          "2. Verify Token"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/api/Login/Profile": {
       "get": {
         "tags": [
@@ -5523,6 +5535,14 @@
         ],
         "parameters": [
           {
+            "name": "SchoolID",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
             "name": "View",
             "in": "query",
             "schema": {
@@ -6811,6 +6831,15 @@
               "type": "integer",
               "format": "int32"
             }
+          },
+          {
+            "name": "schoolID",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
           }
         ],
         "responses": {
@@ -7416,6 +7445,298 @@
         "responses": {
           "200": {
             "description": "Success"
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/TeacherClassAssignment/add": {
+      "post": {
+        "tags": [
+          "6. Teacher Class Assignment"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeacherClassAssignmentAddRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeacherClassAssignmentAddRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeacherClassAssignmentAddRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/TeacherClassAssignment/get": {
+      "get": {
+        "tags": [
+          "6. Teacher Class Assignment"
+        ],
+        "parameters": [
+          {
+            "name": "teacherId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "schoolID",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/TeacherClassAssignment/remove": {
+      "delete": {
+        "tags": [
+          "6. Teacher Class Assignment"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeacherClassAssignmentRemoveRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeacherClassAssignmentRemoveRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeacherClassAssignmentRemoveRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/api/TeacherClassAssignment/update": {
+      "put": {
+        "tags": [
+          "6. Teacher Class Assignment"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeacherClassAssignmentUpdateRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeacherClassAssignmentUpdateRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeacherClassAssignmentUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         },
         "security": [
@@ -9165,10 +9486,6 @@
           "password": {
             "type": "string",
             "nullable": true
-          },
-          "email": {
-            "type": "string",
-            "nullable": true
           }
         },
         "additionalProperties": false
@@ -10724,6 +11041,11 @@
       "SyllabusAddRequest": {
         "type": "object",
         "properties": {
+          "schoolID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "classID": {
             "type": "integer",
             "format": "int32"
@@ -10792,6 +11114,11 @@
       "SyllabusDeleteRequest": {
         "type": "object",
         "properties": {
+          "schoolID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "syllabusID": {
             "type": "integer",
             "format": "int32"
@@ -10802,6 +11129,11 @@
       "SyllabusUpdateRequest": {
         "type": "object",
         "properties": {
+          "schoolID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "syllabusID": {
             "type": "integer",
             "format": "int32"
@@ -11010,6 +11342,10 @@
       "TeacherClassAssignmentAddRequest": {
         "type": "object",
         "properties": {
+          "schoolID": {
+            "type": "integer",
+            "format": "int32"
+          },
           "teacherID": {
             "type": "integer",
             "format": "int32"
@@ -11028,6 +11364,10 @@
       "TeacherClassAssignmentRemoveRequest": {
         "type": "object",
         "properties": {
+          "schoolID": {
+            "type": "integer",
+            "format": "int32"
+          },
           "teacherID": {
             "type": "integer",
             "format": "int32"
@@ -11042,6 +11382,10 @@
       "TeacherClassAssignmentUpdateRequest": {
         "type": "object",
         "properties": {
+          "schoolID": {
+            "type": "integer",
+            "format": "int32"
+          },
           "teacherID": {
             "type": "integer",
             "format": "int32"
@@ -11596,7 +11940,7 @@
     "securitySchemes": {
       "Bearer": {
         "type": "http",
-        "description": "1) Call POST /api/Login/Login with email and password.\n2) Copy the token from the response.\n3) Click Authorize and paste the token only (without 'Bearer').",
+        "description": "1) Call POST /api/Login/Login with userName and password.\n2) Copy the token from the response.\n3) Click Authorize and paste the token only (without 'Bearer').",
         "scheme": "bearer",
         "bearerFormat": "JWT"
       }
