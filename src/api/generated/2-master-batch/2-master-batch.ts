@@ -38,7 +38,8 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
-  BatchModel
+  BatchModel,
+  DeleteApiBatchDeleteIdParams
 } from '../../model';
 
 import { customInstance } from '../../../services/api/axiosInstance';
@@ -135,17 +136,26 @@ export type deleteApiBatchDeleteIdResponseSuccess = (deleteApiBatchDeleteIdRespo
 
 export type deleteApiBatchDeleteIdResponse = (deleteApiBatchDeleteIdResponseSuccess)
 
-export const getDeleteApiBatchDeleteIdUrl = (id: number,) => {
+export const getDeleteApiBatchDeleteIdUrl = (id: number,
+    params?: DeleteApiBatchDeleteIdParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/api/Batch/Delete/${id}`
+  return stringifiedParams.length > 0 ? `/api/Batch/Delete/${id}?${stringifiedParams}` : `/api/Batch/Delete/${id}`
 }
 
-export const deleteApiBatchDeleteId = async (id: number, options?: RequestInit): Promise<deleteApiBatchDeleteIdResponse> => {
+export const deleteApiBatchDeleteId = async (id: number,
+    params?: DeleteApiBatchDeleteIdParams, options?: RequestInit): Promise<deleteApiBatchDeleteIdResponse> => {
 
-  return customInstance<deleteApiBatchDeleteIdResponse>(getDeleteApiBatchDeleteIdUrl(id),
+  return customInstance<deleteApiBatchDeleteIdResponse>(getDeleteApiBatchDeleteIdUrl(id,params),
   {
     ...options,
     method: 'DELETE'
@@ -158,8 +168,8 @@ export const deleteApiBatchDeleteId = async (id: number, options?: RequestInit):
 
 
 export const getDeleteApiBatchDeleteIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiBatchDeleteId>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof deleteApiBatchDeleteId>>, TError,{id: number}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiBatchDeleteId>>, TError,{id: number;params?: DeleteApiBatchDeleteIdParams}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteApiBatchDeleteId>>, TError,{id: number;params?: DeleteApiBatchDeleteIdParams}, TContext> => {
 
 const mutationKey = ['deleteApiBatchDeleteId'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -171,10 +181,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiBatchDeleteId>>, {id: number}> = (props) => {
-          const {id} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiBatchDeleteId>>, {id: number;params?: DeleteApiBatchDeleteIdParams}> = (props) => {
+          const {id,params} = props ?? {};
 
-          return  deleteApiBatchDeleteId(id,requestOptions)
+          return  deleteApiBatchDeleteId(id,params,requestOptions)
         }
 
 
@@ -189,11 +199,11 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type DeleteApiBatchDeleteIdMutationError = unknown
 
     export const useDeleteApiBatchDeleteId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiBatchDeleteId>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiBatchDeleteId>>, TError,{id: number;params?: DeleteApiBatchDeleteIdParams}, TContext>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteApiBatchDeleteId>>,
         TError,
-        {id: number},
+        {id: number;params?: DeleteApiBatchDeleteIdParams},
         TContext
       > => {
       return useMutation(getDeleteApiBatchDeleteIdMutationOptions(options), queryClient);

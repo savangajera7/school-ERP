@@ -19,18 +19,6 @@
  * OpenAPI spec version: v1
  */
 
-export interface TimetableUpdateRequest {
-  timetableID?: number;
-  /** @nullable */
-  subjectID?: number | null;
-  /** @nullable */
-  teacherID?: number | null;
-  /** @nullable */
-  roomNumber?: string | null;
-  /** @nullable */
-  startTime?: string | null;
-  /** @nullable */
-  endTime?: string | null;
-  /** @nullable */
-  day?: string | null;
-}
+export type DeleteApiBatchDeleteIdParams = {
+schoolID?: number;
+};

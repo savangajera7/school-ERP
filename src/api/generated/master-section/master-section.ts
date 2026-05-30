@@ -38,6 +38,8 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  DeleteApiSectionDeleteIdParams,
+  DeleteApiSectionDeleteSectionParams,
   SectionModel
 } from '../../model';
 
@@ -135,17 +137,26 @@ export type deleteApiSectionDeleteIdResponseSuccess = (deleteApiSectionDeleteIdR
 
 export type deleteApiSectionDeleteIdResponse = (deleteApiSectionDeleteIdResponseSuccess)
 
-export const getDeleteApiSectionDeleteIdUrl = (id: number,) => {
+export const getDeleteApiSectionDeleteIdUrl = (id: number,
+    params?: DeleteApiSectionDeleteIdParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/api/Section/Delete/${id}`
+  return stringifiedParams.length > 0 ? `/api/Section/Delete/${id}?${stringifiedParams}` : `/api/Section/Delete/${id}`
 }
 
-export const deleteApiSectionDeleteId = async (id: number, options?: RequestInit): Promise<deleteApiSectionDeleteIdResponse> => {
+export const deleteApiSectionDeleteId = async (id: number,
+    params?: DeleteApiSectionDeleteIdParams, options?: RequestInit): Promise<deleteApiSectionDeleteIdResponse> => {
 
-  return customInstance<deleteApiSectionDeleteIdResponse>(getDeleteApiSectionDeleteIdUrl(id),
+  return customInstance<deleteApiSectionDeleteIdResponse>(getDeleteApiSectionDeleteIdUrl(id,params),
   {
     ...options,
     method: 'DELETE'
@@ -158,8 +169,8 @@ export const deleteApiSectionDeleteId = async (id: number, options?: RequestInit
 
 
 export const getDeleteApiSectionDeleteIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiSectionDeleteId>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof deleteApiSectionDeleteId>>, TError,{id: number}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiSectionDeleteId>>, TError,{id: number;params?: DeleteApiSectionDeleteIdParams}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteApiSectionDeleteId>>, TError,{id: number;params?: DeleteApiSectionDeleteIdParams}, TContext> => {
 
 const mutationKey = ['deleteApiSectionDeleteId'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -171,10 +182,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiSectionDeleteId>>, {id: number}> = (props) => {
-          const {id} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiSectionDeleteId>>, {id: number;params?: DeleteApiSectionDeleteIdParams}> = (props) => {
+          const {id,params} = props ?? {};
 
-          return  deleteApiSectionDeleteId(id,requestOptions)
+          return  deleteApiSectionDeleteId(id,params,requestOptions)
         }
 
 
@@ -189,11 +200,11 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type DeleteApiSectionDeleteIdMutationError = unknown
 
     export const useDeleteApiSectionDeleteId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiSectionDeleteId>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiSectionDeleteId>>, TError,{id: number;params?: DeleteApiSectionDeleteIdParams}, TContext>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteApiSectionDeleteId>>,
         TError,
-        {id: number},
+        {id: number;params?: DeleteApiSectionDeleteIdParams},
         TContext
       > => {
       return useMutation(getDeleteApiSectionDeleteIdMutationOptions(options), queryClient);
@@ -210,17 +221,24 @@ export type deleteApiSectionDeleteSectionResponseSuccess = (deleteApiSectionDele
 
 export type deleteApiSectionDeleteSectionResponse = (deleteApiSectionDeleteSectionResponseSuccess)
 
-export const getDeleteApiSectionDeleteSectionUrl = () => {
+export const getDeleteApiSectionDeleteSectionUrl = (params?: DeleteApiSectionDeleteSectionParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/api/Section/DeleteSection`
+  return stringifiedParams.length > 0 ? `/api/Section/DeleteSection?${stringifiedParams}` : `/api/Section/DeleteSection`
 }
 
-export const deleteApiSectionDeleteSection = async ( options?: RequestInit): Promise<deleteApiSectionDeleteSectionResponse> => {
+export const deleteApiSectionDeleteSection = async (params?: DeleteApiSectionDeleteSectionParams, options?: RequestInit): Promise<deleteApiSectionDeleteSectionResponse> => {
 
-  return customInstance<deleteApiSectionDeleteSectionResponse>(getDeleteApiSectionDeleteSectionUrl(),
+  return customInstance<deleteApiSectionDeleteSectionResponse>(getDeleteApiSectionDeleteSectionUrl(params),
   {
     ...options,
     method: 'DELETE'
@@ -233,8 +251,8 @@ export const deleteApiSectionDeleteSection = async ( options?: RequestInit): Pro
 
 
 export const getDeleteApiSectionDeleteSectionMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiSectionDeleteSection>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof deleteApiSectionDeleteSection>>, TError,void, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiSectionDeleteSection>>, TError,{params?: DeleteApiSectionDeleteSectionParams}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteApiSectionDeleteSection>>, TError,{params?: DeleteApiSectionDeleteSectionParams}, TContext> => {
 
 const mutationKey = ['deleteApiSectionDeleteSection'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -246,10 +264,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiSectionDeleteSection>>, void> = () => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiSectionDeleteSection>>, {params?: DeleteApiSectionDeleteSectionParams}> = (props) => {
+          const {params} = props ?? {};
 
-
-          return  deleteApiSectionDeleteSection(requestOptions)
+          return  deleteApiSectionDeleteSection(params,requestOptions)
         }
 
 
@@ -264,11 +282,11 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type DeleteApiSectionDeleteSectionMutationError = unknown
 
     export const useDeleteApiSectionDeleteSection = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiSectionDeleteSection>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiSectionDeleteSection>>, TError,{params?: DeleteApiSectionDeleteSectionParams}, TContext>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteApiSectionDeleteSection>>,
         TError,
-        void,
+        {params?: DeleteApiSectionDeleteSectionParams},
         TContext
       > => {
       return useMutation(getDeleteApiSectionDeleteSectionMutationOptions(options), queryClient);

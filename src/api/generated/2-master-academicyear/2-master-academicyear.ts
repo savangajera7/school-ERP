@@ -38,7 +38,8 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
-  AcademicYearModel
+  AcademicYearModel,
+  DeleteApiAcademicYearDeleteIdParams
 } from '../../model';
 
 import { customInstance } from '../../../services/api/axiosInstance';
@@ -135,17 +136,26 @@ export type deleteApiAcademicYearDeleteIdResponseSuccess = (deleteApiAcademicYea
 
 export type deleteApiAcademicYearDeleteIdResponse = (deleteApiAcademicYearDeleteIdResponseSuccess)
 
-export const getDeleteApiAcademicYearDeleteIdUrl = (id: number,) => {
+export const getDeleteApiAcademicYearDeleteIdUrl = (id: number,
+    params?: DeleteApiAcademicYearDeleteIdParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/api/AcademicYear/Delete/${id}`
+  return stringifiedParams.length > 0 ? `/api/AcademicYear/Delete/${id}?${stringifiedParams}` : `/api/AcademicYear/Delete/${id}`
 }
 
-export const deleteApiAcademicYearDeleteId = async (id: number, options?: RequestInit): Promise<deleteApiAcademicYearDeleteIdResponse> => {
+export const deleteApiAcademicYearDeleteId = async (id: number,
+    params?: DeleteApiAcademicYearDeleteIdParams, options?: RequestInit): Promise<deleteApiAcademicYearDeleteIdResponse> => {
 
-  return customInstance<deleteApiAcademicYearDeleteIdResponse>(getDeleteApiAcademicYearDeleteIdUrl(id),
+  return customInstance<deleteApiAcademicYearDeleteIdResponse>(getDeleteApiAcademicYearDeleteIdUrl(id,params),
   {
     ...options,
     method: 'DELETE'
@@ -158,8 +168,8 @@ export const deleteApiAcademicYearDeleteId = async (id: number, options?: Reques
 
 
 export const getDeleteApiAcademicYearDeleteIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiAcademicYearDeleteId>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof deleteApiAcademicYearDeleteId>>, TError,{id: number}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiAcademicYearDeleteId>>, TError,{id: number;params?: DeleteApiAcademicYearDeleteIdParams}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteApiAcademicYearDeleteId>>, TError,{id: number;params?: DeleteApiAcademicYearDeleteIdParams}, TContext> => {
 
 const mutationKey = ['deleteApiAcademicYearDeleteId'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -171,10 +181,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiAcademicYearDeleteId>>, {id: number}> = (props) => {
-          const {id} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiAcademicYearDeleteId>>, {id: number;params?: DeleteApiAcademicYearDeleteIdParams}> = (props) => {
+          const {id,params} = props ?? {};
 
-          return  deleteApiAcademicYearDeleteId(id,requestOptions)
+          return  deleteApiAcademicYearDeleteId(id,params,requestOptions)
         }
 
 
@@ -189,11 +199,11 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type DeleteApiAcademicYearDeleteIdMutationError = unknown
 
     export const useDeleteApiAcademicYearDeleteId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiAcademicYearDeleteId>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiAcademicYearDeleteId>>, TError,{id: number;params?: DeleteApiAcademicYearDeleteIdParams}, TContext>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteApiAcademicYearDeleteId>>,
         TError,
-        {id: number},
+        {id: number;params?: DeleteApiAcademicYearDeleteIdParams},
         TContext
       > => {
       return useMutation(getDeleteApiAcademicYearDeleteIdMutationOptions(options), queryClient);

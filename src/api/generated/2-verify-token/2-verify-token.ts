@@ -273,3 +273,109 @@ export function useGetApiLoginProfile<TData = Awaited<ReturnType<typeof getApiLo
 
 
 
+export type getApiLoginUiNavigationResponse200 = {
+  data: void
+  status: 200
+}
+
+export type getApiLoginUiNavigationResponseSuccess = (getApiLoginUiNavigationResponse200) & {
+  headers: Headers;
+};
+;
+
+export type getApiLoginUiNavigationResponse = (getApiLoginUiNavigationResponseSuccess)
+
+export const getGetApiLoginUiNavigationUrl = () => {
+
+
+
+
+  return `/api/Login/ui-navigation`
+}
+
+export const getApiLoginUiNavigation = async ( options?: RequestInit): Promise<getApiLoginUiNavigationResponse> => {
+
+  return customInstance<getApiLoginUiNavigationResponse>(getGetApiLoginUiNavigationUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetApiLoginUiNavigationQueryKey = () => {
+    return [
+    `/api/Login/ui-navigation`
+    ] as const;
+    }
+
+
+export const getGetApiLoginUiNavigationQueryOptions = <TData = Awaited<ReturnType<typeof getApiLoginUiNavigation>>, TError = unknown>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiLoginUiNavigation>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiLoginUiNavigationQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiLoginUiNavigation>>> = ({ signal }) => getApiLoginUiNavigation({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiLoginUiNavigation>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiLoginUiNavigationQueryResult = NonNullable<Awaited<ReturnType<typeof getApiLoginUiNavigation>>>
+export type GetApiLoginUiNavigationQueryError = unknown
+
+
+export function useGetApiLoginUiNavigation<TData = Awaited<ReturnType<typeof getApiLoginUiNavigation>>, TError = unknown>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiLoginUiNavigation>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiLoginUiNavigation>>,
+          TError,
+          Awaited<ReturnType<typeof getApiLoginUiNavigation>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiLoginUiNavigation<TData = Awaited<ReturnType<typeof getApiLoginUiNavigation>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiLoginUiNavigation>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiLoginUiNavigation>>,
+          TError,
+          Awaited<ReturnType<typeof getApiLoginUiNavigation>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiLoginUiNavigation<TData = Awaited<ReturnType<typeof getApiLoginUiNavigation>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiLoginUiNavigation>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetApiLoginUiNavigation<TData = Awaited<ReturnType<typeof getApiLoginUiNavigation>>, TError = unknown>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiLoginUiNavigation>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiLoginUiNavigationQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+

@@ -20,6 +20,7 @@
  */
 
 export interface TeacherInsertRequest {
+  schoolID?: number;
   /** @nullable */
   teacherCode?: string | null;
   /** @nullable */

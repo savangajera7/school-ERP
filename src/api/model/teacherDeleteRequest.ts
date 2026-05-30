@@ -20,6 +20,7 @@
  */
 
 export interface TeacherDeleteRequest {
+  schoolID?: number;
   teacherID?: number;
   updatedBy?: number;
 }

@@ -38,7 +38,8 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
-  CategoryModel
+  CategoryModel,
+  DeleteApiCategoryDeleteIdParams
 } from '../../model';
 
 import { customInstance } from '../../../services/api/axiosInstance';
@@ -135,17 +136,26 @@ export type deleteApiCategoryDeleteIdResponseSuccess = (deleteApiCategoryDeleteI
 
 export type deleteApiCategoryDeleteIdResponse = (deleteApiCategoryDeleteIdResponseSuccess)
 
-export const getDeleteApiCategoryDeleteIdUrl = (id: number,) => {
+export const getDeleteApiCategoryDeleteIdUrl = (id: number,
+    params?: DeleteApiCategoryDeleteIdParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/api/Category/Delete/${id}`
+  return stringifiedParams.length > 0 ? `/api/Category/Delete/${id}?${stringifiedParams}` : `/api/Category/Delete/${id}`
 }
 
-export const deleteApiCategoryDeleteId = async (id: number, options?: RequestInit): Promise<deleteApiCategoryDeleteIdResponse> => {
+export const deleteApiCategoryDeleteId = async (id: number,
+    params?: DeleteApiCategoryDeleteIdParams, options?: RequestInit): Promise<deleteApiCategoryDeleteIdResponse> => {
 
-  return customInstance<deleteApiCategoryDeleteIdResponse>(getDeleteApiCategoryDeleteIdUrl(id),
+  return customInstance<deleteApiCategoryDeleteIdResponse>(getDeleteApiCategoryDeleteIdUrl(id,params),
   {
     ...options,
     method: 'DELETE'
@@ -158,8 +168,8 @@ export const deleteApiCategoryDeleteId = async (id: number, options?: RequestIni
 
 
 export const getDeleteApiCategoryDeleteIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiCategoryDeleteId>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof deleteApiCategoryDeleteId>>, TError,{id: number}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiCategoryDeleteId>>, TError,{id: number;params?: DeleteApiCategoryDeleteIdParams}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteApiCategoryDeleteId>>, TError,{id: number;params?: DeleteApiCategoryDeleteIdParams}, TContext> => {
 
 const mutationKey = ['deleteApiCategoryDeleteId'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -171,10 +181,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiCategoryDeleteId>>, {id: number}> = (props) => {
-          const {id} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiCategoryDeleteId>>, {id: number;params?: DeleteApiCategoryDeleteIdParams}> = (props) => {
+          const {id,params} = props ?? {};
 
-          return  deleteApiCategoryDeleteId(id,requestOptions)
+          return  deleteApiCategoryDeleteId(id,params,requestOptions)
         }
 
 
@@ -189,11 +199,11 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type DeleteApiCategoryDeleteIdMutationError = unknown
 
     export const useDeleteApiCategoryDeleteId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiCategoryDeleteId>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiCategoryDeleteId>>, TError,{id: number;params?: DeleteApiCategoryDeleteIdParams}, TContext>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteApiCategoryDeleteId>>,
         TError,
-        {id: number},
+        {id: number;params?: DeleteApiCategoryDeleteIdParams},
         TContext
       > => {
       return useMutation(getDeleteApiCategoryDeleteIdMutationOptions(options), queryClient);

@@ -20,6 +20,7 @@
  */
 
 export interface SubjectDeleteRequest {
+  schoolID?: number;
   subjectID?: number;
   updatedBy?: number;
 }

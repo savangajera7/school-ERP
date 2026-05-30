@@ -38,7 +38,8 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
-  BloodGroupModel
+  BloodGroupModel,
+  DeleteApiBloodGroupDeleteIdParams
 } from '../../model';
 
 import { customInstance } from '../../../services/api/axiosInstance';
@@ -135,17 +136,26 @@ export type deleteApiBloodGroupDeleteIdResponseSuccess = (deleteApiBloodGroupDel
 
 export type deleteApiBloodGroupDeleteIdResponse = (deleteApiBloodGroupDeleteIdResponseSuccess)
 
-export const getDeleteApiBloodGroupDeleteIdUrl = (id: number,) => {
+export const getDeleteApiBloodGroupDeleteIdUrl = (id: number,
+    params?: DeleteApiBloodGroupDeleteIdParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/api/BloodGroup/Delete/${id}`
+  return stringifiedParams.length > 0 ? `/api/BloodGroup/Delete/${id}?${stringifiedParams}` : `/api/BloodGroup/Delete/${id}`
 }
 
-export const deleteApiBloodGroupDeleteId = async (id: number, options?: RequestInit): Promise<deleteApiBloodGroupDeleteIdResponse> => {
+export const deleteApiBloodGroupDeleteId = async (id: number,
+    params?: DeleteApiBloodGroupDeleteIdParams, options?: RequestInit): Promise<deleteApiBloodGroupDeleteIdResponse> => {
 
-  return customInstance<deleteApiBloodGroupDeleteIdResponse>(getDeleteApiBloodGroupDeleteIdUrl(id),
+  return customInstance<deleteApiBloodGroupDeleteIdResponse>(getDeleteApiBloodGroupDeleteIdUrl(id,params),
   {
     ...options,
     method: 'DELETE'
@@ -158,8 +168,8 @@ export const deleteApiBloodGroupDeleteId = async (id: number, options?: RequestI
 
 
 export const getDeleteApiBloodGroupDeleteIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiBloodGroupDeleteId>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof deleteApiBloodGroupDeleteId>>, TError,{id: number}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiBloodGroupDeleteId>>, TError,{id: number;params?: DeleteApiBloodGroupDeleteIdParams}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteApiBloodGroupDeleteId>>, TError,{id: number;params?: DeleteApiBloodGroupDeleteIdParams}, TContext> => {
 
 const mutationKey = ['deleteApiBloodGroupDeleteId'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -171,10 +181,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiBloodGroupDeleteId>>, {id: number}> = (props) => {
-          const {id} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiBloodGroupDeleteId>>, {id: number;params?: DeleteApiBloodGroupDeleteIdParams}> = (props) => {
+          const {id,params} = props ?? {};
 
-          return  deleteApiBloodGroupDeleteId(id,requestOptions)
+          return  deleteApiBloodGroupDeleteId(id,params,requestOptions)
         }
 
 
@@ -189,11 +199,11 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type DeleteApiBloodGroupDeleteIdMutationError = unknown
 
     export const useDeleteApiBloodGroupDeleteId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiBloodGroupDeleteId>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiBloodGroupDeleteId>>, TError,{id: number;params?: DeleteApiBloodGroupDeleteIdParams}, TContext>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteApiBloodGroupDeleteId>>,
         TError,
-        {id: number},
+        {id: number;params?: DeleteApiBloodGroupDeleteIdParams},
         TContext
       > => {
       return useMutation(getDeleteApiBloodGroupDeleteIdMutationOptions(options), queryClient);

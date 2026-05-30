@@ -31,4 +31,6 @@ export interface AcademicYearModel {
   createdOn?: string;
   /** @nullable */
   updatedOn?: string | null;
+  /** @nullable */
+  schoolID?: number | null;
 }

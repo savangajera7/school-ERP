@@ -38,6 +38,7 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
+  DeleteApiReligionDeleteIdParams,
   ReligionModel
 } from '../../model';
 
@@ -135,17 +136,26 @@ export type deleteApiReligionDeleteIdResponseSuccess = (deleteApiReligionDeleteI
 
 export type deleteApiReligionDeleteIdResponse = (deleteApiReligionDeleteIdResponseSuccess)
 
-export const getDeleteApiReligionDeleteIdUrl = (id: number,) => {
+export const getDeleteApiReligionDeleteIdUrl = (id: number,
+    params?: DeleteApiReligionDeleteIdParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
 
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
 
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/api/Religion/Delete/${id}`
+  return stringifiedParams.length > 0 ? `/api/Religion/Delete/${id}?${stringifiedParams}` : `/api/Religion/Delete/${id}`
 }
 
-export const deleteApiReligionDeleteId = async (id: number, options?: RequestInit): Promise<deleteApiReligionDeleteIdResponse> => {
+export const deleteApiReligionDeleteId = async (id: number,
+    params?: DeleteApiReligionDeleteIdParams, options?: RequestInit): Promise<deleteApiReligionDeleteIdResponse> => {
 
-  return customInstance<deleteApiReligionDeleteIdResponse>(getDeleteApiReligionDeleteIdUrl(id),
+  return customInstance<deleteApiReligionDeleteIdResponse>(getDeleteApiReligionDeleteIdUrl(id,params),
   {
     ...options,
     method: 'DELETE'
@@ -158,8 +168,8 @@ export const deleteApiReligionDeleteId = async (id: number, options?: RequestIni
 
 
 export const getDeleteApiReligionDeleteIdMutationOptions = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiReligionDeleteId>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof deleteApiReligionDeleteId>>, TError,{id: number}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiReligionDeleteId>>, TError,{id: number;params?: DeleteApiReligionDeleteIdParams}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteApiReligionDeleteId>>, TError,{id: number;params?: DeleteApiReligionDeleteIdParams}, TContext> => {
 
 const mutationKey = ['deleteApiReligionDeleteId'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -171,10 +181,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiReligionDeleteId>>, {id: number}> = (props) => {
-          const {id} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiReligionDeleteId>>, {id: number;params?: DeleteApiReligionDeleteIdParams}> = (props) => {
+          const {id,params} = props ?? {};
 
-          return  deleteApiReligionDeleteId(id,requestOptions)
+          return  deleteApiReligionDeleteId(id,params,requestOptions)
         }
 
 
@@ -189,11 +199,11 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type DeleteApiReligionDeleteIdMutationError = unknown
 
     export const useDeleteApiReligionDeleteId = <TError = unknown,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiReligionDeleteId>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiReligionDeleteId>>, TError,{id: number;params?: DeleteApiReligionDeleteIdParams}, TContext>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteApiReligionDeleteId>>,
         TError,
-        {id: number},
+        {id: number;params?: DeleteApiReligionDeleteIdParams},
         TContext
       > => {
       return useMutation(getDeleteApiReligionDeleteIdMutationOptions(options), queryClient);

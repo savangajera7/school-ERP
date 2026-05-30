@@ -33,4 +33,6 @@ export interface ClassModel {
   updatedOn?: string | null;
   /** @nullable */
   createdByName?: string | null;
+  /** @nullable */
+  schoolID?: number | null;
 }

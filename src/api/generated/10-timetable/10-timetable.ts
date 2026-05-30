@@ -308,6 +308,92 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       > => {
       return useMutation(getPostApiTimetableDeleteMutationOptions(options), queryClient);
     }
+    export type deleteApiTimetableDeleteTimetableIdResponse401TextPlain = {
+  data: ProblemDetails
+  status: 401
+}
+
+export type deleteApiTimetableDeleteTimetableIdResponse401ApplicationJson = {
+  data: ProblemDetails
+  status: 401
+}
+
+export type deleteApiTimetableDeleteTimetableIdResponse401TextJson = {
+  data: ProblemDetails
+  status: 401
+}
+
+;
+export type deleteApiTimetableDeleteTimetableIdResponseError = (deleteApiTimetableDeleteTimetableIdResponse401TextPlain | deleteApiTimetableDeleteTimetableIdResponse401ApplicationJson | deleteApiTimetableDeleteTimetableIdResponse401TextJson) & {
+  headers: Headers;
+};
+
+export type deleteApiTimetableDeleteTimetableIdResponse = (deleteApiTimetableDeleteTimetableIdResponseError)
+
+export const getDeleteApiTimetableDeleteTimetableIdUrl = (timetableId: number,) => {
+
+
+
+
+  return `/api/timetable/delete/${timetableId}`
+}
+
+export const deleteApiTimetableDeleteTimetableId = async (timetableId: number,
+    timetableDeleteRequest?: TimetableDeleteRequest, options?: RequestInit): Promise<deleteApiTimetableDeleteTimetableIdResponse> => {
+
+  return customInstance<deleteApiTimetableDeleteTimetableIdResponse>(getDeleteApiTimetableDeleteTimetableIdUrl(timetableId),
+  {
+    ...options,
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(timetableDeleteRequest)
+  }
+);}
+
+
+
+
+export const getDeleteApiTimetableDeleteTimetableIdMutationOptions = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiTimetableDeleteTimetableId>>, TError,{timetableId: number;data?: TimetableDeleteRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteApiTimetableDeleteTimetableId>>, TError,{timetableId: number;data?: TimetableDeleteRequest}, TContext> => {
+
+const mutationKey = ['deleteApiTimetableDeleteTimetableId'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteApiTimetableDeleteTimetableId>>, {timetableId: number;data?: TimetableDeleteRequest}> = (props) => {
+          const {timetableId,data} = props ?? {};
+
+          return  deleteApiTimetableDeleteTimetableId(timetableId,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteApiTimetableDeleteTimetableIdMutationResult = NonNullable<Awaited<ReturnType<typeof deleteApiTimetableDeleteTimetableId>>>
+    export type DeleteApiTimetableDeleteTimetableIdMutationBody = TimetableDeleteRequest | undefined
+    export type DeleteApiTimetableDeleteTimetableIdMutationError = ProblemDetails
+
+    export const useDeleteApiTimetableDeleteTimetableId = <TError = ProblemDetails,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteApiTimetableDeleteTimetableId>>, TError,{timetableId: number;data?: TimetableDeleteRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteApiTimetableDeleteTimetableId>>,
+        TError,
+        {timetableId: number;data?: TimetableDeleteRequest},
+        TContext
+      > => {
+      return useMutation(getDeleteApiTimetableDeleteTimetableIdMutationOptions(options), queryClient);
+    }
     export type getApiTimetableGetResponse401TextPlain = {
   data: ProblemDetails
   status: 401

@@ -20,5 +20,5 @@
  */
 
 export type DeleteApiClassDeleteIdParams = {
-updatedBy?: number;
+schoolID?: number;
 };

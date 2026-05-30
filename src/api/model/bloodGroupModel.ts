@@ -31,4 +31,6 @@ export interface BloodGroupModel {
   createdOn?: string;
   /** @nullable */
   updatedOn?: string | null;
+  /** @nullable */
+  schoolID?: number | null;
 }

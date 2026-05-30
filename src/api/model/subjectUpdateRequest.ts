@@ -20,6 +20,7 @@
  */
 
 export interface SubjectUpdateRequest {
+  schoolID?: number;
   subjectID?: number;
   /** @nullable */
   subjectName?: string | null;

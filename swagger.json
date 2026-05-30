@@ -56,6 +56,14 @@
               "type": "integer",
               "format": "int32"
             }
+          },
+          {
+            "name": "schoolID",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
           }
         ],
         "responses": {
@@ -617,6 +625,14 @@
               "type": "integer",
               "format": "int32"
             }
+          },
+          {
+            "name": "schoolID",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
           }
         ],
         "responses": {
@@ -762,6 +778,14 @@
               "type": "integer",
               "format": "int32"
             }
+          },
+          {
+            "name": "schoolID",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
           }
         ],
         "responses": {
@@ -903,6 +927,14 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "schoolID",
+            "in": "query",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -1282,12 +1314,11 @@
             }
           },
           {
-            "name": "updatedBy",
+            "name": "schoolID",
             "in": "query",
             "schema": {
               "type": "integer",
-              "format": "int32",
-              "default": 1
+              "format": "int32"
             }
           }
         ],
@@ -1310,12 +1341,11 @@
         ],
         "parameters": [
           {
-            "name": "updatedBy",
+            "name": "schoolID",
             "in": "query",
             "schema": {
               "type": "integer",
-              "format": "int32",
-              "default": 1
+              "format": "int32"
             }
           }
         ],
@@ -2855,6 +2885,18 @@
         }
       }
     },
+    "/api/Login/ui-navigation": {
+      "get": {
+        "tags": [
+          "2. Verify Token"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/api/Medium/Add": {
       "post": {
         "tags": [
@@ -3730,6 +3772,14 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "schoolID",
+            "in": "query",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -4762,6 +4812,14 @@
               "type": "integer",
               "format": "int32"
             }
+          },
+          {
+            "name": "schoolID",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
           }
         ],
         "responses": {
@@ -4780,6 +4838,16 @@
       "delete": {
         "tags": [
           "Master - Section"
+        ],
+        "parameters": [
+          {
+            "name": "schoolID",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -7905,6 +7973,70 @@
         ]
       }
     },
+    "/api/timetable/delete/{timetableId}": {
+      "delete": {
+        "tags": [
+          "10. Timetable"
+        ],
+        "parameters": [
+          {
+            "name": "timetableId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimetableDeleteRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimetableDeleteRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TimetableDeleteRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
     "/api/timetable/get": {
       "get": {
         "tags": [
@@ -8577,6 +8709,11 @@
             "type": "string",
             "format": "dd/MM/yyyy HH:mm:ss",
             "nullable": true
+          },
+          "schoolID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -8693,6 +8830,11 @@
             "type": "string",
             "format": "dd/MM/yyyy HH:mm:ss",
             "nullable": true
+          },
+          "schoolID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -8729,6 +8871,11 @@
             "type": "string",
             "format": "dd/MM/yyyy HH:mm:ss",
             "nullable": true
+          },
+          "schoolID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -8764,6 +8911,11 @@
           "updatedOn": {
             "type": "string",
             "format": "dd/MM/yyyy HH:mm:ss",
+            "nullable": true
+          },
+          "schoolID": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           }
         },
@@ -8804,6 +8956,11 @@
           },
           "createdByName": {
             "type": "string",
+            "nullable": true
+          },
+          "schoolID": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           }
         },
@@ -10024,6 +10181,11 @@
             "type": "string",
             "format": "dd/MM/yyyy HH:mm:ss",
             "nullable": true
+          },
+          "schoolID": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -10465,6 +10627,11 @@
           "updatedOn": {
             "type": "string",
             "format": "dd/MM/yyyy HH:mm:ss",
+            "nullable": true
+          },
+          "schoolID": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           }
         },
@@ -10987,6 +11154,10 @@
       "SubjectDeleteRequest": {
         "type": "object",
         "properties": {
+          "schoolID": {
+            "type": "integer",
+            "format": "int32"
+          },
           "subjectID": {
             "type": "integer",
             "format": "int32"
@@ -11001,6 +11172,10 @@
       "SubjectInsertRequest": {
         "type": "object",
         "properties": {
+          "schoolID": {
+            "type": "integer",
+            "format": "int32"
+          },
           "subjectName": {
             "type": "string",
             "nullable": true
@@ -11019,6 +11194,10 @@
       "SubjectUpdateRequest": {
         "type": "object",
         "properties": {
+          "schoolID": {
+            "type": "integer",
+            "format": "int32"
+          },
           "subjectID": {
             "type": "integer",
             "format": "int32"
@@ -11436,6 +11615,10 @@
       "TeacherDeleteRequest": {
         "type": "object",
         "properties": {
+          "schoolID": {
+            "type": "integer",
+            "format": "int32"
+          },
           "teacherID": {
             "type": "integer",
             "format": "int32"
@@ -11450,6 +11633,10 @@
       "TeacherInsertRequest": {
         "type": "object",
         "properties": {
+          "schoolID": {
+            "type": "integer",
+            "format": "int32"
+          },
           "teacherCode": {
             "type": "string",
             "nullable": true
@@ -11524,6 +11711,10 @@
       "TeacherUpdateRequest": {
         "type": "object",
         "properties": {
+          "schoolID": {
+            "type": "integer",
+            "format": "int32"
+          },
           "teacherCode": {
             "type": "string",
             "nullable": true
@@ -11730,6 +11921,10 @@
             "nullable": true
           },
           "endTime": {
+            "type": "string",
+            "nullable": true
+          },
+          "day": {
             "type": "string",
             "nullable": true
           }
