@@ -28,6 +28,8 @@ import {
   isFutureDate,
   getAttendanceRowName,
   getAttendanceRowRoll,
+  assertAttendanceApiSuccess,
+  getAttendanceApiMessage,
 } from "@/api/attendance";
 import type { MarkStatus } from "@/components/attendance/StudentMarkRow";
 
@@ -48,6 +50,7 @@ import { AppIcon, GenderIcon } from "@/components/icons/AppIcon";
 import { parseApiList } from "@/utils/apiResponse";
 import { useGetApiMediumGet } from "@/api/generated/master-medium/master-medium";
 import { useGetApiBatchGet } from "@/api/generated/2-master-batch/2-master-batch";
+import { useGetApiClassGetByMediumShift } from "@/api/generated/master-class-medium-shift-1a-2b/master-class-medium-shift-1a-2b";
 
 
 const STATUS_CONFIG = {
@@ -131,13 +134,58 @@ export default function UnifiedAttendanceScreen() {
   );
   const { data: attendanceData } = useGetApiAttendanceGet(attendanceParams);
   const { classes } = useMemo(() => parseClassesView(attendanceData?.data), [attendanceData]);
-  
+
+  // Classes for the selected medium + batch (Medium → Shift → Class flow)
+  const classByShiftParams = useMemo(
+    () => ({
+      mediumID: selectedMediumID ?? undefined,
+      batchID: selectedBatchID ?? undefined,
+      schoolID: userData?.schoolID,
+    }),
+    [selectedMediumID, selectedBatchID, userData?.schoolID]
+  );
+  const { data: classListData } = useGetApiClassGetByMediumShift(classByShiftParams, {
+    query: { enabled: !!selectedMediumID && !!selectedBatchID },
+  });
+  const shiftClasses = useMemo(
+    () => parseApiList<any>(classListData?.data),
+    [classListData]
+  );
+
+  // Which classes already have attendance marked for this date
+  const markedMap = useMemo(() => {
+    const m: Record<number, boolean> = {};
+    classes.forEach((c: any) => {
+      m[c.classID] = c.attendanceMarked;
+    });
+    return m;
+  }, [classes]);
+
   const visibleClasses = useMemo(() => {
-    let filtered = access.isSchoolAdmin ? classes : classes.filter((c: any) => access.canMarkClass(c.classID));
+    // Prefer the medium/shift class list; fall back to the view=classes list
+    const base =
+      shiftClasses.length > 0
+        ? shiftClasses
+            .map((c: any) => {
+              const id = c.classID ?? c.id;
+              return {
+                classID: id,
+                className: c.className ?? c.name ?? `Class ${id}`,
+                attendanceMarked: markedMap[id] ?? false,
+              };
+            })
+            .filter((c) => !!c.classID)
+        : classes;
 
-    return filtered;
-  }, [classes, access, selectedMediumID]);
+    return access.isSchoolAdmin
+      ? base
+      : base.filter((c: any) => access.canMarkClass(c.classID));
+  }, [shiftClasses, classes, markedMap, access]);
 
+  // Reset class selection when medium / batch changes
+  useEffect(() => {
+    setClassID(0);
+  }, [selectedMediumID, selectedBatchID]);
 
   useEffect(() => {
     if (classID === 0 && visibleClasses.length > 0) {
@@ -265,13 +313,14 @@ export default function UnifiedAttendanceScreen() {
           ? await updateMutation.mutateAsync({ data: payload })
           : await markMutation.mutateAsync({ data: payload });
 
+        // Backend returns HTTP 200 with { success:false, message } for logical errors
+        assertAttendanceApiSuccess(res);
+
         await queryClient.invalidateQueries({ queryKey: getGetApiAttendanceGetQueryKey() });
 
-        const body = (res as { data?: { message?: string } })?.data;
         const msg =
-          typeof body === "object" && body && "message" in body && body.message
-            ? String(body.message)
-            : alreadyMarked ? "Attendance updated." : "Attendance saved.";
+          getAttendanceApiMessage(res) ??
+          (alreadyMarked ? "Attendance updated." : "Attendance saved.");
 
         showToast(msg, "success");
         router.replace("/(app)/attendance");

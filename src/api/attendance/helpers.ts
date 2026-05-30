@@ -1,8 +1,9 @@
 import type { AttendanceMarkRequest } from "@/api/model/attendanceMarkRequest";
 import type { GetApiAttendanceGetParams } from "@/api/model/getApiAttendanceGetParams";
 import type { TeacherAttendanceInsertRequest } from "@/api/model/teacherAttendanceInsertRequest";
+import type { TeacherAttendanceMarkRequest } from "@/api/model/teacherAttendanceMarkRequest";
 import { formatDate } from "@/services/api";
-import { parseApiList, toCamelCaseRow } from "@/utils/apiResponse";
+import { parseApiList, toCamelCaseRow, unwrapApiBody } from "@/utils/apiResponse";
 
 /** YYYY-MM-DD for GET ?attendanceDate= and POST mark/update body */
 export function toAttendanceIsoDate(isoOrDate: string | Date): string {
@@ -215,6 +216,85 @@ export function buildTeacherAttendanceInsertRequest(input: {
     attendanceStatus: input.attendanceStatus,
     remark: input.remark ?? null,
     addedBy: input.addedBy,
+  };
+}
+
+// ─── Success / message handling ────────────────────────────────────────────
+
+/**
+ * The backend returns HTTP 200 with `{ success: false, message }` for logical
+ * failures (e.g. "no permission", "already marked"). Surface those as errors.
+ */
+export function getAttendanceApiMessage(response: unknown): string | undefined {
+  const body = unwrapApiBody(response) as
+    | { message?: string; Message?: string }
+    | null;
+  return body?.message ?? body?.Message ?? undefined;
+}
+
+export function isAttendanceApiSuccess(response: unknown): boolean {
+  const body = unwrapApiBody(response) as
+    | { success?: boolean; Success?: boolean }
+    | null;
+  if (!body || typeof body !== "object") return true;
+  if (body.success === false || body.Success === false) return false;
+  return true;
+}
+
+/** Throws with the API message when `success === false`. */
+export function assertAttendanceApiSuccess(response: unknown): void {
+  if (!isAttendanceApiSuccess(response)) {
+    throw new Error(getAttendanceApiMessage(response) ?? "Request failed.");
+  }
+}
+
+// ─── Teacher (staff) attendance — default-present bulk mark ──────────────────
+
+/** UI label from API teacher-attendance status (HALF_DAY → Half Day) */
+export function normalizeTeacherStatusFromApi(status?: string | null): string {
+  const u = (status || "PRESENT").toUpperCase().replace(/\s|-/g, "_");
+  if (u === "PRESENT") return "Present";
+  if (u === "ABSENT") return "Absent";
+  if (u === "LEAVE") return "Leave";
+  if (u === "HALF_DAY" || u === "HALFDAY") return "Half Day";
+  return status || "Present";
+}
+
+/** API status from UI teacher status (Half Day → HALF_DAY) */
+export function toApiTeacherStatus(uiStatus: string): string {
+  const label = normalizeTeacherStatusFromApi(uiStatus);
+  if (label === "Half Day") return "HALF_DAY";
+  return label.toUpperCase();
+}
+
+export function isTeacherPresentStatus(status?: string | null): boolean {
+  return normalizeTeacherStatusFromApi(status) === "Present";
+}
+
+/**
+ * Bulk teacher attendance with default-present model: only ABSENT / LEAVE /
+ * HALF_DAY rows are sent; everyone else is saved PRESENT automatically.
+ */
+export function buildTeacherAttendanceMarkRequest(input: {
+  attendanceDate: string;
+  schoolID?: number | null;
+  teacherIds: number[];
+  attendanceMap: Record<number, string>;
+  remarks?: Record<number, string>;
+}): TeacherAttendanceMarkRequest {
+  const teachers = input.teacherIds
+    .filter((id) => !isTeacherPresentStatus(input.attendanceMap[id] ?? "Present"))
+    .map((teacherID) => ({
+      teacherID,
+      attendanceStatus: toApiTeacherStatus(input.attendanceMap[teacherID]),
+      remark: input.remarks?.[teacherID] ?? "",
+    }));
+
+  return {
+    schoolID: input.schoolID ?? null,
+    attendanceDate: toAttendanceIsoDate(input.attendanceDate),
+    absentOnly: true,
+    teachers,
   };
 }
 

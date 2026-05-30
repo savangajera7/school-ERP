@@ -26,18 +26,21 @@ export default function AttendanceHistoryScreen() {
   const studentID = params.studentId ? parseInt(String(params.studentId), 10) : undefined;
   const schoolID = useAuthStore((s) => s.userData?.schoolID);
   const [filter, setFilter] = useState<"all" | "present" | "absent" | "leave">("all");
+  // Full class history by default; "day" narrows to the passed date
+  const [scope, setScope] = useState<"all" | "day">("all");
 
   const queryParams = useMemo(
     () =>
       classID
         ? buildAttendanceViewParams("history", {
             classID,
-            attendanceDate: date,
+            // Omit attendanceDate for full history; include it for single-day
+            attendanceDate: scope === "day" ? date : undefined,
             studentID,
             schoolID,
           })
         : undefined,
-    [classID, date, studentID, schoolID]
+    [classID, date, studentID, schoolID, scope]
   );
 
   const { data, isLoading } = useGetApiAttendanceGet(queryParams, {
@@ -70,10 +73,31 @@ export default function AttendanceHistoryScreen() {
   return (
     <PremiumScreenLayout
       title="Attendance History"
-      subtitle={formatDisplayDate(date)}
+      subtitle={scope === "day" && date ? formatDisplayDate(date) : "All dates"}
       scrollable={false}
       fullWidth
     >
+      {/* Scope toggle: full history vs single day */}
+      {date ? (
+        <View className="flex-row gap-2 mx-3 mt-3">
+          {(["all", "day"] as const).map((s) => {
+            const active = scope === s;
+            return (
+              <TouchableOpacity
+                key={s}
+                onPress={() => setScope(s)}
+                className={`flex-1 py-2 rounded-xl border ${active ? "bg-[#1A3C6E] border-[#1A3C6E]" : "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-600"}`}
+                activeOpacity={0.8}
+              >
+                <Text className={`text-center text-[11px] font-black uppercase ${active ? "text-white" : "text-gray-500 dark:text-slate-400"}`}>
+                  {s === "all" ? "All Dates" : "This Day"}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      ) : null}
+
       {/* Filter chips */}
       <View className="flex-row gap-2 mx-3 mt-3 mb-3">
         {filterChips.map((chip) => {

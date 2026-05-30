@@ -21,8 +21,16 @@ export interface AuthUser {
   token: string;
 }
 
+export interface LinkedStudent {
+  studentID: number;
+  studentName: string;
+  className?: string;
+}
+
 export interface UserData extends Partial<AuthUser> {
   studentID?: number;
+  /** Children linked to a parent account (parent login). */
+  linkedStudents?: LinkedStudent[];
   firstName?: string;
   lastName?: string;
   studentEmail?: string;

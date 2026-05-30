@@ -24,7 +24,10 @@ const MONTH_SHORT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct"
 export default function ParentAttendanceScreen() {
   const { isAttendanceReadOnly, can, isSchoolAdmin, isTeacher } = useAttendanceAccess();
   const userData = useAuthStore((s) => s.userData);
-  const studentId = userData?.studentID ?? userData?.referenceID;
+  const studentId =
+    userData?.studentID ??
+    userData?.linkedStudents?.[0]?.studentID ??
+    userData?.referenceID;
   const now = new Date();
   const [month, setMonth] = useState(now.getMonth() + 1);
   const [year, setYear] = useState(now.getFullYear());

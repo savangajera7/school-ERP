@@ -1,4 +1,5 @@
 import type { GetApiAttendanceGetParams } from "@/api/model/getApiAttendanceGetParams";
+import type { GetApiTeacherAttendanceGetParams } from "@/api/model/getApiTeacherAttendanceGetParams";
 import { unwrapApiBody, toCamelCaseRow } from "@/utils/apiResponse";
 import {
   normalizeAttendanceStatusFromApi,
@@ -200,6 +201,61 @@ export function parseParentYearlyView(response: unknown): {
     year: Number(row.year ?? row.Year) || undefined,
     months: months.sort((a, b) => a.month - b.month),
   };
+}
+
+// ─── Teacher (staff) attendance views ───────────────────────────────────────
+
+export type TeacherRosterRow = {
+  teacherID: number;
+  teacherCode?: string;
+  teacherName: string;
+  subjectName?: string;
+  attendanceStatus?: string;
+  remark?: string;
+  isMarked?: boolean;
+};
+
+export function buildTeacherAttendanceViewParams(
+  view: "teachers" | "list",
+  filters: { schoolID?: number; attendanceDate?: string } = {}
+): GetApiTeacherAttendanceGetParams {
+  const params: GetApiTeacherAttendanceGetParams = { View: view };
+  if (filters.schoolID != null) params.SchoolID = filters.schoolID;
+  if (filters.attendanceDate)
+    params.AttendanceDate = toAttendanceIsoDate(filters.attendanceDate);
+  return params;
+}
+
+export function parseTeacherRoster(response: unknown): TeacherRosterRow[] {
+  const payload = unwrapPayload(response);
+  const raw =
+    (payload?.teachers as unknown[]) ??
+    (payload?.Teachers as unknown[]) ??
+    (Array.isArray(payload) ? (payload as unknown[]) : null) ??
+    parseAttendanceList(response);
+
+  const rows: TeacherRosterRow[] = [];
+  for (const item of raw) {
+    if (!item || typeof item !== "object") continue;
+    const r = toCamelCaseRow<Record<string, unknown>>(item as Record<string, unknown>);
+    const teacherID = Number(r.teacherID ?? r.TeacherID);
+    if (!teacherID) continue;
+    rows.push({
+      teacherID,
+      teacherCode: r.teacherCode ? String(r.teacherCode) : undefined,
+      teacherName: String(
+        r.teacherName ??
+          r.fullName ??
+          ([r.firstName, r.lastName].filter(Boolean).join(" ") ||
+            `Teacher #${teacherID}`)
+      ),
+      subjectName: r.subjectName ? String(r.subjectName) : undefined,
+      attendanceStatus: r.attendanceStatus ? String(r.attendanceStatus) : "PRESENT",
+      remark: r.remark ? String(r.remark) : undefined,
+      isMarked: !!(r.isMarked ?? r.IsMarked),
+    });
+  }
+  return rows;
 }
 
 export function isExceptionStatus(status?: string | null): boolean {

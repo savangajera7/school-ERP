@@ -101,6 +101,9 @@ export function useAttendanceAccess() {
 
     canAccessStaffAttendance: perms.canManageStaffAttendance,
 
-    childStudentId: userData?.studentID ?? userData?.referenceID,
+    childStudentId:
+      userData?.studentID ??
+      userData?.linkedStudents?.[0]?.studentID ??
+      userData?.referenceID,
   };
 }
