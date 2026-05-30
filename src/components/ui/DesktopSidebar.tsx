@@ -7,6 +7,7 @@ import { useAuthStore } from "@/store/authStore";
 import { usePermissions } from "@/hooks/usePermissions";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { ROLE_LABELS } from "@/constants/rolePermissions";
+import { getHomeRoute } from "@/utils/roleRouting";
 import { formatDisplayName } from "@/utils/helpers";
 
 // ─── Active state helper ──────────────────────────────────────────────────────
@@ -55,6 +56,39 @@ export function DesktopSidebar() {
     }
   };
 
+
+  // Group items into categories
+  const groupedItems = [
+    {
+      title: "Main",
+      items: visibleNav.filter(item => ["Dashboard", "Students", "Admission"].includes(item.label))
+    },
+    {
+      title: "Academic",
+      items: visibleNav.filter(item => ["Attendance", "Att. Reports", "Staff Attend.", "Exams", "Subjects", "Timetable"].includes(item.label))
+    },
+    {
+      title: "People",
+      items: visibleNav.filter(item => ["Teachers", "Leave"].includes(item.label))
+    },
+    {
+      title: "Communication",
+      items: visibleNav.filter(item => ["Notices", "Post Notice", "Alerts", "Send Alert", "Notifications"].includes(item.label))
+    },
+    {
+      title: "Finance",
+      items: visibleNav.filter(item => ["Fees", "Accounts"].includes(item.label))
+    },
+    {
+      title: "Administration",
+      items: visibleNav.filter(item => ["Inquiries", "Reports", "Academic", "Masters", "Users", "Roles"].includes(item.label))
+    },
+    {
+      title: "Student",
+      items: visibleNav.filter(item => ["My Results"].includes(item.label))
+    }
+  ].filter(group => group.items.length > 0);
+
   const sidebarWidth = isCollapsed ? 76 : 240;
 
   return (
@@ -76,17 +110,25 @@ export function DesktopSidebar() {
           >
             <AppIcon name="expand" size={14} color="#6B7280" />
           </TouchableOpacity>
-          <View className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 overflow-hidden items-center justify-center p-0.5">
+          <TouchableOpacity
+            onPress={() => router.push(getHomeRoute(role) as any)}
+            activeOpacity={0.8}
+            className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 overflow-hidden items-center justify-center p-0.5"
+          >
             <Image
               source={{ uri: "https://little-angle.mahispark.com/images/logo.png" }}
               className="w-8 h-8"
               resizeMode="contain"
             />
-          </View>
+          </TouchableOpacity>
         </View>
       ) : (
         <View className="flex-row items-center justify-between pb-5 mb-2 border-b border-gray-100 dark:border-slate-800 px-5">
-          <View className="flex-row items-center gap-3 flex-1">
+          <TouchableOpacity 
+            onPress={() => router.push(getHomeRoute(role) as any)}
+            activeOpacity={0.8}
+            className="flex-row items-center gap-3 flex-1"
+          >
             <View className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 overflow-hidden items-center justify-center p-0.5">
               <Image
                 source={{ uri: "https://little-angle.mahispark.com/images/logo.png" }}
@@ -102,7 +144,7 @@ export function DesktopSidebar() {
                 સાંઈ વિદ્યા મંદિર
               </Text>
             </View>
-          </View>
+          </TouchableOpacity>
           <TouchableOpacity
             onPress={toggleCollapse}
             className="w-8 h-8 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl items-center justify-center ml-2"
@@ -117,53 +159,67 @@ export function DesktopSidebar() {
       <ScrollView
         className={`flex-1 ${isCollapsed ? "px-1.5" : "px-3"}`}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ gap: isCollapsed ? 6 : 3, paddingBottom: 20 }}
+        contentContainerStyle={{ paddingBottom: 20 }}
       >
-        {visibleNav.map((item) => {
-          const active = isRouteActive(pathname, item.route);
-          return (
-            <TouchableOpacity
-              key={item.route}
-              onPress={() => router.push(item.route as any)}
-              activeOpacity={0.7}
-              className={`flex-row items-center rounded-xl py-2.5 relative ${
-                isCollapsed ? "justify-center px-1" : "px-3 gap-3"
-              } ${active ? "bg-[#134A8C]/10 dark:bg-slate-800" : ""}`}
-              style={{ minHeight: 44 }}
-            >
-              <AppIcon
-                name={item.icon}
-                size={active ? 20 : 18}
-                color={active ? "#134A8C" : "#6B7280"}
-                active={active}
-              />
-              {!isCollapsed && (
-                <Text
-                  className={`text-[13px] flex-1 ${
-                    active ? "font-black text-[#134A8C] dark:text-[#60A5FA]" : "font-bold text-gray-500 dark:text-slate-400"
-                  }`}
-                >
-                  {item.label}
-                </Text>
-              )}
-              {/* Notification badge */}
-              {!isCollapsed && !!item.badge && (
-                <View className="bg-rose-500 min-w-[18px] h-[18px] rounded-full items-center justify-center px-1">
-                  <Text className="text-white text-[9px] font-black">
-                    {item.badge > 9 ? "9+" : item.badge}
-                  </Text>
-                </View>
-              )}
-              {/* Active indicator */}
-              {active && !isCollapsed && (
-                <View className="w-1.5 h-5 bg-[#F5921E] rounded-full" />
-              )}
-              {active && isCollapsed && (
-                <View className="absolute left-0 top-3 w-1 h-5 bg-[#F5921E] rounded-r-full" />
-              )}
-            </TouchableOpacity>
-          );
-        })}
+        {groupedItems.map((group, gIdx) => (
+          <View key={group.title} className={gIdx > 0 ? "mt-4" : ""}>
+            {!isCollapsed && (
+              <Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest px-3 mb-2">
+                {group.title}
+              </Text>
+            )}
+            {isCollapsed && gIdx > 0 && (
+              <View className="h-px bg-gray-200 dark:bg-slate-700 mx-2 my-2" />
+            )}
+            <View style={{ gap: isCollapsed ? 6 : 3 }}>
+              {group.items.map((item) => {
+                const active = isRouteActive(pathname, item.route);
+                return (
+                  <TouchableOpacity
+                    key={item.route}
+                    onPress={() => router.push(item.route as any)}
+                    activeOpacity={0.7}
+                    className={`flex-row items-center rounded-xl py-2.5 relative ${
+                      isCollapsed ? "justify-center px-1" : "px-3 gap-3"
+                    } ${active ? "bg-[#134A8C]/10 dark:bg-slate-800" : ""}`}
+                    style={{ minHeight: 44 }}
+                  >
+                    <AppIcon
+                      name={item.icon}
+                      size={active ? 20 : 18}
+                      color={active ? "#134A8C" : "#6B7280"}
+                      active={active}
+                    />
+                    {!isCollapsed && (
+                      <Text
+                        className={`text-[13px] flex-1 ${
+                          active ? "font-black text-[#134A8C] dark:text-[#60A5FA]" : "font-bold text-gray-500 dark:text-slate-400"
+                        }`}
+                      >
+                        {item.label}
+                      </Text>
+                    )}
+                    {/* Notification badge */}
+                    {!isCollapsed && !!item.badge && (
+                      <View className="bg-rose-500 min-w-[18px] h-[18px] rounded-full items-center justify-center px-1">
+                        <Text className="text-white text-[9px] font-black">
+                          {item.badge > 9 ? "9+" : item.badge}
+                        </Text>
+                      </View>
+                    )}
+                    {/* Active indicator */}
+                    {active && !isCollapsed && (
+                      <View className="w-1.5 h-5 bg-[#F5921E] rounded-full" />
+                    )}
+                    {active && isCollapsed && (
+                      <View className="absolute left-0 top-3 w-1 h-5 bg-[#F5921E] rounded-r-full" />
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </View>
+        ))}
       </ScrollView>
 
       {/* ── User + logout ── */}
