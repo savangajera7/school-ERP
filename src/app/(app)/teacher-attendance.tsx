@@ -60,7 +60,7 @@ function TeacherMarkRow({
 }) {
   const showRemark = status !== "Present";
   return (
-    <View className="bg-white border border-gray-150 rounded-2xl p-4 mb-3 mx-1">
+    <View className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-2xl p-4 mb-3 mx-1" style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.03, shadowRadius: 3, elevation: 1 }}>
       <View className="flex-row items-center gap-3">
         <View className="w-11 h-11 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 items-center justify-center">
           <Text className="text-sm font-black text-indigo-600 dark:text-indigo-400">
@@ -78,24 +78,33 @@ function TeacherMarkRow({
       <View className="flex-row gap-2 mt-3">
         {STATUS_OPTIONS.map((opt) => {
           const active = status === opt;
-          const activeBg =
+          const activeStyle =
             opt === "Present"
-              ? "bg-emerald-600 border-emerald-600"
+              ? "bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-800"
               : opt === "Absent"
-                ? "bg-rose-600 border-rose-600"
+                ? "bg-rose-50 dark:bg-rose-900/30 border-rose-200 dark:border-rose-800"
                 : opt === "Leave"
-                  ? "bg-amber-500 border-amber-500"
-                  : "bg-sky-600 border-sky-600";
+                  ? "bg-amber-50 dark:bg-amber-900/30 border-amber-200 dark:border-amber-800"
+                  : "bg-sky-50 dark:bg-sky-900/30 border-sky-200 dark:border-sky-800";
+                  
+          const activeText =
+            opt === "Present"
+              ? "text-emerald-700 dark:text-emerald-400"
+              : opt === "Absent"
+                ? "text-rose-700 dark:text-rose-400"
+                : opt === "Leave"
+                  ? "text-amber-700 dark:text-amber-400"
+                  : "text-sky-700 dark:text-sky-400";
           return (
             <TouchableOpacity
               key={`${teacher.teacherID}-${opt}`}
               onPress={() => onStatusChange(opt)}
               className={`flex-1 py-2.5 rounded-xl border items-center ${
-                active ? activeBg : "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700"
+                active ? activeStyle : "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700"
               }`}
               activeOpacity={0.85}
             >
-              <Text className={`text-xs font-black uppercase ${active ? "text-white" : "text-gray-400 dark:text-slate-500"}`}>
+              <Text className={`text-[11px] font-black uppercase ${active ? activeText : "text-gray-400 dark:text-slate-500"}`}>
                 {statusShort(opt)}
               </Text>
             </TouchableOpacity>
@@ -259,7 +268,7 @@ export default function TeacherAttendanceScreen() {
           {counts.halfDay > 0 ? `Half day: ${counts.halfDay}` : " "}
         </Text>
         <TouchableOpacity onPress={markAllPresent}>
-          <Text className="text-emerald-700 font-black text-xs uppercase">
+          <Text className="text-emerald-700 dark:text-emerald-400 font-black text-xs uppercase">
             ✓ Mark all present
           </Text>
         </TouchableOpacity>
