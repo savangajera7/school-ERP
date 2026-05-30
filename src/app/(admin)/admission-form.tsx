@@ -21,7 +21,6 @@ import { useGetApiCategoryGet } from "@/api/generated/2-master-category/2-master
 import { useGetApiBatchGet } from "@/api/generated/2-master-batch/2-master-batch";
 import { useGetApiClassGet } from "@/api/generated/master-class/master-class";
 import { useGetApiAcademicYearGet } from "@/api/generated/2-master-academicyear/2-master-academicyear";
-import { useGetApiSectionGet } from "@/api/generated/master-section/master-section";
 import { useGetApiMediumGet } from "@/api/generated/master-medium/master-medium";
 import { usePermissions } from "@/hooks/usePermissions";
 import { AccessDenied } from "@/components/auth/AccessDenied";
@@ -62,7 +61,6 @@ export default function AdmissionFormScreen() {
   const academicYearId = formData.academicYearId ?? undefined;
   const classId = formData.classId ?? undefined;
   const batchId = formData.batchId ?? undefined;
-  const sectionId = formData.sectionId ?? undefined;
   const studentGRNo = formData.studentGRNo ?? "";
   const uidNo = formData.uidNo ?? "";
   const rollNo = formData.rollNo ?? "";
@@ -138,7 +136,6 @@ export default function AdmissionFormScreen() {
   const setAcademicYearId = (val: any) => updateFormData({ academicYearId: val });
   const setClassId = (val: any) => updateFormData({ classId: val });
   const setBatchId = (val: any) => updateFormData({ batchId: val });
-  const setSectionId = (val: any) => updateFormData({ sectionId: val });
   const setStudentGRNo = (val: any) => updateFormData({ studentGRNo: val });
   const setUidNo = (val: any) => updateFormData({ uidNo: val });
   const setRollNo = (val: any) => updateFormData({ rollNo: val });
@@ -243,7 +240,6 @@ export default function AdmissionFormScreen() {
   const { data: batchesData } = useGetApiBatchGet();
   const { data: classesData } = useGetApiClassGet();
   const { data: academicYearsData } = useGetApiAcademicYearGet();
-  const { data: sectionsData } = useGetApiSectionGet();
   const { data: mediumsData } = useGetApiMediumGet();
 
   const bloodGroups = parseApiList(bloodGroupsData?.data);
@@ -252,7 +248,6 @@ export default function AdmissionFormScreen() {
   const batches = parseApiList(batchesData?.data);
   const classes = parseApiList(classesData?.data);
   const academicYears = parseApiList(academicYearsData?.data);
-  const sections = parseApiList(sectionsData?.data);
   const mediums = parseApiList(mediumsData?.data);
 
   useEffect(() => {
@@ -262,7 +257,6 @@ export default function AdmissionFormScreen() {
       setAcademicYearId(s.academicYearID);
       setClassId(s.classID);
       setBatchId(s.batchID);
-      setSectionId(s.sectionID);
       setMediumId(s.mediumID || undefined);
       setStudentGRNo(s.studentGRNo || "");
       setUidNo(s.uidNo || "");
@@ -371,7 +365,6 @@ export default function AdmissionFormScreen() {
       academicYearID: academicYearId,
       classID: classId,
       batchID: batchId,
-      sectionID: sectionId,
       mediumID: mediumId,
       studentGRNo,
       uidNo,
@@ -490,7 +483,6 @@ export default function AdmissionFormScreen() {
               opt.batchID ??
               opt.classID ??
               opt.academicYearID ??
-              opt.sectionID ??
               opt.id;
             const name =
               opt.mediumName ??
@@ -500,7 +492,6 @@ export default function AdmissionFormScreen() {
               opt.batchName ??
               opt.className ??
               opt.academicYearName ??
-              opt.sectionName ??
               opt.name;
             return (
               <TouchableOpacity
@@ -674,7 +665,6 @@ export default function AdmissionFormScreen() {
               {renderDropdown("Academic Year *", academicYearId, academicYears, (val) => { setAcademicYearId(val); setErrors(prev => ({...prev, academicYearId: ""})); }, "Select Year", "academicYearId")}
               {renderDropdown("Class *", classId, classes, (val) => { setClassId(val); setErrors(prev => ({...prev, classId: ""})); }, "Select Class", "classId")}
               {renderDropdown("Batch", batchId, batches, setBatchId, "Select Batch")}
-              {renderDropdown("Section", sectionId, sections, setSectionId, "Select Section")}
               {renderDropdown("Medium", mediumId, mediums, setMediumId, "Select Medium")}
             </View>
             <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>

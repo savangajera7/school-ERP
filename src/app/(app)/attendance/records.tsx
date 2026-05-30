@@ -21,8 +21,6 @@ import { AccessDenied } from "@/components/auth/AccessDenied";
 
 function formatClassLabel(row: AttendanceRow): string {
   const name = row.className?.trim();
-  const section = row.sectionName?.trim();
-  if (name && section) return `${name} — ${section}`;
   if (name) return name;
   if (row.classID) return `Class ${row.classID}`;
   return "—";

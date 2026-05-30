@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/Card";
 import { useGetApiExamGetExamList } from "@/api/generated/exam/exam";
 import { useGetApiSubjectGetSubjectList } from "@/api/generated/subject/subject";
 import { useGetApiClassGetClassList } from "@/api/generated/master-class/master-class";
-import { useGetApiSectionGetSectionList } from "@/api/generated/master-section/master-section";
+
 import { useGetApiStudentGet } from "@/api/generated/3-student-crud/3-student-crud";
 import { usePostApiResultInsertResult, useGetApiResultGetResultList } from "@/api/generated/result/result";
 import { parseApiList } from "@/utils/apiResponse";
@@ -28,7 +28,7 @@ export default function ExamMarksScreen() {
   const [selectedExamId, setSelectedExamId] = useState<number | null>(null);
   const [selectedSubjectId, setSelectedSubjectId] = useState<number | null>(null);
   const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
-  const [selectedSectionId, setSelectedSectionId] = useState<number | null>(null);
+
   
   const { showToast } = useToast();
   const userData = useAuthStore((s) => s.userData);
@@ -37,7 +37,7 @@ export default function ExamMarksScreen() {
   const { data: examsData, isLoading: loadingExams } = useGetApiExamGetExamList();
   const { data: subjectsData, isLoading: loadingSubjects } = useGetApiSubjectGetSubjectList();
   const { data: classesData, isLoading: loadingClasses } = useGetApiClassGetClassList();
-  const { data: sectionsData, isLoading: loadingSections } = useGetApiSectionGetSectionList();
+
   const { data: studentsData, isLoading: loadingStudents } = useGetApiStudentGet();
   const { data: resultsData, isLoading: loadingResults, refetch: refetchResults } = useGetApiResultGetResultList();
   const insertResult = usePostApiResultInsertResult();
@@ -45,7 +45,7 @@ export default function ExamMarksScreen() {
   const exams = useMemo(() => parseApiList(examsData?.data), [examsData]);
   const subjects = useMemo(() => parseApiList(subjectsData?.data), [subjectsData]);
   const classes = useMemo(() => parseApiList(classesData?.data), [classesData]);
-  const sections = useMemo(() => parseApiList(sectionsData?.data), [sectionsData]);
+
   const allResults = useMemo(() => parseApiList(resultsData?.data), [resultsData]);
   
   const [marksMap, setMarksMap] = useState<Record<number, string>>({});
@@ -58,10 +58,9 @@ export default function ExamMarksScreen() {
   const filteredStudents = useMemo(() => {
     return allStudents.filter(
       (s) =>
-        (!selectedClassId || s.classID === selectedClassId) &&
-        (!selectedSectionId || s.sectionID === selectedSectionId)
+        (!selectedClassId || s.classID === selectedClassId)
     );
-  }, [allStudents, selectedClassId, selectedSectionId]);
+  }, [allStudents, selectedClassId]);
 
   const handleMarkChange = (studentId: number, value: string) => {
     setMarksMap(prev => ({ ...prev, [studentId]: value }));
@@ -184,24 +183,6 @@ export default function ExamMarksScreen() {
                   ))}
                 </ScrollView>
               </View>
-              <View className="flex-1">
-                <Text className="text-[12px] font-black text-gray-405 mb-2 uppercase tracking-wider">Section</Text>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
-                  {sections.map((sec: any) => (
-                    <TouchableOpacity
-                      key={sec.sectionID}
-                      onPress={() => setSelectedSectionId(sec.sectionID)}
-                      className={`px-4 py-2 rounded-xl border ${
-                        selectedSectionId === sec.sectionID ? "bg-primary border-primary" : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700"
-                      }`}
-                    >
-                      <Text className={`text-xs font-bold ${selectedSectionId === sec.sectionID ? "text-white" : "text-gray-600"}`}>
-                        {sec.sectionName}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </ScrollView>
-              </View>
             </View>
           </View>
         </PremiumCard>
@@ -209,7 +190,7 @@ export default function ExamMarksScreen() {
         {loadingStudents || loadingExams || loadingSubjects ? (
           <SkeletonLoader rows={5} />
         ) : filteredStudents.length === 0 ? (
-          <EmptyState title="No students found" message="Select class and section to see students" />
+          <EmptyState title="No students found" message="Select class to see students" />
         ) : (
           <View className="gap-3">
             {filteredStudents.map((student) => (

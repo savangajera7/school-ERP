@@ -221,10 +221,9 @@ export default function AdminStudentManagementScreen() {
       flex: 1, 
       render: (s) => {
         const cName = (s as any).className || classes.find((c: any) => c.classID === s.classID)?.className || s.classID;
-        const sName = (s as any).sectionName || s.sectionID;
         return (
           <Text className="text-sm font-semibold text-gray-600 dark:text-slate-400">
-            {cName ? `Class ${cName}` : ''} {sName ? `- ${sName}` : ''}
+            {cName ? `Class ${cName}` : ''}
           </Text>
         );
       }
@@ -262,7 +261,6 @@ export default function AdminStudentManagementScreen() {
     const fullName = getStudentDisplayName(item);
     const studentId = item.studentID;
     const cName = (item as any).className || classes.find((c: any) => c.classID === item.classID)?.className || item.classID;
-    const sName = (item as any).sectionName || item.sectionID;
     
     return (
       <TouchableOpacity 
@@ -297,10 +295,10 @@ export default function AdminStudentManagementScreen() {
               <Text className="text-sm font-extrabold text-gray-900 dark:text-slate-100 uppercase flex-1" numberOfLines={1}>
                 {fullName}
               </Text>
-              {Boolean(item.classID || item.sectionID || cName) && (
+              {Boolean(item.classID || cName) && (
                 <View className="px-2 py-0.5 bg-teal-50 border border-teal-100 rounded-lg">
                   <Text className="text-[10px] font-black text-teal-700 uppercase">
-                    {cName ? `Class ${cName}` : ''}{sName ? `-${sName}` : ''}
+                    {cName ? `Class ${cName}` : ''}
                   </Text>
                 </View>
               )}

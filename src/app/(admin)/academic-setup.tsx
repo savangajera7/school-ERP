@@ -8,26 +8,23 @@ import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { PremiumTabSwitcher } from "@/components/ui/premium";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
 import { useGetApiClassGetClassList } from "@/api/generated/master-class/master-class";
-import { useGetApiSectionGetSectionList } from "@/api/generated/master-section/master-section";
 import { useGetApiAcademicYearGet } from "@/api/generated/2-master-academicyear/2-master-academicyear";
 import { useGetApiBatchGet } from "@/api/generated/2-master-batch/2-master-batch";
 import { parseApiList } from "@/utils/apiResponse";
 import type { AppIconName } from "@/constants/appIcons";
 import { AppIcon } from "@/components/icons/AppIcon";
 
-type TabKey = "years" | "classes" | "sections" | "batches";
+type TabKey = "years" | "classes" | "batches";
 
 const TAB_ICONS: Record<TabKey, AppIconName> = {
   years: "calendar",
   classes: "academic",
-  sections: "admission",
   batches: "students",
 };
 
 const TAB_COLORS: Record<TabKey, { bg: string; border: string; text: string }> = {
   years:    { bg: "bg-blue-50",   border: "border-blue-100",   text: "text-blue-600"   },
   classes:  { bg: "bg-violet-50", border: "border-violet-100", text: "text-violet-600" },
-  sections: { bg: "bg-amber-50",  border: "border-amber-100",  text: "text-amber-600"  },
   batches:  { bg: "bg-emerald-50",border: "border-emerald-100",text: "text-emerald-600"},
 };
 
@@ -38,10 +35,9 @@ export default function AcademicSetupScreen() {
 
   const { data: yearsData, isLoading: loadingYears } = useGetApiAcademicYearGet();
   const { data: classesData, isLoading: loadingClasses } = useGetApiClassGetClassList();
-  const { data: sectionsData, isLoading: loadingSections } = useGetApiSectionGetSectionList();
   const { data: batchesData, isLoading: loadingBatches } = useGetApiBatchGet();
 
-  const isLoading = loadingYears || loadingClasses || loadingSections || loadingBatches;
+  const isLoading = loadingYears || loadingClasses || loadingBatches;
 
   const activeData = useMemo(() => {
     let raw: any[] = [];
@@ -59,11 +55,7 @@ export default function AcademicSetupScreen() {
         idKey = "classID";
         nameKey = "className";
         break;
-      case "sections":
-        raw = parseApiList(sectionsData?.data);
-        idKey = "sectionID";
-        nameKey = "sectionName";
-        break;
+
       case "batches":
         raw = parseApiList(batchesData?.data);
         idKey = "batchID";
@@ -80,7 +72,7 @@ export default function AcademicSetupScreen() {
       : raw;
 
     return { items: filtered, idKey, nameKey };
-  }, [activeTab, search, yearsData, classesData, sectionsData, batchesData]);
+  }, [activeTab, search, yearsData, classesData, batchesData]);
 
   const colors = TAB_COLORS[activeTab];
 
@@ -94,7 +86,6 @@ export default function AcademicSetupScreen() {
           tabs={[
             { key: "years", label: "Years" },
             { key: "classes", label: "Classes" },
-            { key: "sections", label: "Sections" },
             { key: "batches", label: "Batches" },
           ]}
           active={activeTab}
