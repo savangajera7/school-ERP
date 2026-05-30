@@ -33,7 +33,6 @@ import { useColorScheme } from "nativewind";
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 import { Platform } from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import { premiumCardShadow } from "@/constants/premiumStyles";
 import { ResponsiveDataList } from "@/components/shared/ResponsiveDataList";
 import { EntityActionButtons } from "@/components/shared/EntityActionButtons";
@@ -62,6 +61,17 @@ function subjectColor(name: string) {
   let h = 0;
   for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) & 0xffffffff;
   return SUBJECT_COLORS[Math.abs(h) % SUBJECT_COLORS.length];
+}
+
+function formatTo12Hour(timeStr: string): string {
+  if (!timeStr) return "";
+  const [hStr, mStr] = timeStr.split(":");
+  const h = parseInt(hStr, 10);
+  if (isNaN(h)) return timeStr;
+  const ampm = h >= 12 ? "PM" : "AM";
+  const hours = h % 12 || 12;
+  const mins = mStr || "00";
+  return `${hours}:${mins} ${ampm}`;
 }
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -1030,62 +1040,53 @@ return (
               )}
 
               {/* Time Selection */}
-              <View className="flex-row gap-4 mb-6">
+              <View className="flex-row gap-4 mb-4">
                 <View className="flex-1">
                   <Text className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 ml-1">Starts At *</Text>
                   <TouchableOpacity
-                    onPress={() => setShowStartPicker(true)}
+                    onPress={() => { setShowStartPicker(!showStartPicker); setShowEndPicker(false); }}
                     activeOpacity={0.7}
                     className="bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl px-4 py-3.5 flex-row items-center justify-between"
                   >
-                    <Text className="text-sm font-black text-gray-800 dark:text-slate-200">{formStart}</Text>
+                    <Text className="text-sm font-black text-gray-800 dark:text-slate-200">{formatTo12Hour(formStart)}</Text>
                     <View className="w-7 h-7 rounded-lg bg-indigo-500/10 items-center justify-center">
                       <AppIcon name="timetable" size={14} color="#6366F1" />
                     </View>
                   </TouchableOpacity>
-                  {showStartPicker && (
-                    <DateTimePicker
-                      value={parseTimeString(formStart)}
-                      mode="time"
-                      is24Hour={true}
-                      display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                      onChange={(event, selectedDate) => {
-                        setShowStartPicker(Platform.OS === 'ios');
-                        if (selectedDate) {
-                          setFormStart(formatTimeToString(selectedDate));
-                        }
-                      }}
-                    />
-                  )}
                 </View>
                 <View className="flex-1">
                   <Text className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 ml-1">Ends At *</Text>
                   <TouchableOpacity
-                    onPress={() => setShowEndPicker(true)}
+                    onPress={() => { setShowEndPicker(!showEndPicker); setShowStartPicker(false); }}
                     activeOpacity={0.7}
                     className="bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl px-4 py-3.5 flex-row items-center justify-between"
                   >
-                    <Text className="text-sm font-black text-gray-800 dark:text-slate-200">{formEnd}</Text>
+                    <Text className="text-sm font-black text-gray-800 dark:text-slate-200">{formatTo12Hour(formEnd)}</Text>
                     <View className="w-7 h-7 rounded-lg bg-indigo-500/10 items-center justify-center">
                       <AppIcon name="timetable" size={14} color="#6366F1" />
                     </View>
                   </TouchableOpacity>
-                  {showEndPicker && (
-                    <DateTimePicker
-                      value={parseTimeString(formEnd)}
-                      mode="time"
-                      is24Hour={true}
-                      display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                      onChange={(event, selectedDate) => {
-                        setShowEndPicker(Platform.OS === 'ios');
-                        if (selectedDate) {
-                          setFormEnd(formatTimeToString(selectedDate));
-                        }
-                      }}
-                    />
-                  )}
                 </View>
               </View>
+
+              {/* Time Picker Modals */}
+              <TimePickerModal
+                visible={showStartPicker}
+                onClose={() => setShowStartPicker(false)}
+                value={formStart}
+                onConfirm={setFormStart}
+                isDark={isDark}
+                title="Select Start Time"
+              />
+
+              <TimePickerModal
+                visible={showEndPicker}
+                onClose={() => setShowEndPicker(false)}
+                value={formEnd}
+                onConfirm={setFormEnd}
+                isDark={isDark}
+                title="Select End Time"
+              />
 
               {/* Room Number */}
               <View className="mb-6">
@@ -1232,3 +1233,253 @@ return (
     </PremiumScreenLayout>
   );
 }
+
+// ─── Custom Time Picker Modal Component ──────────────────────────────────────
+
+interface TimePickerModalProps {
+  visible: boolean;
+  onClose: () => void;
+  value: string; // "HH:MM"
+  onConfirm: (timeStr: string) => void;
+  isDark: boolean;
+  title: string;
+}
+
+function TimePickerModal({ visible, onClose, value, onConfirm, isDark, title }: TimePickerModalProps) {
+  const parseTime = (timeStr: string) => {
+    try {
+      const [hhStr, mmStr] = (timeStr || "08:00").split(":");
+      const hh = parseInt(hhStr, 10) || 0;
+      const mm = parseInt(mmStr, 10) || 0;
+      const isPm = hh >= 12;
+      const hour12 = hh % 12 || 12;
+      return { hour12, minute: mm, isPm };
+    } catch (e) {
+      return { hour12: 8, minute: 0, isPm: false };
+    }
+  };
+
+  const formatTime = (hour12: number, minute: number, isPm: boolean) => {
+    let hh24 = hour12;
+    if (isPm) {
+      if (hh24 < 12) hh24 += 12;
+    } else {
+      if (hh24 === 12) hh24 = 0;
+    }
+    const hhStr = hh24.toString().padStart(2, "0");
+    const mmStr = minute.toString().padStart(2, "0");
+    return `${hhStr}:${mmStr}`;
+  };
+
+  const [selectedHour, setSelectedHour] = useState(8);
+  const [selectedMinute, setSelectedMinute] = useState(0);
+  const [isPm, setIsPm] = useState(false);
+  const [activeTab, setActiveTab] = useState<"hours" | "minutes">("hours");
+
+  // Load initial value when modal becomes visible
+  useEffect(() => {
+    if (visible) {
+      const parsed = parseTime(value);
+      setSelectedHour(parsed.hour12);
+      setSelectedMinute(parsed.minute);
+      setIsPm(parsed.isPm);
+      setActiveTab("hours");
+    }
+  }, [visible, value]);
+
+  const handleConfirm = () => {
+    const formatted = formatTime(selectedHour, selectedMinute, isPm);
+    onConfirm(formatted);
+    onClose();
+  };
+
+  const HOURS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  const MINUTES = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
+
+  if (!visible) return null;
+
+  return (
+    <Modal
+      transparent
+      visible={visible}
+      animationType="fade"
+      onRequestClose={onClose}
+    >
+      <View className="flex-1 bg-black/60 justify-center items-center p-6">
+        <View 
+          className="w-full max-w-[340px] rounded-3xl overflow-hidden border p-5"
+          style={{
+            backgroundColor: isDark ? SchoolTheme.cardDark : "#FFFFFF",
+            borderColor: isDark ? SchoolTheme.borderDark : "#E2E8F0",
+          }}
+        >
+          {/* Header */}
+          <View className="flex-row justify-between items-center pb-3 border-b mb-4" style={{ borderColor: isDark ? SchoolTheme.borderDark : "#F1F5F9" }}>
+            <Text className="text-sm font-black uppercase tracking-wider text-slate-800 dark:text-slate-200">
+              {title}
+            </Text>
+            <TouchableOpacity onPress={onClose} className="p-1 rounded-lg" style={{ backgroundColor: isDark ? "#334155" : "#F1F5F9" }}>
+              <AppIcon name="delete" size={14} color={isDark ? "#94A3B8" : "#475569"} />
+            </TouchableOpacity>
+          </View>
+
+          {/* Time Display Preview */}
+          <View className="flex-row items-center justify-center bg-indigo-50/50 dark:bg-indigo-950/20 w-full py-4 rounded-2xl mb-4 border border-indigo-100/50 dark:border-indigo-900/30">
+            <TouchableOpacity onPress={() => setActiveTab("hours")}>
+              <Text className={`text-4xl font-black ${activeTab === "hours" ? "text-indigo-600 dark:text-indigo-400" : "text-gray-400 dark:text-slate-500"}`}>
+                {selectedHour.toString().padStart(2, "0")}
+              </Text>
+            </TouchableOpacity>
+            <Text className="text-4xl font-black text-indigo-300 dark:text-indigo-900 mx-2">:</Text>
+            <TouchableOpacity onPress={() => setActiveTab("minutes")}>
+              <Text className={`text-4xl font-black ${activeTab === "minutes" ? "text-indigo-600 dark:text-indigo-400" : "text-gray-400 dark:text-slate-500"}`}>
+                {selectedMinute.toString().padStart(2, "0")}
+              </Text>
+            </TouchableOpacity>
+            <View className="ml-3 bg-indigo-100 dark:bg-indigo-900/50 px-2.5 py-1 rounded-lg">
+              <Text className="text-sm font-black text-indigo-700 dark:text-indigo-300">
+                {isPm ? "PM" : "AM"}
+              </Text>
+            </View>
+          </View>
+
+          {/* Segmented Switch */}
+          <View className="flex-row w-full bg-gray-100 dark:bg-slate-800 p-1 rounded-xl mb-4">
+            <TouchableOpacity 
+              onPress={() => setActiveTab("hours")}
+              className={`flex-1 py-2 items-center rounded-lg ${activeTab === "hours" ? "bg-white dark:bg-slate-700" : ""}`}
+            >
+              <Text className={`text-xs font-black uppercase ${activeTab === "hours" ? "text-indigo-600 dark:text-indigo-400" : "text-gray-500 dark:text-slate-400"}`}>
+                Hours
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              onPress={() => setActiveTab("minutes")}
+              className={`flex-1 py-2 items-center rounded-lg ${activeTab === "minutes" ? "bg-white dark:bg-slate-700" : ""}`}
+            >
+              <Text className={`text-xs font-black uppercase ${activeTab === "minutes" ? "text-indigo-600 dark:text-indigo-400" : "text-gray-500 dark:text-slate-400"}`}>
+                Minutes
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Grid selectors */}
+          <View className="w-full min-h-[160px] justify-center mb-4">
+            {activeTab === "hours" ? (
+              <View className="flex-row flex-wrap justify-between gap-y-3 gap-x-2">
+                {HOURS.map((hr) => {
+                  const isSelected = selectedHour === hr;
+                  return (
+                    <TouchableOpacity
+                      key={hr}
+                      onPress={() => {
+                        setSelectedHour(hr);
+                        setActiveTab("minutes");
+                      }}
+                      className={`w-[60px] h-[40px] justify-center items-center rounded-xl border ${
+                        isSelected 
+                          ? "bg-indigo-600 border-indigo-600" 
+                          : "bg-gray-50 dark:bg-slate-800/50 border-gray-200 dark:border-slate-800"
+                      }`}
+                    >
+                      <Text className={`text-sm font-black ${isSelected ? "text-white" : "text-gray-700 dark:text-slate-300"}`}>
+                        {hr.toString().padStart(2, "0")}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            ) : (
+              <View className="w-full">
+                <View className="flex-row flex-wrap justify-between gap-y-3 gap-x-2 mb-3">
+                  {MINUTES.map((min) => {
+                    const isSelected = selectedMinute === min;
+                    return (
+                      <TouchableOpacity
+                        key={min}
+                        onPress={() => setSelectedMinute(min)}
+                        className={`w-[60px] h-[40px] justify-center items-center rounded-xl border ${
+                          isSelected 
+                            ? "bg-indigo-600 border-indigo-600" 
+                            : "bg-gray-50 dark:bg-slate-800/50 border-gray-200 dark:border-slate-800"
+                        }`}
+                      >
+                        <Text className={`text-sm font-black ${isSelected ? "text-white" : "text-gray-700 dark:text-slate-300"}`}>
+                          {min.toString().padStart(2, "0")}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+
+                {/* Micro adjusters */}
+                <View className="flex-row justify-between items-center bg-gray-50 dark:bg-slate-800/30 p-2.5 rounded-xl border border-gray-100 dark:border-slate-800">
+                  <TouchableOpacity
+                    onPress={() => setSelectedMinute(m => Math.max(0, m - 1))}
+                    className="w-10 h-8 bg-gray-200/50 dark:bg-slate-700/50 items-center justify-center rounded-lg active:scale-95"
+                  >
+                    <Text className="text-lg font-black text-gray-700 dark:text-slate-300">-</Text>
+                  </TouchableOpacity>
+                  <Text className="text-xs font-black text-gray-500 dark:text-slate-400 uppercase">
+                    Fine Tune: {selectedMinute}m
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => setSelectedMinute(m => Math.min(59, m + 1))}
+                    className="w-10 h-8 bg-gray-200/50 dark:bg-slate-700/50 items-center justify-center rounded-lg active:scale-95"
+                  >
+                    <Text className="text-lg font-black text-gray-700 dark:text-slate-300">+</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+          </View>
+
+          {/* AM / PM Selector */}
+          <View className="flex-row w-full justify-center gap-4 border-t border-b py-3 mb-4" style={{ borderColor: isDark ? SchoolTheme.borderDark : "#F1F5F9" }}>
+            <TouchableOpacity
+              onPress={() => setIsPm(false)}
+              className={`flex-1 py-2 rounded-xl border items-center justify-center ${
+                !isPm 
+                  ? "bg-indigo-600 border-indigo-600" 
+                  : "bg-gray-50 dark:bg-slate-800/50 border-gray-200 dark:border-slate-800"
+              }`}
+            >
+              <Text className={`text-xs font-black uppercase ${!isPm ? "text-white" : "text-gray-600 dark:text-slate-400"}`}>
+                AM
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setIsPm(true)}
+              className={`flex-1 py-2 rounded-xl border items-center justify-center ${
+                isPm 
+                  ? "bg-indigo-600 border-indigo-600" 
+                  : "bg-gray-50 dark:bg-slate-800/50 border-gray-200 dark:border-slate-800"
+              }`}
+            >
+              <Text className={`text-xs font-black uppercase ${isPm ? "text-white" : "text-gray-600 dark:text-slate-400"}`}>
+                PM
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Confirm Actions */}
+          <View className="flex-row gap-3 w-full">
+            <TouchableOpacity
+              onPress={onClose}
+              className="flex-1 py-3 rounded-2xl bg-gray-100 dark:bg-slate-800 items-center justify-center active:scale-95"
+            >
+              <Text className="text-gray-700 dark:text-slate-300 font-bold text-xs uppercase">Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={handleConfirm}
+              className="flex-1 py-3 rounded-2xl bg-emerald-600 items-center justify-center active:scale-95"
+            >
+              <Text className="text-white font-black text-xs uppercase">Confirm</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
+}
+
