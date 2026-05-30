@@ -770,7 +770,7 @@ return (
           {canEdit && (
             <TouchableOpacity
               onPress={openAdd}
-              className="flex-row items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 shadow-md shadow-emerald-500/20"
+              className="flex-row items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600"
               activeOpacity={0.8}
             >
               <AppIcon name="add" size={14} color="white" />
@@ -795,7 +795,7 @@ return (
                 onPress={() => setSelectedDay(day)}
                 className={`px-4 py-2 rounded-xl border ${
                   selectedDay === day
-                    ? "bg-indigo-600 border-indigo-600 shadow-md shadow-indigo-500/30"
+                    ? "bg-indigo-600 border-indigo-600"
                     : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700"
                 }`}
                 activeOpacity={0.8}
@@ -820,7 +820,7 @@ return (
                 onPress={() => setSelectedMediumID(med.mediumID)}
                 className={`px-4 py-2 rounded-xl border ${
                   selectedMediumID === med.mediumID 
-                    ? "bg-orange-600 border-orange-600 shadow-md shadow-orange-500/30" 
+                    ? "bg-orange-600 border-orange-600" 
                     : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700"
                 }`}
               >
@@ -844,7 +844,7 @@ return (
                 onPress={() => setSelectedBatchID(batch.batchID)}
                 className={`px-4 py-2 rounded-xl border ${
                   selectedBatchID === batch.batchID 
-                    ? "bg-emerald-600 border-emerald-600 shadow-md shadow-emerald-500/30" 
+                    ? "bg-emerald-600 border-emerald-600" 
                     : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700"
                 }`}
               >
@@ -875,7 +875,7 @@ return (
                   onPress={() => setSelectedClassID(cls.classID)}
                   className={`px-4 py-2 rounded-xl border ${
                     selectedClassID === cls.classID
-                      ? "bg-indigo-600 border-indigo-600 shadow-md shadow-indigo-500/30"
+                      ? "bg-indigo-600 border-indigo-600"
                       : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700"
                   }`}
                   activeOpacity={0.8}
@@ -890,6 +890,7 @@ return (
             </ScrollView>
           </View>
         )}
+      </View>
 
       {/* ── Form Modal ── */}
       {formVisible && (
@@ -973,7 +974,7 @@ return (
                             onPress={() => setFormSubjectID(sub.subjectID)}
                             className={`px-4 py-2.5 rounded-xl border ${
                               isSelected 
-                                ? "bg-indigo-600 border-indigo-600 shadow-md shadow-indigo-500/30" 
+                                ? "bg-indigo-600 border-indigo-600" 
                                 : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700"
                             }`}
                             activeOpacity={0.8}
@@ -1011,7 +1012,7 @@ return (
                           onPress={() => setFormTeacherID(t.teacherID)}
                           className={`px-4 py-2.5 rounded-xl border ${
                             isSelected 
-                              ? "bg-emerald-600 border-emerald-600 shadow-md shadow-emerald-500/30" 
+                              ? "bg-emerald-600 border-emerald-600" 
                               : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700"
                           }`}
                           activeOpacity={0.8}
@@ -1189,9 +1190,6 @@ return (
         </SafeAreaView>
       </View>
       )}
-
-        
-      </View>
 
       {/* ── Header info ── */}
       <View className="flex-row items-center justify-between mb-3 px-1">
