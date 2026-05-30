@@ -40,28 +40,28 @@ export function EntityActionButtons({
       {viewVisible && (
         <TouchableOpacity
           onPress={onView}
-          className="bg-emerald-50 w-[30px] h-[30px] rounded-md items-center justify-center border border-emerald-100"
+          className="bg-emerald-500/10 w-[32px] h-[32px] rounded-lg items-center justify-center border border-emerald-500/20"
           activeOpacity={0.7}
         >
-          <AppIcon name="profile" size={15} color="#10B981" />
+          <AppIcon name="profile" size={16} color="#10B981" />
         </TouchableOpacity>
       )}
       {editVisible && (
         <TouchableOpacity
           onPress={onEdit}
-          className="bg-blue-50 w-[30px] h-[30px] rounded-md items-center justify-center border border-blue-100"
+          className="bg-indigo-500/10 w-[32px] h-[32px] rounded-lg items-center justify-center border border-indigo-500/20"
           activeOpacity={0.7}
         >
-          <AppIcon name="edit" size={15} color="#3B82F6" />
+          <AppIcon name="edit" size={16} color="#6366F1" />
         </TouchableOpacity>
       )}
       {deleteVisible && (
         <TouchableOpacity
           onPress={onDelete}
-          className="bg-red-50 w-[30px] h-[30px] rounded-md items-center justify-center border border-red-100"
+          className="bg-rose-500/10 w-[32px] h-[32px] rounded-lg items-center justify-center border border-rose-500/20"
           activeOpacity={0.7}
         >
-          <AppIcon name="delete" size={15} color="#EF4444" />
+          <AppIcon name="delete" size={16} color="#EF4444" />
         </TouchableOpacity>
       )}
     </View>

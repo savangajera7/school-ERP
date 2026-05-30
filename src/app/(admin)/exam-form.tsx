@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, ScrollView, TouchableOpacity, TextInput, ActivityIndicator, StyleSheet } from "react-native";
 import { useDialog } from "@/components/ui/AppDialog";
+import { useToast } from "@/components/ui/Toast";
 import { router, useLocalSearchParams } from "expo-router";
 import { Card } from "@/components/ui/Card";
 import { Colors } from "@/constants/colors";
@@ -25,6 +26,7 @@ export default function ExamFormScreen() {
   const { userData } = useAuthStore();
   const [loading, setLoading] = useState(false);
   const { alert } = useDialog();
+  const { showToast } = useToast();
 
   // Form State
   const [examName, setExamName] = useState("");
@@ -66,10 +68,10 @@ export default function ExamFormScreen() {
       setLoading(true);
       if (isEditing) {
         await updateExam.mutateAsync({ data: { ...payload, examID: examID as number, updatedBy: parseInt(userData?.id || "0") } });
-        await alert("Success", "Exam details updated successfully!", "success");
+        showToast("Exam details updated successfully!", "success");
       } else {
         await insertExam.mutateAsync({ data: payload });
-        await alert("Success", "Exam created successfully!", "success");
+        showToast("Exam created successfully!", "success");
       }
       setLoading(false);
       router.back();
@@ -87,18 +89,17 @@ export default function ExamFormScreen() {
     );
   }
 
-  return (
-    <PremiumScreenLayout
+  return (    <PremiumScreenLayout
       title={isEditing ? "Edit Exam" : "New Exam"}
       subtitle={isEditing ? "Modify examination schedule" : "Schedule a new examination"}
       flatHeader
       keyboard
     >
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>
-        <Card className="p-6 mb-6">
-          <View className="flex-row items-center gap-3 mb-5 border-b border-gray-100 dark:border-slate-700 pb-4">
-            <AppIcon name="exams" size={22} color={Colors.accent} active />
-            <Text className="text-[16px] font-black text-gray-900 dark:text-slate-100 uppercase tracking-wide">Exam Configuration</Text>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }} className="p-4">
+        <View className="bg-[#1e293b] p-6 rounded-3xl border border-slate-700 shadow-xl">
+          <View className="flex-row items-center gap-3 mb-6 border-b border-slate-700 pb-5">
+            <AppIcon name="exams" size={24} color="#f5921e" />
+            <Text className="text-lg font-black text-white uppercase tracking-tight">Exam Information</Text>
           </View>
 
           <View className="gap-4">
@@ -187,7 +188,7 @@ export default function ExamFormScreen() {
               </Text>
             )}
           </TouchableOpacity>
-        </Card>
+        </View>
       </ScrollView>
     </PremiumScreenLayout>
   );

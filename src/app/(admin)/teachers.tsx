@@ -32,6 +32,8 @@ import {
   getGetApiTeacherGetTeacherListQueryKey,
 } from "@/api/generated/teacher/teacher";
 import { SchoolTheme } from "@/constants/theme";
+import { useDialog } from "@/components/ui/AppDialog";
+import { useToast } from "@/components/ui/Toast";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -91,6 +93,8 @@ export default function AdminTeacherManagementScreen() {
   const queryClient = useQueryClient();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
+  const dialog = useDialog();
+  const { showToast } = useToast();
 
   // ── Data ──────────────────────────────────────────────────────────────────
   const { data: teachersRaw, isLoading, isError, error, refetch } = useGetApiTeacherGetTeacherList();
@@ -143,8 +147,9 @@ export default function AdminTeacherManagementScreen() {
       queryClient.invalidateQueries({ queryKey: getGetApiTeacherGetTeacherListQueryKey() });
       setDeleteModalVisible(false);
       setTeacherToDelete(null);
+      showToast("Teacher deleted successfully", "success");
     } catch (e: any) {
-      // keep modal open, show inline error handled below
+      dialog.alert("Error", e.message || "Failed to delete teacher", "error");
     } finally {
       setIsDeleting(false);
     }
@@ -256,79 +261,91 @@ export default function AdminTeacherManagementScreen() {
   const renderTeacherCard = (item: TeacherWithDetails) => (
     <TouchableOpacity
       activeOpacity={0.9}
-      className="rounded-2xl mb-3 border"
-      style={[
-        premiumCardShadow,
-        {
-          backgroundColor: isDark ? SchoolTheme.cardDark : "#FFFFFF",
-          borderColor: isDark ? SchoolTheme.borderDark : "#F3F4F6",
-        }
-      ]}
+      onPress={() => openPanel(item)}
+      className="bg-[#1e293b] rounded-2xl mb-3 overflow-hidden border border-slate-700"
+      style={{
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
+      }}
     >
-      <View className="p-4 border-b flex-row gap-3 rounded-t-2xl" style={{ backgroundColor: isDark ? SchoolTheme.cardDark : "#FFFFFF", borderColor: isDark ? SchoolTheme.borderDark : "#F3F4F6" }}>
+      <View className="p-4 flex-row gap-3">
         <View className="relative">
-          <View className="w-14 h-14 rounded-2xl border items-center justify-center overflow-hidden" style={{ backgroundColor: isDark ? "#1E293B" : "#F9FAFB", borderColor: isDark ? SchoolTheme.borderDark : "#E5E7EB" }}>
+          <View className="w-14 h-14 rounded-xl bg-slate-700 border border-slate-600 items-center justify-center overflow-hidden">
             <TeacherAvatar photo={item.photo ?? undefined} size={56} />
           </View>
           {item.isActive && (
-            <View className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-2 border-white rounded-full" />
+            <View className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-2 border-[#1e293b] rounded-full shadow-sm" />
           )}
         </View>
-        <View className="flex-1 justify-center">
-          <View className="flex-row items-center justify-between mb-1 gap-2">
-            <Text className="text-sm font-extrabold uppercase flex-1" numberOfLines={1} style={{ color: isDark ? SchoolTheme.textDark : "#111827" }}>
+        <View className="flex-1">
+          <View className="flex-row items-start justify-between mb-1">
+            <Text className="text-[14px] font-black text-white uppercase flex-1 mr-2 leading-tight" numberOfLines={1}>
               {item.teacherName}
             </Text>
-            <View className="px-2 py-0.5 border rounded-lg" style={{ backgroundColor: isDark ? "#1E3A8A" : "#EFF6FF", borderColor: isDark ? "#3B82F6" : "#BFDBFE" }}>
-              <Text className="text-[10px] font-black uppercase" style={{ color: isDark ? "#60A5FA" : "#1D4ED8" }}>{item.teacherCode || "—"}</Text>
+            <View className="px-2 py-0.5 bg-white/10 rounded-lg border border-white/10">
+              <Text className="text-[9px] font-black text-blue-400 uppercase tracking-tighter">
+                {item.teacherCode || "N/A"}
+              </Text>
             </View>
           </View>
+          
           {item.subjectName ? (
             <View className="flex-row items-center gap-1.5 mb-1">
-              <AppIcon name="subjects" size={12} color="#7C3AED" />
-              <Text className="text-[12px] font-bold text-violet-600 flex-1" numberOfLines={1}>{item.subjectName}</Text>
+              <AppIcon name="subjects" size={13} color="#a855f7" />
+              <Text className="text-[12px] font-bold text-purple-400 flex-1" numberOfLines={1}>
+                {item.subjectName}
+              </Text>
             </View>
           ) : null}
+          
           <View className="flex-row items-center gap-1.5">
-            <AppIcon name="call" size={12} color="#6B7280" />
-            <Text className="text-[12px] font-semibold flex-1" numberOfLines={1} style={{ color: isDark ? SchoolTheme.textSecondaryDark : "#6B7280" }}>{item.mobileNo || "No phone"}</Text>
+            <AppIcon name="call" size={13} color="#94a3b8" />
+            <Text className="text-[12px] font-bold text-slate-400 flex-1" numberOfLines={1}>
+              {item.mobileNo || "No phone"}
+            </Text>
           </View>
         </View>
       </View>
 
       {item.classPermissions.length > 0 && (
-        <View className="px-4 py-2.5 border-b flex-row items-center gap-2 flex-wrap" style={{ borderColor: isDark ? SchoolTheme.borderDark : "#F3F4F6" }}>
-          <AppIcon name="subjects" size={12} color="#9CA3AF" />
+        <View className="px-4 py-2 bg-slate-800/20 border-t border-slate-700/30 flex-row items-center gap-2 flex-wrap">
+          <AppIcon name="subjects" size={11} color="#475569" />
           {item.classPermissions.map((cp) => (
-            <View key={cp.classID} className="px-2 py-0.5 border rounded-md" style={{ backgroundColor: isDark ? "#134E4A" : "#F0FDFA", borderColor: isDark ? "#14B8A6" : "#99F6E4" }}>
-              <Text className="text-[10px] font-black" style={{ color: isDark ? "#5EEAD4" : "#0D9488" }}>{cp.className}</Text>
+            <View key={cp.classID} className="px-2 py-0.5 bg-teal-500/10 border border-teal-500/20 rounded-lg">
+              <Text className="text-[9px] font-black text-teal-400 uppercase">{cp.className}</Text>
             </View>
           ))}
         </View>
       )}
 
-      <View className="flex-row justify-end items-center px-4 py-2.5 gap-2.5 rounded-b-2xl border-t" style={{ backgroundColor: isDark ? "#1E293B" : "#F9FAFB", borderColor: isDark ? SchoolTheme.borderDark : "#F3F4F6" }}>
-        <View className="border rounded-xl overflow-hidden" style={{ backgroundColor: isDark ? "#1E3A8A" : "#EFF6FF", borderColor: isDark ? "#3B82F6" : "#BFDBFE" }}>
-          <IconButton 
-            icon="settings" 
-            color="#1A3C6E" 
-            onPress={() => openPanel(item)}
-          />
-        </View>
-        <View className="border rounded-xl overflow-hidden" style={{ backgroundColor: isDark ? "#312E81" : "#EEF2FF", borderColor: isDark ? "#4338CA" : "#C7D2FE" }}>
-          <IconButton 
-            icon="edit" 
-            color="#4F46E5" 
-            onPress={() => router.push(`/(admin)/teacher-form?id=${item.teacherID}`)}
-          />
-        </View>
-        <View className="border rounded-xl overflow-hidden" style={{ backgroundColor: isDark ? "#881337" : "#FEF2F2", borderColor: isDark ? "#BE123C" : "#FECACA" }}>
-          <IconButton 
-            icon="delete" 
-            color="#E11D48" 
-            onPress={() => handleDeleteClick(item)}
-          />
-        </View>
+      <View className="flex-row justify-end items-center px-4 py-2 bg-slate-800/40 border-t border-slate-700/50 gap-2">
+        <TouchableOpacity 
+          onPress={() => openPanel(item)}
+          className="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 items-center justify-center"
+        >
+          <AppIcon name="settings" size={16} color="#818cf8" />
+        </TouchableOpacity>
+        
+        {canManageTeachers && (
+          <>
+            <TouchableOpacity 
+              onPress={() => router.push(`/(admin)/teacher-form?id=${item.teacherID}`)}
+              className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 items-center justify-center"
+            >
+              <AppIcon name="edit" size={16} color="#34d399" />
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              onPress={() => handleDeleteClick(item)}
+              className="w-9 h-9 rounded-xl bg-rose-500/10 border border-rose-500/20 items-center justify-center"
+            >
+              <AppIcon name="delete" size={16} color="#fb7185" />
+            </TouchableOpacity>
+          </>
+        )}
       </View>
     </TouchableOpacity>
   );

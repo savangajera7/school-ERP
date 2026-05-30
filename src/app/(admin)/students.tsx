@@ -1,8 +1,8 @@
-import { Alert } from "react-native";
 import React, { useState, useMemo } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Modal, TextInput, ActivityIndicator, Image } from "react-native";
 import { router, useFocusEffect } from "expo-router";
 import { useDialog } from "@/components/ui/AppDialog";
+import { useToast } from "@/components/ui/Toast";
 import type { StudentModel } from "@/api/model/studentModel";
 import type { StudentSearchRequest } from "@/api/model/studentSearchRequest";
 import type { StudentSearchResponse } from "@/api/model/studentSearchResponse";
@@ -28,8 +28,8 @@ import { IconButton } from "@/components/ui/IconButton";
 
 export default function AdminStudentManagementScreen() {
   const dialog = useDialog();
+  const { showToast } = useToast();
   const { canManageStudents } = usePermissions();
-  const { alert } = useDialog();
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
@@ -163,6 +163,7 @@ export default function AdminStudentManagementScreen() {
         params: { reason: deleteReason.trim() }
       });
       setDeleteModalVisible(false);
+      showToast("Student deleted successfully", "success");
       const searchRequest: StudentSearchRequest = {
         page: currentPage,
         pageSize: pageSize,
@@ -272,12 +273,18 @@ export default function AdminStudentManagementScreen() {
           });
         }}
         activeOpacity={0.9}
-        className="bg-white dark:bg-slate-800 rounded-2xl mb-3 border border-gray-100 dark:border-slate-700"
-        style={premiumCardShadow}
+        className="bg-[#1e293b] rounded-2xl mb-3 overflow-hidden border border-slate-700"
+        style={{
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
+          elevation: 3,
+        }}
       >
-        <View className="p-4 border-b border-gray-50 dark:border-slate-700 flex-row gap-3 rounded-t-2xl bg-white dark:bg-slate-800">
+        <View className="p-4 flex-row gap-3">
           <View className="relative">
-            <View className="w-14 h-14 rounded-2xl bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 items-center justify-center overflow-hidden">
+            <View className="w-14 h-14 rounded-xl bg-slate-700 border border-slate-600 items-center justify-center overflow-hidden">
               {item.studentPhoto ? (
                 <Image source={{ uri: item.studentPhoto }} className="w-full h-full" />
               ) : (
@@ -285,73 +292,70 @@ export default function AdminStudentManagementScreen() {
               )}
             </View>
             {Boolean(item.rollNo) && (
-              <View className="absolute -top-1.5 -right-1.5 bg-amber-500 border border-white min-w-[20px] h-5 px-1 rounded-full items-center justify-center shadow-sm">
+              <View className="absolute -top-1.5 -right-1.5 bg-orange-500 border-2 border-[#1e293b] min-w-[20px] h-5 px-1 rounded-full items-center justify-center shadow-md">
                 <Text className="text-[10px] font-black text-white">{item.rollNo}</Text>
               </View>
             )}
           </View>
-          <View className="flex-1 justify-center">
-            <View className="flex-row items-center justify-between mb-1.5 gap-2">
-              <Text className="text-sm font-extrabold text-gray-900 dark:text-slate-100 uppercase flex-1" numberOfLines={1}>
+          
+          <View className="flex-1">
+            <View className="flex-row items-start justify-between mb-1">
+              <Text className="text-[14px] font-black text-white uppercase flex-1 mr-2 leading-tight" numberOfLines={1}>
                 {fullName}
               </Text>
               {Boolean(item.classID || cName) && (
-                <View className="px-2 py-0.5 bg-teal-50 border border-teal-100 rounded-lg">
-                  <Text className="text-[10px] font-black text-teal-700 uppercase">
+                <View className="px-2 py-0.5 bg-white/10 rounded-lg border border-white/10">
+                  <Text className="text-[9px] font-black text-teal-400 uppercase tracking-tighter">
                     {cName ? `Class ${cName}` : ''}
                   </Text>
                 </View>
               )}
             </View>
             
-            <View className="flex-row items-center gap-1.5 mb-1.5">
-              <AppIcon name="parents" size={13} color="#059669" />
-              <Text className="text-[12px] font-bold text-emerald-600 flex-1" numberOfLines={1}>
-                Username: {getParentLoginUsername(item)}
+            <View className="flex-row items-center gap-1.5 mb-1">
+              <AppIcon name="profile" size={13} color="#10b981" />
+              <Text className="text-[12px] font-bold text-[#10b981] flex-1" numberOfLines={1}>
+                User: {getParentLoginUsername(item)}
               </Text>
             </View>
             
-            <View className="flex-row items-center gap-1.5 mb-1.5">
-              <AppIcon name="lock" size={13} color="#6B7280" />
-              <Text className="text-[12px] font-bold text-gray-600 dark:text-slate-400 flex-1" numberOfLines={1}>
-                Password: {getParentLoginPassword(item)}
+            <View className="flex-row items-center gap-1.5">
+              <AppIcon name="key" size={13} color="#94a3b8" />
+              <Text className="text-[12px] font-bold text-slate-400 flex-1" numberOfLines={1}>
+                Pass: <Text className="text-white">{getParentLoginPassword(item)}</Text>
               </Text>
             </View>
           </View>
         </View>
         
-        <View className="flex-row justify-end items-center px-4 py-2.5 bg-gray-50 dark:bg-slate-800/50 dark:bg-slate-700/30 gap-2.5 rounded-b-2xl">
+        <View className="flex-row justify-end items-center px-4 py-2 bg-slate-800/40 border-t border-slate-700/50 gap-2">
           {canManageStudents && (
-            <View className="flex-row gap-2">
-              {/* AUDIT FIX #6: Touch Targets */}
-              <View className="bg-indigo-50 border border-indigo-100 rounded-xl overflow-hidden">
-                <IconButton 
-                  icon="admission" 
-                  color="#4F46E5" 
-                  onPress={() => router.push(`/(admin)/admission-form?id=${studentId}`)}
-                />
-              </View>
+            <>
+              <TouchableOpacity 
+                onPress={() => router.push(`/(admin)/admission-form?id=${studentId}`)}
+                className="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 items-center justify-center"
+              >
+                <AppIcon name="edit" size={16} color="#818cf8" />
+              </TouchableOpacity>
               
-              <View className="bg-rose-50 border border-rose-100 rounded-xl overflow-hidden">
-                <IconButton 
-                  icon="warning" 
-                  color="#E11D48" 
-                  onPress={() => handleDeleteClick(item)}
-                />
-              </View>
-            </View>
+              <TouchableOpacity 
+                onPress={() => handleDeleteClick(item)}
+                className="w-9 h-9 rounded-xl bg-rose-500/10 border border-rose-500/20 items-center justify-center"
+              >
+                <AppIcon name="delete" size={16} color="#fb7185" />
+              </TouchableOpacity>
+            </>
           )}
 
-          <View className="bg-emerald-50 border border-emerald-100 rounded-xl overflow-hidden">
-            <IconButton 
-              icon="profile" 
-              color="#059669" 
-              onPress={() => {
-                if (studentId == null) return;
-                router.push({ pathname: "/(app)/student-profile", params: { id: String(studentId) } });
-              }}
-            />
-          </View>
+          <TouchableOpacity 
+            onPress={() => {
+              if (studentId == null) return;
+              router.push({ pathname: "/(app)/student-profile", params: { id: String(studentId) } });
+            }}
+            className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 items-center justify-center"
+          >
+            <AppIcon name="profile" size={16} color="#34d399" />
+          </TouchableOpacity>
         </View>
       </TouchableOpacity>
     );
@@ -503,20 +507,26 @@ export default function AdminStudentManagementScreen() {
         <View className="absolute bottom-6 left-0 right-0 items-center z-50">
           <TouchableOpacity
             className="bg-red-600 px-6 py-3 rounded-full flex-row items-center gap-2 shadow-lg"
-            onPress={() => {
-              Alert.alert("Bulk Delete", `Are you sure you want to delete ${selectedIds.length} students?`, [
-                { text: "Cancel", style: "cancel" },
-                { text: "Delete", style: "destructive", onPress: () => {
+            onPress={async () => {
+              const ok = await dialog.showDialog({
+                title: "Bulk Delete",
+                message: `Are you sure you want to delete ${selectedIds.length} students?`,
+                variant: "warning",
+                buttons: [
+                  { label: "Cancel", cancel: true },
+                  { label: "Delete", destructive: true, primary: true }
+                ]
+              });
+              if (ok.confirmed) {
                   // Simulate bulk delete
                   setIsDeleting(true);
                   setTimeout(() => {
                     setIsDeleting(false);
                     setSelectedIds([]);
-                    dialog.alert("Success", "Students deleted successfully", "success");
+                    showToast("Students deleted successfully", "success");
                     handleRefresh();
                   }, 1000);
-                }}
-              ]);
+              }
             }}
           >
             <AppIcon name="delete" size={20} color="white" />

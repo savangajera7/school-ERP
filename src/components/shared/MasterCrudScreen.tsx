@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, FlatList, TextInput, TouchableOpacity, Platform } from "react-native";
+import { View, Text, FlatList, TextInput, TouchableOpacity, Platform, ActivityIndicator } from "react-native";
 import { router } from "expo-router";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { ResponsiveDataList } from "@/components/shared/ResponsiveDataList";
@@ -17,6 +17,7 @@ import { parseApiList } from "@/utils/apiResponse";
 import type { AppIconName } from "@/constants/appIcons";
 import { useAuthStore } from "@/store/authStore";
 import { useDialog } from "@/components/ui/AppDialog";
+import { useToast } from "@/components/ui/Toast";
 
 export interface MasterCrudScreenProps {
   title: string;
@@ -55,6 +56,7 @@ export function MasterCrudScreen({
   const [editingItem, setEditingItem] = useState<any>(null);
   const { userData } = useAuthStore();
   const { alert, confirm } = useDialog();
+  const { showToast } = useToast();
 
   const currentUserId =
     Number(userData?.id ?? (userData as any)?.userID ?? (userData as any)?.UserID) || 1;
@@ -98,7 +100,7 @@ export function MasterCrudScreen({
       setInputValue("");
       setHasSubmitted(false);
       setIsActive(true);
-      await alert("Success", `${entityName} added successfully.`, "success");
+      showToast(`${entityName} added successfully`, "success");
       refetch();
     } catch (error: any) {
       await alert("Error", error.message || `Failed to add ${entityName}`, "error");
@@ -124,7 +126,7 @@ export function MasterCrudScreen({
       setEditingItem(null);
       setHasSubmitted(false);
       setIsActive(true);
-      await alert("Success", `${entityName} updated successfully.`, "success");
+      showToast(`${entityName} updated successfully`, "success");
       refetch();
     } catch (error: any) {
       await alert("Error", error.message || `Failed to update ${entityName}`, "error");
@@ -155,7 +157,7 @@ export function MasterCrudScreen({
     try {
       const response = await deleteMutation.mutateAsync({ id });
       assertSuccessfulMutation(response, `Failed to delete ${entityName}`);
-      await alert("Success", `${entityName} deleted successfully.`, "success");
+      showToast(`${entityName} deleted successfully`, "success");
       refetch();
     } catch (error: any) {
       await alert("Error", error.message || `Failed to delete ${entityName}`, "error");
@@ -170,77 +172,79 @@ export function MasterCrudScreen({
       fullWidth
       hideBack={Platform.OS === "web"}
     >
-      <Card className="p-4 mb-6" style={premiumCardShadow}>
-        <View className="flex-row gap-3">
+      <View 
+        className="bg-[#1e293b] p-4 mb-4 rounded-2xl border border-slate-700 mx-4 mt-3 shadow-lg"
+      >
+        <View className="flex-row gap-2">
           <TextInput
             value={inputValue}
             onChangeText={setInputValue}
             placeholder={placeholder}
-            className="flex-1 h-[48px] bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl px-4 text-sm font-semibold text-gray-800 dark:text-slate-200"
+            placeholderTextColor="#94a3b8"
+            className="flex-1 h-[46px] bg-slate-800 border border-slate-700 rounded-xl px-4 text-sm font-black text-white"
           />
           {editingItem ? (
             <View className="flex-row gap-2">
-              <Button
-                label="Save"
+              <TouchableOpacity
                 onPress={handleUpdate}
-                loading={updateMutation.isPending}
-                style={{ width: 70 }}
-              />
+                disabled={updateMutation.isPending}
+                className="bg-emerald-600 h-[46px] px-4 items-center justify-center rounded-xl"
+              >
+                {updateMutation.isPending ? <ActivityIndicator size="small" color="#fff" /> : <Text className="text-white font-black uppercase text-[10px]">Save</Text>}
+              </TouchableOpacity>
               <TouchableOpacity
                 onPress={cancelEdit}
-                className="bg-gray-100 dark:bg-slate-700 h-[48px] w-[48px] items-center justify-center rounded-xl"
+                className="bg-slate-700 h-[46px] w-[46px] items-center justify-center rounded-xl border border-slate-600"
               >
-                <AppIcon name="close" size={20} color="#6B7280" />
+                <AppIcon name="close" size={18} color="#94a3b8" />
               </TouchableOpacity>
             </View>
           ) : (
-            <Button
-              label="Add"
+            <TouchableOpacity
               onPress={handleAdd}
-              loading={addMutation.isPending}
-              style={{ width: 80 }}
-            />
+              disabled={addMutation.isPending}
+              className="bg-indigo-600 h-[46px] px-5 items-center justify-center rounded-xl"
+            >
+              {addMutation.isPending ? <ActivityIndicator size="small" color="#fff" /> : <Text className="text-white font-black uppercase text-[10px]">Add</Text>}
+            </TouchableOpacity>
           )}
         </View>
-      </Card>
+      </View>
 
       {isLoading ? (
         <SkeletonLoader rows={5} />
       ) : (
         <FlatList
-          data={items}
+          data={filteredItems}
           keyExtractor={(item: any) => String(item[idField])}
+          contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 100 }}
           renderItem={({ item }: { item: any }) => (
             <MobileDataCard
               title={item[nameField]}
               subtitle={getSubtitle(item)}
-              icon={<AppIcon name={iconName} size={26} color="#134A8C" active />}
+              icon={<AppIcon name={iconName} size={20} color="#f5921e" />}
               noAccent
               actions={
                 <View className="flex-row gap-2">
                   <TouchableOpacity
                     onPress={() => startEdit(item)}
-                    activeOpacity={0.7}
-                    className="flex-row items-center gap-1.5 px-3 py-1.5 bg-indigo-50 border border-indigo-100 rounded-xl"
+                    className="w-9 h-9 rounded-lg bg-indigo-500/10 border border-indigo-500/20 items-center justify-center"
                   >
-                    <AppIcon name="edit" size={12} color="#4F46E5" />
-                    <Text className="text-[10px] font-extrabold text-indigo-700 uppercase">Edit</Text>
+                    <AppIcon name="edit" size={16} color="#818cf8" />
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => handleDelete(item[idField])}
-                    activeOpacity={0.7}
-                    className="flex-row items-center gap-1.5 px-3 py-1.5 bg-rose-50 border border-rose-100 rounded-xl"
+                    className="w-9 h-9 rounded-lg bg-rose-500/10 border border-rose-500/20 items-center justify-center"
                   >
-                    <AppIcon name="delete" size={12} color="#E11D48" />
-                    <Text className="text-[10px] font-extrabold text-rose-700 uppercase">Delete</Text>
+                    <AppIcon name="delete" size={16} color="#fb7185" />
                   </TouchableOpacity>
                 </View>
               }
             />
           )}
-          contentContainerStyle={{ paddingBottom: 20 }}
         />
       )}
     </PremiumScreenLayout>
   );
 }
+
