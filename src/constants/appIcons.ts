@@ -23,6 +23,8 @@ export type AppIconName =
   | "notices"
   | "compose"
   | "notifications"
+  | "coffee"
+  | "print"
   | "broadcast"
   | "leave"
   | "timetable"
@@ -164,6 +166,8 @@ export const APP_ICONS: Record<AppIconName, IconPair> = {
   eyeOff: { outline: "eye-off-outline", filled: "eye-off" },
   moon: { outline: "moon-outline", filled: "moon" },
   sun: { outline: "sunny-outline", filled: "sunny" },
+  print: { outline: "print-outline", filled: "print" },
+  coffee: { outline: "cafe-outline", filled: "cafe" },
 };
 
 export function resolveIconName(
@@ -261,4 +265,6 @@ export const QUICK_ACTION_STYLES: Record<
   eyeOff: { bg: "#F3F4F6", iconBg: "#E5E7EB", iconColor: "#6B7280" },
   moon: { bg: "#F5F3FF", iconBg: "#DDD6FE", iconColor: "#6D28D9" },
   sun: { bg: "#FEF3C7", iconBg: "#FDE68A", iconColor: "#B45309" },
+  print: { bg: "#F3F4F6", iconBg: "#E5E7EB", iconColor: "#6B7280" },
+  coffee: { bg: "#FFEDD5", iconBg: "#FED7AA", iconColor: "#C2410C" },
 };

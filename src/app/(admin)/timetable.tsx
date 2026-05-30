@@ -30,6 +30,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useDialog } from "@/components/ui/AppDialog";
 import { SchoolTheme } from "@/constants/theme";
 import { useColorScheme } from "nativewind";
+import * as Print from "expo-print";
+import * as Sharing from "expo-sharing";
+import { Platform } from "react-native";
+import { getApiTimetableGet } from "@/api/generated/10-timetable/10-timetable";
 import { premiumCardShadow } from "@/constants/premiumStyles";
 import { ResponsiveDataList, EntityActionButtons, type TableColumn } from "@/components/shared";
 
@@ -219,6 +223,165 @@ export default function TimetableScreen() {
   const updateMutation = usePutApiTimetableUpdate();
   const deleteMutation = usePostApiTimetableDelete();
 
+
+  // ── PDF Generation ────────────────────────────────────────────────────────
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+
+  const downloadPDF = async () => {
+    try {
+      setIsGeneratingPDF(true);
+      
+      // Fetch data for all days sequentially
+      const weekData: Record<string, Period[]> = {};
+      let title = "Timetable";
+      
+      for (const day of DAYS) {
+        const params = isViewOnly 
+          ? { View: "student", Day: day } 
+          : { ClassID: selectedClassID ?? undefined, Day: day, BatchID: selectedBatchID ?? undefined };
+          
+        if (!isViewOnly && !selectedClassID) continue;
+        
+        try {
+           const res = await getApiTimetableGet(params);
+           const d = (res as any)?.data?.data ?? (res as any)?.data;
+           if (!d) continue;
+           
+           const header = Array.isArray(d) ? d[0] : d;
+           const periods = Array.isArray(d?.periods) ? d.periods : Array.isArray(d) && d.length > 1 ? d[1] : [];
+           
+           if (!title || title === "Timetable") {
+             if (header?.className) title = `Class ${header.className} ${header.batchName ? `(${header.batchName})` : ''} Timetable`;
+             else if (header?.teacherName) title = `${header.teacherName}'s Timetable`;
+           }
+           
+           if (periods.length > 0) {
+             weekData[day] = [...periods].sort((a, b) => a.startTime.localeCompare(b.startTime));
+           }
+        } catch (e) {
+           console.log(`Failed to fetch day ${day}`, e);
+        }
+      }
+      
+      if (Object.keys(weekData).length === 0) {
+        await dialog.alert("No Data", "There are no scheduled periods for this week to export.", "warning");
+        setIsGeneratingPDF(false);
+        return;
+      }
+      
+      // Build HTML
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <title>${title}</title>
+          <style>
+            body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #111827; padding: 40px; margin: 0; background: #fff; }
+            .header { display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid #134A8C; padding-bottom: 20px; margin-bottom: 30px; }
+            .logo-container { display: flex; align-items: center; gap: 15px; }
+            .logo { width: 60px; height: 60px; object-fit: contain; }
+            .school-info h1 { margin: 0; font-size: 24px; color: #111827; }
+            .school-info p { margin: 4px 0 0; font-size: 14px; color: #6B7280; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+            .title-info { text-align: right; }
+            .title-info h2 { margin: 0; font-size: 22px; color: #134A8C; }
+            .title-info p { margin: 4px 0 0; font-size: 14px; color: #6B7280; }
+            
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; table-layout: fixed; }
+            th { background-color: #F3F4F6; color: #374151; font-weight: 800; text-align: center; padding: 12px; border: 1px solid #D1D5DB; text-transform: uppercase; font-size: 13px; letter-spacing: 1px; }
+            td { padding: 12px; border: 1px solid #D1D5DB; vertical-align: top; }
+            
+            .period-card { background: #F9FAFB; border-left: 4px solid #134A8C; padding: 10px; margin-bottom: 10px; border-radius: 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+            .period-card.break { background: #FFF7ED; border-left-color: #EA580C; border: 1px solid #FFEDD5; text-align: center; }
+            .time { font-size: 11px; color: #4B5563; font-weight: 800; margin-bottom: 4px; }
+            .subject { font-size: 14px; font-weight: 800; color: #111827; margin-bottom: 4px; word-wrap: break-word; }
+            .details { font-size: 11px; color: #6B7280; font-weight: 600; }
+            .break-text { font-size: 13px; font-weight: 800; color: #C2410C; text-transform: uppercase; letter-spacing: 1px; }
+            
+            .no-classes { text-align: center; color: #9CA3AF; font-size: 13px; font-style: italic; padding: 20px; }
+            .footer { margin-top: 50px; text-align: center; font-size: 11px; color: #9CA3AF; border-top: 1px solid #E5E7EB; padding-top: 20px; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div class="logo-container">
+              <img src="https://little-angle.mahispark.com/images/logo.png" class="logo" />
+              <div class="school-info">
+                <h1>Little Angel's</h1>
+                <p>School ERP</p>
+              </div>
+            </div>
+            <div class="title-info">
+              <h2>Weekly Timetable</h2>
+              <p>${title}</p>
+            </div>
+          </div>
+          
+          <table>
+            <thead>
+              <tr>
+                ${DAYS.map(day => `<th>${day}</th>`).join('')}
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                ${DAYS.map(day => {
+                  const periods = weekData[day] || [];
+                  if (periods.length === 0) return `<td class="no-classes">No Classes</td>`;
+                  
+                  return `<td>
+                    ${periods.map(p => {
+                      const isB = p.subjectName?.toLowerCase().includes("break") || p.subjectName?.toLowerCase().includes("lunch");
+                      if (isB) {
+                        return `
+                          <div class="period-card break">
+                            <div class="time">${p.startTime} - ${p.endTime}</div>
+                            <div class="break-text">${p.subjectName || "Break"}</div>
+                          </div>
+                        `;
+                      }
+                      return `
+                        <div class="period-card" style="border-left-color: ${subjectColor(p.subjectName || 'A')}">
+                          <div class="time">${p.startTime} - ${p.endTime}</div>
+                          <div class="subject">${p.subjectName}</div>
+                          <div class="details">
+                            ${p.teacherName || p.className ? `${p.teacherName || p.className}<br>` : ''}
+                            ${p.roomNumber ? `Room: ${p.roomNumber}` : ''}
+                          </div>
+                        </div>
+                      `;
+                    }).join('')}
+                  </td>`;
+                }).join('')}
+              </tr>
+            </tbody>
+          </table>
+          
+          <div class="footer">
+            Generated by Little Angel's School Management System on ${new Date().toLocaleDateString()}
+          </div>
+        </body>
+        </html>
+      `;
+
+      if (Platform.OS === 'web') {
+        const { printAsync } = require("expo-print");
+        await printAsync({ html: htmlContent });
+      } else {
+        const { printToFileAsync } = require("expo-print");
+        const { shareAsync } = require("expo-sharing");
+        const { uri } = await printToFileAsync({ html: htmlContent });
+        await shareAsync(uri, { UTI: '.pdf', mimeType: 'application/pdf' });
+      }
+      
+    } catch (error: any) {
+      console.error(error);
+      await dialog.alert("Error", error?.message || "Failed to generate PDF.", "error");
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
+
   // ── Form modal state ──────────────────────────────────────────────────────
   const [formVisible, setFormVisible] = useState(false);
   const [editingPeriod, setEditingPeriod] = useState<Period | null>(null);
@@ -227,6 +390,8 @@ export default function TimetableScreen() {
   const [formSubjectID, setFormSubjectID] = useState<number | null>(null);
   const [formTeacherID, setFormTeacherID] = useState<number | null>(null);
   const [formRoom, setFormRoom] = useState("");
+  const [isBreak, setIsBreak] = useState(false);
+  const [breakName, setBreakName] = useState("Break");
   const [formStart, setFormStart] = useState("08:00");
   const [formEnd, setFormEnd] = useState("09:00");
   const [formSaving, setFormSaving] = useState(false);
@@ -240,6 +405,8 @@ export default function TimetableScreen() {
     setFormRoom("");
     setFormStart("08:00");
     setFormEnd("09:00");
+    setIsBreak(false);
+    setBreakName("Break");
     setFormVisible(true);
   };
 
@@ -252,25 +419,40 @@ export default function TimetableScreen() {
     setFormRoom(p.roomNumber ?? "");
     setFormStart(p.startTime ?? "08:00");
     setFormEnd(p.endTime ?? "09:00");
+    const isB = p.subjectName?.toLowerCase().includes("break") || p.subjectName?.toLowerCase().includes("lunch");
+    setIsBreak(isB || false);
+    setBreakName(isB && p.subjectName ? p.subjectName : "Break");
     setFormVisible(true);
   };
 
   const handleSave = async () => {
-    if (!formSubjectID || !formTeacherID || !formStart || !formEnd) {
-      await dialog.alert("Missing Fields", "Subject, Teacher, Start Time and End Time are required.", "warning");
+    if (!isBreak && (!formSubjectID || !formTeacherID)) {
+      await dialog.alert("Missing Fields", "Subject and Teacher are required for regular periods.", "warning");
       return;
     }
+    if (!formStart || !formEnd) {
+      await dialog.alert("Missing Fields", "Start Time and End Time are required.", "warning");
+      return;
+    }
+    
+    // Attempt to resolve subject ID for break if user has a subject with 'break'
+    let resolvedSubjectID = formSubjectID;
+    if (isBreak && !resolvedSubjectID) {
+       const breakSub = subjects.find((s: any) => s.subjectName?.toLowerCase().includes("break"));
+       if (breakSub) resolvedSubjectID = breakSub.subjectID;
+    }
+    
     setFormSaving(true);
     try {
       if (editingPeriod?.timetableID) {
         await updateMutation.mutateAsync({
-          data: { timetableID: editingPeriod.timetableID, subjectID: formSubjectID, teacherID: formTeacherID, roomNumber: formRoom || null, startTime: formStart, endTime: formEnd },
+          data: { timetableID: editingPeriod.timetableID, subjectID: resolvedSubjectID, teacherID: isBreak ? undefined : (formTeacherID ?? undefined), roomNumber: formRoom || null, startTime: formStart, endTime: formEnd },
         });
       } else {
         const classId = formClassID ?? selectedClassID;
         if (!classId) { await dialog.alert("Error", "Please select a class.", "error"); return; }
         await addMutation.mutateAsync({
-          data: { classID: classId, day: formDay, subjectID: formSubjectID, teacherID: formTeacherID, roomNumber: formRoom || null, startTime: formStart, endTime: formEnd },
+          data: { classID: classId ?? undefined, day: formDay, subjectID: resolvedSubjectID ?? undefined, teacherID: isBreak ? undefined : (formTeacherID ?? undefined), roomNumber: formRoom || null, startTime: formStart, endTime: formEnd },
         });
       }
       queryClient.invalidateQueries({ queryKey: ['/api/timetable/get'] });
@@ -347,6 +529,15 @@ export default function TimetableScreen() {
     {
       key: "subject", header: "Subject", flex: 1,
       render: (p) => {
+        const isB = p.subjectName?.toLowerCase().includes("break") || p.subjectName?.toLowerCase().includes("lunch");
+        if (isB) {
+          return (
+             <View className="flex-row items-center gap-2 px-2 py-1 rounded-lg bg-orange-50 dark:bg-orange-900/30 self-start">
+               <AppIcon name="coffee" size={14} color="#EA580C" />
+               <Text className="text-sm font-black text-orange-600 dark:text-orange-400">{p.subjectName}</Text>
+             </View>
+          );
+        }
         const color = subjectColor(p.subjectName);
         return (
           <View className="flex-row items-center gap-2">
@@ -385,7 +576,47 @@ export default function TimetableScreen() {
   ];
 
   const renderPeriodCard = (period: Period, index: number) => {
-    const color = subjectColor(period.subjectName);
+    const isB = period.subjectName?.toLowerCase().includes("break") || period.subjectName?.toLowerCase().includes("lunch");
+    const color = isB ? "#EA580C" : subjectColor(period.subjectName);
+    
+    if (isB) {
+      return (
+        <View
+          className="rounded-2xl border mb-3 overflow-hidden flex-row items-center px-4 py-3"
+          style={[
+            premiumCardShadow,
+            {
+              backgroundColor: isDark ? "#431407" : "#FFF7ED", // orange-950 / orange-50
+              borderColor: isDark ? "#7C2D12" : "#FFEDD5",
+            }
+          ]}
+        >
+          <View className="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-900/50 items-center justify-center mr-3">
+            <AppIcon name="coffee" size={20} color="#EA580C" />
+          </View>
+          <View className="flex-1">
+            <Text className="text-[15px] font-black text-orange-800 dark:text-orange-200 uppercase tracking-widest">{period.subjectName}</Text>
+            <View className="flex-row items-center gap-1.5 mt-0.5">
+              <AppIcon name="clock" size={10} color={isDark ? "#FDBA74" : "#F97316"} />
+              <Text className="text-[11px] font-bold text-orange-600 dark:text-orange-300">
+                {period.startTime} – {period.endTime}
+              </Text>
+            </View>
+          </View>
+          {canEdit && (
+            <View className="flex-row gap-2">
+               <TouchableOpacity onPress={() => openEdit(period)} className="w-8 h-8 items-center justify-center rounded-lg bg-orange-100 dark:bg-orange-900/30">
+                 <AppIcon name="edit" size={14} color="#EA580C" />
+               </TouchableOpacity>
+               <TouchableOpacity onPress={() => setDeleteTarget(period)} className="w-8 h-8 items-center justify-center rounded-lg bg-rose-100 dark:bg-rose-900/30">
+                 <AppIcon name="delete" size={14} color="#E11D48" />
+               </TouchableOpacity>
+            </View>
+          )}
+        </View>
+      );
+    }
+    
     return (
       <View
         className="rounded-2xl border mb-3 overflow-hidden"
@@ -463,17 +694,32 @@ export default function TimetableScreen() {
       fullWidth
       hideBack
       rightAction={
-        canEdit ? (
+        <View className="flex-row items-center gap-2">
           <TouchableOpacity
-            onPress={openAdd}
-            className="flex-row items-center gap-1.5 px-4 py-2.5 rounded-xl"
-            style={{ backgroundColor: Colors.accent }}
+            onPress={downloadPDF}
+            disabled={isGeneratingPDF}
+            className="flex-row items-center justify-center w-10 h-10 rounded-xl"
+            style={{ backgroundColor: isDark ? "#1E293B" : "#F1F5F9", opacity: isGeneratingPDF ? 0.7 : 1 }}
             activeOpacity={0.8}
           >
-            <AppIcon name="add" size={15} color="white" />
-            <Text className="text-white font-black text-xs uppercase tracking-widest">Add Period</Text>
+            {isGeneratingPDF ? (
+              <ActivityIndicator size="small" color={Colors.primary} />
+            ) : (
+              <AppIcon name="print" size={18} color={isDark ? "#94A3B8" : "#475569"} />
+            )}
           </TouchableOpacity>
-        ) : undefined
+          {canEdit && (
+            <TouchableOpacity
+              onPress={openAdd}
+              className="flex-row items-center gap-1.5 px-4 py-2.5 rounded-xl"
+              style={{ backgroundColor: Colors.accent }}
+              activeOpacity={0.8}
+            >
+              <AppIcon name="add" size={15} color="white" />
+              <Text className="text-white font-black text-xs uppercase tracking-widest">Add Period</Text>
+            </TouchableOpacity>
+          )}
+        </View>
       }
     >
             {/* ── Filters bar ── */}
@@ -578,9 +824,32 @@ export default function TimetableScreen() {
 
             {/* Form */}
             <ScrollView className="px-6 py-5" showsVerticalScrollIndicator={false}>
-              {/* Subject */}
+              {/* Break Toggle */}
+              <View className="mb-4 flex-row justify-between items-center bg-orange-50 dark:bg-slate-800 p-3 rounded-xl border border-orange-100 dark:border-slate-700">
+                <View>
+                  <Text className="text-sm font-black text-orange-800 dark:text-orange-200">Is this a Break?</Text>
+                  <Text className="text-[10px] font-semibold text-orange-500/80 dark:text-orange-400">Enable for Lunch, Recess, etc.</Text>
+                </View>
+                <TouchableOpacity onPress={() => setIsBreak(!isBreak)} className={`w-12 h-6 rounded-full p-1 justify-center ${isBreak ? 'bg-orange-500' : 'bg-gray-300 dark:bg-slate-600'}`}>
+                  <View className={`w-4 h-4 bg-white rounded-full transition-transform ${isBreak ? 'translate-x-6' : 'translate-x-0'}`} />
+                </TouchableOpacity>
+              </View>
+
+              {/* Subject / Break Name */}
               <View className="mb-4">
-                <Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-2">Subject *</Text>
+                {isBreak ? (
+                  <>
+                    <Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-2">Break Name</Text>
+                    <TextInput
+                      value={breakName}
+                      onChangeText={setBreakName}
+                      placeholder="e.g. Lunch Break"
+                      className="bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm font-bold text-gray-800 dark:text-slate-200"
+                    />
+                  </>
+                ) : (
+                  <>
+                    <Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-2">Subject *</Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
                   {subjects.map((sub: any) => (
                     <TouchableOpacity
@@ -599,10 +868,13 @@ export default function TimetableScreen() {
                     </TouchableOpacity>
                   ))}
                 </ScrollView>
+                  </>
+                )}
               </View>
 
               {/* Teacher */}
-              <View className="mb-4">
+              {!isBreak && (
+                <View className="mb-4">
                 <Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-2">Teacher *</Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
                   {teachers.map((t: any) => (
@@ -622,7 +894,8 @@ export default function TimetableScreen() {
                     </TouchableOpacity>
                   ))}
                 </ScrollView>
-              </View>
+                </View>
+              )}
 
               {/* Time */}
               <View className="flex-row gap-3 mb-4">

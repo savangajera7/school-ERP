@@ -169,9 +169,20 @@ export function PremiumDatePicker({
       <TouchableOpacity
         onPress={openPicker}
         activeOpacity={0.7}
-        style={[styles.trigger, isDark && { backgroundColor: SchoolTheme.cardDark, borderColor: SchoolTheme.borderDark }]}
+        style={[
+          styles.trigger, 
+          isDark && { 
+            backgroundColor: SchoolTheme.cardDark, 
+            borderColor: SchoolTheme.borderDark 
+          }
+        ]}
       >
-        <Text style={[styles.triggerText, !value && styles.triggerPlaceholder]}>
+        <Text style={[
+          styles.triggerText, 
+          !value && styles.triggerPlaceholder,
+          isDark && { color: SchoolTheme.textDark },
+          isDark && !value && { color: "#64748B" }
+        ]}>
           {value ? formatDisplayDate(value) : placeholder}
         </Text>
         <Text style={styles.calIcon}>📅</Text>
@@ -192,7 +203,18 @@ export function PremiumDatePicker({
         >
           <TouchableOpacity
             activeOpacity={1}
-            style={[styles.calCard, premiumCardShadow as any]}
+            style={[
+              styles.calCard, 
+              premiumCardShadow as any,
+              isDark && { 
+                backgroundColor: SchoolTheme.cardDark, 
+                borderColor: SchoolTheme.borderDark 
+              },
+              !isDark && {
+                backgroundColor: "#fff",
+                borderColor: "#F3F4F6",
+              }
+            ]}
             onPress={() => {}}
           >
             {/* ── Calendar mode ── */}
@@ -200,7 +222,7 @@ export function PremiumDatePicker({
               <>
                 {/* Header */}
                 <View style={styles.calHeader}>
-                  <TouchableOpacity onPress={prevMonth} style={[styles.navBtn, isDark && { backgroundColor: "#334155" }]}>
+                  <TouchableOpacity onPress={prevMonth} style={[styles.navBtn, isDark ? { backgroundColor: "#334155" } : { backgroundColor: "#F3F4F6" }]}>
                     <Text style={styles.navArrow}>‹</Text>
                   </TouchableOpacity>
 
@@ -208,12 +230,12 @@ export function PremiumDatePicker({
                     onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setMode("month"); }}
                     style={styles.monthYearBtn}
                   >
-                    <Text style={styles.monthYearText}>
+                    <Text style={[styles.monthYearText, isDark && { color: SchoolTheme.primaryLight }]}>
                       {MONTH_NAMES[viewMonth]} {viewYear}
                     </Text>
                   </TouchableOpacity>
 
-                  <TouchableOpacity onPress={nextMonth} style={[styles.navBtn, isDark && { backgroundColor: "#334155" }]}>
+                  <TouchableOpacity onPress={nextMonth} style={[styles.navBtn, isDark ? { backgroundColor: "#334155" } : { backgroundColor: "#F3F4F6" }]}>
                     <Text style={styles.navArrow}>›</Text>
                   </TouchableOpacity>
                 </View>
@@ -239,14 +261,18 @@ export function PremiumDatePicker({
                         style={[
                           styles.dayCell,
                           selected && styles.dayCellSelected,
-                          isToday && !selected && styles.dayCellToday,
+                          isToday && !selected && (isDark 
+                            ? { backgroundColor: "rgba(13,54,102,0.3)", borderWidth: 1, borderColor: SchoolTheme.primaryLight }
+                            : styles.dayCellToday
+                          ),
                           disabled && styles.dayCellDisabled,
                         ]}
                         activeOpacity={disabled ? 1 : 0.7}
                       >
                         <Text
                           style={[
-                            styles.dayText, isDark && { color: SchoolTheme.textDark },
+                            styles.dayText, 
+                            isDark && { color: SchoolTheme.textDark },
                             selected && styles.dayTextSelected,
                             isToday && !selected && styles.dayTextToday,
                             disabled && styles.dayTextDisabled,
@@ -267,9 +293,14 @@ export function PremiumDatePicker({
                     setViewMonth(t.getMonth());
                     selectDay(t.getDate());
                   }}
-                  style={[styles.todayBtn, isDark && { backgroundColor: "rgba(13,54,102,0.5)", borderColor: SchoolTheme.primaryLight }]}
+                  style={[
+                    styles.todayBtn, 
+                    isDark 
+                      ? { backgroundColor: "rgba(13,54,102,0.5)", borderColor: SchoolTheme.primaryLight }
+                      : { backgroundColor: "#EFF6FF", borderColor: "#BFDBFE" }
+                  ]}
                 >
-                  <Text style={styles.todayBtnText}>Today</Text>
+                  <Text style={[styles.todayBtnText, isDark && { color: SchoolTheme.primaryLight }]}>Today</Text>
                 </TouchableOpacity>
               </>
             )}
@@ -282,11 +313,11 @@ export function PremiumDatePicker({
                     onPress={() => setMode("year")}
                     style={styles.monthYearBtn}
                   >
-                    <Text style={styles.monthYearText}>{viewYear}</Text>
+                    <Text style={[styles.monthYearText, isDark && { color: SchoolTheme.primaryLight }]}>{viewYear}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setMode("calendar"); }}
-                    style={[styles.navBtn, isDark && { backgroundColor: "#334155" }]}
+                    style={[styles.navBtn, isDark ? { backgroundColor: "#334155" } : { backgroundColor: "#F3F4F6" }]}
                   >
                     <Text style={styles.navArrow}>✕</Text>
                   </TouchableOpacity>
@@ -300,12 +331,14 @@ export function PremiumDatePicker({
                       style={[
                         styles.monthCell,
                         viewMonth === idx && styles.monthCellSelected,
+                        isDark && viewMonth !== idx && { backgroundColor: "#1E293B", borderColor: "#334155" },
                       ]}
                     >
                       <Text
                         style={[
                           styles.monthCellText,
                           viewMonth === idx && styles.monthCellTextSelected,
+                          isDark && viewMonth !== idx && { color: SchoolTheme.textDark },
                         ]}
                       >
                         {name.slice(0, 3)}
@@ -320,10 +353,10 @@ export function PremiumDatePicker({
             {mode === "year" && (
               <>
                 <View style={styles.calHeader}>
-                  <Text style={styles.monthYearText}>Select Year</Text>
+                  <Text style={[styles.monthYearText, isDark && { color: SchoolTheme.primaryLight }]}>Select Year</Text>
                   <TouchableOpacity
                     onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setMode("calendar"); }}
-                    style={[styles.navBtn, isDark && { backgroundColor: "#334155" }]}
+                    style={[styles.navBtn, isDark ? { backgroundColor: "#334155" } : { backgroundColor: "#F3F4F6" }]}
                   >
                     <Text style={styles.navArrow}>✕</Text>
                   </TouchableOpacity>
@@ -337,12 +370,14 @@ export function PremiumDatePicker({
                       style={[
                         styles.yearCell,
                         viewYear === y && styles.yearCellSelected,
+                        isDark && viewYear !== y && { backgroundColor: "#1E293B", borderColor: "#334155" },
                       ]}
                     >
                       <Text
                         style={[
                           styles.yearCellText,
                           viewYear === y && styles.yearCellTextSelected,
+                          isDark && viewYear !== y && { color: SchoolTheme.textDark },
                         ]}
                       >
                         {y}
@@ -407,13 +442,11 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   calCard: {
-    backgroundColor: "#fff",
     borderRadius: 20,
     padding: 16,
     width: "100%",
     maxWidth: 340,
     borderWidth: 1,
-    borderColor: "#F3F4F6",
   },
 
   // Calendar header
@@ -427,15 +460,14 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: "#F3F4F6",
     alignItems: "center",
     justifyContent: "center",
   },
   navArrow: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: "700",
     color: Colors.primary,
-    lineHeight: 22,
+    lineHeight: 24,
   },
   monthYearBtn: {
     flex: 1,
