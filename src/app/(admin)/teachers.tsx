@@ -182,7 +182,7 @@ export default function AdminTeacherManagementScreen() {
 
   // Sync localPerms when permissionsData updates
   useEffect(() => {
-    if (permissionsData?.data) {
+    if (panelVisible && permissionsData?.data) {
       const permsList = parseApiList<ClassPermission>(permissionsData.data);
       const seed: Record<number, ClassPermission> = {};
       permsList.forEach((cp) => {
@@ -199,7 +199,7 @@ export default function AdminTeacherManagementScreen() {
       });
       setLocalPerms(seed);
     }
-  }, [permissionsData]);
+  }, [permissionsData, panelVisible, selectedTeacher]);
 
   const activePermissions = useMemo(() => {
     if (!permissionsData?.data) {
@@ -210,6 +210,7 @@ export default function AdminTeacherManagementScreen() {
 
   const openPanel = useCallback((teacher: TeacherWithDetails) => {
     setSelectedTeacher(teacher);
+    // Set basic permissions immediately, useEffect will override with detailed permissions
     const seed: Record<number, ClassPermission> = {};
     teacher.classPermissions.forEach((cp) => { seed[cp.classID] = { ...cp }; });
     setLocalPerms(seed);
@@ -314,7 +315,7 @@ export default function AdminTeacherManagementScreen() {
     <TouchableOpacity
       activeOpacity={0.9}
       onPress={() => openPanel(item)}
-      className="bg-[#1e293b] rounded-2xl mb-3 overflow-hidden border border-slate-700"
+      className="bg-white dark:bg-[#1e293b] rounded-2xl mb-3 overflow-hidden border border-gray-200 dark:border-slate-700"
       style={{
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
@@ -325,20 +326,20 @@ export default function AdminTeacherManagementScreen() {
     >
       <View className="p-4 flex-row gap-3">
         <View className="relative">
-          <View className="w-14 h-14 rounded-xl bg-slate-700 border border-slate-600 items-center justify-center overflow-hidden">
+          <View className="w-14 h-14 rounded-xl bg-gray-100 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 items-center justify-center overflow-hidden">
             <TeacherAvatar photo={item.photo ?? undefined} size={56} />
           </View>
           {item.isActive && (
-            <View className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-2 border-[#1e293b] rounded-full shadow-sm" />
+            <View className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-2 border-white dark:border-[#1e293b] rounded-full shadow-sm" />
           )}
         </View>
         <View className="flex-1">
           <View className="flex-row items-start justify-between mb-1">
-            <Text className="text-[14px] font-black text-white uppercase flex-1 mr-2 leading-tight" numberOfLines={1}>
+            <Text className="text-[14px] font-black text-gray-900 dark:text-white uppercase flex-1 mr-2 leading-tight" numberOfLines={1}>
               {item.teacherName}
             </Text>
-            <View className="px-2 py-0.5 bg-white/10 rounded-lg border border-white/10">
-              <Text className="text-[9px] font-black text-blue-400 uppercase tracking-tighter">
+            <View className="px-2 py-0.5 bg-gray-100 dark:bg-white/10 rounded-lg border border-gray-200 dark:border-white/10">
+              <Text className="text-[9px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-tighter">
                 {item.teacherCode || "N/A"}
               </Text>
             </View>
@@ -347,7 +348,7 @@ export default function AdminTeacherManagementScreen() {
           {item.subjectName ? (
             <View className="flex-row items-center gap-1.5 mb-1">
               <AppIcon name="subjects" size={13} color="#a855f7" />
-              <Text className="text-[12px] font-bold text-purple-400 flex-1" numberOfLines={1}>
+              <Text className="text-[12px] font-bold text-purple-600 dark:text-purple-400 flex-1" numberOfLines={1}>
                 {item.subjectName}
               </Text>
             </View>
@@ -355,7 +356,7 @@ export default function AdminTeacherManagementScreen() {
           
           <View className="flex-row items-center gap-1.5">
             <AppIcon name="call" size={13} color="#94a3b8" />
-            <Text className="text-[12px] font-bold text-slate-400 flex-1" numberOfLines={1}>
+            <Text className="text-[12px] font-bold text-slate-500 dark:text-slate-400 flex-1" numberOfLines={1}>
               {item.mobileNo || "No phone"}
             </Text>
           </View>
@@ -363,38 +364,38 @@ export default function AdminTeacherManagementScreen() {
       </View>
 
       {item.classPermissions.length > 0 && (
-        <View className="px-4 py-2 bg-slate-800/20 border-t border-slate-700/30 flex-row items-center gap-2 flex-wrap">
+        <View className="px-4 py-2 bg-gray-50 dark:bg-slate-800/20 border-t border-gray-100 dark:border-slate-700/30 flex-row items-center gap-2 flex-wrap">
           <AppIcon name="subjects" size={11} color="#475569" />
           {item.classPermissions.map((cp) => (
-            <View key={cp.classID} className="px-2 py-0.5 bg-teal-500/10 border border-teal-500/20 rounded-lg">
-              <Text className="text-[9px] font-black text-teal-400 uppercase">{cp.className}</Text>
+            <View key={cp.classID} className="px-2 py-0.5 bg-teal-50 dark:bg-teal-500/10 border border-teal-200 dark:border-teal-500/20 rounded-lg">
+              <Text className="text-[9px] font-black text-teal-600 dark:text-teal-400 uppercase">{cp.className}</Text>
             </View>
           ))}
         </View>
       )}
 
-      <View className="flex-row justify-end items-center px-4 py-2 bg-slate-800/40 border-t border-slate-700/50 gap-2">
+      <View className="flex-row justify-end items-center px-4 py-2 bg-gray-50/80 dark:bg-slate-800/40 border-t border-gray-100 dark:border-slate-700/50 gap-2">
         <TouchableOpacity 
           onPress={() => openPanel(item)}
-          className="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 items-center justify-center"
+          className="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-500/20 items-center justify-center"
         >
-          <AppIcon name="settings" size={16} color="#818cf8" />
+          <AppIcon name="settings" size={16} color="#6366f1" />
         </TouchableOpacity>
         
         {canManageTeachers && (
           <>
             <TouchableOpacity 
               onPress={() => router.push(`/(admin)/teacher-form?id=${item.teacherID}`)}
-              className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 items-center justify-center"
+              className="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 items-center justify-center"
             >
-              <AppIcon name="edit" size={16} color="#34d399" />
+              <AppIcon name="edit" size={16} color="#10b981" />
             </TouchableOpacity>
             
             <TouchableOpacity 
               onPress={() => handleDeleteClick(item)}
-              className="w-9 h-9 rounded-xl bg-rose-500/10 border border-rose-500/20 items-center justify-center"
+              className="w-9 h-9 rounded-xl bg-rose-50 dark:bg-rose-500/10 border border-rose-100 dark:border-rose-500/20 items-center justify-center"
             >
-              <AppIcon name="delete" size={16} color="#fb7185" />
+              <AppIcon name="delete" size={16} color="#f43f5e" />
             </TouchableOpacity>
           </>
         )}
@@ -507,26 +508,26 @@ export default function AdminTeacherManagementScreen() {
                 const isSaving = savingClassID === cp.classID;
                 return (
                   <View key={cp.classID} className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 mb-3 overflow-hidden">
-                    <View className="flex-row items-center justify-between px-4 py-3 bg-[#1A3C6E]">
+                    <View className="flex-row items-center justify-between px-4 py-3 bg-gray-50 dark:bg-slate-800/80 border-b border-gray-200 dark:border-slate-700">
                       <View className="flex-row items-center gap-2">
-                        <View className="w-7 h-7 bg-white dark:bg-slate-800/20 dark:bg-slate-700/50 rounded-lg items-center justify-center">
-                          <AppIcon name="subjects" size={14} color="#fff" />
+                        <View className="w-7 h-7 bg-indigo-100 dark:bg-indigo-500/20 rounded-lg items-center justify-center">
+                          <AppIcon name="subjects" size={14} color="#6366f1" />
                         </View>
-                        <Text className="text-white font-black text-[14px]">{cp.className}</Text>
+                        <Text className="text-gray-900 dark:text-white font-black text-[14px]">{cp.className}</Text>
                       </View>
                       <View className="flex-row gap-2 items-center">
                         {isSaving ? (
-                          <ActivityIndicator size="small" color="#fff" />
+                          <ActivityIndicator size="small" color="#6366f1" />
                         ) : (
-                          <TouchableOpacity onPress={() => saveClassPerms(cp.classID)} className="px-3 py-1 bg-white dark:bg-slate-800/20 dark:bg-slate-700/50 rounded-lg">
-                            <Text className="text-white text-[11px] font-black uppercase">Save</Text>
+                          <TouchableOpacity onPress={() => saveClassPerms(cp.classID)} className="px-3 py-1 bg-emerald-100 dark:bg-emerald-500/20 rounded-lg border border-emerald-200 dark:border-emerald-500/30">
+                            <Text className="text-emerald-700 dark:text-emerald-400 text-[11px] font-black uppercase">Save</Text>
                           </TouchableOpacity>
                         )}
                         <TouchableOpacity
                           onPress={() => setRemoveClassModal({ classID: cp.classID, className: cp.className })}
-                          className="w-7 h-7 bg-red-500/80 rounded-lg items-center justify-center"
+                          className="w-7 h-7 bg-rose-100 dark:bg-rose-500/20 rounded-lg items-center justify-center border border-rose-200 dark:border-rose-500/30"
                         >
-                          <AppIcon name="delete" size={13} color="#fff" />
+                          <AppIcon name="delete" size={13} color="#f43f5e" />
                         </TouchableOpacity>
                       </View>
                     </View>
@@ -561,10 +562,10 @@ export default function AdminTeacherManagementScreen() {
                     <TouchableOpacity
                       key={cls.classID}
                       onPress={() => assignClass(cls.classID)}
-                      className="flex-row items-center gap-1.5 px-3 py-2 rounded-xl bg-blue-50 border border-blue-200"
+                      className="flex-row items-center gap-1.5 px-3 py-2 rounded-xl bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/20"
                     >
-                      <AppIcon name="add" size={12} color="#1A3C6E" />
-                      <Text className="text-[11px] font-black text-[#1A3C6E]">{cls.className}</Text>
+                      <AppIcon name="add" size={12} color="#3b82f6" />
+                      <Text className="text-[11px] font-black text-blue-800 dark:text-blue-400">{cls.className}</Text>
                     </TouchableOpacity>
                   ))}
                 </View>
