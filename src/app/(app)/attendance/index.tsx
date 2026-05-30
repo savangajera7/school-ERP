@@ -37,11 +37,17 @@ import { useAuthStore } from "@/store/authStore";
 import { useAttendanceAccess } from "@/hooks/useAttendanceAccess";
 import { AccessDenied } from "@/components/auth/AccessDenied";
 import { Colors } from "@/constants/colors";
+import { SchoolTheme } from "@/constants/theme";
+import { premiumCardShadow } from "@/constants/premiumStyles";
+import { useColorScheme } from "react-native";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
 import * as Haptics from "expo-haptics";
 import { ScrollView } from "react-native";
 import { getApiErrorMessage } from "@/utils/recordHelpers";
 import { AppIcon, GenderIcon } from "@/components/icons/AppIcon";
+import { parseApiList } from "@/utils/apiResponse";
+import { useGetApiMediumGet } from "@/api/generated/master-medium/master-medium";
+import { useGetApiBatchGet } from "@/api/generated/2-master-batch/2-master-batch";
 
 
 const STATUS_CONFIG = {
@@ -78,13 +84,38 @@ const STATUS_CONFIG = {
 } as const;
 
 export default function UnifiedAttendanceScreen() {
+  const isDark = useColorScheme() === "dark";
   const dialog = useDialog();
   const access = useAttendanceAccess();
   const { showToast } = useToast();
   const queryClient = useQueryClient();
 
+  
   const [date, setDate] = useState<string>(new Date().toISOString().split("T")[0]);
+  const [selectedMediumID, setSelectedMediumID] = useState<number | null>(null);
+  const [selectedBatchID, setSelectedBatchID] = useState<number | null>(null);
   const [classID, setClassID] = useState<number>(0);
+
+  const { data: mediumsData } = useGetApiMediumGet();
+  const { data: batchesData } = useGetApiBatchGet();
+
+  const mediums = useMemo(() => parseApiList<any>(mediumsData?.data), [mediumsData]);
+
+  const batches = useMemo(() => parseApiList<any>(batchesData?.data), [batchesData]);
+
+  // Auto-select first medium & batch
+  useEffect(() => {
+    if (mediums.length > 0 && selectedMediumID === null) {
+      setSelectedMediumID(mediums[0].mediumID || mediums[0].id);
+    }
+  }, [mediums, selectedMediumID]);
+
+  useEffect(() => {
+    if (batches.length > 0 && selectedBatchID === null) {
+      setSelectedBatchID(batches[0].batchID || batches[0].id);
+    }
+  }, [batches, selectedBatchID]);
+
 
   const userData = useAuthStore((s) => s.userData);
 
@@ -100,9 +131,13 @@ export default function UnifiedAttendanceScreen() {
   );
   const { data: attendanceData } = useGetApiAttendanceGet(attendanceParams);
   const { classes } = useMemo(() => parseClassesView(attendanceData?.data), [attendanceData]);
+  
   const visibleClasses = useMemo(() => {
-    return access.isSchoolAdmin ? classes : classes.filter((c) => access.canMarkClass(c.classID));
-  }, [classes, access]);
+    let filtered = access.isSchoolAdmin ? classes : classes.filter((c: any) => access.canMarkClass(c.classID));
+
+    return filtered;
+  }, [classes, access, selectedMediumID]);
+
 
   useEffect(() => {
     if (classID === 0 && visibleClasses.length > 0) {
@@ -362,11 +397,81 @@ export default function UnifiedAttendanceScreen() {
         </TouchableOpacity>
       }
     >
-      {/* Top Selectors Card */}
-      <View className="bg-white dark:bg-slate-800 mx-3 mt-4 rounded-3xl p-4 mb-3 border border-gray-100 dark:border-slate-700" style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 10, elevation: 2 }}>
+            {/* Top Selectors Card */}
+      <View className="rounded-2xl border mx-3 mt-4 px-4 py-4 mb-3" style={[premiumCardShadow, { backgroundColor: isDark ? SchoolTheme.cardDark : "#FFFFFF", borderColor: isDark ? SchoolTheme.borderDark : "#F3F4F6" }]}>
         
-        {/* Class Selector */}
+        {/* Medium Selector */}
         <View className="mb-4">
+          <Text className="text-[10px] font-black tracking-widest text-gray-400 dark:text-slate-500 mb-2 uppercase ml-1">Select Medium</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+            {mediums.map((med: any) => {
+              const medId = med.mediumID || med.id;
+              const isSelected = selectedMediumID === medId;
+              return (
+                <TouchableOpacity
+                  key={medId}
+                  onPress={() => setSelectedMediumID(medId)}
+                  className={`px-4 py-1.5 rounded-xl border flex-row items-center gap-1 ${isSelected ? "bg-orange-50 border-orange-200" : "bg-white dark:bg-slate-700 border-gray-200 dark:border-slate-600"}`}
+                >
+                  <Text className={`text-[11px] font-bold ${isSelected ? "text-orange-700" : "text-gray-600 dark:text-slate-300"}`}>
+                    {med.mediumName || med.name}
+                  </Text>
+                </TouchableOpacity>
+              )
+            })}
+          </ScrollView>
+        </View>
+
+        {/* Batch Selector */}
+        <View className="mb-4">
+          <Text className="text-[10px] font-black tracking-widest text-gray-400 dark:text-slate-500 mb-2 uppercase ml-1">Select Batch</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+            {batches.map((batch: any) => {
+              const batchId = batch.batchID || batch.id;
+              const isSelected = selectedBatchID === batchId;
+              return (
+                <TouchableOpacity
+                  key={batchId}
+                  onPress={() => setSelectedBatchID(batchId)}
+                  className={`px-4 py-1.5 rounded-xl border flex-row items-center gap-1 ${isSelected ? "bg-emerald-50 border-emerald-200" : "bg-white dark:bg-slate-700 border-gray-200 dark:border-slate-600"}`}
+                >
+                  <Text className={`text-[11px] font-bold ${isSelected ? "text-emerald-700" : "text-gray-600 dark:text-slate-300"}`}>
+                    {batch.batchName || batch.name}
+                  </Text>
+                </TouchableOpacity>
+              )
+            })}
+          </ScrollView>
+        </View>
+
+        {/* Weekly Date Strip */}
+        <View className="mb-4">
+          <Text className="text-[10px] font-black tracking-widest text-gray-400 dark:text-slate-500 mb-2 uppercase ml-1">Select Date</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+            {Array.from({ length: 7 }).map((_, i) => {
+              const d = new Date();
+              d.setDate(d.getDate() - 3 + i); // 3 days before today, today, 3 days after today
+              const iso = d.toISOString().split("T")[0];
+              const isSelected = date === iso;
+              const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
+              const dayNum = d.getDate();
+              return (
+                <TouchableOpacity
+                  key={iso}
+                  onPress={() => setDate(iso)}
+                  className={`px-4 py-2 rounded-xl items-center justify-center border ${isSelected ? "bg-[#1A3C6E] border-[#1A3C6E]" : "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700"}`}
+                  activeOpacity={0.8}
+                >
+                  <Text className={`text-[9px] font-bold uppercase mb-0.5 ${isSelected ? 'text-white' : 'text-gray-400 dark:text-slate-500'}`}>{dayName}</Text>
+                  <Text className={`text-[14px] font-black ${isSelected ? 'text-white' : 'text-gray-800 dark:text-slate-200'}`}>{dayNum}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </View>
+
+        {/* Class Selector */}
+        <View>
           <Text className="text-[10px] font-black tracking-widest text-gray-400 dark:text-slate-500 mb-2 uppercase ml-1">Select Class</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
             {visibleClasses.length === 0 ? (
@@ -389,34 +494,8 @@ export default function UnifiedAttendanceScreen() {
           </ScrollView>
         </View>
 
-        {/* Weekly Date Strip (Centered on Today) */}
-        <View>
-          <Text className="text-[10px] font-black tracking-widest text-gray-400 dark:text-slate-500 mb-2 uppercase ml-1">Select Date</Text>
-          <View className="flex-row justify-between w-full">
-            {Array.from({ length: 7 }).map((_, i) => {
-              const d = new Date();
-              d.setDate(d.getDate() - 3 + i); // 3 days before today, today, 3 days after today
-              const iso = d.toISOString().split("T")[0];
-              const isSelected = date === iso;
-              const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
-              const dayNum = d.getDate();
-              return (
-                <TouchableOpacity
-                  key={iso}
-                  onPress={() => setDate(iso)}
-                  className={`flex-1 mx-0.5 max-w-[44px] h-[54px] rounded-xl items-center justify-center border ${isSelected ? 'bg-[#1A3C6E] border-[#1A3C6E]' : 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-600'}`}
-                  activeOpacity={0.8}
-                >
-                  <Text className={`text-[9px] font-bold uppercase mb-0.5 ${isSelected ? 'text-white' : 'text-gray-400 dark:text-slate-500'}`}>{dayName}</Text>
-                  <Text className={`text-[14px] font-black ${isSelected ? 'text-white' : 'text-gray-800 dark:text-slate-200'}`}>{dayNum}</Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-        </View>
-
           {/* Quick actions inside card */}
-          <View className="flex-row justify-between mt-3 pt-3 border-t border-gray-100 dark:border-slate-700">
+          <View className="flex-row justify-between mt-3 pt-3 border-t" style={{ borderColor: isDark ? SchoolTheme.borderDark : "#F9FAFB" }}>
             <TouchableOpacity onPress={markAllPresent} className="flex-row items-center gap-1 px-2.5 py-1.5 rounded-lg bg-emerald-50 border border-emerald-100" activeOpacity={0.7}>
               <AppIcon name="check" size={11} color="#059669" />
               <Text className="text-[10px] font-black text-emerald-700 uppercase">All Present</Text>

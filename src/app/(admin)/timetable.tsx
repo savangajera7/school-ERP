@@ -19,6 +19,8 @@ import {
   getGetApiTimetableGetQueryKey,
 } from "@/api/generated/10-timetable/10-timetable";
 import { useGetApiClassGet } from "@/api/generated/master-class/master-class";
+import { useGetApiMediumGet } from "@/api/generated/master-medium/master-medium";
+import { useGetApiBatchGet } from "@/api/generated/2-master-batch/2-master-batch";
 import {
   useGetApiTeacherGetTeacherList,
 } from "@/api/generated/teacher/teacher";
@@ -97,22 +99,35 @@ export default function TimetableScreen() {
   const canEdit = isSchoolAdmin || isAdmin;
   const isViewOnly = isParent || isStudent;
 
+  
   // ── Selectors ─────────────────────────────────────────────────────────────
   const todayIndex = new Date().getDay(); // 0=Sun
   const defaultDay: Day = DAYS[Math.min(todayIndex > 0 ? todayIndex - 1 : 0, 5)];
   const [selectedDay, setSelectedDay] = useState<Day>(defaultDay);
+  const [selectedMediumID, setSelectedMediumID] = useState<number | null>(null);
+  const [selectedBatchID, setSelectedBatchID] = useState<number | null>(null);
   const [selectedClassID, setSelectedClassID] = useState<number | null>(null);
 
+
+  
   // ── Master data ───────────────────────────────────────────────────────────
   const { data: classesRaw } = useGetApiClassGet();
+  const { data: mediumsRaw } = useGetApiMediumGet();
+  const { data: batchesRaw } = useGetApiBatchGet();
+  
+  const mediums = useMemo(() => parseApiList<any>(mediumsRaw?.data), [mediumsRaw]);
+  const batches = useMemo(() => parseApiList<any>(batchesRaw?.data), [batchesRaw]);
+
   
   const { data: teacherPermissionsData } = useGetApiTeacherPermissionsTeacherId(
     Number(userData?.id || 0),
     { query: { enabled: isTeacher } }
   );
 
+  
   const classes = useMemo(() => {
-    const allCls = parseApiList<any>(classesRaw?.data);
+    let allCls = parseApiList<any>(classesRaw?.data);
+
     if (isSchoolAdmin || isAdmin) return allCls;
     if (isTeacher) {
       const perms = parseApiList<any>(teacherPermissionsData?.data);
@@ -122,7 +137,8 @@ export default function TimetableScreen() {
       return allCls.filter((c: any) => allowedClassIds.has(c.classID));
     }
     return [];
-  }, [classesRaw, isSchoolAdmin, isAdmin, isTeacher, teacherPermissionsData]);
+  }, [classesRaw, isSchoolAdmin, isAdmin, isTeacher, teacherPermissionsData, selectedMediumID]);
+
 
   const { data: teachersRaw } = useGetApiTeacherGetTeacherList();
   const teachers = useMemo(() => parseApiList<any>(teachersRaw?.data), [teachersRaw]);
@@ -137,6 +153,20 @@ export default function TimetableScreen() {
     );
   }, [subjectsRaw]);
 
+  
+  // Auto-select first medium & batch
+  React.useEffect(() => {
+    if (mediums.length > 0 && selectedMediumID === null) {
+      setSelectedMediumID(mediums[0].mediumID);
+    }
+  }, [mediums, selectedMediumID]);
+
+  React.useEffect(() => {
+    if (batches.length > 0 && selectedBatchID === null) {
+      setSelectedBatchID(batches[0].batchID);
+    }
+  }, [batches, selectedBatchID]);
+
   // Auto-select first class for admin & teacher
   React.useEffect(() => {
     if (classes.length > 0 && selectedClassID === null && (isSchoolAdmin || isAdmin || isTeacher)) {
@@ -144,6 +174,8 @@ export default function TimetableScreen() {
     }
   }, [classes, selectedClassID, isSchoolAdmin, isAdmin, isTeacher]);
 
+
+  
   // ── Timetable query params ────────────────────────────────────────────────
   const queryParams = useMemo(() => {
     if (isViewOnly) {
@@ -152,8 +184,9 @@ export default function TimetableScreen() {
     }
     // admin & teacher
     if (!selectedClassID) return null;
-    return { ClassID: selectedClassID, Day: selectedDay };
-  }, [isViewOnly, selectedClassID, selectedDay]);
+    return { ClassID: selectedClassID, Day: selectedDay, BatchID: selectedBatchID ?? undefined };
+  }, [isViewOnly, selectedClassID, selectedDay, selectedBatchID]);
+
 
   const { data: timetableRaw, isLoading, isError, error, refetch } = useGetApiTimetableGet(
     queryParams ?? undefined,
@@ -443,11 +476,49 @@ export default function TimetableScreen() {
         ) : undefined
       }
     >
-      {/* ── Filters bar ── */}
+            {/* ── Filters bar ── */}
       <View
         className="rounded-2xl border px-4 py-4 mb-4"
         style={[premiumCardShadow, { backgroundColor: isDark ? SchoolTheme.cardDark : "#FFFFFF", borderColor: isDark ? SchoolTheme.borderDark : "#F3F4F6" }]}
       >
+        {/* Medium Selector */}
+        <View className="mb-4">
+          <Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-2">Select Medium</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+            {mediums.map((med: any) => (
+              <TouchableOpacity
+                key={med.mediumID}
+                onPress={() => setSelectedMediumID(med.mediumID)}
+                className={`px-4 py-1.5 rounded-xl border flex-row items-center gap-1 ${selectedMediumID === med.mediumID ? "bg-orange-50 border-orange-200" : "bg-white dark:bg-slate-700 border-gray-200 dark:border-slate-600"}`}
+              >
+                <Text className={`text-[11px] font-bold ${selectedMediumID === med.mediumID ? "text-orange-700" : "text-gray-600 dark:text-slate-300"}`}>
+                  {med.mediumName}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+
+        {/* Batch Selector */}
+        <View className="mb-4">
+          <Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-2">Select Batch</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+            {batches.map((batch: any) => (
+              <TouchableOpacity
+                key={batch.batchID}
+                onPress={() => setSelectedBatchID(batch.batchID)}
+                className={`px-4 py-1.5 rounded-xl border flex-row items-center gap-1 ${selectedBatchID === batch.batchID ? "bg-emerald-50 border-emerald-200" : "bg-white dark:bg-slate-700 border-gray-200 dark:border-slate-600"}`}
+              >
+                <Text className={`text-[11px] font-bold ${selectedBatchID === batch.batchID ? "text-emerald-700" : "text-gray-600 dark:text-slate-300"}`}>
+                  {batch.batchName}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+
+        
+
         {/* Class selector — admin & teacher */}
         {(isSchoolAdmin || isAdmin || isTeacher) && (
           <View className="mb-4">
@@ -670,29 +741,7 @@ export default function TimetableScreen() {
         </SafeAreaView>
       </Modal>
 
-        {/* Day selector */}
-        <View>
-          <Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-2">Select Day</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
-            {DAYS.map((day) => {
-              const active = selectedDay === day;
-              const c = DAY_COLORS[day];
-              return (
-                <TouchableOpacity
-                  key={day}
-                  onPress={() => setSelectedDay(day)}
-                  className={`px-4 py-2 rounded-xl border ${active ? `${c.bg} ${c.border}` : ""}`}
-                  style={!active ? { backgroundColor: isDark ? SchoolTheme.cardDark : "#FFFFFF", borderColor: isDark ? SchoolTheme.borderDark : "#E5E7EB" } : {}}
-                  activeOpacity={0.8}
-                >
-                  <Text className={`text-[11px] font-black uppercase ${active ? c.text : "text-gray-500 dark:text-slate-400"}`}>
-                    {day.charAt(0) + day.slice(1).toLowerCase()}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
-        </View>
+        
       </View>
 
       {/* ── Header info ── */}
