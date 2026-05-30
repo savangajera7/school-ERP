@@ -1,3 +1,4 @@
+import { ActivityIndicator } from "react-native";
 import { SchoolTheme } from "@/constants/theme";
 import { useColorScheme } from "nativewind";
 import React, { useState } from "react";

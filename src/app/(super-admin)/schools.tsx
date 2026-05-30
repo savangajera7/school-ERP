@@ -1,3 +1,4 @@
+import { Alert } from "react-native";
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useDialog } from "@/components/ui/AppDialog";

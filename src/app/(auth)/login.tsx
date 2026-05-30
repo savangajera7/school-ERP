@@ -1,3 +1,4 @@
+import { useColorScheme } from "nativewind";
 import React from "react";
 import { View, Text, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, Dimensions, StyleSheet } from "react-native";
 import { useForm } from "react-hook-form";

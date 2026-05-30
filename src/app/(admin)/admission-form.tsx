@@ -1,3 +1,5 @@
+import { Linking } from "react-native";
+import { Alert } from "react-native";
 import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, TextInput, ActivityIndicator, ScrollView, Image } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";

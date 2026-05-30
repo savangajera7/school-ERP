@@ -72,6 +72,8 @@ export function PremiumDatePicker({
   minimumDate,
   maximumDate,
 }: PremiumDatePickerProps) {
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === "dark";
   const [open, setOpen] = useState(false);
 
   const selectedDate = useMemo(() => parseYMD(value), [value]);
@@ -399,7 +401,7 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: "rgba(15, 23, 42, 0.6)",
-    backdropFilter: "blur(4px)",
+    
     justifyContent: "center",
     alignItems: "center",
     padding: 20,

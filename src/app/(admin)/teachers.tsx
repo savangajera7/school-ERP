@@ -1,3 +1,4 @@
+import { premiumCardShadow } from "@/constants/premiumStyles";
 import React, { useState, useMemo, useCallback } from "react";
 import {
   View, Text, TouchableOpacity, Modal,

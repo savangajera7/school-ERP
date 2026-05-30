@@ -1,3 +1,4 @@
+import { Alert } from "react-native";
 import React, { useEffect, useMemo, useState } from "react";
 import {
   View,
@@ -245,7 +246,7 @@ export default function UnifiedAttendanceScreen() {
     };
 
     if (absentRate > 0.5) {
-      dialog.alert("High absence rate", `More than half the class (${counts.absent + counts.leave} of ${studentIds.length}) is absent or on leave. Save anyway?`,
+      Alert.alert("High absence rate", `More than half the class (${counts.absent + counts.leave} of ${studentIds.length}) is absent or on leave. Save anyway?`,
         [
           { text: "Cancel", style: "cancel" },
           { text: "Save", onPress: () => void doSave() },
@@ -352,7 +353,7 @@ export default function UnifiedAttendanceScreen() {
             <ActivityIndicator color="#fff" size="small" />
           ) : (
             <>
-              <AppIcon name="save" size={14} color="#fff" />
+              <AppIcon name="calendar" size={14} color="#fff" />
               <Text className="text-white font-black text-xs uppercase">
                 {alreadyMarked ? "Update" : "Save"}
               </Text>
