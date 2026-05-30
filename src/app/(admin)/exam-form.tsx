@@ -97,9 +97,9 @@ export default function ExamFormScreen() {
     >
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>
         <Card className="p-6 mb-6">
-          <View className="flex-row items-center gap-3 mb-5 border-b border-gray-100 pb-4">
+          <View className="flex-row items-center gap-3 mb-5 border-b border-gray-100 dark:border-slate-700 pb-4">
             <AppIcon name="exams" size={22} color={Colors.accent} active />
-            <Text className="text-[16px] font-black text-gray-900 uppercase tracking-wide">Exam Configuration</Text>
+            <Text className="text-[16px] font-black text-gray-900 dark:text-slate-100 uppercase tracking-wide">Exam Configuration</Text>
           </View>
 
           <View className="gap-4">
@@ -109,7 +109,8 @@ export default function ExamFormScreen() {
                 value={examName}
                 onChangeText={setExamName}
                 placeholder="e.g. Mid-Term 2026"
-                className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
+                placeholderTextColor="#9CA3AF"
+                className="h-[48px] bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl px-4 text-sm font-semibold text-gray-800 dark:text-slate-200"
               />
             </View>
 
@@ -120,7 +121,8 @@ export default function ExamFormScreen() {
                   value={examCode}
                   onChangeText={setExamCode}
                   placeholder="EX-001"
-                  className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-bold text-gray-800"
+                  placeholderTextColor="#9CA3AF"
+                  className="h-[48px] bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl px-4 text-sm font-bold text-gray-800 dark:text-slate-200"
                 />
               </View>
               <View className="flex-1">
@@ -129,8 +131,9 @@ export default function ExamFormScreen() {
                   value={classID}
                   onChangeText={setClassID}
                   placeholder="10"
+                  placeholderTextColor="#9CA3AF"
                   keyboardType="numeric"
-                  className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
+                  className="h-[48px] bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl px-4 text-sm font-semibold text-gray-800 dark:text-slate-200"
                 />
               </View>
             </View>
@@ -149,8 +152,9 @@ export default function ExamFormScreen() {
                   value={totalMarks}
                   onChangeText={setTotalMarks}
                   placeholder="100"
+                  placeholderTextColor="#9CA3AF"
                   keyboardType="numeric"
-                  className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
+                  className="h-[48px] bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl px-4 text-sm font-semibold text-gray-800 dark:text-slate-200"
                 />
               </View>
             </View>
@@ -161,9 +165,10 @@ export default function ExamFormScreen() {
                 value={description}
                 onChangeText={setDescription}
                 placeholder="Guidelines or additional info..."
+                placeholderTextColor="#9CA3AF"
                 multiline
                 numberOfLines={3}
-                className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-semibold text-gray-800"
+                className="bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm font-semibold text-gray-800 dark:text-slate-200"
               />
             </View>
           </View>

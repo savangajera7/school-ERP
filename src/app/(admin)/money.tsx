@@ -71,10 +71,10 @@ export default function MoneyScreen() {
       bodyStyle={{ flex: 1, paddingHorizontal: 0, marginTop: -16 }}
     >
       <PremiumCard noAccent style={{ padding: 16, marginHorizontal: 16, marginBottom: 12, gap: 8 }}>
-        <TextInput placeholder="Type (e.g. Expense)" value={moneyType} onChangeText={setMoneyType} className="border border-gray-200 rounded-xl px-4 py-2" />
-        <TextInput placeholder="Amount" value={amount} onChangeText={setAmount} keyboardType="decimal-pad" className="border border-gray-200 rounded-xl px-4 py-2" />
-        <TextInput placeholder="Payment mode" value={paymentMode} onChangeText={setPaymentMode} className="border border-gray-200 rounded-xl px-4 py-2" />
-        <TextInput placeholder="Remark" value={remark} onChangeText={setRemark} className="border border-gray-200 rounded-xl px-4 py-2" />
+        <TextInput placeholder="Type (e.g. Expense)" value={moneyType} onChangeText={setMoneyType} className="border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl px-4 py-2 text-gray-800 dark:text-slate-200" placeholderTextColor="#9CA3AF" />
+        <TextInput placeholder="Amount" value={amount} onChangeText={setAmount} keyboardType="decimal-pad" className="border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl px-4 py-2 text-gray-800 dark:text-slate-200" placeholderTextColor="#9CA3AF" />
+        <TextInput placeholder="Payment mode" value={paymentMode} onChangeText={setPaymentMode} className="border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl px-4 py-2 text-gray-800 dark:text-slate-200" placeholderTextColor="#9CA3AF" />
+        <TextInput placeholder="Remark" value={remark} onChangeText={setRemark} className="border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl px-4 py-2 text-gray-800 dark:text-slate-200" placeholderTextColor="#9CA3AF" />
         <Button label="Add entry" onPress={handleAdd} loading={insertMutation.isPending} />
       </PremiumCard>
       {isLoading ? (

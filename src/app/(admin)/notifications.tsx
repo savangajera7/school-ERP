@@ -121,7 +121,7 @@ export default function AdminNotificationsManagementScreen() {
           <View className="flex-row gap-2 ml-auto">
             <TouchableOpacity
               onPress={() => handleDelete(item)}
-              className="bg-red-50 p-2 rounded-lg"
+              className="bg-red-50 dark:bg-red-950/30 p-2 rounded-lg"
             >
               <AppIcon name="delete" size={18} color="#EF4444" />
             </TouchableOpacity>
@@ -156,46 +156,48 @@ export default function AdminNotificationsManagementScreen() {
         {/* Notification Form */}
         {showForm && (
           <Card className="p-5 mb-4">
-            <View className="flex-row items-center gap-3 mb-4 border-b border-gray-100 pb-3">
+            <View className="flex-row items-center gap-3 mb-4 border-b border-gray-100 dark:border-slate-700 pb-3">
               <AppIcon name="notifications" size={20} color={Colors.primary} active />
-              <Text className="text-[14px] font-black text-gray-900 uppercase tracking-wide">New Notification</Text>
+              <Text className="text-[14px] font-black text-gray-900 dark:text-slate-100 uppercase tracking-wide">New Notification</Text>
             </View>
 
             <View className="gap-3">
               <View>
-                <Text className="text-[10px] font-black text-gray-600 uppercase mb-1.5">Title *</Text>
+                <Text className="text-[10px] font-black text-gray-600 dark:text-slate-400 uppercase mb-1.5">Title *</Text>
                 <TextInput
                   value={title}
                   onChangeText={setTitle}
                   placeholder="e.g. School Closed Tomorrow"
-                  className="h-[44px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
+                  placeholderTextColor="#9CA3AF"
+                  className="h-[44px] bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl px-4 text-sm font-semibold text-gray-800 dark:text-slate-200"
                 />
               </View>
 
               <View>
-                <Text className="text-[10px] font-black text-gray-600 uppercase mb-1.5">Message *</Text>
+                <Text className="text-[10px] font-black text-gray-600 dark:text-slate-400 uppercase mb-1.5">Message *</Text>
                 <TextInput
                   value={message}
                   onChangeText={setMessage}
                   placeholder="Write the notification message..."
+                  placeholderTextColor="#9CA3AF"
                   multiline
                   numberOfLines={4}
-                  className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-semibold text-gray-800"
+                  className="bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm font-semibold text-gray-800 dark:text-slate-200"
                   style={{ minHeight: 100, textAlignVertical: "top" }}
                 />
               </View>
 
               <View>
-                <Text className="text-[10px] font-black text-gray-600 uppercase mb-1.5">Type *</Text>
+                <Text className="text-[10px] font-black text-gray-600 dark:text-slate-400 uppercase mb-1.5">Type *</Text>
                 {isSuperAdmin ? (
                   <View className="flex-row gap-2">
                     {["App Update", "System"].map(type => (
                       <TouchableOpacity
                         key={type}
                         onPress={() => setNotificationType(type)}
-                        className={`flex-1 items-center justify-center h-[44px] rounded-xl border ${notificationType === type ? 'border-primary bg-[#134A8C]/10' : 'border-gray-200 bg-gray-50'}`}
+                        className={`flex-1 items-center justify-center h-[44px] rounded-xl border ${notificationType === type ? 'border-primary bg-[#134A8C]/10 dark:bg-blue-900/20' : 'border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800'}`}
                       >
-                        <Text className={`text-xs font-bold ${notificationType === type ? 'text-primary' : 'text-gray-600'}`}>{type}</Text>
+                        <Text className={`text-xs font-bold ${notificationType === type ? 'text-primary' : 'text-gray-600 dark:text-slate-400'}`}>{type}</Text>
                       </TouchableOpacity>
                     ))}
                   </View>
@@ -205,9 +207,9 @@ export default function AdminNotificationsManagementScreen() {
                       <TouchableOpacity
                         key={type}
                         onPress={() => setNotificationType(type)}
-                        className={`flex-1 items-center justify-center h-[44px] rounded-xl border ${notificationType === type ? 'border-primary bg-[#134A8C]/10' : 'border-gray-200 bg-gray-50'}`}
+                        className={`flex-1 items-center justify-center h-[44px] rounded-xl border ${notificationType === type ? 'border-primary bg-[#134A8C]/10 dark:bg-blue-900/20' : 'border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800'}`}
                       >
-                        <Text className={`text-xs font-bold ${notificationType === type ? 'text-primary' : 'text-gray-600'}`}>{type}</Text>
+                        <Text className={`text-xs font-bold ${notificationType === type ? 'text-primary' : 'text-gray-600 dark:text-slate-400'}`}>{type}</Text>
                       </TouchableOpacity>
                     ))}
                   </View>

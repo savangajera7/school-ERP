@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { router } from "expo-router";
+import { useColorScheme } from "nativewind";
 import { ResponsiveScreen } from "@/components/layout/ResponsiveScreen";
 import { RoleHeader } from "@/components/layout/RoleHeader";
 import { ROLE_TAB_BAR_HEIGHT } from "@/components/layout/RoleTabBar";
@@ -14,6 +15,20 @@ export default function AdminSettingsScreen() {
   const { handleLogout } = useAuth();
   const userData = useAuthStore((s) => s.userData);
   const { bodySize } = useResponsive();
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === "dark";
+
+  const getRowStyle = () => ({
+    ...styles.row,
+    backgroundColor: isDark ? SchoolTheme.cardDark : "#fff",
+    borderColor: isDark ? SchoolTheme.borderDark : SchoolTheme.border,
+  });
+
+  const getLabelStyle = () => ({
+    ...styles.label,
+    color: isDark ? SchoolTheme.textDark : SchoolTheme.text,
+    fontSize: bodySize,
+  });
 
   return (
     <View style={{ flex: 1 }}>
@@ -24,24 +39,24 @@ export default function AdminSettingsScreen() {
       />
       <ResponsiveScreen tabBarPadding={ROLE_TAB_BAR_HEIGHT}>
         <TouchableOpacity
-          style={styles.row}
+          style={getRowStyle()}
           onPress={() => router.push("/(app)/profile" as never)}
         >
-          <Text style={[styles.label, { fontSize: bodySize }]}>Profile</Text>
-          <AppIcon name="chevronRight" size={20} color="#9CA3AF" />
+          <Text style={getLabelStyle()}>Profile</Text>
+          <AppIcon name="chevronRight" size={20} color={isDark ? "#94A3B8" : "#9CA3AF"} />
         </TouchableOpacity>
         <TouchableOpacity
-          style={styles.row}
+          style={getRowStyle()}
           onPress={() => router.push("/(app)/change-password" as never)}
         >
-          <Text style={[styles.label, { fontSize: bodySize }]}>Change password</Text>
-          <AppIcon name="chevronRight" size={20} color="#9CA3AF" />
+          <Text style={getLabelStyle()}>Change password</Text>
+          <AppIcon name="chevronRight" size={20} color={isDark ? "#94A3B8" : "#9CA3AF"} />
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.row, styles.danger]}
+          style={[getRowStyle(), styles.danger]}
           onPress={handleLogout}
         >
-          <Text style={[styles.label, { color: SchoolTheme.error, fontSize: bodySize }]}>
+          <Text style={[getLabelStyle(), { color: SchoolTheme.error }]}>
             Sign out
           </Text>
           <AppIcon name="logout" size={20} color={SchoolTheme.error} />
@@ -53,17 +68,15 @@ export default function AdminSettingsScreen() {
 
 const styles = StyleSheet.create({
   row: {
-    backgroundColor: "#fff",
     padding: 16,
     borderRadius: 14,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: SchoolTheme.border,
     flexDirection: "row",
     justifyContent: "space-between",
     minHeight: 56,
     alignItems: "center",
   },
-  label: { fontWeight: "700", color: SchoolTheme.text },
+  label: { fontWeight: "700" },
   danger: { marginTop: 24 },
 });

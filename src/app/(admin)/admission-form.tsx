@@ -476,8 +476,8 @@ export default function AdmissionFormScreen() {
     const hasError = errorKey ? !!errors[errorKey] : false;
     return (
     <View className="flex-1 min-w-[280px]">
-      <Text className={`text-[12px] font-black ${hasError ? 'text-red-500' : 'text-gray-450'} mb-1.5 uppercase`}>{label}</Text>
-      <View className={`${hasError ? 'bg-red-50 border-red-400' : 'bg-gray-50 border-gray-200'} border rounded-xl overflow-hidden h-[48px]`}>
+      <Text className={`text-[12px] font-black ${hasError ? 'text-red-500 dark:text-red-400' : 'text-gray-450 dark:text-slate-400'} mb-1.5 uppercase`}>{label}</Text>
+      <View className={`${hasError ? 'bg-red-50 dark:bg-red-950/30 border-red-400 dark:border-red-800' : 'bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700'} border rounded-xl overflow-hidden h-[48px]`}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ alignItems: 'center', paddingHorizontal: 10 }}>
           {options.map((opt) => {
             const id =
@@ -504,9 +504,9 @@ export default function AdmissionFormScreen() {
               <TouchableOpacity
                 key={id}
                 onPress={() => onSelect(id)}
-                className={`px-3 py-1.5 rounded-lg mr-2 ${value === id ? "bg-[#1A3C6E]" : "bg-gray-200"}`}
+                className={`px-3 py-1.5 rounded-lg mr-2 ${value === id ? "bg-[#1A3C6E] dark:bg-blue-600" : "bg-gray-200 dark:bg-slate-700"}`}
               >
-                <Text className={`text-[11px] font-bold ${value === id ? "text-white" : "text-gray-600"}`}>
+                <Text className={`text-[11px] font-bold ${value === id ? "text-white" : "text-gray-600 dark:text-slate-300"}`}>
                   {name}
                 </Text>
               </TouchableOpacity>
@@ -514,7 +514,7 @@ export default function AdmissionFormScreen() {
           })}
         </ScrollView>
       </View>
-      {hasError && <Text className="text-red-500 text-[10px] font-bold mt-1">{errors[errorKey!]}</Text>}
+      {hasError && <Text className="text-red-500 dark:text-red-400 text-[10px] font-bold mt-1">{errors[errorKey!]}</Text>}
     </View>
   );
   };
@@ -523,18 +523,19 @@ export default function AdmissionFormScreen() {
     const hasError = errorKey ? !!errors[errorKey] : false;
     return (
     <View className="flex-1 min-w-[280px]">
-      <Text className={`text-[12px] font-black ${hasError ? 'text-red-500' : 'text-gray-455'} mb-1.5 uppercase`}>{label}</Text>
+      <Text className={`text-[12px] font-black ${hasError ? 'text-red-500 dark:text-red-400' : 'text-gray-455 dark:text-slate-400'} mb-1.5 uppercase`}>{label}</Text>
       <TextInput
         value={value}
         onChangeText={onChange}
         placeholder={placeholder}
+        placeholderTextColor={hasError ? "#FCA5A5" : "#9CA3AF"}
         multiline={options?.multiline}
         keyboardType={options?.keyboard || "default"}
         maxLength={options?.maxLength}
         editable={options?.editable}
-        className={`${options?.multiline ? "min-h-[80px] py-2" : "h-[48px]"} ${hasError ? 'bg-red-50 border-red-400 text-red-900' : 'bg-gray-50 border-gray-200 text-gray-800'} border rounded-xl px-4 text-sm font-semibold`}
+        className={`${options?.multiline ? "min-h-[80px] py-2" : "h-[48px]"} ${hasError ? 'bg-red-50 dark:bg-red-950/30 border-red-400 dark:border-red-800 text-red-900 dark:text-red-200' : 'bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700 text-gray-800 dark:text-slate-200'} border rounded-xl px-4 text-sm font-semibold`}
       />
-      {hasError && <Text className="text-red-500 text-[10px] font-bold mt-1">{errors[errorKey!]}</Text>}
+      {hasError && <Text className="text-red-500 dark:text-red-400 text-[10px] font-bold mt-1">{errors[errorKey!]}</Text>}
     </View>
   );
   };
@@ -557,24 +558,24 @@ export default function AdmissionFormScreen() {
     const hasError = errorKey ? !!errors[errorKey] : false;
     return (
     <View className="flex-1 min-w-[280px]">
-      <Text className={`text-[12px] font-black ${hasError ? 'text-red-500' : 'text-gray-450'} mb-1.5 uppercase`}>{label}</Text>
-      <View className={`flex-row ${hasError ? 'bg-red-50 border-red-400' : 'bg-gray-50 border-gray-200'} border rounded-xl overflow-hidden h-[48px] p-0.5`}>
+      <Text className={`text-[12px] font-black ${hasError ? 'text-red-500 dark:text-red-400' : 'text-gray-450 dark:text-slate-400'} mb-1.5 uppercase`}>{label}</Text>
+      <View className={`flex-row ${hasError ? 'bg-red-50 dark:bg-red-950/30 border-red-400 dark:border-red-800' : 'bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700'} border rounded-xl overflow-hidden h-[48px] p-0.5`}>
         {options.map((opt) => {
           const isActive = typeof value === 'boolean' ? (opt === 'Yes' ? value === true : value === false) : value === opt;
           return (
             <TouchableOpacity
               key={opt}
               onPress={() => onSelect(opt === 'Yes' ? true : opt === 'No' ? false : opt)}
-              className={`flex-1 items-center justify-center rounded-lg ${isActive ? "bg-[#1A3C6E]" : ""}`}
+              className={`flex-1 items-center justify-center rounded-lg ${isActive ? "bg-[#1A3C6E] dark:bg-blue-600" : ""}`}
             >
-              <Text className={`text-xs font-black uppercase ${isActive ? "text-white" : "text-gray-500"}`}>
+              <Text className={`text-xs font-black uppercase ${isActive ? "text-white" : "text-gray-500 dark:text-slate-400"}`}>
                 {opt}
               </Text>
             </TouchableOpacity>
           );
         })}
       </View>
-      {hasError && <Text className="text-red-500 text-[10px] font-bold mt-1">{errors[errorKey!]}</Text>}
+      {hasError && <Text className="text-red-500 dark:text-red-400 text-[10px] font-bold mt-1">{errors[errorKey!]}</Text>}
     </View>
   );
   };
@@ -589,7 +590,7 @@ export default function AdmissionFormScreen() {
         <View className={`w-10 h-10 ${bgColor} rounded-xl items-center justify-center border ${borderColor}`}>
           <AppIcon name={icon} size={22} color={color} active />
         </View>
-        <Text className="text-[16px] font-black text-gray-900 uppercase tracking-wide">{title}</Text>
+        <Text className="text-[16px] font-black text-gray-900 dark:text-slate-100 uppercase tracking-wide">{title}</Text>
       </View>
       <View className={`transform ${expandedSections[sectionKey] ? "rotate-180" : "rotate-0"}`}>
         <AppIcon name="chevronDown" size={20} color="#9CA3AF" />
@@ -641,10 +642,10 @@ export default function AdmissionFormScreen() {
 
   const renderImagePicker = (label: string, photoUri: string | null, setter: (uri: string) => void) => (
     <View className="flex-1 min-w-[280px] items-center">
-      <Text className="text-[12px] font-black text-gray-450 mb-2 uppercase">{label}</Text>
+      <Text className="text-[12px] font-black text-gray-450 dark:text-slate-400 mb-2 uppercase">{label}</Text>
       <TouchableOpacity 
         onPress={() => pickImage(setter)}
-        className="w-[100px] h-[100px] rounded-full border-2 border-dashed border-gray-300 items-center justify-center bg-gray-50 overflow-hidden"
+        className="w-[100px] h-[100px] rounded-full border-2 border-dashed border-gray-300 dark:border-slate-600 items-center justify-center bg-gray-50 dark:bg-slate-800 overflow-hidden"
       >
         {photoUri ? (
           <Image source={{ uri: photoUri }} className="w-full h-full" />
@@ -663,10 +664,10 @@ export default function AdmissionFormScreen() {
   const formContent = (
     <View className="flex-1 w-full max-w-full">
       {/* SECTION 1: Academic Details */}
-      <Card className="bg-white border border-gray-150 p-6 mb-4 overflow-hidden">
-        {renderSectionHeader("Academic Details", "subjects", "#15803D", "bg-emerald-50", "border-emerald-100", "academic")}
+      <Card className="bg-white dark:bg-slate-800 border border-gray-150 dark:border-slate-700 p-6 mb-4 overflow-hidden">
+        {renderSectionHeader("Academic Details", "subjects", "#15803D", "bg-emerald-50 dark:bg-emerald-900/20", "border-emerald-100 dark:border-emerald-800", "academic")}
         {expandedSections.academic && (
-          <View className="mt-6 pt-6 border-t border-gray-100">
+          <View className="mt-6 pt-6 border-t border-gray-100 dark:border-slate-700">
             <View className={`flex-row flex-wrap gap-5 ${isMobile ? "flex-col" : ""}`}>
               {renderDropdown("Academic Year *", academicYearId, academicYears, (val) => { setAcademicYearId(val); setErrors(prev => ({...prev, academicYearId: ""})); }, "Select Year", "academicYearId")}
               {renderDropdown("Class *", classId, classes, (val) => { setClassId(val); setErrors(prev => ({...prev, classId: ""})); }, "Select Class", "classId")}
@@ -684,7 +685,7 @@ export default function AdmissionFormScreen() {
       </Card>
 
       {/* SECTION 2: Personal Details */}
-      <Card className="bg-white border border-gray-150 p-6 mb-4 overflow-hidden">
+      <Card className="bg-white dark:bg-slate-800 border border-gray-150 dark:border-slate-700 p-6 mb-4 overflow-hidden">
         {renderSectionHeader("Personal Details", gender.toLowerCase() === "female" ? "female" : "male", "#0369A1", "bg-blue-50", "border-blue-100", "personal")}
         {expandedSections.personal && (
           <View className="mt-6 pt-6 border-t border-gray-100">
@@ -740,11 +741,11 @@ export default function AdmissionFormScreen() {
       </Card>
 
       {/* SECTION 3: Guardian Details */}
-      <Card className="bg-white border border-gray-150 p-6 mb-4 overflow-hidden">
-        {renderSectionHeader("Guardian Details", "parents", "#B45309", "bg-amber-50", "border-amber-100", "guardian")}
+      <Card className="bg-white dark:bg-slate-800 border border-gray-150 dark:border-slate-700 p-6 mb-4 overflow-hidden">
+        {renderSectionHeader("Guardian Details", "parents", "#B45309", "bg-amber-50 dark:bg-amber-900/20", "border-amber-100 dark:border-amber-800", "guardian")}
         {expandedSections.guardian && (
-          <View className="mt-6 pt-6 border-t border-gray-100">
-            <Text className="text-[14px] font-bold text-gray-700 mb-3">Father's Information</Text>
+          <View className="mt-6 pt-6 border-t border-gray-100 dark:border-slate-700">
+            <Text className="text-[14px] font-bold text-gray-700 dark:text-slate-300 mb-3">Father's Information</Text>
             <View className={`flex-row flex-wrap gap-5 ${isMobile ? "flex-col" : ""}`}>
               {renderTextInput("Father Name *", fatherName, (val) => { setFatherName(val); setErrors(prev => ({...prev, fatherName: ""})); }, "Full Name", undefined, "fatherName")}
               {renderTextInput("Father Phone *", fatherNumber, (val) => { setFatherNumber(val); setErrors(prev => ({...prev, fatherNumber: ""})); }, "Mobile No", { keyboard: "phone-pad" }, "fatherNumber")}
@@ -773,10 +774,10 @@ export default function AdmissionFormScreen() {
       </Card>
 
       {/* SECTION 4: Address Details */}
-      <Card className="bg-white border border-gray-150 p-6 mb-4 overflow-hidden">
-        {renderSectionHeader("Address Details", "notifications", "#059669", "bg-emerald-50", "border-emerald-100", "address")}
+      <Card className="bg-white dark:bg-slate-800 border border-gray-150 dark:border-slate-700 p-6 mb-4 overflow-hidden">
+        {renderSectionHeader("Address Details", "notifications", "#059669", "bg-emerald-50 dark:bg-emerald-900/20", "border-emerald-100 dark:border-emerald-800", "address")}
         {expandedSections.address && (
-          <View className="mt-6 pt-6 border-t border-gray-100">
+          <View className="mt-6 pt-6 border-t border-gray-100 dark:border-slate-700">
             <View className={`flex-row flex-wrap gap-5 ${isMobile ? "flex-col" : ""}`}>
               {renderTextInput("Current Address", currentAddress, setCurrentAddress, "Full Address", { multiline: true })}
               {renderTextInput("Current City", currentCity, setCurrentCity, "City/Village")}
@@ -802,10 +803,10 @@ export default function AdmissionFormScreen() {
       </Card>
 
       {/* SECTION 5: Admission Details */}
-      <Card className="bg-white border border-gray-150 p-6 mb-10 overflow-hidden">
-        {renderSectionHeader("Admission Details", "reports", "#DB2777", "bg-pink-50", "border-pink-100", "admission")}
+      <Card className="bg-white dark:bg-slate-800 border border-gray-150 dark:border-slate-700 p-6 mb-10 overflow-hidden">
+        {renderSectionHeader("Admission Details", "reports", "#DB2777", "bg-pink-50 dark:bg-pink-900/20", "border-pink-100 dark:border-pink-800", "admission")}
         {expandedSections.admission && (
-          <View className="mt-6 pt-6 border-t border-gray-100">
+          <View className="mt-6 pt-6 border-t border-gray-100 dark:border-slate-700">
             <View className={`flex-row flex-wrap gap-5 ${isMobile ? "flex-col" : ""}`}>
               {renderToggle("Right to Education (RTE)", rte, ["Yes", "No"], setRte)}
               {renderToggle("Student Type", studentType, ["New", "Regular"], setStudentType)}

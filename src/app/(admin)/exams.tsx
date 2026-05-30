@@ -59,7 +59,7 @@ export default function AdminExamsManagementScreen() {
       key: "examDate", 
       header: "Date", 
       width: 100, 
-      render: (e) => <Text className="text-sm text-gray-600">{formatDisplayDate(e.examDate)}</Text>
+      render: (e) => <Text className="text-sm text-gray-600 dark:text-slate-400">{formatDisplayDate(e.examDate)}</Text>
     },
     { 
       key: "status", 
@@ -67,8 +67,8 @@ export default function AdminExamsManagementScreen() {
       width: 100, 
       align: "center",
       render: (e) => (
-        <View className="px-2 py-1 bg-blue-50 rounded-md border border-blue-100">
-          <Text className="text-[10px] font-bold text-blue-700">{e.status || "Upcoming"}</Text>
+        <View className="px-2 py-1 bg-blue-50 dark:bg-blue-950/30 rounded-md border border-blue-100 dark:border-blue-800">
+          <Text className="text-[10px] font-bold text-blue-700 dark:text-blue-400">{e.status || "Upcoming"}</Text>
         </View>
       )
     },

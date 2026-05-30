@@ -135,7 +135,7 @@ export default function ExamMarksScreen() {
                     key={exam.examID}
                     onPress={() => setSelectedExamId(exam.examID)}
                     className={`px-4 py-2 rounded-xl border ${
-                      selectedExamId === exam.examID ? "bg-primary border-primary" : "bg-gray-50 border-gray-200"
+                      selectedExamId === exam.examID ? "bg-primary border-primary" : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700"
                     }`}
                   >
                     <Text className={`text-xs font-bold ${selectedExamId === exam.examID ? "text-white" : "text-gray-600"}`}>
@@ -154,7 +154,7 @@ export default function ExamMarksScreen() {
                     key={sub.subjectID}
                     onPress={() => setSelectedSubjectId(sub.subjectID)}
                     className={`px-4 py-2 rounded-xl border ${
-                      selectedSubjectId === sub.subjectID ? "bg-primary border-primary" : "bg-gray-50 border-gray-200"
+                      selectedSubjectId === sub.subjectID ? "bg-primary border-primary" : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700"
                     }`}
                   >
                     <Text className={`text-xs font-bold ${selectedSubjectId === sub.subjectID ? "text-white" : "text-gray-600"}`}>
@@ -174,7 +174,7 @@ export default function ExamMarksScreen() {
                       key={cls.classID}
                       onPress={() => setSelectedClassId(cls.classID)}
                       className={`px-4 py-2 rounded-xl border ${
-                        selectedClassId === cls.classID ? "bg-primary border-primary" : "bg-gray-50 border-gray-200"
+                        selectedClassId === cls.classID ? "bg-primary border-primary" : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700"
                       }`}
                     >
                       <Text className={`text-xs font-bold ${selectedClassId === cls.classID ? "text-white" : "text-gray-600"}`}>
@@ -192,7 +192,7 @@ export default function ExamMarksScreen() {
                       key={sec.sectionID}
                       onPress={() => setSelectedSectionId(sec.sectionID)}
                       className={`px-4 py-2 rounded-xl border ${
-                        selectedSectionId === sec.sectionID ? "bg-primary border-primary" : "bg-gray-50 border-gray-200"
+                        selectedSectionId === sec.sectionID ? "bg-primary border-primary" : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700"
                       }`}
                     >
                       <Text className={`text-xs font-bold ${selectedSectionId === sec.sectionID ? "text-white" : "text-gray-600"}`}>

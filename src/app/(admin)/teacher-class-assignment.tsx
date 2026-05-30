@@ -38,9 +38,9 @@ export default function TeacherClassAssignmentScreen() {
           tableColumns={columns}
           keyExtractor={(item: any) => String(item.id || item.teacherID)}
           renderCard={(item: any) => (
-            <View className="bg-white p-4 mb-3 rounded-xl border border-gray-200">
-              <Text className="font-bold text-[16px] text-gray-900">{item.teacherName}</Text>
-              <Text className="text-gray-500 mb-2">Class: {item.className}</Text>
+            <View className="bg-white dark:bg-slate-800 p-4 mb-3 rounded-xl border border-gray-200 dark:border-slate-700">
+              <Text className="font-bold text-[16px] text-gray-900 dark:text-slate-100">{item.teacherName}</Text>
+              <Text className="text-gray-500 dark:text-slate-400 mb-2">Class: {item.className}</Text>
               <EntityActionButtons
                 onDelete={async () => {
                   await deleteAssignment.mutateAsync({

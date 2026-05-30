@@ -156,17 +156,17 @@ export default function InquiriesScreen() {
       )}
 
           {/* Filters Bar */}
-          <Card className="bg-white border border-gray-150 p-4 mb-6 flex-row flex-wrap gap-4 items-center">
+          <Card className="bg-white dark:bg-slate-800 border border-gray-150 dark:border-slate-700 p-4 mb-6 flex-row flex-wrap gap-4 items-center">
             {/* Search Input */}
             <View 
-              className="flex-1 min-w-[200px] h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 flex-row items-center gap-2.5"
+              className="flex-1 min-w-[200px] h-[48px] bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl px-4 flex-row items-center gap-2.5"
             >
               <AppIcon name="search" size={14} color="#9CA3AF" />
               <TextInput
                 placeholder="Search name, parent, or contact..."
                 value={search}
                 onChangeText={setSearch}
-                className="flex-1 text-sm font-semibold text-gray-800"
+                className="flex-1 text-sm font-semibold text-gray-800 dark:text-slate-200"
                 placeholderTextColor="#9CA3AF"
                 style={{ outlineWidth: 0 } as any}
               />
@@ -174,16 +174,16 @@ export default function InquiriesScreen() {
 
             {/* Class Filter */}
             <View className="flex-row items-center gap-2">
-              <Text className="text-xs text-gray-400 font-extrabold uppercase tracking-wide">Class:</Text>
-              <View className="flex-row bg-gray-50 border border-gray-200 rounded-xl overflow-hidden p-0.5">
+              <Text className="text-xs text-gray-400 dark:text-slate-500 font-extrabold uppercase tracking-wide">Class:</Text>
+              <View className="flex-row bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl overflow-hidden p-0.5">
                 {["All", "Nursery", "Class I", "Class XI-Sci"].map((cls) => (
                   <TouchableOpacity
                     key={cls}
                     onPress={() => setSelectedClass(cls)}
-                    className={`px-3 py-1.5 rounded-lg ${selectedClass === cls ? "bg-[#0d3666]" : ""}`}
+                    className={`px-3 py-1.5 rounded-lg ${selectedClass === cls ? "bg-[#0d3666] dark:bg-blue-600" : ""}`}
                   >
                     <Text className={`text-[10px] font-black uppercase tracking-wider ${
-                      selectedClass === cls ? "text-white" : "text-gray-500"
+                      selectedClass === cls ? "text-white" : "text-gray-500 dark:text-slate-400"
                     }`}>
                       {cls === "Class XI-Sci" ? "XI-Sci" : cls}
                     </Text>
@@ -195,7 +195,7 @@ export default function InquiriesScreen() {
             {/* Status Filter */}
             <View className="flex-row items-center gap-2">
               <Text className="text-xs text-gray-400 font-extrabold uppercase tracking-wide">Status:</Text>
-              <View className="flex-row bg-gray-50 border border-gray-200 rounded-xl overflow-hidden p-0.5">
+              <View className="flex-row bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl overflow-hidden p-0.5">
                 {["All", "Pending", "Processed", "Rejected"].map((st) => (
                   <TouchableOpacity
                     key={st}
@@ -219,7 +219,7 @@ export default function InquiriesScreen() {
               <PremiumLoader color={Colors.primary} size={36} />
             </View>
           ) : filteredInquiries.length === 0 ? (
-            <View className="py-20 items-center justify-center bg-white rounded-3xl border border-gray-100 p-8">
+            <View className="py-20 items-center justify-center bg-white dark:bg-slate-800 rounded-3xl border border-gray-100 dark:border-slate-700 p-8">
               <EmptyState icon="inquiries" title="No inquiries" message="New inquiries will show here" />
               <Text className="text-gray-400 font-extrabold text-sm uppercase tracking-wider">No admission inquiries found</Text>
             </View>
@@ -270,8 +270,8 @@ export default function InquiriesScreen() {
               })}
             </View>
           ) : (
-            <Card noPadding className="bg-white border border-gray-100 overflow-hidden shadow-sm">
-              <View className="flex-row bg-gray-50 border-b border-gray-150 px-6 py-4">
+            <Card noPadding className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 overflow-hidden shadow-sm">
+              <View className="flex-row bg-gray-50 dark:bg-slate-800 border-b border-gray-150 dark:border-slate-700 px-6 py-4">
                 <Text className="flex-[1.5] font-black text-gray-400 text-xs uppercase">Student Name</Text>
                 <Text className="flex-1 font-black text-gray-400 text-xs uppercase">Parent Name</Text>
                 <Text className="flex-[0.8] font-black text-gray-400 text-xs uppercase">Class Requested</Text>
@@ -321,7 +321,7 @@ export default function InquiriesScreen() {
                             </TouchableOpacity>
                           </>
                         ) : (
-                          <View className="px-3 py-1.5 bg-gray-50 border border-gray-150 rounded-lg">
+                          <View className="px-3 py-1.5 bg-gray-50 dark:bg-slate-700 border border-gray-150 dark:border-slate-600 rounded-lg">
                             <Text className="text-[11px] text-gray-400 font-extrabold uppercase">
                               {inq.status === "Processed" ? "Approved" : "Rejected"}
                             </Text>
@@ -343,12 +343,12 @@ export default function InquiriesScreen() {
         onRequestClose={() => setIsModalVisible(false)}
       >
         <View className="flex-1 bg-black/50 items-center justify-center p-6">
-          <Card className="w-full max-w-[500px] bg-white p-6 rounded-3xl border-2 border-orange-50 shadow-2xl">
+          <Card className="w-full max-w-[500px] bg-white dark:bg-slate-800 p-6 rounded-3xl border-2 border-orange-50 dark:border-slate-700 shadow-2xl">
             <View className="flex-row justify-between items-center mb-5 pb-3 border-b border-gray-100">
               <Text className="text-base font-black text-gray-900 uppercase tracking-wider">Add New Inquiry Lead</Text>
               <TouchableOpacity 
                 onPress={() => setIsModalVisible(false)}
-                className="bg-gray-50 w-8 h-8 rounded-full items-center justify-center"
+                className="bg-gray-50 dark:bg-slate-700 w-8 h-8 rounded-full items-center justify-center"
               >
                 <Text className="text-sm font-black text-gray-400">✕</Text>
               </TouchableOpacity>
@@ -362,7 +362,7 @@ export default function InquiriesScreen() {
                   onChangeText={setNewStudent}
                   placeholder="Enter student name"
                   placeholderTextColor="#9CA3AF"
-                  className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
+                  className="h-[48px] bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl px-4 text-sm font-semibold text-gray-800 dark:text-slate-200"
                   style={{ outlineWidth: 0 } as any}
                 />
               </View>
@@ -374,7 +374,7 @@ export default function InquiriesScreen() {
                   onChangeText={setNewParent}
                   placeholder="Enter parent name"
                   placeholderTextColor="#9CA3AF"
-                  className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
+                  className="h-[48px] bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl px-4 text-sm font-semibold text-gray-800 dark:text-slate-200"
                   style={{ outlineWidth: 0 } as any}
                 />
               </View>

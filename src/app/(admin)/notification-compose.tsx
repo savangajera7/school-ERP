@@ -64,28 +64,31 @@ export default function NotificationComposeScreen() {
       keyboard
     >
       <PremiumCard noAccent style={{ padding: 20, gap: 12 }}>
-        <Text className="text-sm font-semibold text-gray-600">Title</Text>
+        <Text className="text-sm font-semibold text-gray-600 dark:text-slate-400">Title</Text>
         <TextInput
           value={title}
           onChangeText={setTitle}
-          className="border border-gray-200 rounded-xl px-4 py-3"
+          className="border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl px-4 py-3 text-gray-800 dark:text-slate-200"
           placeholder="Notification title"
+          placeholderTextColor="#9CA3AF"
         />
-        <Text className="text-sm font-semibold text-gray-600 mt-2">Message</Text>
+        <Text className="text-sm font-semibold text-gray-600 dark:text-slate-400 mt-2">Message</Text>
         <TextInput
           value={message}
           onChangeText={setMessage}
           multiline
           numberOfLines={4}
-          className="border border-gray-200 rounded-xl px-4 py-3 min-h-[100px]"
+          className="border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl px-4 py-3 min-h-[100px] text-gray-800 dark:text-slate-200"
           placeholder="Message body"
+          placeholderTextColor="#9CA3AF"
         />
-        <Text className="text-sm font-semibold text-gray-600 mt-2">Type</Text>
+        <Text className="text-sm font-semibold text-gray-600 dark:text-slate-400 mt-2">Type</Text>
         <TextInput
           value={notificationType}
           onChangeText={setNotificationType}
-          className="border border-gray-200 rounded-xl px-4 py-3"
+          className="border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-xl px-4 py-3 text-gray-800 dark:text-slate-200"
           placeholder="General"
+          placeholderTextColor="#9CA3AF"
         />
         <Button label="Send notification" onPress={handleSend} loading={insertMutation.isPending} />
       </PremiumCard>

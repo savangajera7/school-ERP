@@ -259,8 +259,8 @@ export default function TeacherFormScreen() {
           returnKeyType="next"
           className={`${opts?.multiline ? "min-h-[80px] py-3" : "h-[48px]"} ${
             hasError
-              ? "bg-red-50 border-red-400 text-red-900"
-              : "bg-gray-50 border-gray-200 text-gray-800"
+              ? "bg-red-50 dark:bg-red-950/30 border-red-400 dark:border-red-800 text-red-900 dark:text-red-200"
+              : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700 text-gray-800 dark:text-slate-200"
           } border rounded-xl px-4 text-sm font-semibold`}
           placeholderTextColor={hasError ? "#FCA5A5" : "#9CA3AF"}
         />
@@ -329,8 +329,8 @@ export default function TeacherFormScreen() {
       <FormLayout ref={scrollViewRef} contentContainerStyle={{ paddingBottom: 40 }}>
 
         {/* ── SECTION 1: Personal Details ── */}
-        <Card className="bg-white border border-gray-150 p-6 mb-4 overflow-hidden">
-          {renderSectionHeader("Personal Details", "teachers", "#0369A1", "bg-blue-50", "border-blue-100", "personal")}
+        <Card className="bg-white dark:bg-slate-800 border border-gray-150 dark:border-slate-700 p-6 mb-4 overflow-hidden">
+          {renderSectionHeader("Personal Details", "teachers", "#0369A1", "bg-blue-50 dark:bg-blue-900/20", "border-blue-100 dark:border-blue-800", "personal")}
 
           {expandedSections.personal && (
             <View className="mt-6 pt-6 border-t border-gray-100">
@@ -390,8 +390,8 @@ export default function TeacherFormScreen() {
         </Card>
 
         {/* ── SECTION 2: Professional Details ── */}
-        <Card className="bg-white border border-gray-150 p-6 mb-4 overflow-hidden">
-          {renderSectionHeader("Professional Details", "subjects", "#15803D", "bg-emerald-50", "border-emerald-100", "professional")}
+        <Card className="bg-white dark:bg-slate-800 border border-gray-150 dark:border-slate-700 p-6 mb-4 overflow-hidden">
+          {renderSectionHeader("Professional Details", "subjects", "#15803D", "bg-emerald-50 dark:bg-emerald-900/20", "border-emerald-100 dark:border-emerald-800", "professional")}
 
           {expandedSections.professional && (
             <View className="mt-6 pt-6 border-t border-gray-100">
@@ -424,8 +424,8 @@ export default function TeacherFormScreen() {
         </Card>
 
         {/* ── SECTION 3: Account / Login ── */}
-        <Card className="bg-white border border-gray-150 p-6 mb-4 overflow-hidden">
-          {renderSectionHeader("Login Account", "lock", "#B45309", "bg-amber-50", "border-amber-100", "account")}
+        <Card className="bg-white dark:bg-slate-800 border border-gray-150 dark:border-slate-700 p-6 mb-4 overflow-hidden">
+          {renderSectionHeader("Login Account", "lock", "#B45309", "bg-amber-50 dark:bg-amber-900/20", "border-amber-100 dark:border-amber-800", "account")}
 
           {expandedSections.account && (
             <View className="mt-6 pt-6 border-t border-gray-100">
@@ -452,7 +452,7 @@ export default function TeacherFormScreen() {
                   <Text className={`text-[12px] font-black ${errors.password ? "text-red-500" : "text-gray-500"} mb-1.5 uppercase`}>
                     Password{!isEditing ? " *" : ""}
                   </Text>
-                  <View className={`flex-row items-center ${errors.password ? "bg-red-50 border-red-400" : "bg-gray-50 border-gray-200"} border rounded-xl overflow-hidden h-[48px]`}>
+                  <View className={`flex-row items-center ${errors.password ? "bg-red-50 dark:bg-red-950/30 border-red-400 dark:border-red-800" : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700"} border rounded-xl overflow-hidden h-[48px]`}>
                     <TextInput
                       value={password}
                       onChangeText={(v) => {

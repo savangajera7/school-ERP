@@ -88,7 +88,7 @@ function PeriodCard({
   const color = subjectColor(period.subjectName);
   return (
     <View
-      className="bg-white rounded-2xl border border-gray-100 mb-3 overflow-hidden"
+      className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 mb-3 overflow-hidden"
       style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 8, elevation: 2 }}
     >
       {/* Color accent bar */}
@@ -169,7 +169,7 @@ function TableRow({
 }) {
   const color = subjectColor(period.subjectName);
   return (
-    <View className="flex-row items-center px-5 py-3.5 border-b border-gray-50 bg-white">
+    <View className="flex-row items-center px-5 py-3.5 border-b border-gray-50 dark:border-slate-700 bg-white dark:bg-slate-800">
       {/* # */}
       <View className="w-10 items-center">
         <View className="w-6 h-6 rounded-lg items-center justify-center" style={{ backgroundColor: color + "18" }}>
@@ -457,7 +457,7 @@ export default function TimetableScreen() {
     >
       {/* ── Filters bar ── */}
       <View
-        className="bg-white rounded-2xl border border-gray-100 px-4 py-4 mb-4"
+        className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 px-4 py-4 mb-4"
         style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 6, elevation: 2 }}
       >
         {/* Class selector — admin & teacher */}
@@ -476,7 +476,7 @@ export default function TimetableScreen() {
                   className={`px-4 py-2 rounded-xl border ${
                     selectedClassID === cls.classID
                       ? "bg-[#1A3C6E] border-[#1A3C6E]"
-                      : "bg-white border-gray-200"
+                      : "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700"
                   }`}
                   activeOpacity={0.8}
                 >
@@ -494,7 +494,7 @@ export default function TimetableScreen() {
       {/* ── Form Modal ── */}
       <Modal visible={formVisible} transparent animationType="fade">
         <SafeAreaView className="flex-1 bg-black/50 items-center justify-center p-4">
-          <View className="bg-white rounded-3xl w-full max-w-[500px] overflow-hidden"
+          <View className="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-[500px] overflow-hidden"
             style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.15, shadowRadius: 24, elevation: 8 }}
           >
             {/* Header */}
@@ -512,7 +512,7 @@ export default function TimetableScreen() {
                   </Text>
                 </View>
               </View>
-              <TouchableOpacity onPress={() => setFormVisible(false)} className="w-8 h-8 rounded-lg bg-gray-50 items-center justify-center" activeOpacity={0.7}>
+              <TouchableOpacity onPress={() => setFormVisible(false)} className="w-8 h-8 rounded-lg bg-gray-50 dark:bg-slate-700 items-center justify-center" activeOpacity={0.7}>
                 <AppIcon name="close" size={16} color="#6B7280" />
               </TouchableOpacity>
             </View>
@@ -529,7 +529,7 @@ export default function TimetableScreen() {
                         key={cls.classID}
                         onPress={() => setFormClassID(cls.classID)}
                         className={`px-4 py-2 rounded-xl border ${
-                          formClassID === cls.classID ? "bg-[#1A3C6E] border-[#1A3C6E]" : "bg-gray-50 border-gray-200"
+                          formClassID === cls.classID ? "bg-[#1A3C6E] dark:bg-blue-600 border-[#1A3C6E] dark:border-blue-600" : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700"
                         }`}
                         activeOpacity={0.8}
                       >
@@ -553,7 +553,7 @@ export default function TimetableScreen() {
                       key={sub.subjectID}
                       onPress={() => setFormSubjectID(sub.subjectID)}
                       className={`px-4 py-2 rounded-xl border ${
-                        formSubjectID === sub.subjectID ? "bg-indigo-600 border-indigo-600" : "bg-gray-50 border-gray-200"
+                        formSubjectID === sub.subjectID ? "bg-indigo-600 dark:bg-indigo-500 border-indigo-600 dark:border-indigo-500" : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700"
                       }`}
                       activeOpacity={0.8}
                     >
@@ -576,7 +576,7 @@ export default function TimetableScreen() {
                       key={t.teacherID}
                       onPress={() => setFormTeacherID(t.teacherID)}
                       className={`px-4 py-2 rounded-xl border ${
-                        formTeacherID === t.teacherID ? "bg-indigo-600 border-indigo-600" : "bg-gray-50 border-gray-200"
+                        formTeacherID === t.teacherID ? "bg-indigo-600 dark:bg-indigo-500 border-indigo-600 dark:border-indigo-500" : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700"
                       }`}
                       activeOpacity={0.8}
                     >
@@ -598,7 +598,7 @@ export default function TimetableScreen() {
                     value={formStart}
                     onChangeText={setFormStart}
                     placeholder="08:00"
-                    className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold text-gray-800"
+                    className="bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm font-bold text-gray-800 dark:text-slate-200"
                   />
                 </View>
                 <View className="flex-1">
@@ -607,7 +607,7 @@ export default function TimetableScreen() {
                     value={formEnd}
                     onChangeText={setFormEnd}
                     placeholder="09:00"
-                    className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold text-gray-800"
+                    className="bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm font-bold text-gray-800 dark:text-slate-200"
                   />
                 </View>
               </View>
@@ -619,7 +619,7 @@ export default function TimetableScreen() {
                   value={formRoom}
                   onChangeText={setFormRoom}
                   placeholder="e.g. 101, Lab A"
-                  className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold text-gray-800"
+                  className="bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm font-bold text-gray-800 dark:text-slate-200"
                 />
               </View>
             </ScrollView>
@@ -628,10 +628,10 @@ export default function TimetableScreen() {
             <View className="px-6 py-4 border-t border-gray-100 flex-row gap-3">
               <TouchableOpacity
                 onPress={() => setFormVisible(false)}
-                className="flex-1 py-3 rounded-xl bg-gray-100 border border-gray-200"
+                className="flex-1 py-3 rounded-xl bg-gray-100 dark:bg-slate-700 border border-gray-200 dark:border-slate-600"
                 activeOpacity={0.7}
               >
-                <Text className="text-center text-[12px] font-black text-gray-600 uppercase">Cancel</Text>
+                <Text className="text-center text-[12px] font-black text-gray-600 dark:text-slate-300 uppercase">Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={handleSave}
@@ -655,7 +655,7 @@ export default function TimetableScreen() {
       {/* ── Delete Modal ── */}
       <Modal visible={!!deleteTarget} transparent animationType="fade">
         <SafeAreaView className="flex-1 bg-black/50 items-center justify-center p-4">
-          <View className="bg-white rounded-3xl w-full max-w-[420px] overflow-hidden"
+          <View className="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-[420px] overflow-hidden"
             style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.15, shadowRadius: 24, elevation: 8 }}
           >
             {/* Header */}
@@ -718,7 +718,7 @@ export default function TimetableScreen() {
                 <TouchableOpacity
                   key={day}
                   onPress={() => setSelectedDay(day)}
-                  className={`px-4 py-2 rounded-xl border ${active ? `${c.bg} ${c.border}` : "bg-white border-gray-200"}`}
+                  className={`px-4 py-2 rounded-xl border ${active ? `${c.bg} ${c.border}` : "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700"}`}
                   activeOpacity={0.8}
                 >
                   <Text className={`text-[11px] font-black uppercase ${active ? c.text : "text-gray-500"}`}>
@@ -787,7 +787,7 @@ export default function TimetableScreen() {
         </ScrollView>
       ) : (
         /* Desktop table */
-        <View className="flex-1 bg-white rounded-2xl border border-gray-100 overflow-hidden"
+        <View className="flex-1 bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 overflow-hidden"
           style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 8, elevation: 2 }}
         >
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>

@@ -18,6 +18,7 @@ import { Colors } from "@/constants/colors";
 import { premiumCardShadow } from "@/constants/premiumStyles";
 import { formatDisplayDate } from "@/utils/dateHelpers";
 import * as Haptics from "expo-haptics";
+import { useColorScheme } from "nativewind";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

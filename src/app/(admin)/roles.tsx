@@ -39,7 +39,7 @@ export default function RolesScreen() {
     >
       <FlatList
         ListHeaderComponent={
-          <Text className="text-lg font-black text-primary px-4 pt-4 pb-2">Roles</Text>
+          <Text className="text-lg font-black text-primary dark:text-blue-400 px-4 pt-4 pb-2">Roles</Text>
         }
         data={roles}
         keyExtractor={(item, i) => String((item as { roleID?: number }).roleID ?? i)}
@@ -53,7 +53,7 @@ export default function RolesScreen() {
         )}
         ListFooterComponent={
           <>
-            <Text className="text-lg font-black text-primary px-4 pt-6 pb-2">Rights</Text>
+            <Text className="text-lg font-black text-primary dark:text-blue-400 px-4 pt-6 pb-2">Rights</Text>
             {rights.map((item, i) => (
               <MobileDataCard
                 key={String((item as { roleRightsID?: number }).roleRightsID ?? i)}

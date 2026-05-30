@@ -4,6 +4,7 @@ import {
   ScrollView, ActivityIndicator, Image, TextInput,
 } from "react-native";
 import { router } from "expo-router";
+import { useColorScheme } from "nativewind";
 import { Colors } from "@/constants/colors";
 import { useDeleteApiTeacherDeleteTeacher } from "@/api/generated/teacher/teacher";
 import { parseApiList } from "@/utils/apiResponse";
@@ -29,6 +30,7 @@ import {
   useGetApiTeacherGetTeacherList,
   getGetApiTeacherGetTeacherListQueryKey,
 } from "@/api/generated/teacher/teacher";
+import { SchoolTheme } from "@/constants/theme";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -86,6 +88,8 @@ const TeacherAvatar = ({ photo, size = 44 }: { photo?: string; size?: number }) 
 export default function AdminTeacherManagementScreen() {
   const { canManageTeachers } = usePermissions();
   const queryClient = useQueryClient();
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === "dark";
 
   // ── Data ──────────────────────────────────────────────────────────────────
   const { data: teachersRaw, isLoading, isError, error, refetch } = useGetApiTeacherGetTeacherList();
@@ -251,12 +255,18 @@ export default function AdminTeacherManagementScreen() {
   const renderTeacherCard = (item: TeacherWithDetails) => (
     <TouchableOpacity
       activeOpacity={0.9}
-      className="bg-white rounded-2xl mb-3 border border-gray-100"
-      style={premiumCardShadow}
+      className="rounded-2xl mb-3 border"
+      style={[
+        premiumCardShadow,
+        {
+          backgroundColor: isDark ? SchoolTheme.cardDark : "#FFFFFF",
+          borderColor: isDark ? SchoolTheme.borderDark : "#F3F4F6",
+        }
+      ]}
     >
-      <View className="p-4 border-b border-gray-50 flex-row gap-3 rounded-t-2xl bg-white">
+      <View className="p-4 border-b flex-row gap-3 rounded-t-2xl" style={{ backgroundColor: isDark ? SchoolTheme.cardDark : "#FFFFFF", borderColor: isDark ? SchoolTheme.borderDark : "#F3F4F6" }}>
         <View className="relative">
-          <View className="w-14 h-14 rounded-2xl bg-gray-50 border border-gray-200 items-center justify-center overflow-hidden">
+          <View className="w-14 h-14 rounded-2xl border items-center justify-center overflow-hidden" style={{ backgroundColor: isDark ? "#1E293B" : "#F9FAFB", borderColor: isDark ? SchoolTheme.borderDark : "#E5E7EB" }}>
             <TeacherAvatar photo={item.photo ?? undefined} size={56} />
           </View>
           {item.isActive && (
@@ -265,11 +275,11 @@ export default function AdminTeacherManagementScreen() {
         </View>
         <View className="flex-1 justify-center">
           <View className="flex-row items-center justify-between mb-1 gap-2">
-            <Text className="text-sm font-extrabold text-gray-900 uppercase flex-1" numberOfLines={1}>
+            <Text className="text-sm font-extrabold uppercase flex-1" numberOfLines={1} style={{ color: isDark ? SchoolTheme.textDark : "#111827" }}>
               {item.teacherName}
             </Text>
-            <View className="px-2 py-0.5 bg-blue-50 border border-blue-100 rounded-lg">
-              <Text className="text-[10px] font-black text-blue-700 uppercase">{item.teacherCode || "—"}</Text>
+            <View className="px-2 py-0.5 border rounded-lg" style={{ backgroundColor: isDark ? "#1E3A8A" : "#EFF6FF", borderColor: isDark ? "#3B82F6" : "#BFDBFE" }}>
+              <Text className="text-[10px] font-black uppercase" style={{ color: isDark ? "#60A5FA" : "#1D4ED8" }}>{item.teacherCode || "—"}</Text>
             </View>
           </View>
           {item.subjectName ? (
@@ -280,38 +290,38 @@ export default function AdminTeacherManagementScreen() {
           ) : null}
           <View className="flex-row items-center gap-1.5">
             <AppIcon name="call" size={12} color="#6B7280" />
-            <Text className="text-[12px] font-semibold text-gray-500 flex-1" numberOfLines={1}>{item.mobileNo || "No phone"}</Text>
+            <Text className="text-[12px] font-semibold flex-1" numberOfLines={1} style={{ color: isDark ? SchoolTheme.textSecondaryDark : "#6B7280" }}>{item.mobileNo || "No phone"}</Text>
           </View>
         </View>
       </View>
 
       {item.classPermissions.length > 0 && (
-        <View className="px-4 py-2.5 border-b border-gray-50 flex-row items-center gap-2 flex-wrap">
+        <View className="px-4 py-2.5 border-b flex-row items-center gap-2 flex-wrap" style={{ borderColor: isDark ? SchoolTheme.borderDark : "#F3F4F6" }}>
           <AppIcon name="subjects" size={12} color="#9CA3AF" />
           {item.classPermissions.map((cp) => (
-            <View key={cp.classID} className="px-2 py-0.5 bg-teal-50 border border-teal-100 rounded-md">
-              <Text className="text-[10px] font-black text-teal-700">{cp.className}</Text>
+            <View key={cp.classID} className="px-2 py-0.5 border rounded-md" style={{ backgroundColor: isDark ? "#134E4A" : "#F0FDFA", borderColor: isDark ? "#14B8A6" : "#99F6E4" }}>
+              <Text className="text-[10px] font-black" style={{ color: isDark ? "#5EEAD4" : "#0D9488" }}>{cp.className}</Text>
             </View>
           ))}
         </View>
       )}
 
-      <View className="flex-row justify-end items-center px-4 py-2.5 bg-gray-50/50 gap-2.5 rounded-b-2xl border-t border-gray-100">
-        <View className="bg-blue-50 border border-blue-100 rounded-xl overflow-hidden">
+      <View className="flex-row justify-end items-center px-4 py-2.5 gap-2.5 rounded-b-2xl border-t" style={{ backgroundColor: isDark ? "#1E293B" : "#F9FAFB", borderColor: isDark ? SchoolTheme.borderDark : "#F3F4F6" }}>
+        <View className="border rounded-xl overflow-hidden" style={{ backgroundColor: isDark ? "#1E3A8A" : "#EFF6FF", borderColor: isDark ? "#3B82F6" : "#BFDBFE" }}>
           <IconButton 
             icon="settings" 
             color="#1A3C6E" 
             onPress={() => openPanel(item)}
           />
         </View>
-        <View className="bg-indigo-50 border border-indigo-100 rounded-xl overflow-hidden">
+        <View className="border rounded-xl overflow-hidden" style={{ backgroundColor: isDark ? "#312E81" : "#EEF2FF", borderColor: isDark ? "#4338CA" : "#C7D2FE" }}>
           <IconButton 
             icon="edit" 
             color="#4F46E5" 
             onPress={() => router.push(`/(admin)/teacher-form?id=${item.teacherID}`)}
           />
         </View>
-        <View className="bg-rose-50 border border-rose-100 rounded-xl overflow-hidden">
+        <View className="border rounded-xl overflow-hidden" style={{ backgroundColor: isDark ? "#881337" : "#FEF2F2", borderColor: isDark ? "#BE123C" : "#FECACA" }}>
           <IconButton 
             icon="delete" 
             color="#E11D48" 
@@ -367,7 +377,7 @@ export default function AdminTeacherManagementScreen() {
     {
       key: "isActive", header: "Status", width: 80, align: "center",
       render: (t) => (
-        <View className={`px-2 py-1 rounded-md border ${t.isActive ? "bg-green-50 border-green-100" : "bg-gray-50 border-gray-200"}`}>
+        <View className={`px-2 py-1 rounded-md border ${t.isActive ? "bg-green-50 dark:bg-green-950/30 border-green-100 dark:border-green-800" : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700"}`}>
           <Text className={`text-[10px] font-bold ${t.isActive ? "text-green-700" : "text-gray-500"}`}>
             {t.isActive ? "Active" : "Inactive"}
           </Text>
@@ -401,7 +411,7 @@ export default function AdminTeacherManagementScreen() {
       <Modal visible={panelVisible} animationType="slide" presentationStyle="pageSheet" onRequestClose={closePanel}>
         <View className="flex-1 bg-gray-50">
           {/* Header */}
-          <View className="bg-white border-b border-gray-200 px-5 pt-12 pb-4 flex-row items-center justify-between">
+          <View className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-5 pt-12 pb-4 flex-row items-center justify-between">
             <View className="flex-row items-center gap-3">
               <TeacherAvatar photo={selectedTeacher.photo ?? undefined} size={48} />
               <View>
@@ -416,7 +426,7 @@ export default function AdminTeacherManagementScreen() {
 
           <ScrollView className="flex-1" contentContainerStyle={{ padding: 16, paddingBottom: 40 }}>
             {selectedTeacher.classPermissions.length === 0 ? (
-              <View className="bg-white rounded-2xl border border-gray-200 p-8 items-center mb-4">
+              <View className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 p-8 items-center mb-4">
                 <IconCircle name="subjects" size={56} iconSize={28} />
                 <Text className="text-gray-700 font-black text-base mt-4">No classes assigned yet</Text>
                 <Text className="text-gray-400 text-xs mt-1 text-center">Add a class below to configure module access.</Text>
@@ -426,10 +436,10 @@ export default function AdminTeacherManagementScreen() {
                 const local = localPerms[cp.classID] ?? cp;
                 const isSaving = savingClassID === cp.classID;
                 return (
-                  <View key={cp.classID} className="bg-white rounded-2xl border border-gray-200 mb-3 overflow-hidden">
+                  <View key={cp.classID} className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 mb-3 overflow-hidden">
                     <View className="flex-row items-center justify-between px-4 py-3 bg-[#1A3C6E]">
                       <View className="flex-row items-center gap-2">
-                        <View className="w-7 h-7 bg-white/20 rounded-lg items-center justify-center">
+                        <View className="w-7 h-7 bg-white/20 dark:bg-slate-700/50 rounded-lg items-center justify-center">
                           <AppIcon name="subjects" size={14} color="#fff" />
                         </View>
                         <Text className="text-white font-black text-[14px]">{cp.className}</Text>
@@ -438,7 +448,7 @@ export default function AdminTeacherManagementScreen() {
                         {isSaving ? (
                           <ActivityIndicator size="small" color="#fff" />
                         ) : (
-                          <TouchableOpacity onPress={() => saveClassPerms(cp.classID)} className="px-3 py-1 bg-white/20 rounded-lg">
+                          <TouchableOpacity onPress={() => saveClassPerms(cp.classID)} className="px-3 py-1 bg-white/20 dark:bg-slate-700/50 rounded-lg">
                             <Text className="text-white text-[11px] font-black uppercase">Save</Text>
                           </TouchableOpacity>
                         )}
@@ -459,7 +469,7 @@ export default function AdminTeacherManagementScreen() {
                             <TouchableOpacity
                               key={key}
                               onPress={() => toggleModule(cp.classID, key)}
-                              className={`flex-row items-center gap-1.5 px-3 py-2 rounded-xl border ${enabled ? "bg-emerald-50 border-emerald-300" : "bg-gray-50 border-gray-200"}`}
+                              className={`flex-row items-center gap-1.5 px-3 py-2 rounded-xl border ${enabled ? "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-300 dark:border-emerald-800" : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700"}`}
                             >
                               <AppIcon name={icon as any} size={13} color={enabled ? "#059669" : "#9CA3AF"} />
                               <Text className={`text-[11px] font-black ${enabled ? "text-emerald-700" : "text-gray-400"}`}>{label}</Text>
@@ -474,7 +484,7 @@ export default function AdminTeacherManagementScreen() {
             )}
 
             {unassignedClasses.length > 0 && (
-              <View className="bg-white rounded-2xl border border-dashed border-gray-300 p-4 mt-2">
+              <View className="bg-white dark:bg-slate-800 rounded-2xl border border-dashed border-gray-300 dark:border-slate-600 p-4 mt-2">
                 <Text className="text-[11px] font-black text-gray-400 uppercase mb-3 tracking-wider">Assign New Class</Text>
                 <View className="flex-row flex-wrap gap-2">
                   {unassignedClasses.map((cls: any) => (
@@ -536,9 +546,9 @@ export default function AdminTeacherManagementScreen() {
       {/* ── Delete Teacher Modal ── */}
       <Modal visible={deleteModalVisible} transparent animationType="fade">
         <View className="flex-1 bg-black/50 items-center justify-center p-4">
-          <View className="bg-white w-full max-w-sm rounded-2xl overflow-hidden shadow-xl">
+          <View className="bg-white dark:bg-slate-800 w-full max-w-sm rounded-2xl overflow-hidden shadow-xl">
             {/* Red danger header */}
-            <View className="bg-red-50 px-6 pt-6 pb-4 items-center border-b border-red-100">
+            <View className="bg-red-50 dark:bg-red-900/20 px-6 pt-6 pb-4 items-center border-b border-red-100 dark:border-red-800">
               <View className="w-14 h-14 bg-red-100 rounded-full items-center justify-center mb-3">
                 <AppIcon name="delete" size={26} color="#DC2626" />
               </View>
@@ -576,8 +586,8 @@ export default function AdminTeacherManagementScreen() {
       {/* ── Remove Class Confirm Modal ── */}
       <Modal visible={!!removeClassModal} transparent animationType="fade">
         <View className="flex-1 bg-black/50 items-center justify-center p-4">
-          <View className="bg-white w-full max-w-sm rounded-2xl overflow-hidden shadow-xl">
-            <View className="bg-amber-50 px-6 pt-6 pb-4 items-center border-b border-amber-100">
+          <View className="bg-white dark:bg-slate-800 w-full max-w-sm rounded-2xl overflow-hidden shadow-xl">
+            <View className="bg-amber-50 dark:bg-amber-900/20 px-6 pt-6 pb-4 items-center border-b border-amber-100 dark:border-amber-800">
               <View className="w-14 h-14 bg-amber-100 rounded-full items-center justify-center mb-3">
                 <AppIcon name="warning" size={26} color="#D97706" />
               </View>

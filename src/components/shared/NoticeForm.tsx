@@ -151,7 +151,7 @@ export function NoticeForm({
                 key={t}
                 onPress={() => setTargetAudience(t)}
                 className={`px-3 py-1.5 rounded-lg border ${
-                  targetAudience === t ? "bg-blue-50 border-blue-200" : "bg-gray-50 border-gray-200"
+                  targetAudience === t ? "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800" : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700"
                 }`}
               >
                 <Text

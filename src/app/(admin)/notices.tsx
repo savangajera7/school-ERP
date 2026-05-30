@@ -71,13 +71,13 @@ export default function AdminNoticesManagementScreen() {
           <View className="flex-row gap-2 ml-auto">
             <TouchableOpacity 
               onPress={() => router.push(`/(admin)/notice-form?id=${item.noticeID}`)}
-              className="bg-blue-50 p-2 rounded-lg"
+              className="bg-blue-50 dark:bg-blue-950/30 p-2 rounded-lg"
             >
               <AppIcon name="edit" size={18} color="#3B82F6" />
             </TouchableOpacity>
             <TouchableOpacity 
               onPress={() => handleDelete(item)}
-              className="bg-red-50 p-2 rounded-lg"
+              className="bg-red-50 dark:bg-red-950/30 p-2 rounded-lg"
             >
               <AppIcon name="delete" size={18} color="#EF4444" />
             </TouchableOpacity>

@@ -60,13 +60,13 @@ export default function AdminFeesManagementScreen() {
       header: "Amount", 
       width: 90, 
       align: "right",
-      render: (f) => <Text className="text-sm font-bold text-gray-800">₹{f.amount || 0}</Text>
+      render: (f) => <Text className="text-sm font-bold text-gray-800 dark:text-slate-200">₹{f.amount || 0}</Text>
     },
     { 
       key: "paymentDate", 
       header: "Date", 
       width: 100, 
-      render: (f) => <Text className="text-sm text-gray-600">{formatDisplayDate(f.paymentDate)}</Text>
+      render: (f) => <Text className="text-sm text-gray-600 dark:text-slate-400">{formatDisplayDate(f.paymentDate)}</Text>
     },
     { 
       key: "status", 
@@ -74,8 +74,8 @@ export default function AdminFeesManagementScreen() {
       width: 90, 
       align: "center",
       render: (f) => (
-        <View className="px-2 py-1 bg-green-50 rounded-md border border-green-100">
-          <Text className="text-[10px] font-bold text-green-700">{f.status || "Paid"}</Text>
+        <View className="px-2 py-1 bg-green-50 dark:bg-green-950/30 rounded-md border border-green-100 dark:border-green-800">
+          <Text className="text-[10px] font-bold text-green-700 dark:text-green-400">{f.status || "Paid"}</Text>
         </View>
       )
     },

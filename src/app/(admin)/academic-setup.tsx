@@ -113,8 +113,8 @@ export default function AcademicSetupScreen() {
                 <AppIcon name={TAB_ICONS[activeTab]} size={22} color={Colors.primary} active />
               </View>
               <View>
-                <Text className="text-[16px] font-black text-gray-900 capitalize">{activeTab} Management</Text>
-                <Text className="text-[11px] text-gray-400 font-bold mt-0.5 uppercase tracking-wide">
+                <Text className="text-[16px] font-black text-gray-900 dark:text-slate-100 capitalize">{activeTab} Management</Text>
+                <Text className="text-[11px] text-gray-400 dark:text-slate-500 font-bold mt-0.5 uppercase tracking-wide">
                   {activeData.items.length} record{activeData.items.length !== 1 ? "s" : ""} found
                 </Text>
               </View>
@@ -122,7 +122,7 @@ export default function AcademicSetupScreen() {
 
             {/* Search bar */}
             <View
-              className="flex-row bg-white border border-gray-200 rounded-xl h-[44px] px-3 items-center gap-2"
+              className="flex-row bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl h-[44px] px-3 items-center gap-2"
               style={{ minWidth: isMobile ? "100%" : 220 }}
             >
               <AppIcon name="search" size={18} color="#D1D5DB" />
@@ -131,7 +131,7 @@ export default function AcademicSetupScreen() {
                 onChangeText={setSearch}
                 placeholder={`Search ${activeTab}…`}
                 placeholderTextColor="#9CA3AF"
-                className="flex-1 text-sm font-semibold text-gray-800"
+                className="flex-1 text-sm font-semibold text-gray-800 dark:text-slate-200"
                 style={{ outlineWidth: 0 } as any}
               />
             </View>
@@ -142,14 +142,14 @@ export default function AcademicSetupScreen() {
               <PremiumLoader color={Colors.primary} size={36} />
             </View>
           ) : activeData.items.length === 0 ? (
-            <View className="py-20 items-center justify-center bg-white rounded-3xl border border-gray-100">
+            <View className="py-20 items-center justify-center bg-white dark:bg-slate-800 rounded-3xl border border-gray-100 dark:border-slate-700">
               <View className="mb-3">
                 <AppIcon name={TAB_ICONS[activeTab]} size={40} color={Colors.primary} active />
               </View>
-              <Text className="text-gray-400 font-extrabold text-sm uppercase tracking-wider">
+              <Text className="text-gray-400 dark:text-slate-500 font-extrabold text-sm uppercase tracking-wider">
                 No {activeTab} configured yet
               </Text>
-              <Text className="text-gray-300 font-semibold text-xs mt-2">
+              <Text className="text-gray-300 dark:text-slate-600 font-semibold text-xs mt-2">
                 Contact your administrator to add records
               </Text>
             </View>
@@ -161,7 +161,7 @@ export default function AcademicSetupScreen() {
                 return (
                   <Card
                     key={id}
-                    className={`bg-white border border-gray-150 p-4 flex-row justify-between items-center shadow-sm ${
+                    className={`bg-white dark:bg-slate-800 border border-gray-150 dark:border-slate-700 p-4 flex-row justify-between items-center shadow-sm ${
                       !isMobile ? "w-[calc(50%-8px)]" : ""
                     }`}
                     style={{
@@ -178,8 +178,8 @@ export default function AcademicSetupScreen() {
                         <Text className={`text-xs font-black ${colors.text}`}>{index + 1}</Text>
                       </View>
                       <View className="flex-1">
-                        <Text className="text-sm font-black text-gray-900" numberOfLines={1}>{name}</Text>
-                        <Text className="text-[11px] text-gray-400 font-bold mt-0.5 uppercase">
+                        <Text className="text-sm font-black text-gray-900 dark:text-slate-100" numberOfLines={1}>{name}</Text>
+                        <Text className="text-[11px] text-gray-400 dark:text-slate-500 font-bold mt-0.5 uppercase">
                           ID: {id}
                         </Text>
                       </View>

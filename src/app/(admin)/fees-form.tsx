@@ -132,7 +132,7 @@ export default function FeesFormScreen() {
                   <TouchableOpacity
                     key={t}
                     onPress={() => setFeesType(t)}
-                    className={`px-4 py-2 rounded-lg border ${feesType === t ? "bg-blue-50 border-blue-200" : "bg-gray-50 border-gray-200"}`}
+                    className={`px-4 py-2 rounded-lg border ${feesType === t ? "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800" : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700"}`}
                   >
                     <Text className={`text-xs font-bold ${feesType === t ? "text-blue-700" : "text-gray-500"}`}>{t}</Text>
                   </TouchableOpacity>
@@ -147,7 +147,7 @@ export default function FeesFormScreen() {
                   <TouchableOpacity
                     key={m}
                     onPress={() => setPaymentMethod(m)}
-                    className={`px-4 py-2 rounded-lg border ${paymentMethod === m ? "bg-emerald-50 border-emerald-200" : "bg-gray-50 border-gray-200"}`}
+                    className={`px-4 py-2 rounded-lg border ${paymentMethod === m ? "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800" : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700"}`}
                   >
                     <Text className={`text-xs font-bold ${paymentMethod === m ? "text-emerald-700" : "text-gray-500"}`}>{m}</Text>
                   </TouchableOpacity>

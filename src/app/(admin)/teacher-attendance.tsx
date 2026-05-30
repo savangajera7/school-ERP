@@ -71,13 +71,13 @@ export default function TeacherAttendanceScreen() {
       bodyStyle={{ flex: 1, paddingHorizontal: 0, marginTop: -16 }}
     >
       <PremiumCard noAccent style={{ padding: 16, marginHorizontal: 16, marginBottom: 12, gap: 4 }}>
-        <TextInput placeholder="Teacher ID" value={teacherId} onChangeText={setTeacherId} keyboardType="number-pad" className="border border-gray-200 rounded-xl px-4 py-3 mb-2 text-sm font-semibold text-gray-800 bg-gray-50" />
+        <TextInput placeholder="Teacher ID" value={teacherId} onChangeText={setTeacherId} keyboardType="number-pad" className="border border-gray-200 dark:border-slate-700 rounded-xl px-4 py-3 mb-2 text-sm font-semibold text-gray-800 dark:text-slate-200 bg-gray-50 dark:bg-slate-800" placeholderTextColor="#9CA3AF" />
         <PremiumDatePicker
           label="Attendance Date"
           value={date}
           onChange={setDate}
         />
-        <TextInput placeholder="Status (Present/Absent)" value={status} onChangeText={setStatus} className="border border-gray-200 rounded-xl px-4 py-3 mb-4 text-sm font-semibold text-gray-800 bg-gray-50" />
+        <TextInput placeholder="Status (Present/Absent)" value={status} onChangeText={setStatus} className="border border-gray-200 dark:border-slate-700 rounded-xl px-4 py-3 mb-4 text-sm font-semibold text-gray-800 dark:text-slate-200 bg-gray-50 dark:bg-slate-800" placeholderTextColor="#9CA3AF" />
         <Button label="Add attendance" onPress={handleMark} loading={insertMutation.isPending} />
       </PremiumCard>
       {isLoading ? (

@@ -150,7 +150,7 @@ export default function UserDetailScreen() {
                     className={`px-4 py-2 rounded-xl border ${
                       control._formValues.roleID === role.roleID 
                         ? "bg-primary border-primary" 
-                        : "bg-gray-50 border-gray-200"
+                        : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700"
                     }`}
                   >
                     <Text className={`text-xs font-bold ${
