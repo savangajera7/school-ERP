@@ -892,7 +892,8 @@ return (
         )}
 
       {/* ── Form Modal ── */}
-      <Modal visible={formVisible} transparent animationType="fade">
+      {formVisible && (
+      <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999, elevation: 9999 }}>
         <SafeAreaView className="flex-1 bg-black/50 items-center justify-center p-4">
           <View className="rounded-3xl w-full max-w-[500px] overflow-hidden"
             style={[{ backgroundColor: isDark ? SchoolTheme.cardDark : "#FFFFFF" }, { shadowColor: "#000", shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.15, shadowRadius: 24, elevation: 8 }]}
@@ -1129,10 +1130,12 @@ return (
             </View>
           </View>
         </SafeAreaView>
-      </Modal>
+      </View>
+      )}
 
       {/* ── Delete Modal ── */}
-      <Modal visible={!!deleteTarget} transparent animationType="fade">
+      {!!deleteTarget && (
+      <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999, elevation: 9999 }}>
         <SafeAreaView className="flex-1 bg-black/50 items-center justify-center p-4">
           <View className="rounded-3xl w-full max-w-[420px] overflow-hidden"
             style={[{ backgroundColor: isDark ? SchoolTheme.cardDark : "#FFFFFF" }, { shadowColor: "#000", shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.15, shadowRadius: 24, elevation: 8 }]}
@@ -1184,7 +1187,8 @@ return (
             </View>
           </View>
         </SafeAreaView>
-      </Modal>
+      </View>
+      )}
 
         
       </View>

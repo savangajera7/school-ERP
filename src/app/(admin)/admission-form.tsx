@@ -665,9 +665,9 @@ export default function AdmissionFormScreen() {
           <View className="mt-6 pt-6 border-t border-gray-100 dark:border-slate-700">
             <View className={`flex-row flex-wrap gap-5 ${isMobile ? "flex-col" : ""}`}>
               {renderDropdown("Academic Year *", academicYearId, academicYears, (val) => { setAcademicYearId(val); setErrors(prev => ({...prev, academicYearId: ""})); }, "Select Year", "academicYearId", "academicYearID", "academicYearName")}
-              {renderDropdown("Class *", classId, classes, (val) => { setClassId(val); setErrors(prev => ({...prev, classId: ""})); }, "Select Class", "classId", "classID", "className")}
-              {renderDropdown("Batch", batchId, batches, setBatchId, "Select Batch", undefined, "batchID", "batchName")}
-              {renderDropdown("Medium", mediumId, mediums, setMediumId, "Select Medium", undefined, "mediumID", "mediumName")}
+              {renderDropdown("Medium", mediumId, mediums, (val) => { setMediumId(val); setClassId(undefined); }, "Select Medium", undefined, "mediumID", "mediumName")}
+              {renderDropdown("Batch", batchId, batches, (val) => { setBatchId(val); setClassId(undefined); }, "Select Batch", undefined, "batchID", "batchName")}
+              {renderDropdown("Class *", classId, classes.filter((c: any) => (!mediumId || c.mediumID === mediumId) && (!batchId || c.batchID === batchId)), (val) => { setClassId(val); setErrors(prev => ({...prev, classId: ""})); }, "Select Class", "classId", "classID", "className")}
             </View>
             <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>
               {renderTextInput("Student Id / GR No.", studentGRNo, setStudentGRNo, "GR Number", { editable: !isEditing })}

@@ -1,3 +1,4 @@
+import { useColorScheme } from "nativewind";
 import React, { useEffect, useMemo, useState } from "react";
 import {
   View,
@@ -48,25 +49,27 @@ function TeacherMarkRow({
   remark,
   onStatusChange,
   onRemarkChange,
+  isDark,
 }: {
   teacher: TeacherRosterRow;
   status: StaffStatus;
   remark: string;
   onStatusChange: (s: StaffStatus) => void;
   onRemarkChange: (text: string) => void;
+  isDark: boolean;
 }) {
   const showRemark = status !== "Present";
   return (
     <View className="bg-white border border-gray-150 rounded-2xl p-4 mb-3 mx-1">
       <View className="flex-row items-center gap-3">
-        <View className="w-11 h-11 rounded-xl bg-indigo-50 border border-indigo-100 items-center justify-center">
-          <Text className="text-sm font-black text-indigo-600">
+        <View className="w-11 h-11 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 items-center justify-center">
+          <Text className="text-sm font-black text-indigo-600 dark:text-indigo-400">
             {teacher.teacherName?.charAt(0)?.toUpperCase() ?? "T"}
           </Text>
         </View>
         <View className="flex-1">
-          <Text className="text-sm font-black text-gray-900">{teacher.teacherName}</Text>
-          <Text className="text-xs font-bold text-gray-400">
+          <Text className="text-sm font-black text-gray-900 dark:text-slate-100">{teacher.teacherName}</Text>
+          <Text className="text-xs font-bold text-gray-400 dark:text-slate-500">
             {teacher.teacherCode || teacher.subjectName || `ID ${teacher.teacherID}`}
           </Text>
         </View>
@@ -88,11 +91,11 @@ function TeacherMarkRow({
               key={`${teacher.teacherID}-${opt}`}
               onPress={() => onStatusChange(opt)}
               className={`flex-1 py-2.5 rounded-xl border items-center ${
-                active ? activeBg : "bg-white border-gray-200"
+                active ? activeBg : "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700"
               }`}
               activeOpacity={0.85}
             >
-              <Text className={`text-xs font-black uppercase ${active ? "text-white" : "text-gray-400"}`}>
+              <Text className={`text-xs font-black uppercase ${active ? "text-white" : "text-gray-400 dark:text-slate-500"}`}>
                 {statusShort(opt)}
               </Text>
             </TouchableOpacity>
@@ -105,7 +108,7 @@ function TeacherMarkRow({
           value={remark}
           onChangeText={onRemarkChange}
           placeholder="Remark (optional)"
-          className="mt-2 h-10 border border-gray-200 rounded-xl px-3 text-sm bg-gray-50"
+          className="mt-2 h-10 border border-gray-200 dark:border-slate-700 rounded-xl px-3 text-sm bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-slate-100" placeholderTextColor={isDark ? "#64748b" : "#9ca3af"}
         />
       )}
     </View>
@@ -117,6 +120,8 @@ export default function TeacherAttendanceScreen() {
   const { showToast } = useToast();
   const queryClient = useQueryClient();
   const schoolID = useAuthStore((s) => s.userData?.schoolID);
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === 'dark';
 
   const [date, setDate] = useState(todayIsoDate());
   const [attendanceMap, setAttendanceMap] = useState<Record<number, StaffStatus>>({});
@@ -250,7 +255,7 @@ export default function TeacherAttendanceScreen() {
       </View>
 
       <View className="flex-row items-center justify-between px-1 mb-2">
-        <Text className="text-xs font-bold text-gray-400">
+        <Text className="text-xs font-bold text-gray-400 dark:text-slate-500">
           {counts.halfDay > 0 ? `Half day: ${counts.halfDay}` : " "}
         </Text>
         <TouchableOpacity onPress={markAllPresent}>
@@ -293,6 +298,7 @@ export default function TeacherAttendanceScreen() {
               onRemarkChange={(text) =>
                 setRemarks((prev) => ({ ...prev, [item.teacherID]: text }))
               }
+              isDark={isDark}
             />
           )}
         />
