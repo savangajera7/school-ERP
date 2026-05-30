@@ -23,3 +23,4 @@ export type GetApiTeacherClassAssignmentGetParams = {
 teacherId?: number;
 schoolID?: number;
 };
+

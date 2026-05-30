@@ -467,7 +467,7 @@ export default function AdmissionFormScreen() {
     );
   }
 
-  const renderDropdown = (label: string, value: number | undefined, options: any[], onSelect: (id: number) => void, placeholder: string, errorKey?: string) => {
+  const renderDropdown = (label: string, value: number | undefined, options: any[], onSelect: (id: number) => void, placeholder: string, errorKey?: string, idKey?: string, labelKey?: string) => {
     const hasError = errorKey ? !!errors[errorKey] : false;
     return (
     <View className="flex-1 min-w-[280px]">
@@ -475,7 +475,7 @@ export default function AdmissionFormScreen() {
       <View className={`${hasError ? 'bg-red-50 dark:bg-red-950/30 border-red-400 dark:border-red-800' : 'bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700'} border rounded-xl overflow-hidden h-[48px]`}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ alignItems: 'center', paddingHorizontal: 10 }}>
           {options.map((opt) => {
-            const id =
+            const id = idKey ? opt[idKey] : (
               opt.mediumID ??
               opt.bloodGroupID ??
               opt.religionID ??
@@ -483,8 +483,9 @@ export default function AdmissionFormScreen() {
               opt.batchID ??
               opt.classID ??
               opt.academicYearID ??
-              opt.id;
-            const name =
+              opt.id
+            );
+            const name = labelKey ? opt[labelKey] : (
               opt.mediumName ??
               opt.bloodGroupName ??
               opt.religionName ??
@@ -492,7 +493,8 @@ export default function AdmissionFormScreen() {
               opt.batchName ??
               opt.className ??
               opt.academicYearName ??
-              opt.name;
+              opt.name
+            );
             return (
               <TouchableOpacity
                 key={id}
@@ -662,10 +664,10 @@ export default function AdmissionFormScreen() {
         {expandedSections.academic && (
           <View className="mt-6 pt-6 border-t border-gray-100 dark:border-slate-700">
             <View className={`flex-row flex-wrap gap-5 ${isMobile ? "flex-col" : ""}`}>
-              {renderDropdown("Academic Year *", academicYearId, academicYears, (val) => { setAcademicYearId(val); setErrors(prev => ({...prev, academicYearId: ""})); }, "Select Year", "academicYearId")}
-              {renderDropdown("Class *", classId, classes, (val) => { setClassId(val); setErrors(prev => ({...prev, classId: ""})); }, "Select Class", "classId")}
-              {renderDropdown("Batch", batchId, batches, setBatchId, "Select Batch")}
-              {renderDropdown("Medium", mediumId, mediums, setMediumId, "Select Medium")}
+              {renderDropdown("Academic Year *", academicYearId, academicYears, (val) => { setAcademicYearId(val); setErrors(prev => ({...prev, academicYearId: ""})); }, "Select Year", "academicYearId", "academicYearID", "academicYearName")}
+              {renderDropdown("Class *", classId, classes, (val) => { setClassId(val); setErrors(prev => ({...prev, classId: ""})); }, "Select Class", "classId", "classID", "className")}
+              {renderDropdown("Batch", batchId, batches, setBatchId, "Select Batch", undefined, "batchID", "batchName")}
+              {renderDropdown("Medium", mediumId, mediums, setMediumId, "Select Medium", undefined, "mediumID", "mediumName")}
             </View>
             <View className={`flex-row flex-wrap gap-5 mt-5 ${isMobile ? "flex-col" : ""}`}>
               {renderTextInput("Student Id / GR No.", studentGRNo, setStudentGRNo, "GR Number", { editable: !isEditing })}

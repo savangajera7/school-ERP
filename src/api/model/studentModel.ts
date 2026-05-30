@@ -174,6 +174,12 @@ export interface StudentModel {
   status?: string | null;
   /** @nullable */
   createdDate?: string | null;
+  /** @nullable */
+  createdOn?: string | null;
+  /** @nullable */
+  updatedOn?: string | null;
+  /** @nullable */
+  fullName?: string | null;
   /** @minLength 1 */
   fatherName: string;
   /** @minLength 1 */
