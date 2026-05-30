@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
+import { AppIcon } from "@/components/icons/AppIcon";
 import { PremiumDatePicker } from "@/components/ui/PremiumDatePicker";
 import { premiumCardShadow } from "@/constants/premiumStyles";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
@@ -164,6 +165,17 @@ export default function TeacherAttendanceScreen() {
 
   const roster = useMemo(() => parseTeacherRoster(data?.data), [data]);
 
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredRoster = useMemo(() => {
+    const q = searchQuery.toLowerCase().trim();
+    if (!q) return roster;
+    return roster.filter((t) =>
+      t.teacherName?.toLowerCase().includes(q) ||
+      t.teacherCode?.toLowerCase().includes(q)
+    );
+  }, [roster, searchQuery]);
+
   useEffect(() => {
     const next: Record<number, StaffStatus> = {};
     const nextRemarks: Record<number, string> = {};
@@ -211,10 +223,6 @@ export default function TeacherAttendanceScreen() {
   };
 
   const handleSave = async () => {
-    if (isFutureDate(date)) {
-      showToast("Cannot mark attendance for a future date.", "error");
-      return;
-    }
     const teacherIds = roster.map((t) => t.teacherID).filter(Boolean);
     const alreadyMarked = roster.some((t) => t.isMarked);
 
@@ -290,19 +298,33 @@ export default function TeacherAttendanceScreen() {
             );
           })}
         </View>
-        {isFutureDate(date) && (
-          <Text className="text-rose-600 text-xs font-bold mt-2 ml-1">
-            Future dates cannot be marked.
-          </Text>
-        )}
       </View>
 
-      <View className="px-1">
+      <View className="px-1 mb-2">
         <AttendanceSummaryChips
           present={counts.present}
           absent={counts.absent}
           leave={counts.leave}
         />
+      </View>
+
+      {/* Search */}
+      <View className="px-1 mb-3">
+        <View className="flex-row items-center bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl px-3 h-11">
+          <AppIcon name="search" size={16} color="#9CA3AF" />
+          <TextInput
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholder="Search teacher by name or code..."
+            className="flex-1 ml-2 text-sm font-semibold text-gray-800 dark:text-slate-200"
+            placeholderTextColor="#9CA3AF"
+          />
+          {searchQuery.length > 0 && (
+            <TouchableOpacity onPress={() => setSearchQuery("")}>
+              <AppIcon name="close" size={16} color="#9CA3AF" />
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
 
       <View className="flex-row items-center justify-between px-1 mb-3">
@@ -330,17 +352,17 @@ export default function TeacherAttendanceScreen() {
         />
       ) : (
         <FlatList
-          data={roster}
+          data={filteredRoster}
           keyExtractor={(item) => String(item.teacherID)}
           contentContainerStyle={{ paddingBottom: 100, flexGrow: 1 }}
           refreshing={isRefetching}
           onRefresh={refetch}
           ListEmptyComponent={
-            <EmptyState
-              icon="teachers"
-              title="No teaching staff"
-              message="No teachers found for this school."
-            />
+            <View className="items-center py-12">
+              <Text className="text-gray-400 dark:text-slate-500 font-semibold text-sm">
+                {searchQuery ? "No teachers match your search." : "No teaching staff found."}
+              </Text>
+            </View>
           }
           renderItem={({ item }) => (
             <TeacherMarkRow
