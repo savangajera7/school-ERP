@@ -300,14 +300,6 @@ export default function TeacherAttendanceScreen() {
         </View>
       </View>
 
-      <View className="px-1 mb-2">
-        <AttendanceSummaryChips
-          present={counts.present}
-          absent={counts.absent}
-          leave={counts.leave}
-        />
-      </View>
-
       {/* Search */}
       <View className="px-1 mb-3">
         <View className="flex-row items-center bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl px-3 h-11">
@@ -327,10 +319,7 @@ export default function TeacherAttendanceScreen() {
         </View>
       </View>
 
-      <View className="flex-row items-center justify-between px-1 mb-3">
-        <Text className="text-xs font-bold text-gray-400 dark:text-slate-500">
-          {counts.halfDay > 0 ? `Half day: ${counts.halfDay}` : " "}
-        </Text>
+      <View className="flex-row items-center justify-end px-1 mb-3">
         <TouchableOpacity 
           onPress={markAllPresent} 
           className="flex-row items-center gap-1 px-3 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-100 dark:border-emerald-800" 
