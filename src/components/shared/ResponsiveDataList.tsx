@@ -2,7 +2,7 @@ import { ActivityIndicator } from "react-native";
 import { SchoolTheme } from "@/constants/theme";
 import { useColorScheme } from "nativewind";
 import React, { useState } from "react";
-import { View, FlatList, RefreshControl, Text, TextInput, TouchableOpacity, ScrollView } from "react-native";
+import { View, FlatList, RefreshControl, Text, TextInput, TouchableOpacity, ScrollView, type FlatListProps } from "react-native";
 import { useResponsive } from "@/hooks/useResponsive";
 import { DataTable, type TableColumn } from "./DataTable";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
@@ -38,6 +38,12 @@ export interface ResponsiveDataListProps<T> {
   onSearchChange?: (text: string) => void;
   searchPlaceholder?: string;
   headerComponent?: React.ReactNode;
+
+  /** Forward props to the underlying FlatList */
+  flatListProps?: Partial<FlatListProps<T>>;
+  
+  /** Ref for the underlying FlatList */
+  listRef?: React.RefObject<FlatList<T> | null>;
 }
 
 export function ResponsiveDataList<T>({
@@ -60,6 +66,8 @@ export function ResponsiveDataList<T>({
   onEndReached,
   onEndReachedThreshold = 0.5,
   isFetchingNextPage,
+  flatListProps,
+  listRef,
 }: ResponsiveDataListProps<T>) {
   const { listMode } = useResponsive();
   const { t } = useTranslation();
@@ -179,6 +187,7 @@ export function ResponsiveDataList<T>({
   // Mobile list mode
   return (
     <FlatList
+      ref={listRef}
       data={data}
       keyExtractor={keyExtractor}
       renderItem={({ item, index }) => renderCard(item, index)}
@@ -206,6 +215,7 @@ export function ResponsiveDataList<T>({
           </View>
         ) : null
       }
+      {...flatListProps}
     />
   );
 }

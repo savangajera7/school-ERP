@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback, useEffect } from "react";
 import {
   View, Text, TouchableOpacity, ScrollView,
-  ActivityIndicator, Modal, TextInput,
+  ActivityIndicator, Modal, TextInput, FlatList,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
@@ -111,7 +111,7 @@ export default function TimetableScreen() {
   }, []);
 
   const { isSchoolAdmin, isAdmin, isTeacher, isParent, isStudent, userData } = usePermissions();
-  const { isMobile } = useResponsive();
+  const { isMobile, listMode } = useResponsive();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const queryClient = useQueryClient();
@@ -125,6 +125,17 @@ export default function TimetableScreen() {
   const todayIndex = new Date().getDay(); // 0=Sun
   const defaultDay: Day = DAYS[Math.min(todayIndex > 0 ? todayIndex - 1 : 0, 5)];
   const [selectedDay, setSelectedDay] = useState<Day>(defaultDay);
+
+  // ── Live clock for current/upcoming period detection ─────────────────────
+  const getNowStr = () => {
+    const now = new Date();
+    return `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+  };
+  const [currentTimeStr, setCurrentTimeStr] = useState(getNowStr);
+  useEffect(() => {
+    const interval = setInterval(() => setCurrentTimeStr(getNowStr()), 30000);
+    return () => clearInterval(interval);
+  }, []);
   const [selectedMediumID, setSelectedMediumID] = useState<number | null>(null);
   const [selectedBatchID, setSelectedBatchID] = useState<number | null>(null);
   const [selectedClassID, setSelectedClassID] = useState<number | null>(null);
@@ -212,14 +223,24 @@ export default function TimetableScreen() {
   
   // ── Timetable query params ────────────────────────────────────────────────
   const queryParams = useMemo(() => {
+    const baseParams = {
+      SchoolID: userData?.schoolID,
+      Day: selectedDay,
+    };
+
     if (isViewOnly) {
       // parent/student — backend resolves class from JWT
-      return { View: "student", Day: selectedDay };
+      return { ...baseParams, View: "student" };
     }
     // admin & teacher
     if (!selectedClassID) return null;
-    return { ClassID: selectedClassID, Day: selectedDay, BatchID: selectedBatchID ?? undefined };
-  }, [isViewOnly, selectedClassID, selectedDay, selectedBatchID]);
+    return { 
+      ...baseParams, 
+      ClassID: selectedClassID, 
+      BatchID: selectedBatchID ?? undefined,
+      MediumID: selectedMediumID ?? undefined,
+    };
+  }, [isViewOnly, selectedClassID, selectedDay, selectedBatchID, selectedMediumID, userData?.schoolID]);
 
 
   const { data: timetableRaw, isLoading, isError, error, refetch: refetchTimetable } = useGetApiTimetableGet(
@@ -544,24 +565,94 @@ export default function TimetableScreen() {
   };
 
   const sortedPeriods = useMemo(() => {
-    const sorted = [...(timetableView?.periods ?? [])].sort((a, b) => {
-      return a.startTime.localeCompare(b.startTime);
+    // 3. NO BLANK CARDS: Every card must have valid data before rendering
+    const raw = (timetableView?.periods ?? []).filter(p => 
+      p && p.subjectName && p.subjectName.trim() !== ""
+    );
+    const isToday = selectedDay === defaultDay;
+
+    // 1. SORTING ORDER (array order): Past > Live > Upcoming
+    const withStatus = raw.map(p => {
+      const isLive = isToday && p.startTime <= currentTimeStr && currentTimeStr < p.endTime;
+      const isPast = isToday && p.endTime <= currentTimeStr;
+      const isUpcoming = isToday && p.startTime > currentTimeStr && !isLive;
+      return { ...p, isLive, isPast, isUpcoming };
     });
-    
-    // Check overlaps
-    return sorted.map((p, i) => {
-      let hasOverlap = false;
-      if (i > 0) {
-        if (p.startTime < sorted[i-1].endTime) {
-          hasOverlap = true;
-        }
+
+    const past = withStatus.filter(p => p.isPast).sort((a, b) => a.startTime.localeCompare(b.startTime));
+    const live = withStatus.filter(p => p.isLive);
+    const upcoming = withStatus.filter(p => p.isUpcoming).sort((a, b) => a.startTime.localeCompare(b.startTime));
+
+    const sorted = [...past, ...live, ...upcoming];
+
+    // 4. Overlap check
+    const chrono = [...raw].sort((a, b) => a.startTime.localeCompare(b.startTime));
+    const overlapIds = new Set();
+    chrono.forEach((p, i) => {
+      if (i > 0 && p.startTime < chrono[i-1].endTime) {
+        overlapIds.add(p.timetableID || `${p.startTime}-${p.subjectID}`);
       }
-      return { ...p, hasOverlap };
     });
-  }, [timetableView?.periods]);
+
+    return sorted.map(p => ({
+      ...p,
+      hasOverlap: overlapIds.has(p.timetableID || `${p.startTime}-${p.subjectID}`)
+    }));
+  }, [timetableView?.periods, selectedDay, defaultDay, currentTimeStr]);
   const periods = sortedPeriods;
 
-  const tableColumns: TableColumn<Period>[] = [
+  // ── 2. AUTO-SCROLL ON LOAD ────────────────────────────────────────────────
+  const listRef = React.useRef<FlatList<any>>(null);
+  // Adjusted for precision: Admin card(152) + gap(12) = 164 | Student card(100) + gap(12) = 112
+  const CARD_HEIGHT = canEdit ? 164 : 112;
+
+  const scrollToActive = useCallback(() => {
+    if (!periods.length || !listRef.current || !isMounted || listMode === 'table') return;
+
+    // Find liveIndex or scroll to first upcoming
+    const liveIndex = periods.findIndex((p: any) => p.isLive);
+    const upcomingIndex = periods.findIndex((p: any) => p.isUpcoming);
+    
+    // Priority: Live > First Upcoming > First item (if all over/none found)
+    let scrollIndex = liveIndex !== -1 ? liveIndex : upcomingIndex;
+
+    // If day is over (no live, no upcoming), scroll to 0 to show all as requested previously
+    if (scrollIndex === -1) scrollIndex = 0;
+
+    if (scrollIndex >= 0) {
+      setTimeout(() => {
+        try {
+          listRef.current?.scrollToIndex({
+            index: scrollIndex,
+            animated: false,
+            viewPosition: 0, 
+          });
+        } catch (err) {
+          // silent fail
+        }
+      }, 400); // Slightly faster response
+    }
+  }, [periods, isMounted, listMode, canEdit]);
+
+  // 4. REAL-TIME UPDATE every 60 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = getNowStr();
+      if (now !== currentTimeStr) {
+        setCurrentTimeStr(now);
+      }
+    }, 60000);
+    return () => clearInterval(interval);
+  }, [currentTimeStr]);
+
+  // Initial and update scroll
+  useEffect(() => {
+    if (periods.length > 0 && isMounted) {
+      scrollToActive();
+    }
+  }, [periods.length, isMounted, scrollToActive]);
+
+  const tableColumns: TableColumn<any>[] = [
     {
       key: "rowNo", header: "#", width: 48, align: "center",
       render: (p, i) => {
@@ -636,110 +727,102 @@ export default function TimetableScreen() {
     },
   ];
 
-  const renderPeriodCard = (period: Period, index: number) => {
+  const renderPeriodCard = (period: any, index: number) => {
+    if (!period || !period.subjectName) return null;
+
     const isB = period.subjectName?.toLowerCase().includes("break") || period.subjectName?.toLowerCase().includes("lunch");
     const color = isB ? "#EA580C" : subjectColor(period.subjectName);
-    
-    if (isB) {
-      return (
-        <View
-          className="rounded-2xl border mb-3 overflow-hidden flex-row items-center px-4 py-3"
-          style={[
-            premiumCardShadow,
-            {
-              backgroundColor: isDark ? "#431407" : "#FFF7ED", // orange-950 / orange-50
-              borderColor: isDark ? "#7C2D12" : "#FFEDD5",
-            }
-          ]}
-        >
-          <View className="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-900/50 items-center justify-center mr-3">
-            <AppIcon name="coffee" size={20} color="#EA580C" />
-          </View>
-          <View className="flex-1">
-            <Text className="text-[15px] font-black text-orange-800 dark:text-orange-200 uppercase tracking-widest">{period.subjectName}</Text>
-            <View className="flex-row items-center gap-1.5 mt-0.5">
-              <AppIcon name="clock" size={10} color={isDark ? "#FDBA74" : "#F97316"} />
-              <Text className="text-[11px] font-bold text-orange-600 dark:text-orange-300">
-                {period.startTime} – {period.endTime}
-              </Text>
-            </View>
-          </View>
-          {canEdit && (
-            <View className="flex-row gap-2">
-               <TouchableOpacity onPress={() => openEdit(period)} className="w-8 h-8 items-center justify-center rounded-lg bg-orange-100 dark:bg-orange-900/30">
-                 <AppIcon name="edit" size={14} color="#EA580C" />
-               </TouchableOpacity>
-               <TouchableOpacity onPress={() => setDeleteTarget(period)} className="w-8 h-8 items-center justify-center rounded-lg bg-rose-100 dark:bg-rose-900/30">
-                 <AppIcon name="delete" size={14} color="#E11D48" />
-               </TouchableOpacity>
-            </View>
-          )}
-        </View>
-      );
-    }
-    
+
+    // Using pre-calculated flags from sortedPeriods
+    const { isLive, isPast } = period;
+
     return (
-      <View
-        className="rounded-2xl border mb-3 overflow-hidden"
-        style={[
-          premiumCardShadow,
-          {
-            backgroundColor: isDark ? SchoolTheme.cardDark : "#FFFFFF",
-            borderColor: isDark ? SchoolTheme.borderDark : "#F3F4F6",
-          }
-        ]}
+      <TouchableOpacity 
+        activeOpacity={0.9}
+        onPress={() => {
+          if (canEdit) openEdit(period);
+        }}
+        className={`rounded-2xl mb-3 overflow-hidden border ${
+          isLive 
+            ? "bg-[#1e293b] border-emerald-500 shadow-lg shadow-emerald-500/20" 
+            : "bg-[#1e293b] border-slate-700"
+        }`}
+        style={[premiumCardShadow, { opacity: isPast ? 0.4 : 1 }]}
       >
-        <View style={{ height: 3, backgroundColor: color }} />
-        <View className="p-4">
-          <View className="flex-row items-start justify-between gap-2">
-            <View className="flex-1">
-              {period.hasOverlap && (
-                <View className="px-2 py-1 rounded-lg border self-start mb-2 flex-row items-center gap-1" style={{ backgroundColor: isDark ? "#450A0A" : "#FEF2F2", borderColor: isDark ? "#7F1D1D" : "#FECACA" }}>
-                  <AppIcon name="warning" size={10} color={isDark ? "#F87171" : "#DC2626"} />
-                  <Text className="text-[9px] font-black uppercase tracking-wider" style={{ color: isDark ? "#FCA5A5" : "#DC2626" }}>Time Overlap</Text>
-                </View>
-              )}
-              <View className="flex-row items-center gap-2 mb-2">
-                <View className="px-2.5 py-1 rounded-lg flex-row items-center gap-1.5" style={{ backgroundColor: isDark ? "#1E293B" : "#F3F4F6" }}>
-                  <AppIcon name="clock" size={11} color={isDark ? "#94A3B8" : "#6B7280"} />
-                  <Text className="text-[11px] font-black" style={{ color: isDark ? "#CBD5E1" : "#4B5563" }}>
-                    {period.startTime} – {period.endTime}
-                  </Text>
-                </View>
-                {period.roomNumber ? (
-                  <View className="border px-2 py-1 rounded-lg" style={{ backgroundColor: isDark ? "#1E3A8A" : "#EFF6FF", borderColor: isDark ? "#1E40AF" : "#DBEAFE" }}>
-                    <Text className="text-[10px] font-black uppercase" style={{ color: isDark ? "#60A5FA" : "#2563EB" }}>{period.roomNumber}</Text>
-                  </View>
-                ) : null}
-              </View>
-              <Text className="text-[15px] font-black mb-1" numberOfLines={1} style={{ color: isDark ? SchoolTheme.textDark : "#111827" }}>
+        <View className="p-4 flex-row gap-3">
+          {/* Left Icon/Index */}
+          <View className="relative">
+            <View className={`w-14 h-14 rounded-xl items-center justify-center overflow-hidden border ${
+              isLive ? "bg-emerald-500/10 border-emerald-500/30" : "bg-slate-700 border-slate-600"
+            }`}>
+              <AppIcon name={isB ? "coffee" : "timetable"} size={26} color={isLive ? "#10b981" : color} />
+            </View>
+            <View className="absolute -top-1.5 -right-1.5 bg-slate-800 border-2 border-[#1e293b] min-w-[20px] h-5 px-1 rounded-full items-center justify-center shadow-md">
+              <Text className={`text-[10px] font-black ${isLive ? "text-emerald-400" : "text-white"}`} style={!isLive ? { color } : {}}>{index + 1}</Text>
+            </View>
+          </View>
+
+          {/* Center Content */}
+          <View className="flex-1">
+            <View className="flex-row items-start justify-between mb-1">
+              <Text className={`text-[15px] font-black uppercase flex-1 mr-2 leading-tight ${isLive ? "text-emerald-400" : "text-white"}`} numberOfLines={1}>
                 {period.subjectName}
               </Text>
-              <View className="flex-row items-center gap-1.5">
-                <AppIcon name="teachers" size={12} color={isDark ? SchoolTheme.textSecondaryDark : "#6B7280"} />
-                <Text className="text-[12px] font-semibold" numberOfLines={1} style={{ color: isDark ? SchoolTheme.textSecondaryDark : "#6B7280" }}>
-                  {period.teacherName || period.className || "—"}
-                </Text>
-              </View>
+              {isLive ? (
+                <View className="px-2 py-0.5 bg-emerald-500 rounded-lg shadow-sm">
+                  <Text className="text-[9px] font-black text-white uppercase tracking-tighter">LIVE NOW</Text>
+                </View>
+              ) : isPast ? (
+                <View className="px-2 py-0.5 bg-slate-700 rounded-lg border border-slate-600">
+                  <Text className="text-[9px] font-black text-slate-400 uppercase tracking-tighter">ENDED</Text>
+                </View>
+              ) : period.hasOverlap ? (
+                <View className="px-2 py-0.5 bg-rose-500/20 rounded-lg border border-rose-500/30">
+                  <Text className="text-[9px] font-black text-rose-400 uppercase tracking-tighter">Overlap</Text>
+                </View>
+              ) : null}
             </View>
-            <View className="w-8 h-8 rounded-xl items-center justify-center" style={{ backgroundColor: color + "30" }}>
-              <Text className="text-[13px] font-black" style={{ color }}>{index + 1}</Text>
+
+            <View className="flex-row items-center gap-1.5 mb-1">
+              <AppIcon name="clock" size={13} color={isLive ? "#10b981" : "#94a3b8"} />
+              <Text className={`text-[12px] font-bold flex-1 ${isLive ? "text-emerald-400" : "text-slate-400"}`} numberOfLines={1}>
+                {formatTo12Hour(period.startTime)} – {formatTo12Hour(period.endTime)}
+              </Text>
+            </View>
+
+            <View className="flex-row items-center gap-1.5">
+              <AppIcon name="teachers" size={13} color={isLive ? "#10b981" : "#94a3b8"} />
+              <Text className={`text-[12px] font-bold flex-1 ${isLive ? "text-emerald-400" : "text-slate-400"}`} numberOfLines={1}>
+                {period.teacherName || period.className || "—"}
+                {period.roomNumber ? ` · Rm ${period.roomNumber}` : ""}
+              </Text>
             </View>
           </View>
-          {canEdit && (
-            <View className="flex-row gap-2 mt-3 pt-3 border-t" style={{ borderColor: isDark ? SchoolTheme.borderDark : "#F9FAFB" }}>
-              <TouchableOpacity onPress={() => openEdit(period)} className="flex-1 flex-row items-center justify-center gap-1.5 py-2 border rounded-xl" style={{ backgroundColor: isDark ? "#1E3A8A" : "#EEF2FF", borderColor: isDark ? "#1E40AF" : "#E0E7FF" }} activeOpacity={0.7}>
-                <AppIcon name="edit" size={13} color={isDark ? "#818CF8" : "#4F46E5"} />
-                <Text className="text-[11px] font-black uppercase" style={{ color: isDark ? "#A5B4FC" : "#4338CA" }}>Edit</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => setDeleteTarget(period)} className="flex-1 flex-row items-center justify-center gap-1.5 py-2 border rounded-xl" style={{ backgroundColor: isDark ? "#4C1D95" : "#FFF1F2", borderColor: isDark ? "#5B21B6" : "#FFE4E6" }} activeOpacity={0.7}>
-                <AppIcon name="delete" size={13} color={isDark ? "#F43F5E" : "#E11D48"} />
-                <Text className="text-[11px] font-black uppercase" style={{ color: isDark ? "#FDA4AF" : "#BE123C" }}>Delete</Text>
-              </TouchableOpacity>
-            </View>
-          )}
         </View>
-      </View>
+
+        {/* Bottom Actions */}
+        {canEdit && (
+          <View className={`flex-row justify-end items-center px-4 py-2 border-t gap-2 ${
+            isLive ? "bg-emerald-500/5 border-emerald-500/20" : "bg-slate-800/40 border-slate-700/50"
+          }`}>
+            <TouchableOpacity 
+              onPress={() => openEdit(period)}
+              className={`w-9 h-9 rounded-xl items-center justify-center border ${
+                isLive ? "bg-emerald-500/10 border-emerald-500/20" : "bg-indigo-500/10 border-indigo-500/20"
+              }`}
+            >
+              <AppIcon name="edit" size={16} color={isLive ? "#10b981" : "#818cf8"} />
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              onPress={() => setDeleteTarget(period)}
+              className="w-9 h-9 rounded-xl bg-rose-500/10 border border-rose-500/20 items-center justify-center"
+            >
+              <AppIcon name="delete" size={16} color="#fb7185" />
+            </TouchableOpacity>
+          </View>
+        )}
+      </TouchableOpacity>
     );
   };
   // ── Render ────────────────────────────────────────────────────────────────
@@ -906,8 +989,8 @@ return (
       {formVisible && (
       <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999, elevation: 9999 }}>
         <SafeAreaView className="flex-1 bg-black/50 items-center justify-center p-4">
-          <View className="rounded-3xl w-full max-w-[500px] overflow-hidden"
-            style={[{ backgroundColor: isDark ? SchoolTheme.cardDark : "#FFFFFF" }, { shadowColor: "#000", shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.15, shadowRadius: 24, elevation: 8 }]}
+          <View className="rounded-3xl w-full max-w-[500px] overflow-hidden flex-shrink"
+            style={[{ backgroundColor: isDark ? SchoolTheme.cardDark : "#FFFFFF" }, { shadowColor: "#000", shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.15, shadowRadius: 24, elevation: 8, maxHeight: '90%' }]}
           >
             {/* Header */}
             <View className="px-6 py-5 border-b border-gray-100 dark:border-slate-700 flex-row items-center justify-between">
@@ -930,7 +1013,7 @@ return (
             </View>
 
             {/* Form */}
-            <ScrollView className="px-6 py-5" showsVerticalScrollIndicator={false}>
+            <ScrollView className="px-6 py-5" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 20 }}>
               {/* Break Toggle */}
               <View className="mb-6 flex-row justify-between items-center bg-orange-500/10 dark:bg-orange-500/5 p-4 rounded-2xl border border-orange-500/20">
                 <View className="flex-1 mr-4">
@@ -1044,7 +1127,7 @@ return (
                 <View className="flex-1">
                   <Text className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 ml-1">Starts At *</Text>
                   <TouchableOpacity
-                    onPress={() => { setShowStartPicker(!showStartPicker); setShowEndPicker(false); }}
+                    onPress={() => { setShowStartPicker(true); setShowEndPicker(false); }}
                     activeOpacity={0.7}
                     className="bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl px-4 py-3.5 flex-row items-center justify-between"
                   >
@@ -1057,7 +1140,7 @@ return (
                 <View className="flex-1">
                   <Text className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 ml-1">Ends At *</Text>
                   <TouchableOpacity
-                    onPress={() => { setShowEndPicker(!showEndPicker); setShowStartPicker(false); }}
+                    onPress={() => { setShowEndPicker(true); setShowStartPicker(false); }}
                     activeOpacity={0.7}
                     className="bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl px-4 py-3.5 flex-row items-center justify-between"
                   >
@@ -1068,31 +1151,6 @@ return (
                   </TouchableOpacity>
                 </View>
               </View>
-
-              {/* Inline Time Pickers */}
-              {showStartPicker && (
-                <View className="mb-4">
-                  <TimePickerCard
-                    value={formStart}
-                    onConfirm={(val) => { setFormStart(val); setShowStartPicker(false); }}
-                    onClose={() => setShowStartPicker(false)}
-                    isDark={isDark}
-                    title="Select Start Time"
-                  />
-                </View>
-              )}
-
-              {showEndPicker && (
-                <View className="mb-4">
-                  <TimePickerCard
-                    value={formEnd}
-                    onConfirm={(val) => { setFormEnd(val); setShowEndPicker(false); }}
-                    onClose={() => setShowEndPicker(false)}
-                    isDark={isDark}
-                    title="Select End Time"
-                  />
-                </View>
-              )}
 
               {/* Room Number */}
               <View className="mb-6">
@@ -1139,6 +1197,29 @@ return (
           </View>
         </SafeAreaView>
       </View>
+      )}
+
+      {/* ── Time Picker Modal ── */}
+      {(showStartPicker || showEndPicker) && (
+        <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 10000, elevation: 10000 }}>
+          <SafeAreaView className="flex-1 bg-black/40 items-center justify-center p-4">
+            <TimePickerCard
+              value={showStartPicker ? formStart : formEnd}
+              onConfirm={(val) => {
+                if (showStartPicker) setFormStart(val);
+                else setFormEnd(val);
+                setShowStartPicker(false);
+                setShowEndPicker(false);
+              }}
+              onClose={() => {
+                setShowStartPicker(false);
+                setShowEndPicker(false);
+              }}
+              isDark={isDark}
+              title={showStartPicker ? "Select Start Time" : "Select End Time"}
+            />
+          </SafeAreaView>
+        </View>
       )}
 
       {/* ── Delete Modal ── */}
@@ -1223,6 +1304,7 @@ return (
       {/* ── Content ── */}
       <View className="flex-1 mt-2">
         <ResponsiveDataList
+          listRef={listRef}
           data={periods}
           isLoading={isLoading}
           isError={isError}
@@ -1234,6 +1316,22 @@ return (
           emptyIcon="timetable"
           emptyTitle="No periods scheduled"
           emptyMessage={canEdit ? "Tap 'Add Period' to create the first period for this day." : "No classes scheduled for this day."}
+          flatListProps={{
+            getItemLayout: (data, index) => {
+              const h = canEdit ? 164 : 112;
+              return {
+                length: h,
+                offset: h * index,
+                index,
+              };
+            },
+            onScrollToIndexFailed: (info) => {
+              const wait = new Promise(resolve => setTimeout(resolve, 500));
+              wait.then(() => {
+                listRef.current?.scrollToIndex({ index: info.index, animated: true, viewPosition: 0 });
+              });
+            }
+          }}
         />
       </View>
     </PremiumScreenLayout>
@@ -1251,6 +1349,8 @@ interface TimePickerCardProps {
 }
 
 function TimePickerCard({ value, onConfirm, onClose, isDark, title }: TimePickerCardProps) {
+  const { isMobile } = useResponsive();
+
   const parseTime = (timeStr: string) => {
     try {
       const [hhStr, mmStr] = (timeStr || "08:00").split(":");
@@ -1271,9 +1371,7 @@ function TimePickerCard({ value, onConfirm, onClose, isDark, title }: TimePicker
     } else {
       if (hh24 === 12) hh24 = 0;
     }
-    const hhStr = hh24.toString().padStart(2, "0");
-    const mmStr = minute.toString().padStart(2, "0");
-    return `${hhStr}:${mmStr}`;
+    return `${hh24.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
   };
 
   const [selectedHour, setSelectedHour] = useState(8);
@@ -1281,7 +1379,6 @@ function TimePickerCard({ value, onConfirm, onClose, isDark, title }: TimePicker
   const [isPm, setIsPm] = useState(false);
   const [activeTab, setActiveTab] = useState<"hours" | "minutes">("hours");
 
-  // Load initial value
   useEffect(() => {
     const parsed = parseTime(value);
     setSelectedHour(parsed.hour12);
@@ -1291,184 +1388,164 @@ function TimePickerCard({ value, onConfirm, onClose, isDark, title }: TimePicker
   }, [value]);
 
   const handleConfirm = () => {
-    const formatted = formatTime(selectedHour, selectedMinute, isPm);
-    onConfirm(formatted);
+    onConfirm(formatTime(selectedHour, selectedMinute, isPm));
   };
 
   const HOURS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
   const MINUTES = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
+  // More compact cell size for better web/mobile fit
+  const CELL = isMobile ? 38 : 34;
+  const CELL_GAP = 5;
 
   return (
-    <View 
-      className="w-full rounded-2xl overflow-hidden border p-4"
-      style={{
-        backgroundColor: isDark ? SchoolTheme.cardDark : "#FFFFFF",
-        borderColor: isDark ? SchoolTheme.borderDark : "#E2E8F0",
-      }}
-    >
-      {/* Header */}
-      <View className="flex-row justify-between items-center pb-3 border-b mb-4" style={{ borderColor: isDark ? SchoolTheme.borderDark : "#F1F5F9" }}>
-        <Text className="text-sm font-black uppercase tracking-wider text-slate-800 dark:text-slate-200">
-          {title}
-        </Text>
-        <TouchableOpacity onPress={onClose} className="p-1.5 rounded-lg" style={{ backgroundColor: isDark ? "#334155" : "#F1F5F9" }}>
-          <AppIcon name="delete" size={14} color={isDark ? "#94A3B8" : "#475569"} />
-        </TouchableOpacity>
-      </View>
-
-      {/* Time Display Preview */}
-      <View className="flex-row items-center justify-center bg-indigo-50/50 dark:bg-indigo-950/20 w-full py-4 rounded-xl mb-4 border border-indigo-100/50 dark:border-indigo-900/30">
-        <TouchableOpacity onPress={() => setActiveTab("hours")}>
-          <Text className={`text-4xl font-black ${activeTab === "hours" ? "text-indigo-600 dark:text-indigo-400" : "text-gray-400 dark:text-slate-500"}`}>
-            {selectedHour.toString().padStart(2, "0")}
+    <View style={{ alignSelf: 'center', width: '100%', maxWidth: 320 }}>
+      <View
+        className="w-full rounded-2xl overflow-hidden border p-3"
+        style={{
+          backgroundColor: isDark ? SchoolTheme.cardDark : "#FFFFFF",
+          borderColor: isDark ? SchoolTheme.borderDark : "#E2E8F0",
+        }}
+      >
+        {/* Header */}
+        <View className="flex-row justify-between items-center pb-2.5 border-b mb-2.5" style={{ borderColor: isDark ? SchoolTheme.borderDark : "#F1F5F9" }}>
+          <Text className="text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            {title}
           </Text>
-        </TouchableOpacity>
-        <Text className="text-4xl font-black text-indigo-300 dark:text-indigo-900 mx-2">:</Text>
-        <TouchableOpacity onPress={() => setActiveTab("minutes")}>
-          <Text className={`text-4xl font-black ${activeTab === "minutes" ? "text-indigo-600 dark:text-indigo-400" : "text-gray-400 dark:text-slate-500"}`}>
-            {selectedMinute.toString().padStart(2, "0")}
-          </Text>
-        </TouchableOpacity>
-        <View className="ml-3 bg-indigo-100 dark:bg-indigo-900/50 px-2.5 py-1 rounded-lg">
-          <Text className="text-sm font-black text-indigo-700 dark:text-indigo-300">
-            {isPm ? "PM" : "AM"}
-          </Text>
+          <TouchableOpacity onPress={onClose} className="p-1.5 rounded-lg" style={{ backgroundColor: isDark ? "#334155" : "#F1F5F9" }}>
+            <AppIcon name="close" size={12} color={isDark ? "#94A3B8" : "#475569"} />
+          </TouchableOpacity>
         </View>
-      </View>
 
-      {/* Segmented Switch */}
-      <View className="flex-row w-full bg-gray-100 dark:bg-slate-800 p-1 rounded-xl mb-4">
-        <TouchableOpacity 
-          onPress={() => setActiveTab("hours")}
-          className={`flex-1 py-2 items-center rounded-lg ${activeTab === "hours" ? "bg-white dark:bg-slate-700" : ""}`}
-        >
-          <Text className={`text-xs font-black uppercase ${activeTab === "hours" ? "text-indigo-600 dark:text-indigo-400" : "text-gray-500 dark:text-slate-400"}`}>
-            Hours
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity 
-          onPress={() => setActiveTab("minutes")}
-          className={`flex-1 py-2 items-center rounded-lg ${activeTab === "minutes" ? "bg-white dark:bg-slate-700" : ""}`}
-        >
-          <Text className={`text-xs font-black uppercase ${activeTab === "minutes" ? "text-indigo-600 dark:text-indigo-400" : "text-gray-500 dark:text-slate-400"}`}>
-            Minutes
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Grid selectors */}
-      <View className="w-full justify-center mb-4">
-        {activeTab === "hours" ? (
-          <View className="flex-row flex-wrap justify-between gap-y-3 gap-x-1">
-            {HOURS.map((hr) => {
-              const isSelected = selectedHour === hr;
-              return (
-                <TouchableOpacity
-                  key={hr}
-                  onPress={() => {
-                    setSelectedHour(hr);
-                    setActiveTab("minutes");
-                  }}
-                  className={`w-[15%] aspect-square min-w-[40px] justify-center items-center rounded-xl border ${
-                    isSelected 
-                      ? "bg-indigo-600 border-indigo-600" 
-                      : "bg-gray-50 dark:bg-slate-800/50 border-gray-200 dark:border-slate-800"
-                  }`}
-                >
-                  <Text className={`text-sm font-black ${isSelected ? "text-white" : "text-gray-700 dark:text-slate-300"}`}>
-                    {hr.toString().padStart(2, "0")}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
+        {/* Time Display */}
+        <View className="flex-row items-center justify-center bg-indigo-50 dark:bg-indigo-950/20 w-full py-2 rounded-xl mb-2.5 border border-indigo-100 dark:border-indigo-900/30">
+          <TouchableOpacity onPress={() => setActiveTab("hours")}>
+            <Text className={`text-2xl font-black ${activeTab === "hours" ? "text-indigo-600 dark:text-indigo-400" : "text-gray-400 dark:text-slate-500"}`}>
+              {selectedHour.toString().padStart(2, "0")}
+            </Text>
+          </TouchableOpacity>
+          <Text className="text-2xl font-black text-indigo-300 dark:text-indigo-700 mx-1">:</Text>
+          <TouchableOpacity onPress={() => setActiveTab("minutes")}>
+            <Text className={`text-2xl font-black ${activeTab === "minutes" ? "text-indigo-600 dark:text-indigo-400" : "text-gray-400 dark:text-slate-500"}`}>
+              {selectedMinute.toString().padStart(2, "0")}
+            </Text>
+          </TouchableOpacity>
+          <View className="ml-2 bg-indigo-100 dark:bg-indigo-900/50 px-1.5 py-0.5 rounded-lg">
+            <Text className="text-[9px] font-black text-indigo-700 dark:text-indigo-300">{isPm ? "PM" : "AM"}</Text>
           </View>
-        ) : (
-          <View className="w-full">
-            <View className="flex-row flex-wrap justify-between gap-y-3 gap-x-1 mb-3">
-              {MINUTES.map((min) => {
-                const isSelected = selectedMinute === min;
+        </View>
+
+        {/* Segmented Switch */}
+        <View className="flex-row w-full bg-gray-100 dark:bg-slate-800 p-1 rounded-xl mb-2.5">
+          {(["hours", "minutes"] as const).map((tab) => (
+            <TouchableOpacity
+              key={tab}
+              onPress={() => setActiveTab(tab)}
+              className={`flex-1 py-1 items-center rounded-lg ${activeTab === tab ? "bg-white dark:bg-slate-700" : ""}`}
+            >
+              <Text className={`text-[10px] font-black uppercase ${activeTab === tab ? "text-indigo-600 dark:text-indigo-400" : "text-gray-500 dark:text-slate-400"}`}>
+                {tab}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Grid selectors */}
+        <View className="mb-2.5 items-center">
+          {activeTab === "hours" ? (
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: CELL_GAP, width: (CELL * 4) + (CELL_GAP * 3) }}>
+              {HOURS.map((hr) => {
+                const isSelected = selectedHour === hr;
                 return (
                   <TouchableOpacity
-                    key={min}
-                    onPress={() => setSelectedMinute(min)}
-                    className={`w-[15%] aspect-square min-w-[40px] justify-center items-center rounded-xl border ${
-                      isSelected 
-                        ? "bg-indigo-600 border-indigo-600" 
-                        : "bg-gray-50 dark:bg-slate-800/50 border-gray-200 dark:border-slate-800"
-                    }`}
+                    key={hr}
+                    onPress={() => { setSelectedHour(hr); setActiveTab("minutes"); }}
+                    style={{
+                      width: CELL, height: CELL,
+                      justifyContent: 'center', alignItems: 'center',
+                      borderRadius: 10, borderWidth: 1,
+                      backgroundColor: isSelected ? '#6366f1' : (isDark ? '#1e293b' : '#f9fafb'),
+                      borderColor: isSelected ? '#6366f1' : (isDark ? '#334155' : '#e5e7eb'),
+                    }}
                   >
-                    <Text className={`text-sm font-black ${isSelected ? "text-white" : "text-gray-700 dark:text-slate-300"}`}>
-                      {min.toString().padStart(2, "0")}
+                    <Text style={{ fontSize: 12, fontWeight: '900', color: isSelected ? '#fff' : (isDark ? '#cbd5e1' : '#374151') }}>
+                      {hr.toString().padStart(2, "0")}
                     </Text>
                   </TouchableOpacity>
                 );
               })}
             </View>
-
-            {/* Micro adjusters */}
-            <View className="flex-row justify-between items-center bg-gray-50 dark:bg-slate-800/30 p-2.5 rounded-xl border border-gray-100 dark:border-slate-800">
-              <TouchableOpacity
-                onPress={() => setSelectedMinute(m => Math.max(0, m - 1))}
-                className="w-10 h-8 bg-gray-200/50 dark:bg-slate-700/50 items-center justify-center rounded-lg active:scale-95"
-              >
-                <Text className="text-lg font-black text-gray-700 dark:text-slate-300">-</Text>
-              </TouchableOpacity>
-              <Text className="text-xs font-black text-gray-500 dark:text-slate-400 uppercase">
-                Fine Tune: {selectedMinute}m
-              </Text>
-              <TouchableOpacity
-                onPress={() => setSelectedMinute(m => Math.min(59, m + 1))}
-                className="w-10 h-8 bg-gray-200/50 dark:bg-slate-700/50 items-center justify-center rounded-lg active:scale-95"
-              >
-                <Text className="text-lg font-black text-gray-700 dark:text-slate-300">+</Text>
-              </TouchableOpacity>
+          ) : (
+            <View style={{ width: (CELL * 4) + (CELL_GAP * 3) }}>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: CELL_GAP, marginBottom: 8 }}>
+                {MINUTES.map((min) => {
+                  const isSelected = selectedMinute === min;
+                  return (
+                    <TouchableOpacity
+                      key={min}
+                      onPress={() => setSelectedMinute(min)}
+                      style={{
+                        width: CELL, height: CELL,
+                        justifyContent: 'center', alignItems: 'center',
+                        borderRadius: 10, borderWidth: 1,
+                        backgroundColor: isSelected ? '#6366f1' : (isDark ? '#1e293b' : '#f9fafb'),
+                        borderColor: isSelected ? '#6366f1' : (isDark ? '#334155' : '#e5e7eb'),
+                      }}
+                    >
+                      <Text style={{ fontSize: 12, fontWeight: '900', color: isSelected ? '#fff' : (isDark ? '#cbd5e1' : '#374151') }}>
+                        {min.toString().padStart(2, "0")}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+              {/* Fine tune */}
+              <View className="flex-row justify-between items-center bg-gray-50 dark:bg-slate-800/40 p-1.5 rounded-xl border border-gray-100 dark:border-slate-800">
+                <TouchableOpacity onPress={() => setSelectedMinute(m => Math.max(0, m - 1))} className="w-8 h-6 bg-gray-200 dark:bg-slate-700 items-center justify-center rounded-lg">
+                  <Text className="text-sm font-black text-gray-700 dark:text-slate-300">−</Text>
+                </TouchableOpacity>
+                <Text className="text-[9px] font-black text-gray-500 dark:text-slate-400 uppercase">Tune · {selectedMinute}m</Text>
+                <TouchableOpacity onPress={() => setSelectedMinute(m => Math.min(59, m + 1))} className="w-8 h-6 bg-gray-200 dark:bg-slate-700 items-center justify-center rounded-lg">
+                  <Text className="text-sm font-black text-gray-700 dark:text-slate-300">+</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-        )}
-      </View>
+          )}
+        </View>
 
-      {/* AM / PM Selector */}
-      <View className="flex-row w-full justify-center gap-4 border-t border-b py-3 mb-4" style={{ borderColor: isDark ? SchoolTheme.borderDark : "#F1F5F9" }}>
-        <TouchableOpacity
-          onPress={() => setIsPm(false)}
-          className={`flex-1 py-2 rounded-xl border items-center justify-center ${
-            !isPm 
-              ? "bg-indigo-600 border-indigo-600" 
-              : "bg-gray-50 dark:bg-slate-800/50 border-gray-200 dark:border-slate-800"
-          }`}
-        >
-          <Text className={`text-xs font-black uppercase ${!isPm ? "text-white" : "text-gray-600 dark:text-slate-400"}`}>
-            AM
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => setIsPm(true)}
-          className={`flex-1 py-2 rounded-xl border items-center justify-center ${
-            isPm 
-              ? "bg-indigo-600 border-indigo-600" 
-              : "bg-gray-50 dark:bg-slate-800/50 border-gray-200 dark:border-slate-800"
-          }`}
-        >
-          <Text className={`text-xs font-black uppercase ${isPm ? "text-white" : "text-gray-600 dark:text-slate-400"}`}>
-            PM
-          </Text>
-        </TouchableOpacity>
-      </View>
+        {/* AM / PM */}
+        <View className="flex-row gap-2.5 border-t border-b py-2 mb-2.5" style={{ borderColor: isDark ? SchoolTheme.borderDark : "#F1F5F9" }}>
+          {[false, true].map((pm) => (
+            <TouchableOpacity
+              key={pm ? "PM" : "AM"}
+              onPress={() => setIsPm(pm)}
+              className={`flex-1 py-1.5 rounded-xl border items-center justify-center ${
+                isPm === pm 
+                  ? "bg-indigo-600 border-indigo-600" 
+                  : "bg-gray-50 dark:bg-slate-800/50 border-gray-200 dark:border-slate-800"
+              }`}
+            >
+              <Text className={`text-[10px] font-black uppercase ${isPm === pm ? "text-white" : "text-gray-600 dark:text-slate-400"}`}>
+                {pm ? "PM" : "AM"}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
 
-      {/* Confirm Actions */}
-      <View className="flex-row gap-3 w-full">
-        <TouchableOpacity
-          onPress={onClose}
-          className="flex-1 py-3 rounded-2xl bg-gray-100 dark:bg-slate-800 items-center justify-center active:scale-95"
-        >
-          <Text className="text-gray-700 dark:text-slate-300 font-bold text-xs uppercase">Cancel</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={handleConfirm}
-          className="flex-1 py-3 rounded-2xl bg-emerald-600 items-center justify-center active:scale-95"
-        >
-          <Text className="text-white font-black text-xs uppercase">Confirm</Text>
-        </TouchableOpacity>
+        {/* Confirm Actions */}
+        <View className="flex-row gap-2.5 w-full">
+          <TouchableOpacity
+            onPress={onClose}
+            className="flex-1 py-2.5 rounded-xl bg-gray-100 dark:bg-slate-800 items-center justify-center active:scale-95"
+          >
+            <Text className="text-gray-700 dark:text-slate-300 font-bold text-[10px] uppercase">Cancel</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={handleConfirm}
+            className="flex-1 py-2.5 rounded-xl bg-emerald-600 items-center justify-center active:scale-95"
+          >
+            <Text className="text-white font-black text-[10px] uppercase">Confirm</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
