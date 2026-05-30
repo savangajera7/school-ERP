@@ -17,12 +17,12 @@ import type { AppRoute } from "@/constants/rolePermissions";
 
 const QUICK_ACTIONS: (QuickAction & { route: AppRoute })[] = [
   { title: "Attendance", icon: "attendance", route: "/(app)/attendance" as any },
-  { title: "Homework", icon: "homework", route: "/(teacher)/homework" as any },
-  { title: "Classwork", icon: "classwork", route: "/(teacher)/classwork" as any },
-  { title: "Notebook", icon: "notebook", route: "/(teacher)/notebook" as any },
+  { title: "Homework", icon: "homework", route: "/(app)/homework" as any },
+  { title: "Classwork", icon: "classwork", route: "/(app)/classwork" as any },
+  { title: "Notebook", icon: "notebook", route: "/(app)/notebook" as any },
   { title: "Exam Marks", icon: "exams", route: "/(teacher)/exam-marks" as any },
   { title: "Timetable", icon: "timetable", route: "/(admin)/timetable" as any },
-  { title: "Post Notice", icon: "notices", route: "/(teacher)/notice" as any },
+  { title: "Post Notice", icon: "notices", route: "/(app)/notices" as any },
   { title: "Profile", icon: "profile", route: "/(app)/profile" as any },
 ];
 
@@ -71,7 +71,7 @@ export default function TeacherDashboardScreen() {
           subtitle="Assignments pending"
           backgroundColor="#FEF3C7"
           textColor="#B45309"
-          onPress={() => router.push("/(teacher)/homework")}
+          onPress={() => router.push("/(app)/homework")}
         />
         <StatCard
           icon="attendance"

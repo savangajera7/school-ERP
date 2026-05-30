@@ -1,9 +1,8 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import {
   View, Text, TouchableOpacity, ScrollView,
   ActivityIndicator, Modal, TextInput,
 } from "react-native";
-import { useFocusEffect } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { AppIcon, IconCircle } from "@/components/icons/AppIcon";
@@ -17,6 +16,7 @@ import {
   usePutApiTimetableUpdate,
   usePostApiTimetableDelete,
   getGetApiTimetableGetQueryKey,
+  getApiTimetableGet,
 } from "@/api/generated/10-timetable/10-timetable";
 import { useGetApiClassGet } from "@/api/generated/master-class-medium-shift-1a-2b/master-class-medium-shift-1a-2b";
 import { useGetApiMediumGet } from "@/api/generated/master-medium/master-medium";
@@ -34,9 +34,10 @@ import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 import { Platform } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { getApiTimetableGet } from "@/api/generated/10-timetable/10-timetable";
 import { premiumCardShadow } from "@/constants/premiumStyles";
-import { ResponsiveDataList, EntityActionButtons, type TableColumn } from "@/components/shared";
+import { ResponsiveDataList } from "@/components/shared/ResponsiveDataList";
+import { EntityActionButtons } from "@/components/shared/EntityActionButtons";
+import { type TableColumn } from "@/components/shared/DataTable";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -94,6 +95,11 @@ interface TimetableView {
 // ─── Main Screen ─────────────────────────────────────────────────────────────
 
 export default function TimetableScreen() {
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const { isSchoolAdmin, isAdmin, isTeacher, isParent, isStudent, userData } = usePermissions();
   const { isMobile } = useResponsive();
   const { colorScheme } = useColorScheme();
@@ -211,18 +217,10 @@ export default function TimetableScreen() {
     { query: { enabled: !!queryParams } }
   );
 
-  // Force refetch on focus to ensure latest data
-  useFocusEffect(
-    useCallback(() => {
-      refetchTimetable();
-      refetchClasses();
-      refetchMediums();
-      refetchBatches();
-      refetchTeachers();
-      refetchSubjects();
-      if (isTeacher) refetchTeacherPerms();
-    }, [refetchTimetable, refetchClasses, refetchMediums, refetchBatches, refetchTeachers, refetchSubjects, refetchTeacherPerms, isTeacher])
-  );
+  // Use useEffect instead of useFocusEffect to avoid early navigation context requirements
+  React.useEffect(() => {
+    if (refetchTimetable) refetchTimetable();
+  }, [refetchTimetable, selectedClassID, selectedDay, selectedBatchID]);
 
   const timetableView = useMemo((): TimetableView | null => {
     const d = (timetableRaw as any)?.data?.data ?? (timetableRaw as any)?.data;
@@ -423,6 +421,27 @@ export default function TimetableScreen() {
   const [formEnd, setFormEnd] = useState("09:00");
   const [formSaving, setFormSaving] = useState(false);
 
+  // Time Picker state
+  const [showStartPicker, setShowStartPicker] = useState(false);
+  const [showEndPicker, setShowEndPicker] = useState(false);
+
+  const parseTimeString = (timeStr: string) => {
+    try {
+      const [hours, minutes] = (timeStr || "08:00").split(':').map(Number);
+      const date = new Date();
+      date.setHours(hours || 0, minutes || 0, 0, 0);
+      return date;
+    } catch (e) {
+      return new Date();
+    }
+  };
+
+  const formatTimeToString = (date: Date) => {
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
+  };
+
   const openAdd = () => {
     setEditingPeriod(null);
     setFormDay(selectedDay);
@@ -459,6 +478,11 @@ export default function TimetableScreen() {
     }
     if (!formStart || !formEnd) {
       await dialog.alert("Missing Fields", "Start Time and End Time are required.", "warning");
+      return;
+    }
+
+    if (formStart >= formEnd) {
+      await dialog.alert("Invalid Time", "End time must be after start time.", "warning");
       return;
     }
     
@@ -709,7 +733,15 @@ export default function TimetableScreen() {
     );
   };
   // ── Render ────────────────────────────────────────────────────────────────
-  return (
+  
+  if (!isMounted) {
+    return (
+      <View className="flex-1 items-center justify-center bg-white dark:bg-slate-900">
+        <ActivityIndicator size="large" color={Colors.primary} />
+      </View>
+    );
+  }
+return (
     <PremiumScreenLayout
       title="Timetable"
       subtitle={
@@ -738,12 +770,11 @@ export default function TimetableScreen() {
           {canEdit && (
             <TouchableOpacity
               onPress={openAdd}
-              className="flex-row items-center gap-1.5 px-4 py-2.5 rounded-xl"
-              style={{ backgroundColor: Colors.accent }}
+              className="flex-row items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 shadow-md shadow-emerald-500/20"
               activeOpacity={0.8}
             >
-              <AppIcon name="add" size={15} color="white" />
-              <Text className="text-white font-black text-xs uppercase tracking-widest">Add Period</Text>
+              <AppIcon name="add" size={14} color="white" />
+              <Text className="text-white font-black text-xs uppercase tracking-tight">Add Period</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -754,17 +785,48 @@ export default function TimetableScreen() {
         className="rounded-2xl border px-4 py-4 mb-4"
         style={[premiumCardShadow, { backgroundColor: isDark ? SchoolTheme.cardDark : "#FFFFFF", borderColor: isDark ? SchoolTheme.borderDark : "#F3F4F6" }]}
       >
+        {/* Day Selector */}
+        <View className="mb-4">
+          <Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-2">Select Day</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+            {DAYS.map((day) => (
+              <TouchableOpacity
+                key={day}
+                onPress={() => setSelectedDay(day)}
+                className={`px-4 py-2 rounded-xl border ${
+                  selectedDay === day
+                    ? "bg-indigo-600 border-indigo-600 shadow-md shadow-indigo-500/30"
+                    : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700"
+                }`}
+                activeOpacity={0.8}
+              >
+                <Text className={`text-[11px] font-black uppercase tracking-tight ${
+                  selectedDay === day ? "text-white" : "text-gray-600 dark:text-slate-400"
+                }`}>
+                  {day.substring(0, 3)}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+
         {/* Medium Selector */}
         <View className="mb-4">
           <Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-2">Select Medium</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
-            {mediums.map((med: any) => (
+            {Array.isArray(mediums) && mediums.map((med: any) => (
               <TouchableOpacity
                 key={med.mediumID}
                 onPress={() => setSelectedMediumID(med.mediumID)}
-                className={`px-4 py-1.5 rounded-xl border flex-row items-center gap-1 ${selectedMediumID === med.mediumID ? "bg-orange-50 border-orange-200" : "bg-white dark:bg-slate-700 border-gray-200 dark:border-slate-600"}`}
+                className={`px-4 py-2 rounded-xl border ${
+                  selectedMediumID === med.mediumID 
+                    ? "bg-orange-600 border-orange-600 shadow-md shadow-orange-500/30" 
+                    : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700"
+                }`}
               >
-                <Text className={`text-[11px] font-bold ${selectedMediumID === med.mediumID ? "text-orange-700" : "text-gray-600 dark:text-slate-300"}`}>
+                <Text className={`text-[11px] font-black uppercase tracking-tight ${
+                  selectedMediumID === med.mediumID ? "text-white" : "text-gray-600 dark:text-slate-300"
+                }`}>
                   {med.mediumName}
                 </Text>
               </TouchableOpacity>
@@ -780,9 +842,15 @@ export default function TimetableScreen() {
               <TouchableOpacity
                 key={batch.batchID}
                 onPress={() => setSelectedBatchID(batch.batchID)}
-                className={`px-4 py-1.5 rounded-xl border flex-row items-center gap-1 ${selectedBatchID === batch.batchID ? "bg-emerald-50 border-emerald-200" : "bg-white dark:bg-slate-700 border-gray-200 dark:border-slate-600"}`}
+                className={`px-4 py-2 rounded-xl border ${
+                  selectedBatchID === batch.batchID 
+                    ? "bg-emerald-600 border-emerald-600 shadow-md shadow-emerald-500/30" 
+                    : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700"
+                }`}
               >
-                <Text className={`text-[11px] font-bold ${selectedBatchID === batch.batchID ? "text-emerald-700" : "text-gray-600 dark:text-slate-300"}`}>
+                <Text className={`text-[11px] font-black uppercase tracking-tight ${
+                  selectedBatchID === batch.batchID ? "text-white" : "text-gray-600 dark:text-slate-300"
+                }`}>
                   {batch.batchName}
                 </Text>
               </TouchableOpacity>
@@ -794,7 +862,7 @@ export default function TimetableScreen() {
 
         {/* Class selector — admin & teacher */}
         {(isSchoolAdmin || isAdmin || isTeacher) && (
-          <View className="mb-4">
+          <View>
             <Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-2">
               {isTeacher ? "Select Permitted Class" : "Select Class"}
             </Text>
@@ -807,12 +875,12 @@ export default function TimetableScreen() {
                   onPress={() => setSelectedClassID(cls.classID)}
                   className={`px-4 py-2 rounded-xl border ${
                     selectedClassID === cls.classID
-                      ? "bg-[#1A3C6E] border-[#1A3C6E]"
-                      : "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700"
+                      ? "bg-indigo-600 border-indigo-600 shadow-md shadow-indigo-500/30"
+                      : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700"
                   }`}
                   activeOpacity={0.8}
                 >
-                  <Text className={`text-[11px] font-black uppercase ${
+                  <Text className={`text-[11px] font-black uppercase tracking-tight ${
                     selectedClassID === cls.classID ? "text-white" : "text-gray-600 dark:text-slate-400"
                   }`}>
                     {cls.className}
@@ -852,109 +920,186 @@ export default function TimetableScreen() {
             {/* Form */}
             <ScrollView className="px-6 py-5" showsVerticalScrollIndicator={false}>
               {/* Break Toggle */}
-              <View className="mb-4 flex-row justify-between items-center bg-orange-50 dark:bg-slate-800 p-3 rounded-xl border border-orange-100 dark:border-slate-700">
-                <View>
-                  <Text className="text-sm font-black text-orange-800 dark:text-orange-200">Is this a Break?</Text>
-                  <Text className="text-[10px] font-semibold text-orange-500/80 dark:text-orange-400">Enable for Lunch, Recess, etc.</Text>
+              <View className="mb-6 flex-row justify-between items-center bg-orange-500/10 dark:bg-orange-500/5 p-4 rounded-2xl border border-orange-500/20">
+                <View className="flex-1 mr-4">
+                  <View className="flex-row items-center gap-2 mb-1">
+                    <AppIcon name="attendance" size={14} color="#f59e0b" />
+                    <Text className="text-sm font-black text-orange-700 dark:text-orange-400">Break Period</Text>
+                  </View>
+                  <Text className="text-[10px] font-bold text-orange-600/70 dark:text-orange-300/50">Enable for lunch, recess, or school events</Text>
                 </View>
-                <TouchableOpacity onPress={() => setIsBreak(!isBreak)} className={`w-12 h-6 rounded-full p-1 justify-center ${isBreak ? 'bg-orange-500' : 'bg-gray-300 dark:bg-slate-600'}`}>
-                  <View className={`w-4 h-4 bg-white rounded-full transition-transform ${isBreak ? 'translate-x-6' : 'translate-x-0'}`} />
+                <TouchableOpacity 
+                  onPress={() => setIsBreak(!isBreak)} 
+                  activeOpacity={0.8}
+                  className={`w-11 h-6 rounded-full p-1 justify-center ${isBreak ? 'bg-orange-500' : 'bg-slate-300 dark:bg-slate-700'}`}
+                >
+                  <View 
+                    className={`w-4 h-4 bg-white rounded-full shadow-sm`} 
+                    style={{ transform: [{ translateX: isBreak ? 20 : 0 }] }}
+                  />
                 </TouchableOpacity>
               </View>
 
               {/* Subject / Break Name */}
-              <View className="mb-4">
+              <View className="mb-6">
                 {isBreak ? (
                   <>
-                    <Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-2">Break Name</Text>
+                    <Text className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 ml-1">Break Title</Text>
                     <TextInput
                       value={breakName}
                       onChangeText={setBreakName}
                       placeholder="e.g. Lunch Break"
-                      className="bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm font-bold text-gray-800 dark:text-slate-200"
+                      placeholderTextColor={isDark ? "#475569" : "#94a3b8"}
+                      className="bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl px-4 py-3.5 text-sm font-bold text-gray-800 dark:text-slate-200"
                     />
                   </>
                 ) : (
                   <>
-                    <Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-2">Subject *</Text>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
-                  {subjects.map((sub: any) => (
-                    <TouchableOpacity
-                      key={sub.subjectID}
-                      onPress={() => setFormSubjectID(sub.subjectID)}
-                      className={`px-4 py-2 rounded-xl border ${
-                        formSubjectID === sub.subjectID ? "bg-indigo-600 dark:bg-indigo-500 border-indigo-600 dark:border-indigo-500" : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700"
-                      }`}
-                      activeOpacity={0.8}
-                    >
-                      <Text className={`text-[11px] font-black ${
-                        formSubjectID === sub.subjectID ? "text-white" : "text-gray-600 dark:text-slate-400"
-                      }`}>
-                        {sub.subjectName}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </ScrollView>
+                    <View className="flex-row items-center justify-between mb-2 ml-1">
+                      <Text className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Select Subject *</Text>
+                      {formSubjectID && (
+                        <TouchableOpacity onPress={() => setFormSubjectID(null)}>
+                          <Text className="text-[10px] font-bold text-indigo-500 uppercase">Clear</Text>
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingBottom: 4 }}>
+                      {subjects.map((sub: any) => {
+                        const isSelected = formSubjectID === sub.subjectID;
+                        return (
+                          <TouchableOpacity
+                            key={sub.subjectID}
+                            onPress={() => setFormSubjectID(sub.subjectID)}
+                            className={`px-4 py-2.5 rounded-xl border ${
+                              isSelected 
+                                ? "bg-indigo-600 border-indigo-600 shadow-md shadow-indigo-500/30" 
+                                : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+                            }`}
+                            activeOpacity={0.8}
+                          >
+                            <Text className={`text-[11px] font-black uppercase tracking-tight ${
+                              isSelected ? "text-white" : "text-slate-600 dark:text-slate-400"
+                            }`}>
+                              {sub.subjectName}
+                            </Text>
+                          </TouchableOpacity>
+                        );
+                      })}
+                    </ScrollView>
                   </>
                 )}
               </View>
 
               {/* Teacher */}
               {!isBreak && (
-                <View className="mb-4">
-                <Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-2">Teacher *</Text>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
-                  {teachers.map((t: any) => (
-                    <TouchableOpacity
-                      key={t.teacherID}
-                      onPress={() => setFormTeacherID(t.teacherID)}
-                      className={`px-4 py-2 rounded-xl border ${
-                        formTeacherID === t.teacherID ? "bg-indigo-600 dark:bg-indigo-500 border-indigo-600 dark:border-indigo-500" : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700"
-                      }`}
-                      activeOpacity={0.8}
-                    >
-                      <Text className={`text-[11px] font-black ${
-                        formTeacherID === t.teacherID ? "text-white" : "text-gray-600 dark:text-slate-400"
-                      }`}>
-                        {t.firstName} {t.lastName}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </ScrollView>
+                <View className="mb-6">
+                  <View className="flex-row items-center justify-between mb-2 ml-1">
+                    <Text className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Assign Teacher *</Text>
+                    {formTeacherID && (
+                      <TouchableOpacity onPress={() => setFormTeacherID(null)}>
+                        <Text className="text-[10px] font-bold text-emerald-500 uppercase">Clear</Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, paddingBottom: 4 }}>
+                    {teachers.map((t: any) => {
+                      const isSelected = formTeacherID === t.teacherID;
+                      return (
+                        <TouchableOpacity
+                          key={t.teacherID}
+                          onPress={() => setFormTeacherID(t.teacherID)}
+                          className={`px-4 py-2.5 rounded-xl border ${
+                            isSelected 
+                              ? "bg-emerald-600 border-emerald-600 shadow-md shadow-emerald-500/30" 
+                              : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+                          }`}
+                          activeOpacity={0.8}
+                        >
+                          <Text className={`text-[11px] font-black uppercase tracking-tight ${
+                            isSelected ? "text-white" : "text-slate-600 dark:text-slate-400"
+                          }`}>
+                            {t.firstName} {t.lastName}
+                          </Text>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </ScrollView>
                 </View>
               )}
 
-              {/* Time */}
-              <View className="flex-row gap-3 mb-4">
+              {/* Time Selection */}
+              <View className="flex-row gap-4 mb-6">
                 <View className="flex-1">
-                  <Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-2">Start Time *</Text>
-                  <TextInput
-                    value={formStart}
-                    onChangeText={setFormStart}
-                    placeholder="08:00"
-                    className="bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm font-bold text-gray-800 dark:text-slate-200"
-                  />
+                  <Text className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 ml-1">Starts At *</Text>
+                  <TouchableOpacity
+                    onPress={() => setShowStartPicker(true)}
+                    activeOpacity={0.7}
+                    className="bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl px-4 py-3.5 flex-row items-center justify-between"
+                  >
+                    <Text className="text-sm font-black text-gray-800 dark:text-slate-200">{formStart}</Text>
+                    <View className="w-7 h-7 rounded-lg bg-indigo-500/10 items-center justify-center">
+                      <AppIcon name="timetable" size={14} color="#6366F1" />
+                    </View>
+                  </TouchableOpacity>
+                  {showStartPicker && (
+                    <DateTimePicker
+                      value={parseTimeString(formStart)}
+                      mode="time"
+                      is24Hour={true}
+                      display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                      onChange={(event, selectedDate) => {
+                        setShowStartPicker(Platform.OS === 'ios');
+                        if (selectedDate) {
+                          setFormStart(formatTimeToString(selectedDate));
+                        }
+                      }}
+                    />
+                  )}
                 </View>
                 <View className="flex-1">
-                  <Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-2">End Time *</Text>
-                  <TextInput
-                    value={formEnd}
-                    onChangeText={setFormEnd}
-                    placeholder="09:00"
-                    className="bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm font-bold text-gray-800 dark:text-slate-200"
-                  />
+                  <Text className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 ml-1">Ends At *</Text>
+                  <TouchableOpacity
+                    onPress={() => setShowEndPicker(true)}
+                    activeOpacity={0.7}
+                    className="bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl px-4 py-3.5 flex-row items-center justify-between"
+                  >
+                    <Text className="text-sm font-black text-gray-800 dark:text-slate-200">{formEnd}</Text>
+                    <View className="w-7 h-7 rounded-lg bg-indigo-500/10 items-center justify-center">
+                      <AppIcon name="timetable" size={14} color="#6366F1" />
+                    </View>
+                  </TouchableOpacity>
+                  {showEndPicker && (
+                    <DateTimePicker
+                      value={parseTimeString(formEnd)}
+                      mode="time"
+                      is24Hour={true}
+                      display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                      onChange={(event, selectedDate) => {
+                        setShowEndPicker(Platform.OS === 'ios');
+                        if (selectedDate) {
+                          setFormEnd(formatTimeToString(selectedDate));
+                        }
+                      }}
+                    />
+                  )}
                 </View>
               </View>
 
-              {/* Room */}
-              <View className="mb-4">
-                <Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-2">Room Number</Text>
-                <TextInput
-                  value={formRoom}
-                  onChangeText={setFormRoom}
-                  placeholder="e.g. 101, Lab A"
-                  className="bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm font-bold text-gray-800 dark:text-slate-200"
-                />
+              {/* Room Number */}
+              <View className="mb-6">
+                <Text className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 ml-1">Room / Location</Text>
+                <View className="relative">
+                  <TextInput
+                    value={formRoom}
+                    onChangeText={setFormRoom}
+                    placeholder="e.g. Room 101, Science Lab"
+                    placeholderTextColor={isDark ? "#475569" : "#94a3b8"}
+                    className="bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl px-4 py-3.5 pl-11 text-sm font-bold text-gray-800 dark:text-slate-200"
+                  />
+                  <View className="absolute left-4 top-3.5">
+                    <AppIcon name="admission" size={16} color="#94a3b8" />
+                  </View>
+                </View>
               </View>
             </ScrollView>
 

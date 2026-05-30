@@ -20,6 +20,10 @@ export const ROLE_IDS = {
 } as const;
 
 export type AppRoute =
+  | "/(app)/homework"
+  | "/(app)/classwork"
+  | "/(app)/notebook"
+  | "/(app)/notices"
   | "/(app)/dashboard"
   | "/(app)/menu"
   | "/(app)/student-profile"

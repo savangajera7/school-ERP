@@ -15,14 +15,14 @@ import type { AppIconName } from "@/constants/appIcons";
 import type { AppRoute } from "@/constants/rolePermissions";
 
 const QUICK_ACTIONS: (QuickAction & { route: AppRoute })[] = [
-  { title: "Homework", icon: "homework", route: "/(parent)/homework" },
-  { title: "Attendance", icon: "attendance", route: "/(parent)/attendance" },
+  { title: "Homework", icon: "homework", route: "/(app)/homework" },
+  { title: "Attendance", icon: "attendance", route: "/(app)/attendance" },
   { title: "Fees", icon: "fees", route: "/(parent)/fees" },
   { title: "Exams", icon: "exams", route: "/(parent)/exam" },
   { title: "Exam Marks", icon: "exams", route: "/(parent)/result" },
   { title: "Results", icon: "results", route: "/(parent)/result" },
   { title: "Timetable", icon: "timetable", route: "/(admin)/timetable" },
-  { title: "Notices", icon: "notices", route: "/(parent)/notices" },
+  { title: "Notices", icon: "notices", route: "/(app)/notices" },
   { title: "Syllabus", icon: "syllabus", route: "/(parent)/syllabus" },
   { title: "Profile", icon: "profile", route: "/(app)/profile" },
 ];
@@ -59,7 +59,7 @@ export default function ParentDashboardScreen() {
           subtitle="Excellent"
           backgroundColor="#E0F2FE"
           textColor="#0369A1"
-          onPress={() => router.push("/(parent)/attendance")}
+          onPress={() => router.push("/(app)/attendance")}
         />
         <StatCard
           icon="fees"

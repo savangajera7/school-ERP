@@ -9,11 +9,11 @@ import { premiumCardShadow } from "@/constants/premiumStyles";
 
 const LINKS: { title: string; href: string; icon: AppIconName; desc: string; category: string }[] = [
   { title: "Attendance", href: "/(app)/attendance", icon: "attendance", desc: "Mark and manage student attendance", category: "Classroom" },
-  { title: "Homework", href: "/(teacher)/homework", icon: "homework", desc: "Assign and review student homework", category: "Classroom" },
-  { title: "Classwork", href: "/(teacher)/classwork", icon: "classwork", desc: "Manage daily classroom activities", category: "Classroom" },
-  { title: "Notebook", href: "/(teacher)/notebook", icon: "notebook", desc: "Digital student notebooks", category: "Classroom" },
+  { title: "Homework", href: "/(app)/homework", icon: "homework", desc: "Assign and review student homework", category: "Classroom" },
+  { title: "Classwork", href: "/(app)/classwork", icon: "classwork", desc: "Manage daily classroom activities", category: "Classroom" },
+  { title: "Notebook", href: "/(app)/notebook", icon: "notebook", desc: "Digital student notebooks", category: "Classroom" },
   { title: "Exam Marks", href: "/(teacher)/exam-marks", icon: "exams", desc: "Record assessment and exam scores", category: "Assessment" },
-  { title: "Notices", href: "/(teacher)/notice", icon: "notices", desc: "Post class or school announcements", category: "Communication" },
+  { title: "Notices", href: "/(app)/notices", icon: "notices", desc: "Post class or school announcements", category: "Communication" },
   { title: "Timetable", href: "/(admin)/timetable", icon: "timetable", desc: "Personal teaching schedule", category: "Schedule" },
   { title: "Profile", href: "/(app)/profile", icon: "profile", desc: "Professional profile and settings", category: "Account" },
 ];

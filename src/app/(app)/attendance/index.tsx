@@ -1,3 +1,4 @@
+import { ParentAttendanceView } from "@/components/attendance/ParentAttendanceView";
 import { Alert } from "react-native";
 import React, { useEffect, useMemo, useState } from "react";
 import {
@@ -86,7 +87,7 @@ const STATUS_CONFIG = {
   },
 } as const;
 
-export default function UnifiedAttendanceScreen() {
+export function AdminTeacherAttendanceView() {
   const isDark = useColorScheme() === "dark";
   const dialog = useDialog();
   const access = useAttendanceAccess();
@@ -642,4 +643,15 @@ export default function UnifiedAttendanceScreen() {
       )}
     </PremiumScreenLayout>
   );
+}
+
+
+export default function UnifiedAttendanceScreen() {
+  const { isParent, isStudent } = useAttendanceAccess();
+
+  if (isParent || isStudent) {
+    return <ParentAttendanceView />;
+  }
+
+  return <AdminTeacherAttendanceView />;
 }
