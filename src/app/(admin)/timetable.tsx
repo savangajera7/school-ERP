@@ -26,6 +26,10 @@ import { useGetApiTeacherPermissionsTeacherId } from "@/api/generated/6-teacher-
 import { useGetApiSubjectGetSubjectList } from "@/api/generated/subject/subject";
 import { useQueryClient } from "@tanstack/react-query";
 import { useDialog } from "@/components/ui/AppDialog";
+import { SchoolTheme } from "@/constants/theme";
+import { useColorScheme } from "nativewind";
+import { premiumCardShadow } from "@/constants/premiumStyles";
+import { ResponsiveDataList, EntityActionButtons, type TableColumn } from "@/components/shared";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -78,163 +82,15 @@ interface TimetableView {
 
 // ─── Period Card ─────────────────────────────────────────────────────────────
 
-function PeriodCard({
-  period, index, canEdit,
-  onEdit, onDelete,
-}: {
-  period: Period; index: number; canEdit: boolean;
-  onEdit: (p: Period) => void; onDelete: (p: Period) => void;
-}) {
-  const color = subjectColor(period.subjectName);
-  return (
-    <View
-      className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 mb-3 overflow-hidden"
-      style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 8, elevation: 2 }}
-    >
-      {/* Color accent bar */}
-      <View style={{ height: 3, backgroundColor: color }} />
-      <View className="p-4">
-        <View className="flex-row items-start justify-between gap-2">
-          <View className="flex-1">
-            {/* Time badge */}
-            {period.hasOverlap && (
-              <View className="bg-red-50 px-2 py-1 rounded-lg border border-red-200 self-start mb-2 flex-row items-center gap-1">
-                <AppIcon name="warning" size={10} color="#DC2626" />
-                <Text className="text-[9px] font-black text-red-600 uppercase tracking-wider">Time Overlap</Text>
-              </View>
-            )}
-            <View className="flex-row items-center gap-2 mb-2">
-              <View className="bg-gray-100 dark:bg-slate-700 px-2.5 py-1 rounded-lg flex-row items-center gap-1.5">
-                <AppIcon name="clock" size={11} color="#6B7280" />
-                <Text className="text-[11px] font-black text-gray-600 dark:text-slate-400">
-                  {period.startTime} – {period.endTime}
-                </Text>
-              </View>
-              {period.roomNumber ? (
-                <View className="bg-blue-50 border border-blue-100 px-2 py-1 rounded-lg">
-                  <Text className="text-[10px] font-black text-blue-600 uppercase">{period.roomNumber}</Text>
-                </View>
-              ) : null}
-            </View>
-            {/* Subject */}
-            <Text className="text-[15px] font-black text-gray-900 dark:text-slate-100 mb-1" numberOfLines={1}>
-              {period.subjectName}
-            </Text>
-            {/* Teacher / Class */}
-            <View className="flex-row items-center gap-1.5">
-              <AppIcon name="teachers" size={12} color="#6B7280" />
-              <Text className="text-[12px] font-semibold text-gray-500 dark:text-slate-400" numberOfLines={1}>
-                {period.teacherName || period.className || "—"}
-              </Text>
-            </View>
-          </View>
-          {/* Period number */}
-          <View className="w-8 h-8 rounded-xl items-center justify-center" style={{ backgroundColor: color + "18" }}>
-            <Text className="text-[13px] font-black" style={{ color }}>{index + 1}</Text>
-          </View>
-        </View>
-        {/* Actions */}
-        {canEdit && (
-          <View className="flex-row gap-2 mt-3 pt-3 border-t border-gray-50 dark:border-slate-700/50">
-            <TouchableOpacity
-              onPress={() => onEdit(period)}
-              className="flex-1 flex-row items-center justify-center gap-1.5 py-2 bg-indigo-50 border border-indigo-100 rounded-xl"
-              activeOpacity={0.7}
-            >
-              <AppIcon name="edit" size={13} color="#4F46E5" />
-              <Text className="text-[11px] font-black text-indigo-700 uppercase">Edit</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => onDelete(period)}
-              className="flex-1 flex-row items-center justify-center gap-1.5 py-2 bg-rose-50 border border-rose-100 rounded-xl"
-              activeOpacity={0.7}
-            >
-              <AppIcon name="delete" size={13} color="#E11D48" />
-              <Text className="text-[11px] font-black text-rose-700 uppercase">Delete</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      </View>
-    </View>
-  );
-}
-
-// ─── Desktop Table Row ────────────────────────────────────────────────────────
-
-function TableRow({
-  period, index, canEdit, onEdit, onDelete,
-}: {
-  period: Period; index: number; canEdit: boolean;
-  onEdit: (p: Period) => void; onDelete: (p: Period) => void;
-}) {
-  const color = subjectColor(period.subjectName);
-  return (
-    <View className="flex-row items-center px-5 py-3.5 border-b border-gray-50 dark:border-slate-700 bg-white dark:bg-slate-800">
-      {/* # */}
-      <View className="w-10 items-center">
-        <View className="w-6 h-6 rounded-lg items-center justify-center" style={{ backgroundColor: color + "18" }}>
-          <Text className="text-[11px] font-black" style={{ color }}>{index + 1}</Text>
-        </View>
-      </View>
-      {/* Time */}
-      <View className="w-[140px]">
-        <Text className="text-[12px] font-black text-gray-700 dark:text-slate-300">{period.startTime} – {period.endTime}</Text>
-        {period.hasOverlap && (
-          <View className="bg-red-50 px-1.5 py-0.5 rounded-md border border-red-200 self-start mt-1 flex-row items-center gap-1">
-            <AppIcon name="warning" size={8} color="#DC2626" />
-            <Text className="text-[8px] font-black text-red-600 uppercase">Overlap</Text>
-          </View>
-        )}
-      </View>
-      {/* Subject */}
-      <View className="flex-1 flex-row items-center gap-2">
-        <View className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
-        <Text className="text-sm font-bold text-gray-800 dark:text-slate-200" numberOfLines={1}>{period.subjectName}</Text>
-      </View>
-      {/* Teacher / Class */}
-      <View className="w-[160px]">
-        <Text className="text-sm text-gray-500 dark:text-slate-400 font-semibold" numberOfLines={1}>
-          {period.teacherName || period.className || "—"}
-        </Text>
-      </View>
-      {/* Room */}
-      <View className="w-[90px]">
-        {period.roomNumber ? (
-          <View className="bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-lg self-start">
-            <Text className="text-[10px] font-black text-blue-600 uppercase">{period.roomNumber}</Text>
-          </View>
-        ) : (
-          <Text className="text-sm text-gray-300">—</Text>
-        )}
-      </View>
-      {/* Actions */}
-      {canEdit && (
-        <View className="w-[80px] flex-row gap-1.5 justify-end">
-          <TouchableOpacity
-            onPress={() => onEdit(period)}
-            className="bg-indigo-50 w-[28px] h-[28px] rounded-lg items-center justify-center border border-indigo-100"
-            activeOpacity={0.7}
-          >
-            <AppIcon name="edit" size={13} color="#4F46E5" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => onDelete(period)}
-            className="bg-rose-50 w-[28px] h-[28px] rounded-lg items-center justify-center border border-rose-100"
-            activeOpacity={0.7}
-          >
-            <AppIcon name="delete" size={13} color="#E11D48" />
-          </TouchableOpacity>
-        </View>
-      )}
-    </View>
-  );
-}
+// ─── Desktop Table Row Removed ───────────────────────────────────────────────
 
 // ─── Main Screen ─────────────────────────────────────────────────────────────
 
 export default function TimetableScreen() {
   const { isSchoolAdmin, isAdmin, isTeacher, isParent, isStudent, userData } = usePermissions();
   const { isMobile } = useResponsive();
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === "dark";
   const queryClient = useQueryClient();
   const dialog = useDialog();
 
@@ -299,7 +155,7 @@ export default function TimetableScreen() {
     return { ClassID: selectedClassID, Day: selectedDay };
   }, [isViewOnly, selectedClassID, selectedDay]);
 
-  const { data: timetableRaw, isLoading, isError, refetch } = useGetApiTimetableGet(
+  const { data: timetableRaw, isLoading, isError, error, refetch } = useGetApiTimetableGet(
     queryParams ?? undefined,
     { query: { enabled: !!queryParams } }
   );
@@ -429,6 +285,138 @@ export default function TimetableScreen() {
   }, [timetableView?.periods]);
   const periods = sortedPeriods;
 
+  const tableColumns: TableColumn<Period>[] = [
+    {
+      key: "rowNo", header: "#", width: 48, align: "center",
+      render: (p, i) => {
+        const color = subjectColor(p.subjectName);
+        return (
+          <View className="w-6 h-6 rounded-lg items-center justify-center" style={{ backgroundColor: color + "30" }}>
+            <Text className="text-[11px] font-black" style={{ color }}>{i + 1}</Text>
+          </View>
+        );
+      },
+    },
+    {
+      key: "time", header: "Time", width: 140,
+      render: (p) => (
+        <View>
+          <Text className="text-[12px] font-black" style={{ color: isDark ? SchoolTheme.textDark : "#374151" }}>{p.startTime} – {p.endTime}</Text>
+          {p.hasOverlap && (
+            <View className="px-1.5 py-0.5 rounded-md border self-start mt-1 flex-row items-center gap-1" style={{ backgroundColor: isDark ? "#450A0A" : "#FEF2F2", borderColor: isDark ? "#7F1D1D" : "#FECACA" }}>
+              <AppIcon name="warning" size={8} color={isDark ? "#F87171" : "#DC2626"} />
+              <Text className="text-[8px] font-black uppercase" style={{ color: isDark ? "#FCA5A5" : "#DC2626" }}>Overlap</Text>
+            </View>
+          )}
+        </View>
+      ),
+    },
+    {
+      key: "subject", header: "Subject", flex: 1,
+      render: (p) => {
+        const color = subjectColor(p.subjectName);
+        return (
+          <View className="flex-row items-center gap-2">
+            <View className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
+            <Text className="text-sm font-bold" numberOfLines={1} style={{ color: isDark ? SchoolTheme.textDark : "#1F2937" }}>{p.subjectName}</Text>
+          </View>
+        );
+      },
+    },
+    {
+      key: "teacherClass", header: isTeacher ? "Class" : "Teacher", width: 160,
+      render: (p) => (
+        <Text className="text-sm font-semibold" numberOfLines={1} style={{ color: isDark ? SchoolTheme.textSecondaryDark : "#6B7280" }}>
+          {p.teacherName || p.className || "—"}
+        </Text>
+      ),
+    },
+    {
+      key: "room", header: "Room", width: 90,
+      render: (p) => (
+        p.roomNumber ? (
+          <View className="border px-2 py-0.5 rounded-lg self-start" style={{ backgroundColor: isDark ? "#1E3A8A" : "#EFF6FF", borderColor: isDark ? "#1E40AF" : "#DBEAFE" }}>
+            <Text className="text-[10px] font-black uppercase" style={{ color: isDark ? "#60A5FA" : "#2563EB" }}>{p.roomNumber}</Text>
+          </View>
+        ) : <Text className="text-sm" style={{ color: isDark ? "#475569" : "#D1D5DB" }}>—</Text>
+      ),
+    },
+    {
+      key: "actions", header: "Actions", width: 80, align: "right",
+      render: (p) => canEdit ? (
+        <View className="flex-row gap-1.5 justify-end">
+          <EntityActionButtons onEdit={() => openEdit(p)} onDelete={() => setDeleteTarget(p)} />
+        </View>
+      ) : <></>,
+    },
+  ];
+
+  const renderPeriodCard = (period: Period, index: number) => {
+    const color = subjectColor(period.subjectName);
+    return (
+      <View
+        className="rounded-2xl border mb-3 overflow-hidden"
+        style={[
+          premiumCardShadow,
+          {
+            backgroundColor: isDark ? SchoolTheme.cardDark : "#FFFFFF",
+            borderColor: isDark ? SchoolTheme.borderDark : "#F3F4F6",
+          }
+        ]}
+      >
+        <View style={{ height: 3, backgroundColor: color }} />
+        <View className="p-4">
+          <View className="flex-row items-start justify-between gap-2">
+            <View className="flex-1">
+              {period.hasOverlap && (
+                <View className="px-2 py-1 rounded-lg border self-start mb-2 flex-row items-center gap-1" style={{ backgroundColor: isDark ? "#450A0A" : "#FEF2F2", borderColor: isDark ? "#7F1D1D" : "#FECACA" }}>
+                  <AppIcon name="warning" size={10} color={isDark ? "#F87171" : "#DC2626"} />
+                  <Text className="text-[9px] font-black uppercase tracking-wider" style={{ color: isDark ? "#FCA5A5" : "#DC2626" }}>Time Overlap</Text>
+                </View>
+              )}
+              <View className="flex-row items-center gap-2 mb-2">
+                <View className="px-2.5 py-1 rounded-lg flex-row items-center gap-1.5" style={{ backgroundColor: isDark ? "#1E293B" : "#F3F4F6" }}>
+                  <AppIcon name="clock" size={11} color={isDark ? "#94A3B8" : "#6B7280"} />
+                  <Text className="text-[11px] font-black" style={{ color: isDark ? "#CBD5E1" : "#4B5563" }}>
+                    {period.startTime} – {period.endTime}
+                  </Text>
+                </View>
+                {period.roomNumber ? (
+                  <View className="border px-2 py-1 rounded-lg" style={{ backgroundColor: isDark ? "#1E3A8A" : "#EFF6FF", borderColor: isDark ? "#1E40AF" : "#DBEAFE" }}>
+                    <Text className="text-[10px] font-black uppercase" style={{ color: isDark ? "#60A5FA" : "#2563EB" }}>{period.roomNumber}</Text>
+                  </View>
+                ) : null}
+              </View>
+              <Text className="text-[15px] font-black mb-1" numberOfLines={1} style={{ color: isDark ? SchoolTheme.textDark : "#111827" }}>
+                {period.subjectName}
+              </Text>
+              <View className="flex-row items-center gap-1.5">
+                <AppIcon name="teachers" size={12} color={isDark ? SchoolTheme.textSecondaryDark : "#6B7280"} />
+                <Text className="text-[12px] font-semibold" numberOfLines={1} style={{ color: isDark ? SchoolTheme.textSecondaryDark : "#6B7280" }}>
+                  {period.teacherName || period.className || "—"}
+                </Text>
+              </View>
+            </View>
+            <View className="w-8 h-8 rounded-xl items-center justify-center" style={{ backgroundColor: color + "30" }}>
+              <Text className="text-[13px] font-black" style={{ color }}>{index + 1}</Text>
+            </View>
+          </View>
+          {canEdit && (
+            <View className="flex-row gap-2 mt-3 pt-3 border-t" style={{ borderColor: isDark ? SchoolTheme.borderDark : "#F9FAFB" }}>
+              <TouchableOpacity onPress={() => openEdit(period)} className="flex-1 flex-row items-center justify-center gap-1.5 py-2 border rounded-xl" style={{ backgroundColor: isDark ? "#1E3A8A" : "#EEF2FF", borderColor: isDark ? "#1E40AF" : "#E0E7FF" }} activeOpacity={0.7}>
+                <AppIcon name="edit" size={13} color={isDark ? "#818CF8" : "#4F46E5"} />
+                <Text className="text-[11px] font-black uppercase" style={{ color: isDark ? "#A5B4FC" : "#4338CA" }}>Edit</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setDeleteTarget(period)} className="flex-1 flex-row items-center justify-center gap-1.5 py-2 border rounded-xl" style={{ backgroundColor: isDark ? "#4C1D95" : "#FFF1F2", borderColor: isDark ? "#5B21B6" : "#FFE4E6" }} activeOpacity={0.7}>
+                <AppIcon name="delete" size={13} color={isDark ? "#F43F5E" : "#E11D48"} />
+                <Text className="text-[11px] font-black uppercase" style={{ color: isDark ? "#FDA4AF" : "#BE123C" }}>Delete</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+      </View>
+    );
+  };
   // ── Render ────────────────────────────────────────────────────────────────
   return (
     <PremiumScreenLayout
@@ -457,8 +445,8 @@ export default function TimetableScreen() {
     >
       {/* ── Filters bar ── */}
       <View
-        className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 px-4 py-4 mb-4"
-        style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 6, elevation: 2 }}
+        className="rounded-2xl border px-4 py-4 mb-4"
+        style={[premiumCardShadow, { backgroundColor: isDark ? SchoolTheme.cardDark : "#FFFFFF", borderColor: isDark ? SchoolTheme.borderDark : "#F3F4F6" }]}
       >
         {/* Class selector — admin & teacher */}
         {(isSchoolAdmin || isAdmin || isTeacher) && (
@@ -494,8 +482,8 @@ export default function TimetableScreen() {
       {/* ── Form Modal ── */}
       <Modal visible={formVisible} transparent animationType="fade">
         <SafeAreaView className="flex-1 bg-black/50 items-center justify-center p-4">
-          <View className="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-[500px] overflow-hidden"
-            style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.15, shadowRadius: 24, elevation: 8 }}
+          <View className="rounded-3xl w-full max-w-[500px] overflow-hidden"
+            style={[{ backgroundColor: isDark ? SchoolTheme.cardDark : "#FFFFFF" }, { shadowColor: "#000", shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.15, shadowRadius: 24, elevation: 8 }]}
           >
             {/* Header */}
             <View className="px-6 py-5 border-b border-gray-100 dark:border-slate-700 flex-row items-center justify-between">
@@ -519,31 +507,6 @@ export default function TimetableScreen() {
 
             {/* Form */}
             <ScrollView className="px-6 py-5" showsVerticalScrollIndicator={false}>
-              {/* Class selector (add mode only) */}
-              {(isSchoolAdmin || isAdmin || isTeacher) && !editingPeriod && (
-                <View className="mb-4">
-                  <Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-2">Class</Text>
-                  <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
-                    {classes.map((cls: any) => (
-                      <TouchableOpacity
-                        key={cls.classID}
-                        onPress={() => setFormClassID(cls.classID)}
-                        className={`px-4 py-2 rounded-xl border ${
-                          formClassID === cls.classID ? "bg-[#1A3C6E] dark:bg-blue-600 border-[#1A3C6E] dark:border-blue-600" : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700"
-                        }`}
-                        activeOpacity={0.8}
-                      >
-                        <Text className={`text-[11px] font-black uppercase ${
-                          formClassID === cls.classID ? "text-white" : "text-gray-600 dark:text-slate-400"
-                        }`}>
-                          {cls.className}
-                        </Text>
-                      </TouchableOpacity>
-                    ))}
-                  </ScrollView>
-                </View>
-              )}
-
               {/* Subject */}
               <View className="mb-4">
                 <Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-2">Subject *</Text>
@@ -655,8 +618,8 @@ export default function TimetableScreen() {
       {/* ── Delete Modal ── */}
       <Modal visible={!!deleteTarget} transparent animationType="fade">
         <SafeAreaView className="flex-1 bg-black/50 items-center justify-center p-4">
-          <View className="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-[420px] overflow-hidden"
-            style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.15, shadowRadius: 24, elevation: 8 }}
+          <View className="rounded-3xl w-full max-w-[420px] overflow-hidden"
+            style={[{ backgroundColor: isDark ? SchoolTheme.cardDark : "#FFFFFF" }, { shadowColor: "#000", shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.15, shadowRadius: 24, elevation: 8 }]}
           >
             {/* Header */}
             <View className="px-6 py-5 bg-rose-50 border-b border-rose-100 flex-row items-center gap-3">
@@ -718,7 +681,8 @@ export default function TimetableScreen() {
                 <TouchableOpacity
                   key={day}
                   onPress={() => setSelectedDay(day)}
-                  className={`px-4 py-2 rounded-xl border ${active ? `${c.bg} ${c.border}` : "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700"}`}
+                  className={`px-4 py-2 rounded-xl border ${active ? `${c.bg} ${c.border}` : ""}`}
+                  style={!active ? { backgroundColor: isDark ? SchoolTheme.cardDark : "#FFFFFF", borderColor: isDark ? SchoolTheme.borderDark : "#E5E7EB" } : {}}
                   activeOpacity={0.8}
                 >
                   <Text className={`text-[11px] font-black uppercase ${active ? c.text : "text-gray-500 dark:text-slate-400"}`}>
@@ -734,7 +698,7 @@ export default function TimetableScreen() {
       {/* ── Header info ── */}
       <View className="flex-row items-center justify-between mb-3 px-1">
         <View>
-          <Text className="text-[16px] font-black text-gray-900 dark:text-slate-100">
+          <Text className="text-[16px] font-black" style={{ color: isDark ? SchoolTheme.textDark : "#111827" }}>
             {selectedDay.charAt(0) + selectedDay.slice(1).toLowerCase()}'s Schedule
           </Text>
           <Text className="text-[12px] text-gray-400 dark:text-slate-500 font-semibold mt-0.5">
@@ -754,66 +718,21 @@ export default function TimetableScreen() {
       </View>
 
       {/* ── Content ── */}
-      {isLoading ? (
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color={Colors.primary} />
-          <Text className="text-gray-400 dark:text-slate-500 mt-3 font-semibold text-sm">Loading schedule...</Text>
-        </View>
-      ) : isError ? (
-        <View className="flex-1 items-center justify-center p-8">
-          <IconCircle name="timetable" size={64} iconSize={32} />
-          <Text className="text-gray-700 dark:text-slate-300 font-black text-base mt-4">Could not load timetable</Text>
-          <TouchableOpacity onPress={() => refetch()} className="mt-4 px-5 py-2 bg-blue-50 rounded-xl border border-blue-200">
-            <Text className="text-[#1A3C6E] font-black text-xs uppercase">Retry</Text>
-          </TouchableOpacity>
-        </View>
-      ) : periods.length === 0 ? (
-        <View className="flex-1 items-center justify-center p-8">
-          <IconCircle name="timetable" size={64} iconSize={32} />
-          <Text className="text-gray-700 dark:text-slate-300 font-black text-base mt-4">No periods scheduled</Text>
-          <Text className="text-gray-400 dark:text-slate-500 text-sm mt-1 text-center">
-            {canEdit ? "Tap \"Add Period\" to create the first period for this day." : "No classes scheduled for this day."}
-          </Text>
-        </View>
-      ) : isMobile ? (
-        <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 40 }}>
-          {periods.map((p, i) => (
-            <PeriodCard
-              key={p.timetableID ?? i}
-              period={p} index={i} canEdit={canEdit}
-              onEdit={openEdit} onDelete={setDeleteTarget}
-            />
-          ))}
-        </ScrollView>
-      ) : (
-        /* Desktop table */
-        <View className="flex-1 bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 overflow-hidden"
-          style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 8, elevation: 2 }}
-        >
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <View style={{ minWidth: 600 }}>
-          {/* Table header */}
-          <View className="flex-row items-center px-5 py-3 bg-gray-50 dark:bg-slate-800 border-b border-gray-100 dark:border-slate-700">
-            <View className="w-10"><Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase">#</Text></View>
-            <View className="w-[140px]"><Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider">Time</Text></View>
-            <View className="flex-1"><Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider">Subject</Text></View>
-            <View className="w-[160px]"><Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider">{isTeacher ? "Class" : "Teacher"}</Text></View>
-            <View className="w-[90px]"><Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider">Room</Text></View>
-            {canEdit && <View className="w-[80px]"><Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase text-right tracking-wider">Actions</Text></View>}
-          </View>
-          <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-            {periods.map((p, i) => (
-              <TableRow
-                key={p.timetableID ?? i}
-                period={p} index={i} canEdit={canEdit}
-                onEdit={openEdit} onDelete={setDeleteTarget}
-              />
-            ))}
-          </ScrollView>
-            </View>
-          </ScrollView>
-        </View>
-      )}
+      <View className="flex-1 mt-2">
+        <ResponsiveDataList
+          data={periods}
+          isLoading={isLoading}
+          isError={isError}
+          error={error}
+          onRefresh={refetch}
+          renderCard={renderPeriodCard}
+          tableColumns={tableColumns}
+          keyExtractor={(item, index) => item.timetableID ? String(item.timetableID) : String(index)}
+          emptyIcon="timetable"
+          emptyTitle="No periods scheduled"
+          emptyMessage={canEdit ? "Tap 'Add Period' to create the first period for this day." : "No classes scheduled for this day."}
+        />
+      </View>
     </PremiumScreenLayout>
   );
 }
