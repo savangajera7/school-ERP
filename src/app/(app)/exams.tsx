@@ -207,7 +207,7 @@ export default function ExamsManagementScreen() {
                     placeholder="Exam name"
                     value={examName}
                     onChangeText={setExamName}
-                    className="border border-gray-200 rounded-xl px-4 py-3"
+                    className="border border-gray-200 dark:border-slate-600 rounded-xl px-4 py-3"
                   />
                   <PremiumDatePicker
                     label="Exam Date"
@@ -223,14 +223,14 @@ export default function ExamsManagementScreen() {
                           className={`px-3 py-2 rounded-lg border ${
                             selectedClassId === Number(c.classID)
                               ? "bg-[#0d3666] border-[#0d3666]"
-                              : "border-gray-200"
+                              : "border-gray-200 dark:border-slate-600"
                           }`}
                         >
                           <Text
                             className={`text-xs font-bold ${
                               selectedClassId === Number(c.classID)
                                 ? "text-white"
-                                : "text-gray-600"
+                                : "text-gray-600 dark:text-slate-400"
                             }`}
                           >
                             {recordLabel(c, "className")}
@@ -273,7 +273,7 @@ export default function ExamsManagementScreen() {
 
           {activeTab === "marks" && (
             <View className="gap-4">
-              <Text className="text-xs font-bold text-gray-500 uppercase">Exam</Text>
+              <Text className="text-xs font-bold text-gray-500 dark:text-slate-400 uppercase">Exam</Text>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 <View className="flex-row gap-2">
                   {exams.map((e) => (
@@ -283,12 +283,12 @@ export default function ExamsManagementScreen() {
                       className={`px-3 py-2 rounded-lg border ${
                         selectedExamId === Number(e.examID)
                           ? "bg-[#0d3666] border-[#0d3666]"
-                          : "border-gray-200"
+                          : "border-gray-200 dark:border-slate-600"
                       }`}
                     >
                       <Text
                         className={`text-xs font-bold ${
-                          selectedExamId === Number(e.examID) ? "text-white" : "text-gray-600"
+                          selectedExamId === Number(e.examID) ? "text-white" : "text-gray-600 dark:text-slate-400"
                         }`}
                       >
                         {recordLabel(e, "examName")}
@@ -297,7 +297,7 @@ export default function ExamsManagementScreen() {
                   ))}
                 </View>
               </ScrollView>
-              <Text className="text-xs font-bold text-gray-500 uppercase">Subject</Text>
+              <Text className="text-xs font-bold text-gray-500 dark:text-slate-400 uppercase">Subject</Text>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 <View className="flex-row gap-2">
                   {subjects.map((s) => (
@@ -307,14 +307,14 @@ export default function ExamsManagementScreen() {
                       className={`px-3 py-2 rounded-lg border ${
                         selectedSubjectId === Number(s.subjectID)
                           ? "bg-[#0d3666] border-[#0d3666]"
-                          : "border-gray-200"
+                          : "border-gray-200 dark:border-slate-600"
                       }`}
                     >
                       <Text
                         className={`text-xs font-bold ${
                           selectedSubjectId === Number(s.subjectID)
                             ? "text-white"
-                            : "text-gray-600"
+                            : "text-gray-600 dark:text-slate-400"
                         }`}
                       >
                         {recordLabel(s, "subjectName")}
@@ -340,9 +340,9 @@ export default function ExamsManagementScreen() {
                   return (
                     <View
                       key={String(sid || i)}
-                      className="flex-row items-center justify-between bg-white border border-gray-100 rounded-xl p-4"
+                      className="flex-row items-center justify-between bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-xl p-4"
                     >
-                      <Text className="font-bold text-gray-800 flex-1">{name}</Text>
+                      <Text className="font-bold text-gray-800 dark:text-slate-200 flex-1">{name}</Text>
                       <TextInput
                         keyboardType="numeric"
                         placeholder="0–100"
@@ -350,7 +350,7 @@ export default function ExamsManagementScreen() {
                         onChangeText={(v) =>
                           setMarksByStudent((prev) => ({ ...prev, [sid]: v }))
                         }
-                        className="w-16 border border-gray-200 rounded-lg text-center font-bold"
+                        className="w-16 border border-gray-200 dark:border-slate-600 rounded-lg text-center font-bold"
                       />
                     </View>
                   );

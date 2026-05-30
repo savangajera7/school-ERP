@@ -76,7 +76,7 @@ export default function ChangePasswordScreen() {
       keyboard
     >
       <PremiumCard noAccent style={{ padding: 20, gap: 12 }}>
-        <Text className="text-sm text-gray-500">
+        <Text className="text-sm text-gray-500 dark:text-slate-400">
           Update your account password. Admin accounts should reset via the web portal or IT support.
         </Text>
         <TextInput
@@ -84,21 +84,21 @@ export default function ChangePasswordScreen() {
           secureTextEntry
           value={oldPassword}
           onChangeText={setOldPassword}
-          className="border border-gray-200 rounded-xl px-4 py-3 bg-white"
+          className="border border-gray-200 dark:border-slate-600 rounded-xl px-4 py-3 bg-white dark:bg-slate-800"
         />
         <TextInput
           placeholder="New password"
           secureTextEntry
           value={newPassword}
           onChangeText={setNewPassword}
-          className="border border-gray-200 rounded-xl px-4 py-3 bg-white"
+          className="border border-gray-200 dark:border-slate-600 rounded-xl px-4 py-3 bg-white dark:bg-slate-800"
         />
         <TextInput
           placeholder="Confirm new password"
           secureTextEntry
           value={confirm}
           onChangeText={setConfirm}
-          className="border border-gray-200 rounded-xl px-4 py-3 bg-white"
+          className="border border-gray-200 dark:border-slate-600 rounded-xl px-4 py-3 bg-white dark:bg-slate-800"
         />
         <Button label="Update password" onPress={handleSubmit} loading={loading} />
       </PremiumCard>

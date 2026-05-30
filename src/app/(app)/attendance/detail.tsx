@@ -83,10 +83,10 @@ export default function AttendanceDetailScreen() {
   }
 
   const filterChips: { key: typeof filter; label: string; count: number; color: string; bgActive: string; bgInactive: string }[] = [
-    { key: "all", label: "All", count: counts.total, color: "#1A3C6E", bgActive: "bg-[#1A3C6E]", bgInactive: "bg-white border-gray-200" },
-    { key: "present", label: "Present", count: counts.present, color: "#059669", bgActive: "bg-emerald-600", bgInactive: "bg-white border-emerald-200" },
-    { key: "absent", label: "Absent", count: counts.absent, color: "#DC2626", bgActive: "bg-rose-600", bgInactive: "bg-white border-rose-200" },
-    { key: "leave", label: "Leave", count: counts.leave, color: "#D97706", bgActive: "bg-amber-500", bgInactive: "bg-white border-amber-200" },
+    { key: "all", label: "All", count: counts.total, color: "#1A3C6E", bgActive: "bg-[#1A3C6E]", bgInactive: "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-600" },
+    { key: "present", label: "Present", count: counts.present, color: "#059669", bgActive: "bg-emerald-600", bgInactive: "bg-white dark:bg-slate-800 border-emerald-200" },
+    { key: "absent", label: "Absent", count: counts.absent, color: "#DC2626", bgActive: "bg-rose-600", bgInactive: "bg-white dark:bg-slate-800 border-rose-200" },
+    { key: "leave", label: "Leave", count: counts.leave, color: "#D97706", bgActive: "bg-amber-500", bgInactive: "bg-white dark:bg-slate-800 border-amber-200" },
   ];
 
   return (
@@ -109,21 +109,21 @@ export default function AttendanceDetailScreen() {
       }
     >
       {/* Audit + Summary card */}
-      <View className="bg-white rounded-2xl border border-gray-100 p-4 mb-3 mx-3 mt-3" style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 6, elevation: 2 }}>
+      <View className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 p-4 mb-3 mx-3 mt-3" style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 6, elevation: 2 }}>
         <View className="flex-row gap-4 mb-3">
           <View className="flex-1">
-            <Text className="text-[10px] font-black uppercase text-gray-400 mb-0.5">Marked by</Text>
-            <Text className="text-[13px] font-extrabold text-gray-900">{detail.takenBy || "—"}</Text>
+            <Text className="text-[10px] font-black uppercase text-gray-400 dark:text-slate-500 mb-0.5">Marked by</Text>
+            <Text className="text-[13px] font-extrabold text-gray-900 dark:text-slate-100">{detail.takenBy || "—"}</Text>
           </View>
           <View className="flex-1">
-            <Text className="text-[10px] font-black uppercase text-gray-400 mb-0.5">Last updated</Text>
-            <Text className="text-[13px] font-semibold text-gray-700">{detail.lastUpdatedBy || "—"}</Text>
+            <Text className="text-[10px] font-black uppercase text-gray-400 dark:text-slate-500 mb-0.5">Last updated</Text>
+            <Text className="text-[13px] font-semibold text-gray-700 dark:text-slate-300">{detail.lastUpdatedBy || "—"}</Text>
           </View>
         </View>
 
         {/* Filter chips */}
         {!isLoading && counts.total > 0 && (
-          <View className="flex-row gap-2 pt-3 border-t border-gray-100">
+          <View className="flex-row gap-2 pt-3 border-t border-gray-100 dark:border-slate-700">
             {filterChips.map((chip) => {
               const active = filter === chip.key;
               return (
@@ -133,10 +133,10 @@ export default function AttendanceDetailScreen() {
                   className={`flex-1 py-2 rounded-xl border items-center ${active ? chip.bgActive : chip.bgInactive}`}
                   activeOpacity={0.8}
                 >
-                  <Text className={`text-[10px] font-black uppercase ${active ? 'text-white' : 'text-gray-500'}`}>
+                  <Text className={`text-[10px] font-black uppercase ${active ? 'text-white' : 'text-gray-500 dark:text-slate-400'}`}>
                     {chip.label}
                   </Text>
-                  <Text className={`text-[16px] font-black ${active ? 'text-white' : 'text-gray-800'}`}>
+                  <Text className={`text-[16px] font-black ${active ? 'text-white' : 'text-gray-800 dark:text-slate-200'}`}>
                     {chip.count}
                   </Text>
                 </TouchableOpacity>
@@ -148,13 +148,13 @@ export default function AttendanceDetailScreen() {
 
       {/* Search */}
       <View className="px-3 mb-3">
-        <View className="flex-row items-center bg-white border border-gray-200 rounded-xl px-3 h-10">
+        <View className="flex-row items-center bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl px-3 h-10">
           <AppIcon name="search" size={15} color="#9CA3AF" />
           <TextInput
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholder="Search student..."
-            className="flex-1 ml-2 text-sm font-semibold text-gray-800"
+            className="flex-1 ml-2 text-sm font-semibold text-gray-800 dark:text-slate-200"
             placeholderTextColor="#9CA3AF"
           />
           {searchQuery.length > 0 && (
@@ -175,7 +175,7 @@ export default function AttendanceDetailScreen() {
           contentContainerStyle={{ paddingBottom: 80 }}
           ListEmptyComponent={
             <View className="items-center py-12">
-              <Text className="text-gray-400 font-semibold text-sm">No attendance data found.</Text>
+              <Text className="text-gray-400 dark:text-slate-500 font-semibold text-sm">No attendance data found.</Text>
             </View>
           }
           renderItem={({ item }) => {
@@ -188,11 +188,11 @@ export default function AttendanceDetailScreen() {
             return (
               <View className="mx-3 mb-2">
                 <View
-                  className="bg-white rounded-xl border border-gray-100 p-2.5 flex-row items-center"
+                  className="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 p-2.5 flex-row items-center"
                   style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.03, shadowRadius: 3, elevation: 1 }}
                 >
                   {/* Photo */}
-                  <View className="w-10 h-10 rounded-full bg-gray-50 border border-gray-200 items-center justify-center overflow-hidden mr-2.5">
+                  <View className="w-10 h-10 rounded-full bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-600 items-center justify-center overflow-hidden mr-2.5">
                     {item.studentPhoto ? (
                       <Image source={{ uri: item.studentPhoto }} style={{ width: 40, height: 40 }} resizeMode="cover" />
                     ) : (
@@ -202,10 +202,10 @@ export default function AttendanceDetailScreen() {
 
                   {/* Name + Roll + Remark */}
                   <View className="flex-1 mr-2">
-                    <Text className="text-[13px] font-bold text-gray-900" numberOfLines={1}>
+                    <Text className="text-[13px] font-bold text-gray-900 dark:text-slate-100" numberOfLines={1}>
                       {getAttendanceRowName(item)}
                     </Text>
-                    <Text className="text-[10px] text-gray-400 font-semibold">
+                    <Text className="text-[10px] text-gray-400 dark:text-slate-500 font-semibold">
                       Roll {getAttendanceRowRoll(item)}
                       {item.remark ? ` · "${item.remark}"` : ""}
                     </Text>

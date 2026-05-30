@@ -55,11 +55,11 @@ export default function AdminAttendanceReportsScreen() {
             key={t.key}
             onPress={() => setReportType(t.key)}
             className={`mr-2 px-4 py-2 rounded-xl border ${
-              reportType === t.key ? "bg-[#1A3C6E] border-[#1A3C6E]" : "bg-white border-gray-200"
+              reportType === t.key ? "bg-[#1A3C6E] border-[#1A3C6E]" : "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-600"
             }`}
           >
             <Text
-              className={`text-xs font-black ${reportType === t.key ? "text-white" : "text-gray-500"}`}
+              className={`text-xs font-black ${reportType === t.key ? "text-white" : "text-gray-500 dark:text-slate-400"}`}
             >
               {t.label}
             </Text>
@@ -72,12 +72,12 @@ export default function AdminAttendanceReportsScreen() {
       ) : (
         <ScrollView>
           {rows.length === 0 ? (
-            <Text className="text-gray-400 text-center py-8">No data for this report.</Text>
+            <Text className="text-gray-400 dark:text-slate-500 text-center py-8">No data for this report.</Text>
           ) : (
             rows.map((r, i) => (
-              <View key={i} className="bg-white border border-gray-100 rounded-xl px-4 py-3 mb-2">
-                <Text className="font-black text-gray-900">{getAttendanceRowName(r)}</Text>
-                <Text className="text-xs text-gray-500">
+              <View key={i} className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-xl px-4 py-3 mb-2">
+                <Text className="font-black text-gray-900 dark:text-slate-100">{getAttendanceRowName(r)}</Text>
+                <Text className="text-xs text-gray-500 dark:text-slate-400">
                   {r.className} · {normalizeAttendanceStatusFromApi(r.attendanceStatus)} ·{" "}
                   {r.attendanceDate?.slice(0, 10)}
                 </Text>

@@ -132,15 +132,15 @@ export default function ProfileScreen() {
             {childrenLoading ? (
               <View className="py-8 items-center">
                 <ActivityIndicator color={Colors.primary} />
-                <Text className="text-gray-400 text-xs font-bold mt-3 uppercase tracking-wider">Loading children…</Text>
+                <Text className="text-gray-400 dark:text-slate-500 text-xs font-bold mt-3 uppercase tracking-wider">Loading children…</Text>
               </View>
             ) : children.length === 0 ? (
-              <View className="py-8 px-5 bg-gray-50/50 rounded-2xl border border-gray-100 items-center justify-center">
+              <View className="py-8 px-5 bg-gray-50 dark:bg-slate-800/50 rounded-2xl border border-gray-100 dark:border-slate-700 items-center justify-center">
                 <AppIcon name="warning" size={24} color="#9CA3AF" />
-                <Text className="text-gray-500 text-sm font-black text-center mt-3">
+                <Text className="text-gray-500 dark:text-slate-400 text-sm font-black text-center mt-3">
                   No children linked yet
                 </Text>
-                <Text className="text-gray-400 text-[11px] font-bold text-center mt-1 uppercase tracking-tighter">
+                <Text className="text-gray-400 dark:text-slate-500 text-[11px] font-bold text-center mt-1 uppercase tracking-tighter">
                   Contact the school office to link your ward
                 </Text>
               </View>

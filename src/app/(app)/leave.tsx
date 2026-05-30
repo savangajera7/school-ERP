@@ -89,13 +89,13 @@ export default function LeaveScreen() {
           placeholder="Reason for leave..."
           value={reason}
           onChangeText={setReason}
-          className="border border-gray-200 rounded-xl px-4 py-3 mb-3 text-sm font-semibold text-gray-800 bg-gray-50"
+          className="border border-gray-200 dark:border-slate-600 rounded-xl px-4 py-3 mb-3 text-sm font-semibold text-gray-800 dark:text-slate-200 bg-gray-50 dark:bg-slate-800"
         />
         <Button label="Apply Leave" onPress={handleApply} loading={insertMutation.isPending} />
       </PremiumCard>
 
       {!canReviewLeave ? (
-        <Text className="text-center text-gray-500 px-6 py-8 text-sm">
+        <Text className="text-center text-gray-500 dark:text-slate-400 px-6 py-8 text-sm">
           Your leave request was submitted. The school office will update the status.
         </Text>
       ) : isLoading ? (
@@ -117,7 +117,7 @@ export default function LeaveScreen() {
             />
           )}
           ListEmptyComponent={
-            <Text className="text-center text-gray-500 py-8">No leave applications.</Text>
+            <Text className="text-center text-gray-500 dark:text-slate-400 py-8">No leave applications.</Text>
           }
         />
       )}

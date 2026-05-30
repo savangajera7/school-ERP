@@ -61,7 +61,7 @@ export default function StudentNoticeHistoryScreen() {
         actions={
           <View className="flex-1 mt-1">
             <Text 
-              className="text-sm text-gray-600 leading-relaxed font-semibold"
+              className="text-sm text-gray-600 dark:text-slate-400 leading-relaxed font-semibold"
               numberOfLines={isExpanded ? undefined : 3}
             >
               {item.description}
@@ -125,9 +125,9 @@ export default function StudentNoticeHistoryScreen() {
             onRefresh={refetch}
             refreshing={isLoading}
             ListEmptyComponent={
-              <View className="py-20 items-center justify-center bg-white rounded-3xl border border-gray-150 p-8 mt-2">
+              <View className="py-20 items-center justify-center bg-white dark:bg-slate-800 rounded-3xl border border-gray-150 dark:border-slate-700 p-8 mt-2">
                 <EmptyState icon="notices" title="No notices" message="Published notices will appear here" />
-                <Text className="text-gray-400 font-extrabold text-sm uppercase tracking-wider">No notices posted yet</Text>
+                <Text className="text-gray-400 dark:text-slate-500 font-extrabold text-sm uppercase tracking-wider">No notices posted yet</Text>
               </View>
             }
           />
@@ -141,9 +141,9 @@ export default function StudentNoticeHistoryScreen() {
             onRefresh={refetch}
             refreshing={isLoading}
             ListEmptyComponent={
-              <View className="py-20 items-center justify-center bg-white rounded-3xl border border-gray-150 p-8 mt-2">
+              <View className="py-20 items-center justify-center bg-white dark:bg-slate-800 rounded-3xl border border-gray-150 dark:border-slate-700 p-8 mt-2">
                 <EmptyState icon="notices" title="No notices" message="Published notices will appear here" />
-                <Text className="text-gray-400 font-extrabold text-sm uppercase tracking-wider">No announcements posted yet</Text>
+                <Text className="text-gray-400 dark:text-slate-500 font-extrabold text-sm uppercase tracking-wider">No announcements posted yet</Text>
               </View>
             }
             renderItem={({ item, index }) => {
@@ -151,7 +151,7 @@ export default function StudentNoticeHistoryScreen() {
               return (
                 <Card 
                   key={item.id} 
-                  className="bg-white border border-gray-150 p-5 rounded-2xl mb-4 relative overflow-hidden flex-col shadow-sm"
+                  className="bg-white dark:bg-slate-800 border border-gray-150 dark:border-slate-700 p-5 rounded-2xl mb-4 relative overflow-hidden flex-col shadow-sm"
                 >
                   <View className="w-1.5 absolute left-0 top-0 bottom-0" style={{ backgroundColor: Colors.primary }} />
                   
@@ -159,10 +159,10 @@ export default function StudentNoticeHistoryScreen() {
                     <View className="flex-row justify-between items-center mb-3">
                       <View className="flex-row items-center gap-1.5">
                         <Text className="text-xs">📅</Text>
-                        <Text className="text-xs text-gray-400 font-extrabold">{item.date}</Text>
+                        <Text className="text-xs text-gray-400 dark:text-slate-500 font-extrabold">{item.date}</Text>
                       </View>
                       <View className="flex-row items-center gap-1.5">
-                        <Text className="text-[10px] text-gray-400">👤</Text>
+                        <Text className="text-[10px] text-gray-400 dark:text-slate-500">👤</Text>
                         <Text className="text-[10px] text-gray-450 font-black uppercase tracking-wider">
                           Author: {item.author}
                         </Text>
@@ -170,9 +170,9 @@ export default function StudentNoticeHistoryScreen() {
                     </View>
 
                     <View className="flex-row justify-between items-center">
-                      <Text className="text-[16px] font-black text-gray-900 mb-2 flex-1">{item.title}</Text>
+                      <Text className="text-[16px] font-black text-gray-900 dark:text-slate-100 mb-2 flex-1">{item.title}</Text>
                       {item.description.length > 200 && (
-                        <TouchableOpacity onPress={() => toggleExpand(item.id)} className="bg-gray-50 border border-gray-150 px-3 py-1.5 rounded-xl">
+                        <TouchableOpacity onPress={() => toggleExpand(item.id)} className="bg-gray-50 dark:bg-slate-800 border border-gray-150 dark:border-slate-700 px-3 py-1.5 rounded-xl">
                           <Text 
                             className="text-[10px] font-black uppercase tracking-wide"
                             style={{ color: Colors.primary }}
@@ -183,9 +183,9 @@ export default function StudentNoticeHistoryScreen() {
                       )}
                     </View>
 
-                    <View className="bg-gray-50/50 border border-gray-100 rounded-xl p-3.5 mt-2">
+                    <View className="bg-gray-50 dark:bg-slate-800/50 border border-gray-100 dark:border-slate-700 rounded-xl p-3.5 mt-2">
                       <Text 
-                        className="text-sm text-gray-700 leading-7 font-semibold"
+                        className="text-sm text-gray-700 dark:text-slate-300 leading-7 font-semibold"
                         numberOfLines={isExpanded ? undefined : 3}
                       >
                         {item.description}

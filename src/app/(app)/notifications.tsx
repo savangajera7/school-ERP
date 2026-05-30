@@ -54,7 +54,7 @@ export default function NotificationsScreen() {
           refreshing={isLoading}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
-            <View className="py-20 items-center justify-center bg-white rounded-3xl border border-gray-150 p-8 mt-2">
+            <View className="py-20 items-center justify-center bg-white dark:bg-slate-800 rounded-3xl border border-gray-150 dark:border-slate-700 p-8 mt-2">
               <EmptyState icon="bell" title="Inbox empty" message="You have no new notifications" />
             </View>
           }
@@ -69,7 +69,7 @@ export default function NotificationsScreen() {
                 subtitle={item.message || ""}
                 accentColor={item.isRead ? "#94A3B8" : Colors.primary}
                 icon={
-                  <View className={`w-10 h-10 rounded-xl items-center justify-center ${item.isRead ? 'bg-gray-50 border-gray-100' : 'bg-blue-50 border-blue-100'} border`}>
+                  <View className={`w-10 h-10 rounded-xl items-center justify-center ${item.isRead ? 'bg-gray-50 dark:bg-slate-800 border-gray-100 dark:border-slate-700' : 'bg-blue-50 border-blue-100'} border`}>
                     <IconCircle 
                       name={item.notificationType === 'Alert' ? 'warning' : 'bell'} 
                       size={40} 

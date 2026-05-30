@@ -61,8 +61,8 @@ export default function SubjectsScreen() {
     >
       {canManageSubjects && (
       <PremiumCard noAccent style={{ padding: 16, marginHorizontal: 16, marginBottom: 12, gap: 8 }}>
-        <TextInput placeholder="Subject name *" value={subjectName} onChangeText={setSubjectName} className="border border-gray-200 rounded-xl px-4 py-2" />
-        <TextInput placeholder="Code (optional)" value={subjectCode} onChangeText={setSubjectCode} className="border border-gray-200 rounded-xl px-4 py-2" />
+        <TextInput placeholder="Subject name *" value={subjectName} onChangeText={setSubjectName} className="border border-gray-200 dark:border-slate-600 rounded-xl px-4 py-2" />
+        <TextInput placeholder="Code (optional)" value={subjectCode} onChangeText={setSubjectCode} className="border border-gray-200 dark:border-slate-600 rounded-xl px-4 py-2" />
         <Button label="Add subject" onPress={handleAdd} loading={insertMutation.isPending} />
       </PremiumCard>
       )}

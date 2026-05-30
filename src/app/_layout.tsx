@@ -11,6 +11,8 @@ import { AppDialogProvider } from "@/components/ui/AppDialog";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { AppUpdateModal } from "@/components/updates/AppUpdateModal";
 import { useAppUpdate } from "@/hooks/useAppUpdate";
+import { useColorScheme } from "nativewind";
+import { View } from "react-native";
 import "../../global.css";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -31,6 +33,7 @@ const queryClient = new QueryClient({
 export default function RootLayout() {
   const [isReady, setIsReady] = useState(false);
   const appUpdate = useAppUpdate();
+  const { colorScheme } = useColorScheme();
 
   useEffect(() => {
     // Simulate some loading time for assets/fonts if needed
@@ -69,24 +72,26 @@ export default function RootLayout() {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <SafeAreaProvider>
-        <ToastProvider>
-          <AppDialogProvider>
-            <NotificationProvider>
-              <StatusBar style="dark" />
-              <AuthGate />
-              <AppUpdateModal
-                visible={appUpdate.visible}
-                manifest={appUpdate.manifest}
-                apkUrl={appUpdate.apkUrl}
-                installedVersion={appUpdate.installedVersion}
-                onDismiss={appUpdate.dismiss}
-              />
-            </NotificationProvider>
-          </AppDialogProvider>
-        </ToastProvider>
-      </SafeAreaProvider>
-    </QueryClientProvider>
+    <View style={{ flex: 1 }} className={colorScheme === "dark" ? "dark bg-[#0F172A]" : "bg-[#F8F9FA]"}>
+      <QueryClientProvider client={queryClient}>
+        <SafeAreaProvider>
+          <ToastProvider>
+            <AppDialogProvider>
+              <NotificationProvider>
+                <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
+                <AuthGate />
+                <AppUpdateModal
+                  visible={appUpdate.visible}
+                  manifest={appUpdate.manifest}
+                  apkUrl={appUpdate.apkUrl}
+                  installedVersion={appUpdate.installedVersion}
+                  onDismiss={appUpdate.dismiss}
+                />
+              </NotificationProvider>
+            </AppDialogProvider>
+          </ToastProvider>
+        </SafeAreaProvider>
+      </QueryClientProvider>
+    </View>
   );
 }

@@ -100,10 +100,10 @@ export default function MenuScreen() {
         <ScrollView showsVerticalScrollIndicator={false}>
           {Object.entries(groupedItems).map(([category, categoryItems]) => (
             <View key={category} className="mb-6">
-              <View className="bg-white border border-gray-100 rounded-2xl p-5 overflow-hidden" style={premiumCardShadow}>
+              <View className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-2xl p-5 overflow-hidden" style={premiumCardShadow}>
                 <View className="flex-row items-center gap-2 mb-4">
                   <AppIcon name="menu" size={20} color="#134A8C" />
-                  <Text className="text-gray-900 font-black text-[14px] uppercase tracking-wide flex-1">
+                  <Text className="text-gray-900 dark:text-slate-100 font-black text-[14px] uppercase tracking-wide flex-1">
                     {categoryTitles[category]}
                   </Text>
                   <View className="w-1 h-4 bg-[#F5921E] rounded-full" />
@@ -127,7 +127,7 @@ export default function MenuScreen() {
                         )}
                       </View>
                       <Text
-                        className="text-gray-700 font-bold text-[10px] text-center"
+                        className="text-gray-700 dark:text-slate-300 font-bold text-[10px] text-center"
                         style={{ lineHeight: 13 }}
                         numberOfLines={2}
                       >

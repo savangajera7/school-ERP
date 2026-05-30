@@ -79,7 +79,7 @@ export default function ParentResultsScreen() {
 
   if (loading) {
     return (
-      <View className="flex-1 items-center justify-center bg-white">
+      <View className="flex-1 items-center justify-center bg-white dark:bg-slate-800">
         <PremiumLoader color={Colors.primary} size={40} />
       </View>
     );
@@ -93,7 +93,7 @@ export default function ParentResultsScreen() {
     >
           {results.length === 0 ? (
             <Card className="p-8 items-center">
-              <Text className="text-gray-500 text-center">
+              <Text className="text-gray-500 dark:text-slate-400 text-center">
                 No published results yet. Check back after exams are graded.
               </Text>
             </Card>
@@ -107,12 +107,12 @@ export default function ParentResultsScreen() {
                     className={`mr-3 px-4 py-3 rounded-2xl border ${
                       selectedResult?.examName === r.examName
                         ? "bg-primary border-primary"
-                        : "bg-white border-gray-200"
+                        : "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-600"
                     }`}
                   >
                     <Text
                       className={`font-bold ${
-                        selectedResult?.examName === r.examName ? "text-white" : "text-gray-800"
+                        selectedResult?.examName === r.examName ? "text-white" : "text-gray-800 dark:text-slate-200"
                       }`}
                     >
                       {r.examName}
@@ -126,24 +126,24 @@ export default function ParentResultsScreen() {
                   <Text className="text-xl font-black text-primary mb-2">
                     {selectedResult.examName}
                   </Text>
-                  <Text className="text-gray-500 mb-4">{selectedResult.examDate}</Text>
+                  <Text className="text-gray-500 dark:text-slate-400 mb-4">{selectedResult.examDate}</Text>
                   <View className="flex-row gap-4 mb-6">
                     <View className="bg-blue-50 px-4 py-2 rounded-xl">
-                      <Text className="text-xs text-gray-500">Percentage</Text>
+                      <Text className="text-xs text-gray-500 dark:text-slate-400">Percentage</Text>
                       <Text className="font-black text-primary">{selectedResult.percentage}%</Text>
                     </View>
                     <View className="bg-green-50 px-4 py-2 rounded-xl">
-                      <Text className="text-xs text-gray-500">Grade</Text>
+                      <Text className="text-xs text-gray-500 dark:text-slate-400">Grade</Text>
                       <Text className="font-black text-green-700">{selectedResult.grade}</Text>
                     </View>
                   </View>
                   {selectedResult.subjects.map((s, i) => (
                     <View
                       key={i}
-                      className="flex-row justify-between py-3 border-b border-gray-100"
+                      className="flex-row justify-between py-3 border-b border-gray-100 dark:border-slate-700"
                     >
-                      <Text className="font-semibold text-gray-800">{s.subjectName}</Text>
-                      <Text className="text-gray-600">
+                      <Text className="font-semibold text-gray-800 dark:text-slate-200">{s.subjectName}</Text>
+                      <Text className="text-gray-600 dark:text-slate-400">
                         {s.marksObtained}/{s.totalMarks} ({s.grade})
                       </Text>
                     </View>

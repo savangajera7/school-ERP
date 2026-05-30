@@ -61,7 +61,7 @@ export default function ReportsScreen() {
           <TouchableOpacity key={l.route} onPress={() => router.push(l.route as never)}>
             <Card className="p-4 mb-3 flex-row items-center gap-3">
               <IconCircle name={l.icon} size={40} iconSize={20} />
-              <Text className="font-bold text-gray-800">{l.title}</Text>
+              <Text className="font-bold text-gray-800 dark:text-slate-200">{l.title}</Text>
             </Card>
           </TouchableOpacity>
         ))}

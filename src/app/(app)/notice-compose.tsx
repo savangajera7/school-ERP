@@ -60,7 +60,7 @@ export default function NoticeComposeScreen() {
           value={noticeTitle}
           onChangeText={setNoticeTitle}
           placeholder="Notice title"
-          className="border border-gray-200 rounded-xl px-4 py-3"
+          className="border border-gray-200 dark:border-slate-600 rounded-xl px-4 py-3"
         />
         <TextInput
           value={noticeDescription}
@@ -68,7 +68,7 @@ export default function NoticeComposeScreen() {
           placeholder="Notice description"
           multiline
           numberOfLines={6}
-          className="border border-gray-200 rounded-xl px-4 py-3 min-h-[120px]"
+          className="border border-gray-200 dark:border-slate-600 rounded-xl px-4 py-3 min-h-[120px]"
         />
         <Button label="Publish" onPress={handlePublish} loading={insertMutation.isPending} />
       </PremiumCard>

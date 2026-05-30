@@ -44,7 +44,7 @@ export default function StudentProfileScreen() {
 
   if (loading) {
     return (
-      <View className="flex-1 items-center justify-center bg-white">
+      <View className="flex-1 items-center justify-center bg-white dark:bg-slate-800">
         <PremiumLoader color={Colors.primary} size={40} />
       </View>
     );
@@ -52,10 +52,10 @@ export default function StudentProfileScreen() {
 
   if (isError) {
     return (
-      <View className="flex-1 items-center justify-center bg-white p-6">
+      <View className="flex-1 items-center justify-center bg-white dark:bg-slate-800 p-6">
         <IconCircle name="warning" size={64} iconSize={32} />
-        <Text className="text-gray-800 font-extrabold text-lg mt-4 mb-2">Error Loading Profile</Text>
-        <Text className="text-gray-500 font-semibold text-center mb-6">
+        <Text className="text-gray-800 dark:text-slate-200 font-extrabold text-lg mt-4 mb-2">Error Loading Profile</Text>
+        <Text className="text-gray-500 dark:text-slate-400 font-semibold text-center mb-6">
           {(error as any)?.message || "Failed to fetch student details. Please try again."}
         </Text>
         <ScrollView className="w-full max-h-[200px] mb-4 bg-red-50 p-4 rounded-lg">
@@ -75,10 +75,10 @@ export default function StudentProfileScreen() {
                 router.replace(getHomeRoute(role));
               }
             }} 
-            className="px-6 py-3 bg-gray-100 rounded-xl"
+            className="px-6 py-3 bg-gray-100 dark:bg-slate-700 rounded-xl"
             activeOpacity={0.8}
           >
-            <Text className="text-gray-700 font-black uppercase text-xs tracking-wider">Return Back</Text>
+            <Text className="text-gray-700 dark:text-slate-300 font-black uppercase text-xs tracking-wider">Return Back</Text>
           </TouchableOpacity>
           <TouchableOpacity 
             onPress={() => refetch()} 
@@ -94,10 +94,10 @@ export default function StudentProfileScreen() {
 
   if (!student) {
     return (
-      <View className="flex-1 items-center justify-center bg-white p-6">
-        <Text className="text-gray-500 font-extrabold text-sm uppercase tracking-wider mb-4">Student profile not located</Text>
-        <ScrollView className="w-full max-h-[300px] mb-4 bg-gray-50 p-4 rounded-lg">
-          <Text className="text-xs text-gray-500 font-mono">
+      <View className="flex-1 items-center justify-center bg-white dark:bg-slate-800 p-6">
+        <Text className="text-gray-500 dark:text-slate-400 font-extrabold text-sm uppercase tracking-wider mb-4">Student profile not located</Text>
+        <ScrollView className="w-full max-h-[300px] mb-4 bg-gray-50 dark:bg-slate-800 p-4 rounded-lg">
+          <Text className="text-xs text-gray-500 dark:text-slate-400 font-mono">
             RAW DATA: {JSON.stringify(data, null, 2)}
           </Text>
         </ScrollView>
@@ -113,10 +113,10 @@ export default function StudentProfileScreen() {
                 router.replace(getHomeRoute(role));
               }
             }} 
-            className="px-6 py-3 bg-gray-100 rounded-xl"
+            className="px-6 py-3 bg-gray-100 dark:bg-slate-700 rounded-xl"
             activeOpacity={0.8}
           >
-            <Text className="text-gray-700 font-black uppercase text-xs tracking-wider">Return Back</Text>
+            <Text className="text-gray-700 dark:text-slate-300 font-black uppercase text-xs tracking-wider">Return Back</Text>
           </TouchableOpacity>
           <TouchableOpacity 
             onPress={() => refetch()} 
@@ -154,7 +154,7 @@ export default function StudentProfileScreen() {
           
           <View className="flex-1">
             <View className="flex-row items-center gap-3 mb-1.5">
-              <Text className="text-2xl font-black text-gray-900">{name}</Text>
+              <Text className="text-2xl font-black text-gray-900 dark:text-slate-100">{name}</Text>
               <View className="px-2.5 py-0.5 bg-emerald-50 rounded border border-emerald-100">
                 <Text className="text-[10px] font-black text-emerald-600 uppercase tracking-wider">
                   {student.isActive ? "Active" : "In-Active"}
@@ -187,10 +187,10 @@ export default function StudentProfileScreen() {
 
       <View className="gap-6 pb-20">
         {/* SECTION 1: Personal & Identification */}
-        <Card className="bg-white border border-gray-150 p-6">
+        <Card className="bg-white dark:bg-slate-800 border border-gray-150 dark:border-slate-700 p-6">
           <View className="flex-row items-center gap-2 mb-5">
             <AppIcon name="profile" size={18} color={Colors.primary} active />
-            <Text className="text-[12px] font-black text-gray-400 uppercase tracking-wider">Personal & Identification</Text>
+            <Text className="text-[12px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider">Personal & Identification</Text>
           </View>
           <View className="gap-4">
             <View className="flex-row flex-wrap gap-x-10">
@@ -202,7 +202,7 @@ export default function StudentProfileScreen() {
               <DetailItem label="Religion" value={(student as any).religionName || 'N/A'} />
               <DetailItem label="Category" value={(student as any).categoryName || 'N/A'} />
             </View>
-            <View className="h-[1px] bg-gray-50 my-2" />
+            <View className="h-[1px] bg-gray-50 dark:bg-slate-800 my-2" />
             <DetailItem label="Aadhaar Number" value={(student as any).aadhaarNo || 'N/A'} />
             <DetailItem label="PEN Number" value={(student as any).penNo || 'N/A'} />
             <DetailItem label="APAR ID" value={(student as any).aparID || 'N/A'} />
@@ -210,10 +210,10 @@ export default function StudentProfileScreen() {
         </Card>
 
         {/* SECTION 2: Contact & Address */}
-        <Card className="bg-white border border-gray-150 p-6">
+        <Card className="bg-white dark:bg-slate-800 border border-gray-150 dark:border-slate-700 p-6">
           <View className="flex-row items-center gap-2 mb-5">
             <AppIcon name="notifications" size={18} color={Colors.primary} active />
-            <Text className="text-[12px] font-black text-gray-400 uppercase tracking-wider">Contact & Address</Text>
+            <Text className="text-[12px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider">Contact & Address</Text>
           </View>
           <View className="gap-4">
             <DetailItem label="Mobile Number" value={student.studentNumber || 'N/A'} />
@@ -224,10 +224,10 @@ export default function StudentProfileScreen() {
         </Card>
 
         {/* SECTION 3: Guardian Details */}
-        <Card className="bg-white border border-gray-150 p-6">
+        <Card className="bg-white dark:bg-slate-800 border border-gray-150 dark:border-slate-700 p-6">
           <View className="flex-row items-center gap-2 mb-5">
             <AppIcon name="parents" size={18} color={Colors.primary} active />
-            <Text className="text-[12px] font-black text-gray-400 uppercase tracking-wider">Guardian Information</Text>
+            <Text className="text-[12px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider">Guardian Information</Text>
           </View>
           <View className="gap-4">
             <Text className="text-[11px] font-black text-blue-600 uppercase mb-1">Father's Details</Text>
@@ -236,7 +236,7 @@ export default function StudentProfileScreen() {
             <DetailItem label="Occupation" value={(student as any).fatherOccupation || 'N/A'} />
             <DetailItem label="Education" value={(student as any).fatherEducation || 'N/A'} />
             
-            <View className="h-[1px] bg-gray-50 my-2" />
+            <View className="h-[1px] bg-gray-50 dark:bg-slate-800 my-2" />
             
             <Text className="text-[11px] font-black text-pink-600 uppercase mb-1">Mother's Details</Text>
             <DetailItem label="Mother Name" value={(student as any).motherName || 'N/A'} />
@@ -244,7 +244,7 @@ export default function StudentProfileScreen() {
             <DetailItem label="Occupation" value={(student as any).motherOccupation || 'N/A'} />
             <DetailItem label="Education" value={(student as any).motherEducation || 'N/A'} />
             
-            <View className="h-[1px] bg-gray-50 my-2" />
+            <View className="h-[1px] bg-gray-50 dark:bg-slate-800 my-2" />
             
             <Text className="text-[11px] font-black text-indigo-600 uppercase mb-1">Parent App Credentials</Text>
             <View className="flex-row flex-wrap gap-x-10">
@@ -255,10 +255,10 @@ export default function StudentProfileScreen() {
         </Card>
 
         {/* SECTION 4: Academic & Registration */}
-        <Card className="bg-white border border-gray-150 p-6">
+        <Card className="bg-white dark:bg-slate-800 border border-gray-150 dark:border-slate-700 p-6">
           <View className="flex-row items-center gap-2 mb-5">
             <AppIcon name="subjects" size={18} color={Colors.primary} active />
-            <Text className="text-[12px] font-black text-gray-400 uppercase tracking-wider">Academic & Registration</Text>
+            <Text className="text-[12px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider">Academic & Registration</Text>
           </View>
           <View className="gap-4">
             <DetailItem label="Admission Date" value={student.admissionDate ? String(student.admissionDate).slice(0, 10) : 'N/A'} />
@@ -278,8 +278,8 @@ export default function StudentProfileScreen() {
 
 function DetailItem({ label, value }: { label: string, value: string }) {
   return (
-    <View className="flex-1 min-w-[200px] border-b border-gray-50 pb-3">
-      <Text className="text-[11px] text-gray-400 font-extrabold uppercase tracking-tight mb-1">{label}</Text>
+    <View className="flex-1 min-w-[200px] border-b border-gray-50 dark:border-slate-700/50 pb-3">
+      <Text className="text-[11px] text-gray-400 dark:text-slate-500 font-extrabold uppercase tracking-tight mb-1">{label}</Text>
       <Text className="text-[14px] text-gray-805 font-black">{value}</Text>
     </View>
   );

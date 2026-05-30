@@ -76,25 +76,25 @@ export default function ClassMonthlyReportScreen() {
     >
       {/* Month navigator */}
       <View
-        className="bg-white rounded-2xl border border-gray-100 p-4 mb-4"
+        className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 p-4 mb-4"
         style={premiumCardShadow}
       >
         <View className="flex-row items-center justify-between">
           <TouchableOpacity
             onPress={() => shiftMonth(-1)}
-            className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-200 items-center justify-center"
+            className="w-10 h-10 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-600 items-center justify-center"
           >
             <Text className="font-black text-[#1A3C6E] text-lg">‹</Text>
           </TouchableOpacity>
           <View className="items-center">
-            <Text className="text-base font-black text-gray-900">
+            <Text className="text-base font-black text-gray-900 dark:text-slate-100">
               {MONTH_NAMES[month - 1]}
             </Text>
-            <Text className="text-xs font-bold text-gray-400">{year}</Text>
+            <Text className="text-xs font-bold text-gray-400 dark:text-slate-500">{year}</Text>
           </View>
           <TouchableOpacity
             onPress={() => shiftMonth(1)}
-            className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-200 items-center justify-center"
+            className="w-10 h-10 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-600 items-center justify-center"
           >
             <Text className="font-black text-[#1A3C6E] text-lg">›</Text>
           </TouchableOpacity>
@@ -115,35 +115,35 @@ export default function ClassMonthlyReportScreen() {
 
           {/* Attendance % card */}
           <View
-            className="bg-white rounded-2xl border border-gray-100 p-5 mb-4 items-center"
+            className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 p-5 mb-4 items-center"
             style={premiumCardShadow}
           >
-            <Text className="text-[10px] font-black uppercase text-gray-400 mb-2">
+            <Text className="text-[10px] font-black uppercase text-gray-400 dark:text-slate-500 mb-2">
               Attendance Rate
             </Text>
             <Text className="text-5xl font-black text-[#1A3C6E]">{pct}%</Text>
-            <View className="w-full mt-4 bg-gray-100 rounded-full h-3 overflow-hidden">
+            <View className="w-full mt-4 bg-gray-100 dark:bg-slate-700 rounded-full h-3 overflow-hidden">
               <View
                 className="h-full rounded-full bg-emerald-500"
                 style={{ width: `${pct}%` }}
               />
             </View>
             <View className="flex-row justify-between w-full mt-2">
-              <Text className="text-[10px] font-bold text-gray-400">0%</Text>
-              <Text className="text-[10px] font-bold text-gray-400">100%</Text>
+              <Text className="text-[10px] font-bold text-gray-400 dark:text-slate-500">0%</Text>
+              <Text className="text-[10px] font-bold text-gray-400 dark:text-slate-500">100%</Text>
             </View>
           </View>
 
           {/* Breakdown bar */}
           {total > 0 && (
             <View
-              className="bg-white rounded-2xl border border-gray-100 p-4 mb-4"
+              className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 p-4 mb-4"
               style={premiumCardShadow}
             >
-              <Text className="text-[10px] font-black uppercase text-gray-400 mb-3">
+              <Text className="text-[10px] font-black uppercase text-gray-400 dark:text-slate-500 mb-3">
                 Breakdown
               </Text>
-              <View className="flex-row h-4 rounded-full overflow-hidden bg-gray-100">
+              <View className="flex-row h-4 rounded-full overflow-hidden bg-gray-100 dark:bg-slate-700">
                 <View style={{ flex: summary.present / total, backgroundColor: "#10B981" }} />
                 <View style={{ flex: summary.absent / total, backgroundColor: "#EF4444" }} />
                 <View style={{ flex: summary.leave / total, backgroundColor: "#F59E0B" }} />
@@ -189,11 +189,11 @@ export default function ClassMonthlyReportScreen() {
                   params: { classId: String(classID) },
                 })
               }
-              className="flex-1 flex-row items-center justify-center gap-2 py-3 rounded-xl bg-white border border-gray-200"
+              className="flex-1 flex-row items-center justify-center gap-2 py-3 rounded-xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600"
               activeOpacity={0.85}
             >
               <AppIcon name="reports" size={14} color="#6B7280" />
-              <Text className="text-gray-600 text-xs font-black uppercase">History</Text>
+              <Text className="text-gray-600 dark:text-slate-400 text-xs font-black uppercase">History</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -213,10 +213,10 @@ function StatCard({
 }) {
   return (
     <View
-      className="bg-white border border-gray-100 rounded-xl px-4 py-3 min-w-[45%] flex-1"
+      className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-xl px-4 py-3 min-w-[45%] flex-1"
       style={premiumCardShadow}
     >
-      <Text className="text-[10px] font-black uppercase text-gray-400">{label}</Text>
+      <Text className="text-[10px] font-black uppercase text-gray-400 dark:text-slate-500">{label}</Text>
       <Text className="text-2xl font-black mt-1" style={{ color }}>
         {value}
       </Text>

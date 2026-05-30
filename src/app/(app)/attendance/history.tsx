@@ -61,10 +61,10 @@ export default function AttendanceHistoryScreen() {
   }
 
   const filterChips: { key: typeof filter; label: string; bgActive: string; bgInactive: string }[] = [
-    { key: "all", label: "All", bgActive: "bg-[#1A3C6E]", bgInactive: "bg-white border-gray-200" },
-    { key: "present", label: "Present", bgActive: "bg-emerald-600", bgInactive: "bg-white border-emerald-200" },
-    { key: "absent", label: "Absent", bgActive: "bg-rose-600", bgInactive: "bg-white border-rose-200" },
-    { key: "leave", label: "Leave", bgActive: "bg-amber-500", bgInactive: "bg-white border-amber-200" },
+    { key: "all", label: "All", bgActive: "bg-[#1A3C6E]", bgInactive: "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-600" },
+    { key: "present", label: "Present", bgActive: "bg-emerald-600", bgInactive: "bg-white dark:bg-slate-800 border-emerald-200" },
+    { key: "absent", label: "Absent", bgActive: "bg-rose-600", bgInactive: "bg-white dark:bg-slate-800 border-rose-200" },
+    { key: "leave", label: "Leave", bgActive: "bg-amber-500", bgInactive: "bg-white dark:bg-slate-800 border-amber-200" },
   ];
 
   return (
@@ -86,7 +86,7 @@ export default function AttendanceHistoryScreen() {
               className={`px-3.5 py-2 rounded-xl border ${active ? chip.bgActive : chip.bgInactive}`}
               activeOpacity={0.8}
             >
-              <Text className={`text-[11px] font-black uppercase ${active ? 'text-white' : 'text-gray-500'}`}>
+              <Text className={`text-[11px] font-black uppercase ${active ? 'text-white' : 'text-gray-500 dark:text-slate-400'}`}>
                 {chip.label}
               </Text>
             </TouchableOpacity>
@@ -105,7 +105,7 @@ export default function AttendanceHistoryScreen() {
           ListEmptyComponent={
             <View className="items-center py-12">
               <AppIcon name="reports" size={32} color="#D1D5DB" />
-              <Text className="text-gray-400 font-semibold text-sm mt-3">No history records found.</Text>
+              <Text className="text-gray-400 dark:text-slate-500 font-semibold text-sm mt-3">No history records found.</Text>
             </View>
           }
           renderItem={({ item }) => {
@@ -118,11 +118,11 @@ export default function AttendanceHistoryScreen() {
             return (
               <View className="mx-3 mb-2">
                 <View
-                  className="bg-white rounded-xl border border-gray-100 p-2.5 flex-row items-center"
+                  className="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 p-2.5 flex-row items-center"
                   style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.03, shadowRadius: 3, elevation: 1 }}
                 >
                   {/* Photo */}
-                  <View className="w-10 h-10 rounded-full bg-gray-50 border border-gray-200 items-center justify-center overflow-hidden mr-2.5">
+                  <View className="w-10 h-10 rounded-full bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-600 items-center justify-center overflow-hidden mr-2.5">
                     {item.studentPhoto ? (
                       <Image source={{ uri: item.studentPhoto }} style={{ width: 40, height: 40 }} resizeMode="cover" />
                     ) : (
@@ -132,10 +132,10 @@ export default function AttendanceHistoryScreen() {
 
                   {/* Name + Details */}
                   <View className="flex-1 mr-2">
-                    <Text className="text-[13px] font-bold text-gray-900" numberOfLines={1}>
+                    <Text className="text-[13px] font-bold text-gray-900 dark:text-slate-100" numberOfLines={1}>
                       {getAttendanceRowName(item)}
                     </Text>
-                    <Text className="text-[10px] text-gray-400 font-semibold">
+                    <Text className="text-[10px] text-gray-400 dark:text-slate-500 font-semibold">
                       Roll {getAttendanceRowRoll(item)}
                       {item.markedBy ? ` · By ${item.markedBy}` : ""}
                       {item.attendanceDate ? ` · ${formatDisplayDate(item.attendanceDate)}` : ""}

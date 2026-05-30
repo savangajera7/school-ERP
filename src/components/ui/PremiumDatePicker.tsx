@@ -1,3 +1,4 @@
+import { SchoolTheme } from "@/constants/theme";
 /**
  * PremiumDatePicker — fully custom cross-platform date picker.
  * Works identically on Web, iOS, and Android.
@@ -166,7 +167,7 @@ export function PremiumDatePicker({
       <TouchableOpacity
         onPress={openPicker}
         activeOpacity={0.7}
-        style={styles.trigger}
+        style={[styles.trigger, isDark && { backgroundColor: SchoolTheme.cardDark, borderColor: SchoolTheme.borderDark }]}
       >
         <Text style={[styles.triggerText, !value && styles.triggerPlaceholder]}>
           {value ? formatDisplayDate(value) : placeholder}
@@ -197,7 +198,7 @@ export function PremiumDatePicker({
               <>
                 {/* Header */}
                 <View style={styles.calHeader}>
-                  <TouchableOpacity onPress={prevMonth} style={styles.navBtn}>
+                  <TouchableOpacity onPress={prevMonth} style={[styles.navBtn, isDark && { backgroundColor: "#334155" }]}>
                     <Text style={styles.navArrow}>‹</Text>
                   </TouchableOpacity>
 
@@ -210,7 +211,7 @@ export function PremiumDatePicker({
                     </Text>
                   </TouchableOpacity>
 
-                  <TouchableOpacity onPress={nextMonth} style={styles.navBtn}>
+                  <TouchableOpacity onPress={nextMonth} style={[styles.navBtn, isDark && { backgroundColor: "#334155" }]}>
                     <Text style={styles.navArrow}>›</Text>
                   </TouchableOpacity>
                 </View>
@@ -218,7 +219,7 @@ export function PremiumDatePicker({
                 {/* Day names */}
                 <View style={styles.dayNamesRow}>
                   {DAY_NAMES.map((d) => (
-                    <Text key={d} style={styles.dayName}>{d}</Text>
+                    <Text key={d} style={[styles.dayName, isDark && { color: "#94A3B8" }]}>{d}</Text>
                   ))}
                 </View>
 
@@ -243,7 +244,7 @@ export function PremiumDatePicker({
                       >
                         <Text
                           style={[
-                            styles.dayText,
+                            styles.dayText, isDark && { color: SchoolTheme.textDark },
                             selected && styles.dayTextSelected,
                             isToday && !selected && styles.dayTextToday,
                             disabled && styles.dayTextDisabled,
@@ -264,7 +265,7 @@ export function PremiumDatePicker({
                     setViewMonth(t.getMonth());
                     selectDay(t.getDate());
                   }}
-                  style={styles.todayBtn}
+                  style={[styles.todayBtn, isDark && { backgroundColor: "rgba(13,54,102,0.5)", borderColor: SchoolTheme.primaryLight }]}
                 >
                   <Text style={styles.todayBtnText}>Today</Text>
                 </TouchableOpacity>
@@ -283,7 +284,7 @@ export function PremiumDatePicker({
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setMode("calendar"); }}
-                    style={styles.navBtn}
+                    style={[styles.navBtn, isDark && { backgroundColor: "#334155" }]}
                   >
                     <Text style={styles.navArrow}>✕</Text>
                   </TouchableOpacity>
@@ -320,7 +321,7 @@ export function PremiumDatePicker({
                   <Text style={styles.monthYearText}>Select Year</Text>
                   <TouchableOpacity
                     onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setMode("calendar"); }}
-                    style={styles.navBtn}
+                    style={[styles.navBtn, isDark && { backgroundColor: "#334155" }]}
                   >
                     <Text style={styles.navArrow}>✕</Text>
                   </TouchableOpacity>

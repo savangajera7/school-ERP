@@ -87,7 +87,7 @@ export default function AttendanceRecordsScreen() {
       header: "Student Name",
       flex: 2,
       render: (a) => (
-        <Text className="text-sm font-semibold text-gray-800">{getAttendanceRowName(a)}</Text>
+        <Text className="text-sm font-semibold text-gray-800 dark:text-slate-200">{getAttendanceRowName(a)}</Text>
       ),
     },
     {
@@ -95,7 +95,7 @@ export default function AttendanceRecordsScreen() {
       header: "Class",
       flex: 1,
       render: (a) => (
-        <Text className="text-sm font-semibold text-gray-700">{formatClassLabel(a)}</Text>
+        <Text className="text-sm font-semibold text-gray-700 dark:text-slate-300">{formatClassLabel(a)}</Text>
       ),
     },
     {
@@ -103,7 +103,7 @@ export default function AttendanceRecordsScreen() {
       header: "Date",
       width: 120,
       render: (a) => (
-        <Text className="text-sm font-semibold text-gray-700">
+        <Text className="text-sm font-semibold text-gray-700 dark:text-slate-300">
           {formatDisplayDate(a.attendanceDate)}
         </Text>
       ),

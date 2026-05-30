@@ -48,9 +48,9 @@ const STATUS_CONFIG = {
     label: "P",
     full: "Present",
     active: "bg-emerald-600 border-emerald-600",
-    inactive: "bg-white border-gray-200",
+    inactive: "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-600",
     activeText: "text-white",
-    inactiveText: "text-gray-400",
+    inactiveText: "text-gray-400 dark:text-slate-500",
     badge: "bg-emerald-50 border-emerald-200",
     badgeText: "text-emerald-700",
   },
@@ -58,9 +58,9 @@ const STATUS_CONFIG = {
     label: "A",
     full: "Absent",
     active: "bg-rose-600 border-rose-600",
-    inactive: "bg-white border-gray-200",
+    inactive: "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-600",
     activeText: "text-white",
-    inactiveText: "text-gray-400",
+    inactiveText: "text-gray-400 dark:text-slate-500",
     badge: "bg-rose-50 border-rose-200",
     badgeText: "text-rose-700",
   },
@@ -68,9 +68,9 @@ const STATUS_CONFIG = {
     label: "L",
     full: "Leave",
     active: "bg-amber-500 border-amber-500",
-    inactive: "bg-white border-gray-200",
+    inactive: "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-600",
     activeText: "text-white",
-    inactiveText: "text-gray-400",
+    inactiveText: "text-gray-400 dark:text-slate-500",
     badge: "bg-amber-50 border-amber-200",
     badgeText: "text-amber-700",
   },
@@ -268,7 +268,7 @@ export default function UnifiedAttendanceScreen() {
           activeOpacity={0.9}
           onLongPress={() => handleLongPress(sid)}
           onPress={() => { if (isSelectionMode) toggleSelection(sid); }}
-          className={`bg-white rounded-xl border p-2.5 flex-row items-center ${isSelected ? 'border-blue-500' : 'border-gray-100'}`}
+          className={`bg-white dark:bg-slate-800 rounded-xl border p-2.5 flex-row items-center ${isSelected ? 'border-blue-500' : 'border-gray-100 dark:border-slate-700'}`}
           style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.03, shadowRadius: 3, elevation: 1 }}
         >
           {/* Selection check */}
@@ -279,7 +279,7 @@ export default function UnifiedAttendanceScreen() {
           )}
 
           {/* Photo */}
-          <View className="w-10 h-10 rounded-full bg-gray-50 border border-gray-200 items-center justify-center overflow-hidden mr-2.5">
+          <View className="w-10 h-10 rounded-full bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-600 items-center justify-center overflow-hidden mr-2.5">
             {item.studentPhoto ? (
               <Image source={{ uri: item.studentPhoto }} style={{ width: 40, height: 40 }} resizeMode="cover" />
             ) : (
@@ -289,10 +289,10 @@ export default function UnifiedAttendanceScreen() {
 
           {/* Name + Roll */}
           <View className="flex-1 mr-2">
-            <Text className="text-[13px] font-bold text-gray-900" numberOfLines={1}>
+            <Text className="text-[13px] font-bold text-gray-900 dark:text-slate-100" numberOfLines={1}>
               {getAttendanceRowName(item)}
             </Text>
-            <Text className="text-[10px] text-gray-400 font-semibold">
+            <Text className="text-[10px] text-gray-400 dark:text-slate-500 font-semibold">
               Roll {getAttendanceRowRoll(item)}
             </Text>
           </View>
@@ -325,7 +325,7 @@ export default function UnifiedAttendanceScreen() {
               value={remarks[sid] ?? ""}
               onChangeText={(text) => setRemarks((prev) => ({ ...prev, [sid]: text }))}
               placeholder="Remark (optional)"
-              className="h-8 border border-gray-200 rounded-lg px-3 text-xs bg-gray-50 font-semibold text-gray-800"
+              className="h-8 border border-gray-200 dark:border-slate-600 rounded-lg px-3 text-xs bg-gray-50 dark:bg-slate-800 font-semibold text-gray-800 dark:text-slate-200"
             />
           </View>
         )}
@@ -362,24 +362,24 @@ export default function UnifiedAttendanceScreen() {
       }
     >
       {/* Top Selectors Card */}
-      <View className="bg-white mx-3 mt-4 rounded-3xl p-4 mb-3 border border-gray-100" style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 10, elevation: 2 }}>
+      <View className="bg-white dark:bg-slate-800 mx-3 mt-4 rounded-3xl p-4 mb-3 border border-gray-100 dark:border-slate-700" style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 10, elevation: 2 }}>
         
         {/* Class Selector */}
         <View className="mb-4">
-          <Text className="text-[10px] font-black tracking-widest text-gray-400 mb-2 uppercase ml-1">Select Class</Text>
+          <Text className="text-[10px] font-black tracking-widest text-gray-400 dark:text-slate-500 mb-2 uppercase ml-1">Select Class</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
             {visibleClasses.length === 0 ? (
-              <Text className="text-xs text-gray-400 font-semibold italic py-2">No assigned classes</Text>
+              <Text className="text-xs text-gray-400 dark:text-slate-500 font-semibold italic py-2">No assigned classes</Text>
             ) : visibleClasses.map((c) => {
               const isSelected = classID === c.classID;
               return (
                 <TouchableOpacity
                   key={c.classID}
                   onPress={() => setClassID(c.classID)}
-                  className={`px-4 py-2 rounded-xl border ${isSelected ? 'bg-[#1A3C6E] border-[#1A3C6E]' : 'bg-white border-gray-200'}`}
+                  className={`px-4 py-2 rounded-xl border ${isSelected ? 'bg-[#1A3C6E] border-[#1A3C6E]' : 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-600'}`}
                   activeOpacity={0.8}
                 >
-                  <Text className={`text-[11px] font-black uppercase ${isSelected ? 'text-white' : 'text-gray-600'}`}>
+                  <Text className={`text-[11px] font-black uppercase ${isSelected ? 'text-white' : 'text-gray-600 dark:text-slate-400'}`}>
                     {c.className}
                   </Text>
                 </TouchableOpacity>
@@ -390,7 +390,7 @@ export default function UnifiedAttendanceScreen() {
 
         {/* Weekly Date Strip (Centered on Today) */}
         <View>
-          <Text className="text-[10px] font-black tracking-widest text-gray-400 mb-2 uppercase ml-1">Select Date</Text>
+          <Text className="text-[10px] font-black tracking-widest text-gray-400 dark:text-slate-500 mb-2 uppercase ml-1">Select Date</Text>
           <View className="flex-row justify-between w-full">
             {Array.from({ length: 7 }).map((_, i) => {
               const d = new Date();
@@ -403,11 +403,11 @@ export default function UnifiedAttendanceScreen() {
                 <TouchableOpacity
                   key={iso}
                   onPress={() => setDate(iso)}
-                  className={`flex-1 mx-0.5 max-w-[44px] h-[54px] rounded-xl items-center justify-center border ${isSelected ? 'bg-[#1A3C6E] border-[#1A3C6E]' : 'bg-white border-gray-200'}`}
+                  className={`flex-1 mx-0.5 max-w-[44px] h-[54px] rounded-xl items-center justify-center border ${isSelected ? 'bg-[#1A3C6E] border-[#1A3C6E]' : 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-600'}`}
                   activeOpacity={0.8}
                 >
-                  <Text className={`text-[9px] font-bold uppercase mb-0.5 ${isSelected ? 'text-white' : 'text-gray-400'}`}>{dayName}</Text>
-                  <Text className={`text-[14px] font-black ${isSelected ? 'text-white' : 'text-gray-800'}`}>{dayNum}</Text>
+                  <Text className={`text-[9px] font-bold uppercase mb-0.5 ${isSelected ? 'text-white' : 'text-gray-400 dark:text-slate-500'}`}>{dayName}</Text>
+                  <Text className={`text-[14px] font-black ${isSelected ? 'text-white' : 'text-gray-800 dark:text-slate-200'}`}>{dayNum}</Text>
                 </TouchableOpacity>
               );
             })}
@@ -415,33 +415,33 @@ export default function UnifiedAttendanceScreen() {
         </View>
 
           {/* Quick actions inside card */}
-          <View className="flex-row justify-between mt-3 pt-3 border-t border-gray-100">
+          <View className="flex-row justify-between mt-3 pt-3 border-t border-gray-100 dark:border-slate-700">
             <TouchableOpacity onPress={markAllPresent} className="flex-row items-center gap-1 px-2.5 py-1.5 rounded-lg bg-emerald-50 border border-emerald-100" activeOpacity={0.7}>
               <AppIcon name="check" size={11} color="#059669" />
               <Text className="text-[10px] font-black text-emerald-700 uppercase">All Present</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => router.push({ pathname: "/(app)/attendance/detail", params: { classId: String(classID), className, date } })} className="flex-row items-center gap-1 px-2.5 py-1.5 rounded-lg bg-gray-50 border border-gray-200" activeOpacity={0.7}>
+            <TouchableOpacity onPress={() => router.push({ pathname: "/(app)/attendance/detail", params: { classId: String(classID), className, date } })} className="flex-row items-center gap-1 px-2.5 py-1.5 rounded-lg bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-600" activeOpacity={0.7}>
               <AppIcon name="profile" size={11} color="#4B5563" />
-              <Text className="text-[10px] font-black text-gray-600 uppercase">Detail</Text>
+              <Text className="text-[10px] font-black text-gray-600 dark:text-slate-400 uppercase">Detail</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => router.push({ pathname: "/(app)/attendance/history", params: { classId: String(classID), date } })} className="flex-row items-center gap-1 px-2.5 py-1.5 rounded-lg bg-gray-50 border border-gray-200" activeOpacity={0.7}>
+            <TouchableOpacity onPress={() => router.push({ pathname: "/(app)/attendance/history", params: { classId: String(classID), date } })} className="flex-row items-center gap-1 px-2.5 py-1.5 rounded-lg bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-600" activeOpacity={0.7}>
               <AppIcon name="reports" size={11} color="#4B5563" />
-              <Text className="text-[10px] font-black text-gray-600 uppercase">History</Text>
+              <Text className="text-[10px] font-black text-gray-600 dark:text-slate-400 uppercase">History</Text>
             </TouchableOpacity>
           </View>
         </View>
 
         {/* Search */}
       <View className="px-1 mb-3">
-        <View className="flex-row items-center bg-white border border-gray-200 rounded-xl px-3 h-11">
+        <View className="flex-row items-center bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl px-3 h-11">
           <AppIcon name="search" size={16} color="#9CA3AF" />
           <TextInput
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholder="Search student by name or roll..."
-            className="flex-1 ml-2 text-sm font-semibold text-gray-800"
+            className="flex-1 ml-2 text-sm font-semibold text-gray-800 dark:text-slate-200"
             placeholderTextColor="#9CA3AF"
           />
           {searchQuery.length > 0 && (
@@ -465,7 +465,7 @@ export default function UnifiedAttendanceScreen() {
           refreshing={false}
           ListEmptyComponent={
             <View className="items-center py-12">
-              <Text className="text-gray-400 font-semibold text-sm">
+              <Text className="text-gray-400 dark:text-slate-500 font-semibold text-sm">
                 {searchQuery ? "No students match your search." : "No students in this class."}
               </Text>
             </View>
