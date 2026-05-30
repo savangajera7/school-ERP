@@ -6,22 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="973b64d6-6094-46c3-ae9b-d54eff11ffd3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/notices.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/teacher-attendance.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(admin)/timetable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/timetable.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(parent)/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(parent)/_layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(parent)/attendance.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(parent)/dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(parent)/dashboard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(parent)/homework.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(parent)/notices.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(teacher)/classwork.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(teacher)/dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(teacher)/dashboard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(teacher)/homework.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(teacher)/notebook.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(teacher)/notice.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/auth/AuthGate.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/auth/AuthGate.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/layout/ParentMenuScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/layout/ParentMenuScreen.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/layout/TeacherMenuScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/layout/TeacherMenuScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(admin)/_dashboardConfig.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(admin)/_dashboardConfig.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(app)/teacher-attendance.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(app)/teacher-attendance.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/constants/rolePermissions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/constants/rolePermissions.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,34 +42,34 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;React Native.Unnamed.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/savan/IdeaProjects&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;npm.Expo LAN.executor&quot;: &quot;Run&quot;,
-    &quot;npm.Expo Start (Clear Cache).executor&quot;: &quot;Debug&quot;,
-    &quot;npm.Expo Start.executor&quot;: &quot;Run&quot;,
-    &quot;npm.Expo Tunnel (For Mobile).executor&quot;: &quot;Run&quot;,
-    &quot;npm.Run Android.executor&quot;: &quot;Run&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "React Native.Unnamed.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "main",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/home/savan/IdeaProjects",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "npm.Expo LAN.executor": "Run",
+    "npm.Expo Start (Clear Cache).executor": "Run",
+    "npm.Expo Start.executor": "Run",
+    "npm.Expo Tunnel (For Mobile).executor": "Run",
+    "npm.Run Android.executor": "Run",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
-  <component name="RunManager" selected="npm.Expo LAN">
+}]]></component>
+  <component name="RunManager" selected="npm.Expo Start (Clear Cache)">
     <configuration name="Unnamed" type="ReactNative" factoryName="React Native" nameIsGenerated="true">
       <node-interpreter value="project" />
       <react-native value="$PROJECT_DIR$/node_modules/react-native" />

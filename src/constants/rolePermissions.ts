@@ -67,7 +67,7 @@ export type AppRoute =
   | "/(admin)/admission-form"
   | "/(admin)/inquiries"
   | "/(admin)/academic-setup"
-  | "/(admin)/teacher-attendance"
+  | "/(app)/teacher-attendance"
   | "/(admin)/notification-compose"
   | "/(admin)/settings"
   | "/(super-admin)/dashboard"
@@ -258,7 +258,7 @@ export const ROUTE_ACCESS: Record<Role, AppRoute[]> = {
     "/(app)/student-profile",
     "/(app)/attendance",
     "/(app)/attendance/reports",
-    "/(admin)/teacher-attendance",
+    "/(app)/teacher-attendance",
     "/(admin)/money",
     "/(app)/subjects",
     "/(admin)/admission-form",
@@ -299,7 +299,7 @@ export const ROUTE_ACCESS: Record<Role, AppRoute[]> = {
     "/(app)/student-profile",
     "/(app)/attendance",
     "/(app)/attendance/reports",
-    "/(admin)/teacher-attendance",
+    "/(app)/teacher-attendance",
     "/(admin)/money",
     "/(app)/subjects",
     "/(admin)/admission-form",
@@ -397,7 +397,7 @@ export const NAV_MENU: NavMenuItem[] = [
   { label: "Teachers",     route: "/(admin)/teachers",         icon: "teachers",        permission: "viewTeachers" },
   { label: "Attendance",   route: "/(app)/attendance",         icon: "attendance",      permission: "markStudentAttendance" },
   { label: "Att. Reports", route: "/(app)/attendance/reports", icon: "attendanceReport",permission: "viewAttendanceReports" },
-  { label: "Staff Attend.",route: "/(admin)/teacher-attendance", icon: "staffAttendance", permission: "manageStaffAttendance" },
+  { label: "Staff Attend.",route: "/(app)/teacher-attendance", icon: "staffAttendance", permission: "manageStaffAttendance" },
   { label: "Fees",         route: "/(admin)/fees",             icon: "fees",            permission: "viewFees" },
   { label: "Accounts",     route: "/(admin)/money",              icon: "accounts",        permission: "viewMoney" },
   { label: "Exams",        route: "/(admin)/exams",            icon: "exams",           permission: "viewExams" },

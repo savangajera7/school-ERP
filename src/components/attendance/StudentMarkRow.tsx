@@ -35,18 +35,16 @@ export function StudentMarkRow({
           <Text className="text-xs font-bold text-gray-400 dark:text-slate-500">Roll {getAttendanceRowRoll(student)}</Text>
         </View>
         <View
-          className={`px-2.5 py-1 rounded-lg border ${
-            status === "Present"
+          className={`px-2.5 py-1 rounded-lg border ${status === "Present"
               ? "bg-emerald-50 border-emerald-200"
               : status === "Absent"
                 ? "bg-rose-50 border-rose-200"
                 : "bg-amber-50 border-amber-200"
-          }`}
+            }`}
         >
           <Text
-            className={`text-[9px] font-black uppercase ${
-              status === "Present" ? "text-emerald-700" : status === "Absent" ? "text-rose-700" : "text-amber-700"
-            }`}
+            className={`text-[9px] font-black uppercase ${status === "Present" ? "text-emerald-700" : status === "Absent" ? "text-rose-700" : "text-amber-700"
+              }`}
           >
             {status}
           </Text>

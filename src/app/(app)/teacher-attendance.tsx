@@ -52,21 +52,21 @@ const STATUS_CONFIG = {
     active: "bg-emerald-600 border-emerald-600",
     inactive: "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-600",
     activeText: "text-white",
-    inactiveText: "text-gray-400 dark:text-slate-500",
+    inactiveText: "text-gray-400 dark:text-slate-300",
   },
   Absent: {
     label: "A",
     active: "bg-rose-600 border-rose-600",
     inactive: "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-600",
     activeText: "text-white",
-    inactiveText: "text-gray-400 dark:text-slate-500",
+    inactiveText: "text-gray-400 dark:text-slate-300",
   },
   Leave: {
     label: "L",
     active: "bg-amber-500 border-amber-500",
     inactive: "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-600",
     activeText: "text-white",
-    inactiveText: "text-gray-400 dark:text-slate-500",
+    inactiveText: "text-gray-400 dark:text-slate-300",
   },
 } as const;
 
@@ -130,8 +130,9 @@ function TeacherMarkRow({
             value={remark}
             onChangeText={onRemarkChange}
             placeholder="Remark (optional)"
-            className="h-8 border border-gray-200 dark:border-slate-600 rounded-lg px-3 text-xs bg-gray-50 dark:bg-slate-800 font-semibold text-gray-800 dark:text-slate-200" 
+            className="h-10 border border-gray-200 dark:border-slate-600 rounded-xl px-3 text-xs bg-gray-50 dark:bg-slate-800 font-semibold text-gray-800 dark:text-slate-200" 
             placeholderTextColor={isDark ? "#64748b" : "#9ca3af"}
+            style={{ paddingVertical: 8 }}
           />
         </View>
       )}
@@ -226,9 +227,8 @@ export default function TeacherAttendanceScreen() {
     });
     
     try {
-      const res = alreadyMarked
-        ? await updateMutation.mutateAsync({ data: payload })
-        : await markMutation.mutateAsync({ data: payload });
+      // Use markMutation for both since it's the default-present bulk upsert endpoint
+      const res = await markMutation.mutateAsync({ data: payload });
         
       assertAttendanceApiSuccess(res);
       await queryClient.invalidateQueries({

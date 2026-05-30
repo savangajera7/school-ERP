@@ -94,7 +94,7 @@ export function AdminTeacherAttendanceView() {
   const { showToast } = useToast();
   const queryClient = useQueryClient();
 
-  
+
   const [date, setDate] = useState<string>(new Date().toISOString().split("T")[0]);
   const [selectedMediumID, setSelectedMediumID] = useState<number | null>(null);
   const [selectedBatchID, setSelectedBatchID] = useState<number | null>(null);
@@ -177,15 +177,15 @@ export function AdminTeacherAttendanceView() {
     const base =
       shiftClasses.length > 0
         ? shiftClasses
-            .map((c: any) => {
-              const id = c.classID ?? c.id;
-              return {
-                classID: id,
-                className: c.className ?? c.name ?? `Class ${id}`,
-                attendanceMarked: markedMap[id] ?? false,
-              };
-            })
-            .filter((c) => !!c.classID)
+          .map((c: any) => {
+            const id = c.classID ?? c.id;
+            return {
+              classID: id,
+              className: c.className ?? c.name ?? `Class ${id}`,
+              attendanceMarked: markedMap[id] ?? false,
+            };
+          })
+          .filter((c) => !!c.classID)
         : classes;
 
     return access.isSchoolAdmin
@@ -465,9 +465,9 @@ export function AdminTeacherAttendanceView() {
         </TouchableOpacity>
       }
     >
-            {/* Top Selectors Card */}
+      {/* Top Selectors Card */}
       <View className="rounded-2xl border mx-3 mt-4 px-4 py-4 mb-3" style={[premiumCardShadow, { backgroundColor: isDark ? SchoolTheme.cardDark : "#FFFFFF", borderColor: isDark ? SchoolTheme.borderDark : "#F3F4F6" }]}>
-        
+
         {/* Medium Selector */}
         <View className="mb-4">
           <Text className="text-[10px] font-black tracking-widest text-gray-400 dark:text-slate-500 mb-2 uppercase ml-1">Select Medium</Text>
@@ -562,26 +562,26 @@ export function AdminTeacherAttendanceView() {
           </ScrollView>
         </View>
 
-          {/* Quick actions inside card */}
-          <View className="flex-row justify-between mt-3 pt-3 border-t" style={{ borderColor: isDark ? SchoolTheme.borderDark : "#F9FAFB" }}>
-            <TouchableOpacity onPress={markAllPresent} className="flex-row items-center gap-1 px-2.5 py-1.5 rounded-lg bg-emerald-50 border border-emerald-100" activeOpacity={0.7}>
-              <AppIcon name="check" size={11} color="#059669" />
-              <Text className="text-[10px] font-black text-emerald-700 uppercase">All Present</Text>
-            </TouchableOpacity>
+        {/* Quick actions inside card */}
+        <View className="flex-row justify-between mt-3 pt-3 border-t" style={{ borderColor: isDark ? SchoolTheme.borderDark : "#F9FAFB" }}>
+          <TouchableOpacity onPress={markAllPresent} className="flex-row items-center gap-1 px-2.5 py-1.5 rounded-lg bg-emerald-50 border border-emerald-100" activeOpacity={0.7}>
+            <AppIcon name="check" size={11} color="#059669" />
+            <Text className="text-[10px] font-black text-emerald-700 uppercase">All Present</Text>
+          </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => router.push({ pathname: "/(app)/attendance/detail", params: { classId: String(classID), className, date } })} className="flex-row items-center gap-1 px-2.5 py-1.5 rounded-lg bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-600" activeOpacity={0.7}>
-              <AppIcon name="profile" size={11} color="#4B5563" />
-              <Text className="text-[10px] font-black text-gray-600 dark:text-slate-400 uppercase">Detail</Text>
-            </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push({ pathname: "/(app)/attendance/detail", params: { classId: String(classID), className, date } })} className="flex-row items-center gap-1 px-2.5 py-1.5 rounded-lg bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-600" activeOpacity={0.7}>
+            <AppIcon name="profile" size={11} color="#4B5563" />
+            <Text className="text-[10px] font-black text-gray-600 dark:text-slate-400 uppercase">Detail</Text>
+          </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => router.push({ pathname: "/(app)/attendance/history", params: { classId: String(classID), date } })} className="flex-row items-center gap-1 px-2.5 py-1.5 rounded-lg bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-600" activeOpacity={0.7}>
-              <AppIcon name="reports" size={11} color="#4B5563" />
-              <Text className="text-[10px] font-black text-gray-600 dark:text-slate-400 uppercase">History</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity onPress={() => router.push({ pathname: "/(app)/attendance/history", params: { classId: String(classID), date } })} className="flex-row items-center gap-1 px-2.5 py-1.5 rounded-lg bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-600" activeOpacity={0.7}>
+            <AppIcon name="reports" size={11} color="#4B5563" />
+            <Text className="text-[10px] font-black text-gray-600 dark:text-slate-400 uppercase">History</Text>
+          </TouchableOpacity>
         </View>
+      </View>
 
-        {/* Search */}
+      {/* Search */}
       <View className="px-1 mb-3">
         <View className="flex-row items-center bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl px-3 h-11">
           <AppIcon name="search" size={16} color="#9CA3AF" />
