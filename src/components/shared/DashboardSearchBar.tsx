@@ -21,7 +21,7 @@ export function DashboardSearchBar({
   placeholder = "Search...",
 }: DashboardSearchBarProps) {
   return (
-    <View className="mt-4 bg-white/10 border border-white/20 rounded-2xl h-[46px] px-4 flex-row items-center gap-2">
+    <View className="mt-4 bg-white dark:bg-slate-800/10 border border-white/20 rounded-2xl h-[46px] px-4 flex-row items-center gap-2">
       <AppIcon name="search" size={18} color="rgba(255,255,255,0.6)" />
       <TextInput
         value={value}

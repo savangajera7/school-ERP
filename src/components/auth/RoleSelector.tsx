@@ -29,7 +29,7 @@ export const RoleSelector: React.FC<RoleSelectorProps> = ({ selected, onChange }
             activeOpacity={0.8}
             className={`
               flex-1 min-h-[44px] rounded-[10px] items-center justify-center flex-row gap-1.5
-              ${isActive ? "bg-white" : "bg-transparent"}
+              ${isActive ? "bg-white dark:bg-slate-800" : "bg-transparent"}
             `}
             style={
               isActive

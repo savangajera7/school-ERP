@@ -74,10 +74,10 @@ export function ResponsiveDataList<T>({
           <View className="mb-4">
             <IconCircle name="warning" size={64} iconSize={32} />
           </View>
-          <Text className="text-gray-800 text-lg font-black mb-2 text-center">
+          <Text className="text-gray-800 dark:text-slate-100 text-lg font-black mb-2 text-center">
             Error Loading Data
           </Text>
-          <Text className="text-gray-500 text-sm text-center font-semibold">
+          <Text className="text-gray-500 dark:text-slate-400 text-sm text-center font-semibold">
             {error?.message || "An unexpected error occurred while fetching the data."}
           </Text>
         </View>
@@ -89,10 +89,10 @@ export function ResponsiveDataList<T>({
         <View className="mb-4">
           <IconCircle name={emptyIcon} size={64} iconSize={32} />
         </View>
-        <Text className="text-gray-800 text-lg font-black mb-2 text-center">
+        <Text className="text-gray-800 dark:text-slate-100 text-lg font-black mb-2 text-center">
           {emptyTitle}
         </Text>
-        <Text className="text-gray-500 text-sm text-center font-semibold">
+        <Text className="text-gray-500 dark:text-slate-400 text-sm text-center font-semibold">
           {emptyMessage}
         </Text>
       </View>
@@ -100,7 +100,7 @@ export function ResponsiveDataList<T>({
   };
 
   const searchBar = onSearchChange !== undefined ? (
-    <View className="bg-white border border-gray-100 rounded-2xl flex-row items-center h-[52px] px-4 mb-4" style={{
+    <View className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-2xl flex-row items-center h-[52px] px-4 mb-4" style={{
       shadowColor: "#000",
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.04,
@@ -112,12 +112,12 @@ export function ResponsiveDataList<T>({
         value={searchQuery}
         onChangeText={onSearchChange}
         placeholder={searchPlaceholder || t.searchPlaceholder || "Search..."}
-        className="flex-1 ml-3 text-[15px] text-gray-800 font-semibold h-full"
+        className="flex-1 ml-3 text-[15px] text-gray-800 dark:text-slate-100 font-semibold h-full"
         placeholderTextColor="#9CA3AF"
         style={{ outlineWidth: 0 } as any}
       />
       {Boolean(searchQuery) && (
-        <TouchableOpacity onPress={() => onSearchChange && onSearchChange("")} activeOpacity={0.7} className="bg-gray-100 p-1.5 rounded-full">
+        <TouchableOpacity onPress={() => onSearchChange && onSearchChange("")} activeOpacity={0.7} className="bg-gray-100 dark:bg-slate-700 p-1.5 rounded-full">
           <AppIcon name="close" size={16} color="#6B7280" />
         </TouchableOpacity>
       )}

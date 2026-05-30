@@ -194,7 +194,7 @@ export default function AdminStudentManagementScreen() {
             <GenderIcon gender={s.gender} size={16} />
           )}
           <View className="flex-1 overflow-hidden">
-            <Text className="text-sm font-bold text-gray-800" numberOfLines={1}>{getStudentDisplayName(s)}</Text>
+            <Text className="text-sm font-bold text-gray-800 dark:text-slate-200" numberOfLines={1}>{getStudentDisplayName(s)}</Text>
           </View>
         </View>
       )
@@ -205,10 +205,10 @@ export default function AdminStudentManagementScreen() {
       flex: 1.4,
       render: (s) => (
         <View className="flex-1 overflow-hidden">
-          <Text className="text-xs font-bold text-gray-700" numberOfLines={1}>
+          <Text className="text-xs font-bold text-gray-700 dark:text-slate-300" numberOfLines={1}>
             U: {getParentLoginUsername(s)}
           </Text>
-          <Text className="text-[11px] font-semibold text-gray-500" numberOfLines={1}>
+          <Text className="text-[11px] font-semibold text-gray-500 dark:text-slate-400" numberOfLines={1}>
             P: {getParentLoginPassword(s)}
           </Text>
         </View>
@@ -222,7 +222,7 @@ export default function AdminStudentManagementScreen() {
         const cName = (s as any).className || classes.find((c: any) => c.classID === s.classID)?.className || s.classID;
         const sName = (s as any).sectionName || s.sectionID;
         return (
-          <Text className="text-sm font-semibold text-gray-600">
+          <Text className="text-sm font-semibold text-gray-600 dark:text-slate-400">
             {cName ? `Class ${cName}` : ''} {sName ? `- ${sName}` : ''}
           </Text>
         );
@@ -293,7 +293,7 @@ export default function AdminStudentManagementScreen() {
           </View>
           <View className="flex-1 justify-center">
             <View className="flex-row items-center justify-between mb-1.5 gap-2">
-              <Text className="text-sm font-extrabold text-gray-900 uppercase flex-1" numberOfLines={1}>
+              <Text className="text-sm font-extrabold text-gray-900 dark:text-slate-100 uppercase flex-1" numberOfLines={1}>
                 {fullName}
               </Text>
               {Boolean(item.classID || item.sectionID || cName) && (
@@ -314,14 +314,14 @@ export default function AdminStudentManagementScreen() {
             
             <View className="flex-row items-center gap-1.5 mb-1.5">
               <AppIcon name="lock" size={13} color="#6B7280" />
-              <Text className="text-[12px] font-bold text-gray-600 flex-1" numberOfLines={1}>
+              <Text className="text-[12px] font-bold text-gray-600 dark:text-slate-400 flex-1" numberOfLines={1}>
                 Password: {getParentLoginPassword(item)}
               </Text>
             </View>
           </View>
         </View>
         
-        <View className="flex-row justify-end items-center px-4 py-2.5 bg-gray-50/50 dark:bg-slate-700/30 gap-2.5 rounded-b-2xl">
+        <View className="flex-row justify-end items-center px-4 py-2.5 bg-gray-50 dark:bg-slate-800/50 dark:bg-slate-700/30 gap-2.5 rounded-b-2xl">
           {canManageStudents && (
             <View className="flex-row gap-2">
               {/* AUDIT FIX #6: Touch Targets */}
@@ -391,7 +391,7 @@ export default function AdminStudentManagementScreen() {
           activeOpacity={0.7}
         >
           <AppIcon name="filter" size={14} color={showFilters ? "#0d3666" : "#4B5563"} />
-          <Text className={`text-[11px] font-extrabold uppercase ${showFilters ? "text-[#0d3666]" : "text-gray-600"}`}>
+          <Text className={`text-[11px] font-extrabold uppercase ${showFilters ? "text-[#0d3666]" : "text-gray-600 dark:text-slate-400"}`}>
             {showFilters ? "Hide Filters" : "Filters"}
           </Text>
         </TouchableOpacity>

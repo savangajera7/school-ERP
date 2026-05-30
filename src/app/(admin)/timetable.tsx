@@ -38,7 +38,7 @@ const DAY_COLORS: Record<Day, { bg: string; text: string; border: string }> = {
   WEDNESDAY: { bg: "bg-emerald-50",text: "text-emerald-700",border: "border-emerald-200" },
   THURSDAY:  { bg: "bg-amber-50",  text: "text-amber-700",  border: "border-amber-200" },
   FRIDAY:    { bg: "bg-rose-50",   text: "text-rose-700",   border: "border-rose-200" },
-  SATURDAY:  { bg: "bg-gray-50",   text: "text-gray-600",   border: "border-gray-200" },
+  SATURDAY:  { bg: "bg-gray-50 dark:bg-slate-800",   text: "text-gray-600 dark:text-slate-400",   border: "border-gray-200 dark:border-slate-600" },
 };
 
 const SUBJECT_COLORS = [
@@ -104,9 +104,9 @@ function PeriodCard({
               </View>
             )}
             <View className="flex-row items-center gap-2 mb-2">
-              <View className="bg-gray-100 px-2.5 py-1 rounded-lg flex-row items-center gap-1.5">
+              <View className="bg-gray-100 dark:bg-slate-700 px-2.5 py-1 rounded-lg flex-row items-center gap-1.5">
                 <AppIcon name="clock" size={11} color="#6B7280" />
-                <Text className="text-[11px] font-black text-gray-600">
+                <Text className="text-[11px] font-black text-gray-600 dark:text-slate-400">
                   {period.startTime} – {period.endTime}
                 </Text>
               </View>
@@ -117,13 +117,13 @@ function PeriodCard({
               ) : null}
             </View>
             {/* Subject */}
-            <Text className="text-[15px] font-black text-gray-900 mb-1" numberOfLines={1}>
+            <Text className="text-[15px] font-black text-gray-900 dark:text-slate-100 mb-1" numberOfLines={1}>
               {period.subjectName}
             </Text>
             {/* Teacher / Class */}
             <View className="flex-row items-center gap-1.5">
               <AppIcon name="teachers" size={12} color="#6B7280" />
-              <Text className="text-[12px] font-semibold text-gray-500" numberOfLines={1}>
+              <Text className="text-[12px] font-semibold text-gray-500 dark:text-slate-400" numberOfLines={1}>
                 {period.teacherName || period.className || "—"}
               </Text>
             </View>
@@ -135,7 +135,7 @@ function PeriodCard({
         </View>
         {/* Actions */}
         {canEdit && (
-          <View className="flex-row gap-2 mt-3 pt-3 border-t border-gray-50">
+          <View className="flex-row gap-2 mt-3 pt-3 border-t border-gray-50 dark:border-slate-700/50">
             <TouchableOpacity
               onPress={() => onEdit(period)}
               className="flex-1 flex-row items-center justify-center gap-1.5 py-2 bg-indigo-50 border border-indigo-100 rounded-xl"
@@ -178,7 +178,7 @@ function TableRow({
       </View>
       {/* Time */}
       <View className="w-[140px]">
-        <Text className="text-[12px] font-black text-gray-700">{period.startTime} – {period.endTime}</Text>
+        <Text className="text-[12px] font-black text-gray-700 dark:text-slate-300">{period.startTime} – {period.endTime}</Text>
         {period.hasOverlap && (
           <View className="bg-red-50 px-1.5 py-0.5 rounded-md border border-red-200 self-start mt-1 flex-row items-center gap-1">
             <AppIcon name="warning" size={8} color="#DC2626" />
@@ -189,11 +189,11 @@ function TableRow({
       {/* Subject */}
       <View className="flex-1 flex-row items-center gap-2">
         <View className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
-        <Text className="text-sm font-bold text-gray-800" numberOfLines={1}>{period.subjectName}</Text>
+        <Text className="text-sm font-bold text-gray-800 dark:text-slate-200" numberOfLines={1}>{period.subjectName}</Text>
       </View>
       {/* Teacher / Class */}
       <View className="w-[160px]">
-        <Text className="text-sm text-gray-500 font-semibold" numberOfLines={1}>
+        <Text className="text-sm text-gray-500 dark:text-slate-400 font-semibold" numberOfLines={1}>
           {period.teacherName || period.className || "—"}
         </Text>
       </View>
@@ -463,12 +463,12 @@ export default function TimetableScreen() {
         {/* Class selector — admin & teacher */}
         {(isSchoolAdmin || isAdmin || isTeacher) && (
           <View className="mb-4">
-            <Text className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-2">
+            <Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-2">
               {isTeacher ? "Select Permitted Class" : "Select Class"}
             </Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
               {classes.length === 0 && isTeacher ? (
-                <Text className="text-xs text-gray-400 font-semibold italic py-2">No class permissions</Text>
+                <Text className="text-xs text-gray-400 dark:text-slate-500 font-semibold italic py-2">No class permissions</Text>
               ) : classes.map((cls: any) => (
                 <TouchableOpacity
                   key={cls.classID}
@@ -481,7 +481,7 @@ export default function TimetableScreen() {
                   activeOpacity={0.8}
                 >
                   <Text className={`text-[11px] font-black uppercase ${
-                    selectedClassID === cls.classID ? "text-white" : "text-gray-600"
+                    selectedClassID === cls.classID ? "text-white" : "text-gray-600 dark:text-slate-400"
                   }`}>
                     {cls.className}
                   </Text>
@@ -498,16 +498,16 @@ export default function TimetableScreen() {
             style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.15, shadowRadius: 24, elevation: 8 }}
           >
             {/* Header */}
-            <View className="px-6 py-5 border-b border-gray-100 flex-row items-center justify-between">
+            <View className="px-6 py-5 border-b border-gray-100 dark:border-slate-700 flex-row items-center justify-between">
               <View className="flex-row items-center gap-3">
                 <View className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 items-center justify-center">
                   <AppIcon name={editingPeriod ? "edit" : "add"} size={18} color="#4F46E5" />
                 </View>
                 <View>
-                  <Text className="text-[16px] font-black text-gray-900">
+                  <Text className="text-[16px] font-black text-gray-900 dark:text-slate-100">
                     {editingPeriod ? "Edit Period" : "Add New Period"}
                   </Text>
-                  <Text className="text-[11px] text-gray-400 font-semibold mt-0.5">
+                  <Text className="text-[11px] text-gray-400 dark:text-slate-500 font-semibold mt-0.5">
                     {selectedDay.charAt(0) + selectedDay.slice(1).toLowerCase()}
                   </Text>
                 </View>
@@ -522,7 +522,7 @@ export default function TimetableScreen() {
               {/* Class selector (add mode only) */}
               {(isSchoolAdmin || isAdmin || isTeacher) && !editingPeriod && (
                 <View className="mb-4">
-                  <Text className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-2">Class</Text>
+                  <Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-2">Class</Text>
                   <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
                     {classes.map((cls: any) => (
                       <TouchableOpacity
@@ -534,7 +534,7 @@ export default function TimetableScreen() {
                         activeOpacity={0.8}
                       >
                         <Text className={`text-[11px] font-black uppercase ${
-                          formClassID === cls.classID ? "text-white" : "text-gray-600"
+                          formClassID === cls.classID ? "text-white" : "text-gray-600 dark:text-slate-400"
                         }`}>
                           {cls.className}
                         </Text>
@@ -546,7 +546,7 @@ export default function TimetableScreen() {
 
               {/* Subject */}
               <View className="mb-4">
-                <Text className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-2">Subject *</Text>
+                <Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-2">Subject *</Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
                   {subjects.map((sub: any) => (
                     <TouchableOpacity
@@ -558,7 +558,7 @@ export default function TimetableScreen() {
                       activeOpacity={0.8}
                     >
                       <Text className={`text-[11px] font-black ${
-                        formSubjectID === sub.subjectID ? "text-white" : "text-gray-600"
+                        formSubjectID === sub.subjectID ? "text-white" : "text-gray-600 dark:text-slate-400"
                       }`}>
                         {sub.subjectName}
                       </Text>
@@ -569,7 +569,7 @@ export default function TimetableScreen() {
 
               {/* Teacher */}
               <View className="mb-4">
-                <Text className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-2">Teacher *</Text>
+                <Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-2">Teacher *</Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
                   {teachers.map((t: any) => (
                     <TouchableOpacity
@@ -581,7 +581,7 @@ export default function TimetableScreen() {
                       activeOpacity={0.8}
                     >
                       <Text className={`text-[11px] font-black ${
-                        formTeacherID === t.teacherID ? "text-white" : "text-gray-600"
+                        formTeacherID === t.teacherID ? "text-white" : "text-gray-600 dark:text-slate-400"
                       }`}>
                         {t.firstName} {t.lastName}
                       </Text>
@@ -593,7 +593,7 @@ export default function TimetableScreen() {
               {/* Time */}
               <View className="flex-row gap-3 mb-4">
                 <View className="flex-1">
-                  <Text className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-2">Start Time *</Text>
+                  <Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-2">Start Time *</Text>
                   <TextInput
                     value={formStart}
                     onChangeText={setFormStart}
@@ -602,7 +602,7 @@ export default function TimetableScreen() {
                   />
                 </View>
                 <View className="flex-1">
-                  <Text className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-2">End Time *</Text>
+                  <Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-2">End Time *</Text>
                   <TextInput
                     value={formEnd}
                     onChangeText={setFormEnd}
@@ -614,7 +614,7 @@ export default function TimetableScreen() {
 
               {/* Room */}
               <View className="mb-4">
-                <Text className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-2">Room Number</Text>
+                <Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-2">Room Number</Text>
                 <TextInput
                   value={formRoom}
                   onChangeText={setFormRoom}
@@ -625,7 +625,7 @@ export default function TimetableScreen() {
             </ScrollView>
 
             {/* Footer */}
-            <View className="px-6 py-4 border-t border-gray-100 flex-row gap-3">
+            <View className="px-6 py-4 border-t border-gray-100 dark:border-slate-700 flex-row gap-3">
               <TouchableOpacity
                 onPress={() => setFormVisible(false)}
                 className="flex-1 py-3 rounded-xl bg-gray-100 dark:bg-slate-700 border border-gray-200 dark:border-slate-600"
@@ -671,9 +671,9 @@ export default function TimetableScreen() {
 
             {/* Body */}
             <View className="px-6 py-5">
-              <Text className="text-sm text-gray-600 font-semibold leading-relaxed">
+              <Text className="text-sm text-gray-600 dark:text-slate-400 font-semibold leading-relaxed">
                 Are you sure you want to delete the period for{" "}
-                <Text className="font-black text-gray-900">{deleteTarget?.subjectName}</Text>
+                <Text className="font-black text-gray-900 dark:text-slate-100">{deleteTarget?.subjectName}</Text>
                 {deleteTarget?.startTime && deleteTarget?.endTime && (
                   <Text> ({deleteTarget.startTime} – {deleteTarget.endTime})</Text>
                 )}?
@@ -681,14 +681,14 @@ export default function TimetableScreen() {
             </View>
 
             {/* Footer */}
-            <View className="px-6 py-4 border-t border-gray-100 flex-row gap-3">
+            <View className="px-6 py-4 border-t border-gray-100 dark:border-slate-700 flex-row gap-3">
               <TouchableOpacity
                 onPress={() => setDeleteTarget(null)}
                 disabled={isDeleting}
-                className="flex-1 py-3 rounded-xl bg-gray-100 border border-gray-200"
+                className="flex-1 py-3 rounded-xl bg-gray-100 dark:bg-slate-700 border border-gray-200 dark:border-slate-600"
                 activeOpacity={0.7}
               >
-                <Text className="text-center text-[12px] font-black text-gray-600 uppercase">Cancel</Text>
+                <Text className="text-center text-[12px] font-black text-gray-600 dark:text-slate-400 uppercase">Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={handleDelete}
@@ -709,7 +709,7 @@ export default function TimetableScreen() {
 
         {/* Day selector */}
         <View>
-          <Text className="text-[10px] font-black text-gray-400 uppercase tracking-wider mb-2">Select Day</Text>
+          <Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-2">Select Day</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
             {DAYS.map((day) => {
               const active = selectedDay === day;
@@ -721,7 +721,7 @@ export default function TimetableScreen() {
                   className={`px-4 py-2 rounded-xl border ${active ? `${c.bg} ${c.border}` : "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700"}`}
                   activeOpacity={0.8}
                 >
-                  <Text className={`text-[11px] font-black uppercase ${active ? c.text : "text-gray-500"}`}>
+                  <Text className={`text-[11px] font-black uppercase ${active ? c.text : "text-gray-500 dark:text-slate-400"}`}>
                     {day.charAt(0) + day.slice(1).toLowerCase()}
                   </Text>
                 </TouchableOpacity>
@@ -734,10 +734,10 @@ export default function TimetableScreen() {
       {/* ── Header info ── */}
       <View className="flex-row items-center justify-between mb-3 px-1">
         <View>
-          <Text className="text-[16px] font-black text-gray-900">
+          <Text className="text-[16px] font-black text-gray-900 dark:text-slate-100">
             {selectedDay.charAt(0) + selectedDay.slice(1).toLowerCase()}'s Schedule
           </Text>
-          <Text className="text-[12px] text-gray-400 font-semibold mt-0.5">
+          <Text className="text-[12px] text-gray-400 dark:text-slate-500 font-semibold mt-0.5">
             {timetableView?.className
               ? `Class ${timetableView.className}${timetableView.batchName ? ` · ${timetableView.batchName}` : ""}`
               : timetableView?.teacherName
@@ -746,9 +746,9 @@ export default function TimetableScreen() {
           </Text>
         </View>
         <View className="flex-row items-center gap-2">
-          <View className="bg-gray-100 px-3 py-1.5 rounded-xl flex-row items-center gap-1.5">
+          <View className="bg-gray-100 dark:bg-slate-700 px-3 py-1.5 rounded-xl flex-row items-center gap-1.5">
             <AppIcon name="subjects" size={12} color="#6B7280" />
-            <Text className="text-[11px] font-black text-gray-600">{periods.length} periods</Text>
+            <Text className="text-[11px] font-black text-gray-600 dark:text-slate-400">{periods.length} periods</Text>
           </View>
         </View>
       </View>
@@ -757,12 +757,12 @@ export default function TimetableScreen() {
       {isLoading ? (
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color={Colors.primary} />
-          <Text className="text-gray-400 mt-3 font-semibold text-sm">Loading schedule...</Text>
+          <Text className="text-gray-400 dark:text-slate-500 mt-3 font-semibold text-sm">Loading schedule...</Text>
         </View>
       ) : isError ? (
         <View className="flex-1 items-center justify-center p-8">
           <IconCircle name="timetable" size={64} iconSize={32} />
-          <Text className="text-gray-700 font-black text-base mt-4">Could not load timetable</Text>
+          <Text className="text-gray-700 dark:text-slate-300 font-black text-base mt-4">Could not load timetable</Text>
           <TouchableOpacity onPress={() => refetch()} className="mt-4 px-5 py-2 bg-blue-50 rounded-xl border border-blue-200">
             <Text className="text-[#1A3C6E] font-black text-xs uppercase">Retry</Text>
           </TouchableOpacity>
@@ -770,8 +770,8 @@ export default function TimetableScreen() {
       ) : periods.length === 0 ? (
         <View className="flex-1 items-center justify-center p-8">
           <IconCircle name="timetable" size={64} iconSize={32} />
-          <Text className="text-gray-700 font-black text-base mt-4">No periods scheduled</Text>
-          <Text className="text-gray-400 text-sm mt-1 text-center">
+          <Text className="text-gray-700 dark:text-slate-300 font-black text-base mt-4">No periods scheduled</Text>
+          <Text className="text-gray-400 dark:text-slate-500 text-sm mt-1 text-center">
             {canEdit ? "Tap \"Add Period\" to create the first period for this day." : "No classes scheduled for this day."}
           </Text>
         </View>
@@ -793,13 +793,13 @@ export default function TimetableScreen() {
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={{ minWidth: 600 }}>
           {/* Table header */}
-          <View className="flex-row items-center px-5 py-3 bg-gray-50 border-b border-gray-100">
-            <View className="w-10"><Text className="text-[10px] font-black text-gray-400 uppercase">#</Text></View>
-            <View className="w-[140px]"><Text className="text-[10px] font-black text-gray-400 uppercase tracking-wider">Time</Text></View>
-            <View className="flex-1"><Text className="text-[10px] font-black text-gray-400 uppercase tracking-wider">Subject</Text></View>
-            <View className="w-[160px]"><Text className="text-[10px] font-black text-gray-400 uppercase tracking-wider">{isTeacher ? "Class" : "Teacher"}</Text></View>
-            <View className="w-[90px]"><Text className="text-[10px] font-black text-gray-400 uppercase tracking-wider">Room</Text></View>
-            {canEdit && <View className="w-[80px]"><Text className="text-[10px] font-black text-gray-400 uppercase text-right tracking-wider">Actions</Text></View>}
+          <View className="flex-row items-center px-5 py-3 bg-gray-50 dark:bg-slate-800 border-b border-gray-100 dark:border-slate-700">
+            <View className="w-10"><Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase">#</Text></View>
+            <View className="w-[140px]"><Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider">Time</Text></View>
+            <View className="flex-1"><Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider">Subject</Text></View>
+            <View className="w-[160px]"><Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider">{isTeacher ? "Class" : "Teacher"}</Text></View>
+            <View className="w-[90px]"><Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider">Room</Text></View>
+            {canEdit && <View className="w-[80px]"><Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase text-right tracking-wider">Actions</Text></View>}
           </View>
           <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
             {periods.map((p, i) => (

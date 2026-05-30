@@ -97,9 +97,9 @@ export default function FeesFormScreen() {
     >
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>
         <Card className="p-6 mb-6">
-          <View className="flex-row items-center gap-3 mb-5 border-b border-gray-100 pb-4">
+          <View className="flex-row items-center gap-3 mb-5 border-b border-gray-100 dark:border-slate-700 pb-4">
             <AppIcon name="fees" size={22} color={Colors.primary} active />
-            <Text className="text-[16px] font-black text-gray-900 uppercase tracking-wide">Payment Details</Text>
+            <Text className="text-[16px] font-black text-gray-900 dark:text-slate-100 uppercase tracking-wide">Payment Details</Text>
           </View>
 
           <View className="gap-4">
@@ -110,7 +110,7 @@ export default function FeesFormScreen() {
                 onChangeText={setStudentID}
                 placeholder="Enter Student ID"
                 keyboardType="numeric"
-                className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
+                className="h-[48px] bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl px-4 text-sm font-semibold text-gray-800 dark:text-slate-200"
               />
             </View>
 
@@ -121,7 +121,7 @@ export default function FeesFormScreen() {
                 onChangeText={setAmount}
                 placeholder="5000.00"
                 keyboardType="numeric"
-                className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-bold text-gray-800"
+                className="h-[48px] bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl px-4 text-sm font-bold text-gray-800 dark:text-slate-200"
               />
             </View>
 
@@ -134,7 +134,7 @@ export default function FeesFormScreen() {
                     onPress={() => setFeesType(t)}
                     className={`px-4 py-2 rounded-lg border ${feesType === t ? "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800" : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700"}`}
                   >
-                    <Text className={`text-xs font-bold ${feesType === t ? "text-blue-700" : "text-gray-500"}`}>{t}</Text>
+                    <Text className={`text-xs font-bold ${feesType === t ? "text-blue-700" : "text-gray-500 dark:text-slate-400"}`}>{t}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -149,7 +149,7 @@ export default function FeesFormScreen() {
                     onPress={() => setPaymentMethod(m)}
                     className={`px-4 py-2 rounded-lg border ${paymentMethod === m ? "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800" : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700"}`}
                   >
-                    <Text className={`text-xs font-bold ${paymentMethod === m ? "text-emerald-700" : "text-gray-500"}`}>{m}</Text>
+                    <Text className={`text-xs font-bold ${paymentMethod === m ? "text-emerald-700" : "text-gray-500 dark:text-slate-400"}`}>{m}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -169,7 +169,7 @@ export default function FeesFormScreen() {
                 placeholder="Optional notes..."
                 multiline
                 numberOfLines={3}
-                className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-semibold text-gray-800"
+                className="bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm font-semibold text-gray-800 dark:text-slate-200"
               />
             </View>
           </View>

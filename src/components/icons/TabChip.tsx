@@ -15,7 +15,7 @@ export function TabChip({ icon, label, active = false }: Props) {
       <AppIcon name={icon} size={14} color={active ? "#fff" : "#9CA3AF"} active={active} />
       <Text
         className={`text-xs font-black uppercase tracking-wider ${
-          active ? "text-white" : "text-gray-400"
+          active ? "text-white" : "text-gray-400 dark:text-slate-500"
         }`}
       >
         {label}

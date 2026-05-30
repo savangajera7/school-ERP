@@ -87,10 +87,10 @@ export const OTPInput: React.FC<OTPInputProps> = ({
                 error
                   ? "border-red-500 bg-[#FFF5F5]"
                   : isFocused
-                  ? "border-blue-500 bg-white"
+                  ? "border-blue-500 bg-white dark:bg-slate-800"
                   : isFilled
                   ? "border-[#f5921e] bg-emerald-50"
-                  : "border-gray-200 bg-[#F9FAFB]"
+                  : "border-gray-200 dark:border-slate-600 bg-[#F9FAFB]"
               }
             `}
           />

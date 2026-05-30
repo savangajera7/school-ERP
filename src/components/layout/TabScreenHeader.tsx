@@ -23,7 +23,7 @@ export function TabScreenHeader({ eyebrow, title, subtitle, children, flat = fal
   if (flat) {
     return (
       <View
-        className="bg-white border-b border-gray-100"
+        className="bg-white dark:bg-slate-800 border-b border-gray-100 dark:border-slate-700"
         style={{
           paddingHorizontal: 20,
           paddingTop: (insets.top || 0) + (isMobile ? 16 : 20),
@@ -31,15 +31,15 @@ export function TabScreenHeader({ eyebrow, title, subtitle, children, flat = fal
         }}
       >
         {eyebrow && (
-          <Text className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">
+          <Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-1">
             {eyebrow}
           </Text>
         )}
         <View className="flex-row justify-between items-end">
           <View className="flex-1">
-            <Text className="text-2xl font-black text-gray-900">{title}</Text>
+            <Text className="text-2xl font-black text-gray-900 dark:text-slate-100">{title}</Text>
             {subtitle && (
-              <Text className="text-xs font-semibold text-gray-500 mt-0.5">{subtitle}</Text>
+              <Text className="text-xs font-semibold text-gray-500 dark:text-slate-400 mt-0.5">{subtitle}</Text>
             )}
           </View>
         </View>

@@ -96,53 +96,53 @@ export function NoticeForm({
 
   return (
     <Card className="p-5 mb-4">
-      <View className="flex-row items-center gap-3 mb-4 border-b border-gray-100 pb-3">
+      <View className="flex-row items-center gap-3 mb-4 border-b border-gray-100 dark:border-slate-700 pb-3">
         <AppIcon name="notices" size={20} color={Colors.primary} active />
-        <Text className="text-[14px] font-black text-gray-900 uppercase tracking-wide">
+        <Text className="text-[14px] font-black text-gray-900 dark:text-slate-100 uppercase tracking-wide">
           New Notice
         </Text>
       </View>
 
       <View className="gap-3">
         <View>
-          <Text className="text-[10px] font-black text-gray-600 uppercase mb-1.5">
+          <Text className="text-[10px] font-black text-gray-600 dark:text-slate-400 uppercase mb-1.5">
             Notice Title *
           </Text>
           <TextInput
             value={noticeTitle}
             onChangeText={setNoticeTitle}
             placeholder="e.g. Notice / Event Title"
-            className="h-[44px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
+            className="h-[44px] bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl px-4 text-sm font-semibold text-gray-800 dark:text-slate-200"
           />
         </View>
 
         <View className="flex-row gap-3">
           <View className="flex-1">
-            <Text className="text-[10px] font-black text-gray-600 uppercase mb-1.5">
+            <Text className="text-[10px] font-black text-gray-600 dark:text-slate-400 uppercase mb-1.5">
               Type
             </Text>
             <TextInput
               value={noticeType}
               onChangeText={setNoticeType}
               placeholder="General"
-              className="h-[44px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
+              className="h-[44px] bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl px-4 text-sm font-semibold text-gray-800 dark:text-slate-200"
             />
           </View>
           <View className="flex-1">
-            <Text className="text-[10px] font-black text-gray-600 uppercase mb-1.5">
+            <Text className="text-[10px] font-black text-gray-600 dark:text-slate-400 uppercase mb-1.5">
               Date
             </Text>
             <TextInput
               value={noticeDate}
               onChangeText={setNoticeDate}
               placeholder="YYYY-MM-DD"
-              className="h-[44px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
+              className="h-[44px] bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl px-4 text-sm font-semibold text-gray-800 dark:text-slate-200"
             />
           </View>
         </View>
 
         <View>
-          <Text className="text-[10px] font-black text-gray-600 uppercase mb-1.5">
+          <Text className="text-[10px] font-black text-gray-600 dark:text-slate-400 uppercase mb-1.5">
             Target Audience
           </Text>
           <View className="flex-row flex-wrap gap-2">
@@ -156,7 +156,7 @@ export function NoticeForm({
               >
                 <Text
                   className={`text-[11px] font-bold ${
-                    targetAudience === t ? "text-blue-700" : "text-gray-500"
+                    targetAudience === t ? "text-blue-700" : "text-gray-500 dark:text-slate-400"
                   }`}
                 >
                   {t}
@@ -167,7 +167,7 @@ export function NoticeForm({
         </View>
 
         <View>
-          <Text className="text-[10px] font-black text-gray-600 uppercase mb-1.5">
+          <Text className="text-[10px] font-black text-gray-600 dark:text-slate-400 uppercase mb-1.5">
             Notice Description *
           </Text>
           <TextInput
@@ -176,7 +176,7 @@ export function NoticeForm({
             placeholder="Write the full announcement content here..."
             multiline
             numberOfLines={4}
-            className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-semibold text-gray-800"
+            className="bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm font-semibold text-gray-800 dark:text-slate-200"
             style={{ minHeight: 100, textAlignVertical: "top" }}
           />
         </View>

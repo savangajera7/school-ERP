@@ -50,7 +50,7 @@ export function RouteGuard({ children }: Props) {
     return (
       <View className="flex-1 items-center justify-center bg-[#F8FAFC]">
         <ActivityIndicator size="large" color={Colors.primary} />
-        <Text className="text-gray-500 mt-4 text-sm">Redirecting…</Text>
+        <Text className="text-gray-500 dark:text-slate-400 mt-4 text-sm">Redirecting…</Text>
       </View>
     );
   }

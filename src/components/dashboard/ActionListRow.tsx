@@ -25,7 +25,7 @@ export function ActionListRow({
     <TouchableOpacity 
       onPress={onPress} 
       activeOpacity={0.7}
-      className="bg-white border border-gray-200 rounded-2xl p-4 flex-row items-center"
+      className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-2xl p-4 flex-row items-center"
       style={premiumCardShadow}
     >
       <IconCircle
@@ -36,11 +36,11 @@ export function ActionListRow({
         backgroundColor={iconBackground ?? `${accentColor}15`}
       />
       <View className="flex-1 ml-4 mr-2">
-        <Text className="text-[16px] font-bold text-gray-800">
+        <Text className="text-[16px] font-bold text-gray-800 dark:text-slate-200">
           {label}
         </Text>
         {description && (
-          <Text className="text-[12px] font-medium text-gray-500 mt-1">
+          <Text className="text-[12px] font-medium text-gray-500 dark:text-slate-400 mt-1">
             {description}
           </Text>
         )}

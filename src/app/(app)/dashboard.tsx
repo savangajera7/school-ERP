@@ -126,59 +126,59 @@ export default function DashboardScreen() {
         </View>
       ) : (
         <View
-          className="bg-white border border-gray-155 rounded-3xl p-6 mb-6 overflow-hidden"
+          className="bg-white dark:bg-slate-800 border border-gray-150 dark:border-slate-700 rounded-3xl p-6 mb-6 overflow-hidden"
           style={{ ...premiumCardShadow }}
         >
-          <View className="flex-row justify-between items-center mb-5 border-b border-gray-100 pb-3">
+          <View className="flex-row justify-between items-center mb-5 border-b border-gray-100 dark:border-slate-700/50 pb-3">
             <View className="flex-row items-center gap-2">
               <AppIcon name="chart" size={22} color="#134A8C" />
-              <Text className="text-gray-900 font-black text-sm uppercase tracking-wide">
+              <Text className="text-gray-900 dark:text-slate-100 font-black text-sm uppercase tracking-wide">
                 Live Operational Performance Indicators
               </Text>
             </View>
-            <View className="px-2.5 py-1 bg-emerald-50 rounded-full border border-emerald-100">
-              <Text className="text-[10px] font-black text-emerald-700 uppercase tracking-widest">
+            <View className="px-2.5 py-1 bg-emerald-50 dark:bg-emerald-900/30 rounded-full border border-emerald-100 dark:border-emerald-800/30">
+              <Text className="text-[10px] font-black text-emerald-700 dark:text-emerald-400 uppercase tracking-widest">
                 Real-time Database Sync
               </Text>
             </View>
           </View>
 
-          <View className="border border-gray-100 rounded-2xl overflow-hidden shadow-sm">
-            <View className="flex-row bg-[#F4F8FC] border-b border-gray-100 px-5 py-3">
+          <View className="border border-gray-100 dark:border-slate-700/50 rounded-2xl overflow-hidden shadow-sm">
+            <View className="flex-row bg-[#F4F8FC] dark:bg-slate-700/50 border-b border-gray-100 dark:border-slate-700/50 px-5 py-3">
               <View style={{ flex: 3.5 }}>
-                <Text className="font-black text-gray-400 text-[10px] uppercase tracking-wider">Indicator</Text>
+                <Text className="font-black text-gray-400 dark:text-slate-500 text-[10px] uppercase tracking-wider">Indicator</Text>
               </View>
               <View style={{ flex: 3, alignItems: "center" }}>
-                <Text className="font-black text-gray-400 text-[10px] uppercase tracking-wider">Description</Text>
+                <Text className="font-black text-gray-400 dark:text-slate-500 text-[10px] uppercase tracking-wider">Description</Text>
               </View>
               <View style={{ flex: 1.5, alignItems: "center" }}>
-                <Text className="font-black text-gray-400 text-[10px] uppercase tracking-wider">Current Value</Text>
+                <Text className="font-black text-gray-400 dark:text-slate-500 text-[10px] uppercase tracking-wider">Current Value</Text>
               </View>
               <View style={{ flex: 2, alignItems: "center" }}>
-                <Text className="font-black text-gray-400 text-[10px] uppercase tracking-wider">Target Cap</Text>
+                <Text className="font-black text-gray-400 dark:text-slate-500 text-[10px] uppercase tracking-wider">Target Cap</Text>
               </View>
               <View style={{ flex: 2, alignItems: "flex-end" }}>
-                <Text className="font-black text-gray-400 text-[10px] uppercase tracking-wider">System Action</Text>
+                <Text className="font-black text-gray-400 dark:text-slate-500 text-[10px] uppercase tracking-wider">System Action</Text>
               </View>
             </View>
             
-            <View className="divide-y divide-gray-50">
+            <View className="divide-y divide-gray-50 dark:divide-slate-700/50">
               {indicators.map((ind, i) => (
                 <View key={i} className={`flex-row items-center px-5 py-4 ${ind.rowBgClass}`}>
                   <View style={{ flex: 3.5, flexDirection: "row", alignItems: "center" }} className="gap-3">
-                    <View className={`w-9 h-9 rounded-xl border items-center justify-center ${ind.iconBgClass}`}>
+                    <View className={`w-9 h-9 rounded-xl border items-center justify-center ${ind.iconBgClass} dark:bg-transparent dark:border-slate-600`}>
                       <AppIcon name={ind.icon} size={18} color={ind.iconColorHex} />
                     </View>
-                    <Text className="text-sm font-extrabold text-gray-800">{ind.title}</Text>
+                    <Text className="text-sm font-extrabold text-gray-800 dark:text-slate-100">{ind.title}</Text>
                   </View>
                   <View style={{ flex: 3, alignItems: "center" }}>
-                    <Text className="text-xs text-gray-500 font-semibold">{ind.desc}</Text>
+                    <Text className="text-xs text-gray-500 dark:text-slate-400 font-semibold">{ind.desc}</Text>
                   </View>
                   <View style={{ flex: 1.5, alignItems: "center" }}>
                     <Text className={`text-lg font-black ${ind.valueColorClass}`}>{ind.value}</Text>
                   </View>
                   <View style={{ flex: 2, alignItems: "center" }}>
-                    <Text className="text-xs text-gray-400 font-bold">{ind.target}</Text>
+                    <Text className="text-xs text-gray-400 dark:text-slate-500 font-bold">{ind.target}</Text>
                   </View>
                   <View style={{ flex: 2, alignItems: "flex-end" }}>
                     <TouchableOpacity 
@@ -205,7 +205,7 @@ export default function DashboardScreen() {
         {/* Birthdays */}
         <View className="flex-1">
           <SectionCard title="Birthdays" icon="birthday" noPaddingBody>
-            <View className="flex-row bg-gray-50 border border-gray-150 rounded-xl p-0.5 mx-5 mb-4">
+            <View className="flex-row bg-gray-50 dark:bg-slate-700/30 border border-gray-150 dark:border-slate-700/50 rounded-xl p-0.5 mx-5 mb-4">
               {(["today", "upcoming"] as const).map((tab) => (
                 <TouchableOpacity
                   key={tab}
@@ -216,7 +216,7 @@ export default function DashboardScreen() {
                 >
                   <Text
                     className={`text-[11px] font-black uppercase tracking-wide ${
-                      birthdayTab === tab ? "text-white" : "text-gray-400"
+                      birthdayTab === tab ? "text-white" : "text-gray-400 dark:text-slate-500"
                     }`}
                   >
                     {tab === "today" ? "Today" : "Upcoming"}
@@ -229,7 +229,7 @@ export default function DashboardScreen() {
               <View className="mb-2">
                 <IconCircle name="gift" size={48} iconSize={24} />
               </View>
-              <Text className="text-gray-400 font-extrabold text-xs uppercase tracking-wider">
+              <Text className="text-gray-400 dark:text-slate-500 font-extrabold text-xs uppercase tracking-wider">
                 No birthdays {birthdayTab === "today" ? "today" : "this week"}
               </Text>
             </View>

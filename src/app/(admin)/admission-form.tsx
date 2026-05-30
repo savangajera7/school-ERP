@@ -688,7 +688,7 @@ export default function AdmissionFormScreen() {
       <Card className="bg-white dark:bg-slate-800 border border-gray-150 dark:border-slate-700 p-6 mb-4 overflow-hidden">
         {renderSectionHeader("Personal Details", gender.toLowerCase() === "female" ? "female" : "male", "#0369A1", "bg-blue-50", "border-blue-100", "personal")}
         {expandedSections.personal && (
-          <View className="mt-6 pt-6 border-t border-gray-100">
+          <View className="mt-6 pt-6 border-t border-gray-100 dark:border-slate-700">
             <View className={`flex-row flex-wrap gap-5 ${isMobile ? "flex-col" : ""}`}>
               {renderTextInput("First Name *", firstName, (val) => { setFirstName(val); setErrors(prev => ({...prev, firstName: ""})); }, "Student Name", undefined, "firstName")}
               {renderTextInput("Middle Name", middleName, setMiddleName, "Father's Name")}
@@ -753,7 +753,7 @@ export default function AdmissionFormScreen() {
               {renderTextInput("Father Education", fatherEducation, setFatherEducation, "Education")}
               {renderTextInput("Father Email", fatherEmail, setFatherEmail, "email@example.com", { keyboard: "email-address" })}
             </View>
-            <Text className="text-[14px] font-bold text-gray-700 mt-8 mb-3">Mother's Information</Text>
+            <Text className="text-[14px] font-bold text-gray-700 dark:text-slate-300 mt-8 mb-3">Mother's Information</Text>
             <View className={`flex-row flex-wrap gap-5 ${isMobile ? "flex-col" : ""}`}>
               {renderTextInput("Mother Name", motherName, setMotherName, "Full Name")}
               {renderTextInput("Mother Phone", motherNumber, setMotherNumber, "Mobile No", { keyboard: "phone-pad" })}

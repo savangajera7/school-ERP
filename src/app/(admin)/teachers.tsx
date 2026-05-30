@@ -336,7 +336,7 @@ export default function AdminTeacherManagementScreen() {
   const tableColumns: TableColumn<TeacherWithDetails>[] = [
     {
       key: "rowNo", header: "#", width: 48, align: "center",
-      render: (_t, i) => <Text className="text-sm font-semibold text-gray-400">{i + 1}</Text>,
+      render: (_t, i) => <Text className="text-sm font-semibold text-gray-400 dark:text-slate-500">{i + 1}</Text>,
     },
     {
       key: "teacherName", header: "Teacher Name", flex: 2,
@@ -344,19 +344,19 @@ export default function AdminTeacherManagementScreen() {
         <View className="flex-row items-center gap-2">
           <TeacherAvatar photo={t.photo ?? undefined} size={28} />
           <View className="flex-1 overflow-hidden">
-            <Text className="text-sm font-bold text-gray-800" numberOfLines={1}>{t.teacherName}</Text>
-            {t.email ? <Text className="text-[11px] text-gray-400 font-semibold" numberOfLines={1}>{t.email}</Text> : null}
+            <Text className="text-sm font-bold text-gray-800 dark:text-slate-200" numberOfLines={1}>{t.teacherName}</Text>
+            {t.email ? <Text className="text-[11px] text-gray-400 dark:text-slate-500 font-semibold" numberOfLines={1}>{t.email}</Text> : null}
           </View>
         </View>
       ),
     },
     {
       key: "subjectName", header: "Subject", flex: 1,
-      render: (t) => <Text className="text-sm text-gray-700 font-semibold" numberOfLines={1}>{t.subjectName || "—"}</Text>,
+      render: (t) => <Text className="text-sm text-gray-700 dark:text-slate-300 font-semibold" numberOfLines={1}>{t.subjectName || "—"}</Text>,
     },
     {
       key: "mobileNo", header: "Phone", width: 130,
-      render: (t) => <Text className="text-sm text-gray-600">{t.mobileNo || "—"}</Text>,
+      render: (t) => <Text className="text-sm text-gray-600 dark:text-slate-400">{t.mobileNo || "—"}</Text>,
     },
     {
       key: "classPermissions", header: "Assigned Classes", flex: 2,
@@ -369,7 +369,7 @@ export default function AdminTeacherManagementScreen() {
               </View>
             ))
           ) : (
-            <Text className="text-sm text-gray-400">No classes</Text>
+            <Text className="text-sm text-gray-400 dark:text-slate-500">No classes</Text>
           )}
         </View>
       ),
@@ -378,7 +378,7 @@ export default function AdminTeacherManagementScreen() {
       key: "isActive", header: "Status", width: 80, align: "center",
       render: (t) => (
         <View className={`px-2 py-1 rounded-md border ${t.isActive ? "bg-green-50 dark:bg-green-950/30 border-green-100 dark:border-green-800" : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700"}`}>
-          <Text className={`text-[10px] font-bold ${t.isActive ? "text-green-700" : "text-gray-500"}`}>
+          <Text className={`text-[10px] font-bold ${t.isActive ? "text-green-700" : "text-gray-500 dark:text-slate-400"}`}>
             {t.isActive ? "Active" : "Inactive"}
           </Text>
         </View>
@@ -409,17 +409,17 @@ export default function AdminTeacherManagementScreen() {
     if (!selectedTeacher) return null;
     return (
       <Modal visible={panelVisible} animationType="slide" presentationStyle="pageSheet" onRequestClose={closePanel}>
-        <View className="flex-1 bg-gray-50">
+        <View className="flex-1 bg-gray-50 dark:bg-slate-800">
           {/* Header */}
           <View className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 px-5 pt-12 pb-4 flex-row items-center justify-between">
             <View className="flex-row items-center gap-3">
               <TeacherAvatar photo={selectedTeacher.photo ?? undefined} size={48} />
               <View>
-                <Text className="text-[18px] font-black text-gray-900">{selectedTeacher.teacherName}</Text>
-                <Text className="text-[12px] text-gray-500 font-semibold mt-0.5">Class Assignments & Module Permissions</Text>
+                <Text className="text-[18px] font-black text-gray-900 dark:text-slate-100">{selectedTeacher.teacherName}</Text>
+                <Text className="text-[12px] text-gray-500 dark:text-slate-400 font-semibold mt-0.5">Class Assignments & Module Permissions</Text>
               </View>
             </View>
-            <TouchableOpacity onPress={closePanel} className="w-9 h-9 bg-gray-100 rounded-full items-center justify-center">
+            <TouchableOpacity onPress={closePanel} className="w-9 h-9 bg-gray-100 dark:bg-slate-700 rounded-full items-center justify-center">
               <AppIcon name="close" size={18} color="#6B7280" />
             </TouchableOpacity>
           </View>
@@ -428,8 +428,8 @@ export default function AdminTeacherManagementScreen() {
             {selectedTeacher.classPermissions.length === 0 ? (
               <View className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 p-8 items-center mb-4">
                 <IconCircle name="subjects" size={56} iconSize={28} />
-                <Text className="text-gray-700 font-black text-base mt-4">No classes assigned yet</Text>
-                <Text className="text-gray-400 text-xs mt-1 text-center">Add a class below to configure module access.</Text>
+                <Text className="text-gray-700 dark:text-slate-300 font-black text-base mt-4">No classes assigned yet</Text>
+                <Text className="text-gray-400 dark:text-slate-500 text-xs mt-1 text-center">Add a class below to configure module access.</Text>
               </View>
             ) : (
               selectedTeacher.classPermissions.map((cp) => {
@@ -439,7 +439,7 @@ export default function AdminTeacherManagementScreen() {
                   <View key={cp.classID} className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 mb-3 overflow-hidden">
                     <View className="flex-row items-center justify-between px-4 py-3 bg-[#1A3C6E]">
                       <View className="flex-row items-center gap-2">
-                        <View className="w-7 h-7 bg-white/20 dark:bg-slate-700/50 rounded-lg items-center justify-center">
+                        <View className="w-7 h-7 bg-white dark:bg-slate-800/20 dark:bg-slate-700/50 rounded-lg items-center justify-center">
                           <AppIcon name="subjects" size={14} color="#fff" />
                         </View>
                         <Text className="text-white font-black text-[14px]">{cp.className}</Text>
@@ -448,7 +448,7 @@ export default function AdminTeacherManagementScreen() {
                         {isSaving ? (
                           <ActivityIndicator size="small" color="#fff" />
                         ) : (
-                          <TouchableOpacity onPress={() => saveClassPerms(cp.classID)} className="px-3 py-1 bg-white/20 dark:bg-slate-700/50 rounded-lg">
+                          <TouchableOpacity onPress={() => saveClassPerms(cp.classID)} className="px-3 py-1 bg-white dark:bg-slate-800/20 dark:bg-slate-700/50 rounded-lg">
                             <Text className="text-white text-[11px] font-black uppercase">Save</Text>
                           </TouchableOpacity>
                         )}
@@ -461,7 +461,7 @@ export default function AdminTeacherManagementScreen() {
                       </View>
                     </View>
                     <View className="px-4 py-3">
-                      <Text className="text-[10px] font-black text-gray-400 uppercase mb-3 tracking-wider">Module Access</Text>
+                      <Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase mb-3 tracking-wider">Module Access</Text>
                       <View className="flex-row flex-wrap gap-2">
                         {MODULE_KEYS.map(({ key, label, icon }) => {
                           const enabled = !!(local as any)[key];
@@ -472,7 +472,7 @@ export default function AdminTeacherManagementScreen() {
                               className={`flex-row items-center gap-1.5 px-3 py-2 rounded-xl border ${enabled ? "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-300 dark:border-emerald-800" : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700"}`}
                             >
                               <AppIcon name={icon as any} size={13} color={enabled ? "#059669" : "#9CA3AF"} />
-                              <Text className={`text-[11px] font-black ${enabled ? "text-emerald-700" : "text-gray-400"}`}>{label}</Text>
+                              <Text className={`text-[11px] font-black ${enabled ? "text-emerald-700" : "text-gray-400 dark:text-slate-500"}`}>{label}</Text>
                             </TouchableOpacity>
                           );
                         })}
@@ -485,7 +485,7 @@ export default function AdminTeacherManagementScreen() {
 
             {unassignedClasses.length > 0 && (
               <View className="bg-white dark:bg-slate-800 rounded-2xl border border-dashed border-gray-300 dark:border-slate-600 p-4 mt-2">
-                <Text className="text-[11px] font-black text-gray-400 uppercase mb-3 tracking-wider">Assign New Class</Text>
+                <Text className="text-[11px] font-black text-gray-400 dark:text-slate-500 uppercase mb-3 tracking-wider">Assign New Class</Text>
                 <View className="flex-row flex-wrap gap-2">
                   {unassignedClasses.map((cls: any) => (
                     <TouchableOpacity
@@ -552,10 +552,10 @@ export default function AdminTeacherManagementScreen() {
               <View className="w-14 h-14 bg-red-100 rounded-full items-center justify-center mb-3">
                 <AppIcon name="delete" size={26} color="#DC2626" />
               </View>
-              <Text className="text-lg font-black text-gray-900 text-center">Delete Teacher</Text>
-              <Text className="text-sm font-semibold text-gray-500 text-center mt-1">
+              <Text className="text-lg font-black text-gray-900 dark:text-slate-100 text-center">Delete Teacher</Text>
+              <Text className="text-sm font-semibold text-gray-500 dark:text-slate-400 text-center mt-1">
                 This will permanently remove{"\n"}
-                <Text className="text-gray-800 font-black">{teacherToDelete?.teacherName}</Text>
+                <Text className="text-gray-800 dark:text-slate-200 font-black">{teacherToDelete?.teacherName}</Text>
                 {"\n"}from the school.
               </Text>
             </View>
@@ -563,11 +563,11 @@ export default function AdminTeacherManagementScreen() {
             <View className="px-6 py-5">
               <View className="flex-row gap-3">
                 <TouchableOpacity
-                  className="flex-1 bg-gray-100 py-3 rounded-xl items-center justify-center"
+                  className="flex-1 bg-gray-100 dark:bg-slate-700 py-3 rounded-xl items-center justify-center"
                   onPress={() => { setDeleteModalVisible(false); setTeacherToDelete(null); }}
                   disabled={isDeleting}
                 >
-                  <Text className="font-bold text-gray-700">Cancel</Text>
+                  <Text className="font-bold text-gray-700 dark:text-slate-300">Cancel</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   className="flex-1 bg-red-600 py-3 rounded-xl items-center flex-row justify-center gap-2"
@@ -591,23 +591,23 @@ export default function AdminTeacherManagementScreen() {
               <View className="w-14 h-14 bg-amber-100 rounded-full items-center justify-center mb-3">
                 <AppIcon name="warning" size={26} color="#D97706" />
               </View>
-              <Text className="text-lg font-black text-gray-900 text-center">Remove Class</Text>
-              <Text className="text-sm font-semibold text-gray-500 text-center mt-1">
+              <Text className="text-lg font-black text-gray-900 dark:text-slate-100 text-center">Remove Class</Text>
+              <Text className="text-sm font-semibold text-gray-500 dark:text-slate-400 text-center mt-1">
                 Remove{" "}
-                <Text className="text-gray-800 font-black">{removeClassModal?.className}</Text>
+                <Text className="text-gray-800 dark:text-slate-200 font-black">{removeClassModal?.className}</Text>
                 {" "}from{" "}
-                <Text className="text-gray-800 font-black">{selectedTeacher?.teacherName}</Text>?
+                <Text className="text-gray-800 dark:text-slate-200 font-black">{selectedTeacher?.teacherName}</Text>?
                 {"\n"}All permissions for this class will be lost.
               </Text>
             </View>
             <View className="px-6 py-5">
               <View className="flex-row gap-3">
                 <TouchableOpacity
-                  className="flex-1 bg-gray-100 py-3 rounded-xl items-center justify-center"
+                  className="flex-1 bg-gray-100 dark:bg-slate-700 py-3 rounded-xl items-center justify-center"
                   onPress={() => setRemoveClassModal(null)}
                   disabled={isRemovingClass}
                 >
-                  <Text className="font-bold text-gray-700">Cancel</Text>
+                  <Text className="font-bold text-gray-700 dark:text-slate-300">Cancel</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   className="flex-1 bg-amber-500 py-3 rounded-xl items-center flex-row justify-center gap-2"

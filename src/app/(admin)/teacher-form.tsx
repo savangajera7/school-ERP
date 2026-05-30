@@ -215,7 +215,7 @@ export default function TeacherFormScreen() {
         <View className={`w-10 h-10 ${bgColor} rounded-xl items-center justify-center border ${borderColor}`}>
           <AppIcon name={icon} size={20} color={color} active />
         </View>
-        <Text className="text-[16px] font-black text-gray-900 uppercase tracking-wide">{title}</Text>
+        <Text className="text-[16px] font-black text-gray-900 dark:text-slate-100 uppercase tracking-wide">{title}</Text>
       </View>
       <View style={{ transform: [{ rotate: expandedSections[sectionKey] ? "180deg" : "0deg" }] }}>
         <AppIcon name="chevronDown" size={20} color="#9CA3AF" />
@@ -241,7 +241,7 @@ export default function TeacherFormScreen() {
     const hasError = errorKey ? !!errors[errorKey] : false;
     return (
       <View className="flex-1 min-w-[280px]">
-        <Text className={`text-[12px] font-black ${hasError ? "text-red-500" : "text-gray-500"} mb-1.5 uppercase`}>
+        <Text className={`text-[12px] font-black ${hasError ? "text-red-500" : "text-gray-500 dark:text-slate-400"} mb-1.5 uppercase`}>
           {label}{opts?.required ? " *" : ""}
         </Text>
         <TextInput
@@ -278,15 +278,15 @@ export default function TeacherFormScreen() {
     onSelect: (v: string) => void,
   ) => (
     <View className="flex-1 min-w-[280px]">
-      <Text className="text-[12px] font-black text-gray-500 mb-1.5 uppercase">{label}</Text>
-      <View className="flex-row bg-gray-50 border border-gray-200 rounded-xl overflow-hidden h-[48px] p-0.5">
+      <Text className="text-[12px] font-black text-gray-500 dark:text-slate-400 mb-1.5 uppercase">{label}</Text>
+      <View className="flex-row bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl overflow-hidden h-[48px] p-0.5">
         {options.map((opt) => (
           <TouchableOpacity
             key={opt}
             onPress={() => onSelect(opt)}
             className={`flex-1 items-center justify-center rounded-lg ${value === opt ? "bg-[#1A3C6E]" : ""}`}
           >
-            <Text className={`text-xs font-black uppercase ${value === opt ? "text-white" : "text-gray-500"}`}>
+            <Text className={`text-xs font-black uppercase ${value === opt ? "text-white" : "text-gray-500 dark:text-slate-400"}`}>
               {opt}
             </Text>
           </TouchableOpacity>
@@ -333,15 +333,15 @@ export default function TeacherFormScreen() {
           {renderSectionHeader("Personal Details", "teachers", "#0369A1", "bg-blue-50 dark:bg-blue-900/20", "border-blue-100 dark:border-blue-800", "personal")}
 
           {expandedSections.personal && (
-            <View className="mt-6 pt-6 border-t border-gray-100">
+            <View className="mt-6 pt-6 border-t border-gray-100 dark:border-slate-700">
 
               {/* Photo */}
               <View className="items-center mb-6">
-                <Text className="text-[12px] font-black text-gray-500 mb-2 uppercase">Profile Photo</Text>
+                <Text className="text-[12px] font-black text-gray-500 dark:text-slate-400 mb-2 uppercase">Profile Photo</Text>
                 <TouchableOpacity
                   onPress={pickPhoto}
                   disabled={uploadingPhoto}
-                  className="w-[100px] h-[100px] rounded-full border-2 border-dashed border-gray-300 items-center justify-center bg-gray-50 overflow-hidden"
+                  className="w-[100px] h-[100px] rounded-full border-2 border-dashed border-gray-300 items-center justify-center bg-gray-50 dark:bg-slate-800 overflow-hidden"
                   activeOpacity={0.8}
                 >
                   {uploadingPhoto ? (
@@ -351,7 +351,7 @@ export default function TeacherFormScreen() {
                   ) : (
                     <View className="items-center gap-1">
                       <AppIcon name="camera" size={24} color="#9CA3AF" />
-                      <Text className="text-[10px] text-gray-400 font-bold">Upload</Text>
+                      <Text className="text-[10px] text-gray-400 dark:text-slate-500 font-bold">Upload</Text>
                     </View>
                   )}
                 </TouchableOpacity>
@@ -394,7 +394,7 @@ export default function TeacherFormScreen() {
           {renderSectionHeader("Professional Details", "subjects", "#15803D", "bg-emerald-50 dark:bg-emerald-900/20", "border-emerald-100 dark:border-emerald-800", "professional")}
 
           {expandedSections.professional && (
-            <View className="mt-6 pt-6 border-t border-gray-100">
+            <View className="mt-6 pt-6 border-t border-gray-100 dark:border-slate-700">
 
               {/* Subject + Qualification */}
               <View className={`flex-row flex-wrap gap-5 ${isMobile ? "flex-col" : ""}`}>
@@ -428,7 +428,7 @@ export default function TeacherFormScreen() {
           {renderSectionHeader("Login Account", "lock", "#B45309", "bg-amber-50 dark:bg-amber-900/20", "border-amber-100 dark:border-amber-800", "account")}
 
           {expandedSections.account && (
-            <View className="mt-6 pt-6 border-t border-gray-100">
+            <View className="mt-6 pt-6 border-t border-gray-100 dark:border-slate-700">
               <View className="flex-row items-start gap-2 bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 mb-5">
                 <AppIcon name="warning" size={14} color="#B45309" />
                 <Text className="text-xs text-amber-700 font-semibold flex-1">
@@ -441,15 +441,15 @@ export default function TeacherFormScreen() {
               <View className={`flex-row flex-wrap gap-5 ${isMobile ? "flex-col" : ""}`}>
                 {/* Email shown read-only for reference */}
                 <View className="flex-1 min-w-[280px]">
-                  <Text className="text-[12px] font-black text-gray-500 mb-1.5 uppercase">Login Email (same as above)</Text>
-                  <View className="h-[48px] bg-gray-100 border border-gray-200 rounded-xl px-4 justify-center">
-                    <Text className="text-sm font-semibold text-gray-500">{email || "—"}</Text>
+                  <Text className="text-[12px] font-black text-gray-500 dark:text-slate-400 mb-1.5 uppercase">Login Email (same as above)</Text>
+                  <View className="h-[48px] bg-gray-100 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl px-4 justify-center">
+                    <Text className="text-sm font-semibold text-gray-500 dark:text-slate-400">{email || "—"}</Text>
                   </View>
                 </View>
 
                 {/* Password */}
                 <View className="flex-1 min-w-[280px]">
-                  <Text className={`text-[12px] font-black ${errors.password ? "text-red-500" : "text-gray-500"} mb-1.5 uppercase`}>
+                  <Text className={`text-[12px] font-black ${errors.password ? "text-red-500" : "text-gray-500 dark:text-slate-400"} mb-1.5 uppercase`}>
                     Password{!isEditing ? " *" : ""}
                   </Text>
                   <View className={`flex-row items-center ${errors.password ? "bg-red-50 dark:bg-red-950/30 border-red-400 dark:border-red-800" : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700"} border rounded-xl overflow-hidden h-[48px]`}>
@@ -461,7 +461,7 @@ export default function TeacherFormScreen() {
                       }}
                       placeholder={isEditing ? "Leave blank to keep current" : "Min 6 characters"}
                       secureTextEntry={!showPassword}
-                      className="flex-1 h-full px-4 text-sm font-semibold text-gray-800"
+                      className="flex-1 h-full px-4 text-sm font-semibold text-gray-800 dark:text-slate-200"
                       placeholderTextColor={errors.password ? "#FCA5A5" : "#9CA3AF"}
                     />
                     <TouchableOpacity

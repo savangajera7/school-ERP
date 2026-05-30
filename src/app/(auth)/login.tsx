@@ -38,6 +38,8 @@ export default function LoginScreen() {
   const [loginError, setLoginError] = React.useState<string | null>(null);
   const [rememberMe, setRememberMe] = React.useState(false);
   const { isMobile } = useResponsive();
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === "dark";
 
   React.useEffect(() => {
     if (isAuthenticated) {
@@ -101,7 +103,7 @@ export default function LoginScreen() {
           // You could optionally focus the password field here using a ref
         }}
         leftIcon={
-          <View style={styles.iconCircle}>
+          <View style={[styles.iconCircle, isDark && { backgroundColor: SchoolTheme.cardDark, borderColor: SchoolTheme.borderDark }]}>
             <AppIcon name="email" size={18} color={SchoolTheme.primary} />
           </View>
         }
@@ -116,7 +118,7 @@ export default function LoginScreen() {
         returnKeyType="done"
         onSubmitEditing={handleSubmit(onSubmit)}
         leftIcon={
-          <View style={styles.iconCircle}>
+          <View style={[styles.iconCircle, isDark && { backgroundColor: SchoolTheme.cardDark, borderColor: SchoolTheme.borderDark }]}>
             <AppIcon name="lock" size={18} color={SchoolTheme.primary} />
           </View>
         }
@@ -124,10 +126,14 @@ export default function LoginScreen() {
 
       <View style={styles.formOptions}>
         <TouchableOpacity style={styles.rememberMe} activeOpacity={0.7} onPress={() => setRememberMe(!rememberMe)}>
-          <View style={[styles.checkbox, rememberMe && { backgroundColor: Colors.primary, borderColor: Colors.primary }]}>
+          <View style={[
+            styles.checkbox, 
+            isDark && { backgroundColor: SchoolTheme.cardDark, borderColor: SchoolTheme.borderDark },
+            rememberMe && { backgroundColor: Colors.primary, borderColor: Colors.primary }
+          ]}>
             {rememberMe && <AppIcon name="check" size={12} color="#fff" />}
           </View>
-          <Text style={styles.rememberMeText}>{t.rememberMe}</Text>
+          <Text style={[styles.rememberMeText, isDark && { color: SchoolTheme.textSecondaryDark }]}>{t.rememberMe}</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => router.push("/(auth)/forgot-password")} activeOpacity={0.7}>
           <Text style={styles.forgotPasswordText}>{t.forgotPassword}</Text>
@@ -143,8 +149,8 @@ export default function LoginScreen() {
       />
 
       {(loginError || apiLoginMutation.isError) && (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>
+        <View style={[styles.errorContainer, isDark && { backgroundColor: "#7F1D1D", borderColor: "#EF4444" }]}>
+          <Text style={[styles.errorText, isDark && { color: "#FEF2F2" }]}>
             {loginError ||
               (apiLoginMutation.error as Error)?.message ||
               t.loginFailed}
@@ -184,10 +190,10 @@ export default function LoginScreen() {
                   tagline={t.smartSystem}
                 />
               </LinearGradient>
-              <View style={styles.mobileCardContainer}>
+              <View style={[styles.mobileCardContainer, isDark && { backgroundColor: SchoolTheme.backgroundDark }]}>
                 <View style={styles.mobileFormWrap}>
-                  <Text style={[styles.loginTitle, styles.centerText]}>{t.welcome}</Text>
-                  <Text style={[styles.loginSubtitle, styles.centerText, { marginBottom: 16 }]}>
+                  <Text style={[styles.loginTitle, styles.centerText, isDark && { color: SchoolTheme.textDark }]}>{t.welcome}</Text>
+                  <Text style={[styles.loginSubtitle, styles.centerText, { marginBottom: 16 }, isDark && { color: SchoolTheme.textSecondaryDark }]}>
                     {t.signInSubtitle}
                   </Text>
                   {renderForm()}
@@ -218,10 +224,10 @@ export default function LoginScreen() {
                   <PoweredByFooter light style={{ marginTop: 48 }} />
                 </View>
               </LinearGradient>
-              <View style={styles.desktopLoginForm}>
-                <View style={styles.loginCardWrapper}>
-                  <Text style={styles.loginTitle}>{t.welcome}</Text>
-                  <Text style={styles.loginSubtitle}>{t.signInSubtitle}</Text>
+              <View style={[styles.desktopLoginForm, isDark && { backgroundColor: SchoolTheme.backgroundDark }]}>
+                <View style={[styles.loginCardWrapper, isDark && { backgroundColor: SchoolTheme.cardDark, borderColor: SchoolTheme.borderDark }]}>
+                  <Text style={[styles.loginTitle, isDark && { color: SchoolTheme.textDark }]}>{t.welcome}</Text>
+                  <Text style={[styles.loginSubtitle, isDark && { color: SchoolTheme.textSecondaryDark }]}>{t.signInSubtitle}</Text>
                   {renderForm()}
                 </View>
                 <PoweredByFooter style={{ position: "absolute", bottom: 24, alignSelf: "center" }} />

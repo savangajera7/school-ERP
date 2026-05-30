@@ -135,7 +135,7 @@ export function ScreenHeader({
             {!hideBack && (
               <TouchableOpacity
                 onPress={handleBack}
-                className="w-10 h-10 bg-white/10 rounded-xl items-center justify-center border border-white/10"
+                className="w-10 h-10 bg-white dark:bg-slate-800/10 rounded-xl items-center justify-center border border-white/10"
                 activeOpacity={0.7}
               >
                 <AppIcon name="chevronBack" size={22} color="#fff" />

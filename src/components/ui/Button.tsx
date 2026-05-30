@@ -41,7 +41,7 @@ const variantStyles: Record<
     loaderColor: Colors.primary,
   },
   ghost: {
-    container: "bg-transparent border border-transparent active:bg-gray-100",
+    container: "bg-transparent border border-transparent active:bg-gray-100 dark:bg-slate-700",
     text: "text-primary font-semibold",
     loaderColor: Colors.primary,
   },

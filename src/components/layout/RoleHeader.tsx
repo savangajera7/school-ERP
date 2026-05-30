@@ -26,7 +26,7 @@ export function RoleHeader({
   if (flatHeader) {
     return (
       <View
-        className="bg-white border-b border-gray-100 flex-row justify-between items-center z-10"
+        className="bg-white dark:bg-slate-800 border-b border-gray-100 dark:border-slate-700 flex-row justify-between items-center z-10"
         style={{
           paddingHorizontal: padding,
           paddingTop: isMobile ? 54 : 64, // Approximate safe area + padding
@@ -37,7 +37,7 @@ export function RoleHeader({
           {onBack && (
             <TouchableOpacity
               onPress={onBack}
-              className="w-10 h-10 bg-gray-50 rounded-xl items-center justify-center"
+              className="w-10 h-10 bg-gray-50 dark:bg-slate-800 rounded-xl items-center justify-center"
               activeOpacity={0.7}
             >
               <Ionicons name="chevron-back" size={22} color="#374151" />
@@ -45,7 +45,7 @@ export function RoleHeader({
           )}
           <View className="flex-1">
             <Text
-              className="font-black text-gray-900"
+              className="font-black text-gray-900 dark:text-slate-100"
               style={{ fontSize: titleSize }}
               numberOfLines={1}
             >
@@ -53,7 +53,7 @@ export function RoleHeader({
             </Text>
             {subtitle && (
               <Text
-                className="text-gray-400 font-semibold mt-0.5"
+                className="text-gray-400 dark:text-slate-500 font-semibold mt-0.5"
                 style={{ fontSize: bodySize - 2 }}
                 numberOfLines={1}
               >

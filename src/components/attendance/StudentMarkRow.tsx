@@ -25,14 +25,14 @@ export function StudentMarkRow({
   const showRemark = !isPresentStatus(status);
 
   return (
-    <View className="bg-white border border-gray-150 rounded-2xl p-4 mb-3">
+    <View className="bg-white dark:bg-slate-800 border border-gray-150 dark:border-slate-700 rounded-2xl p-4 mb-3">
       <View className="flex-row items-center gap-3">
-        <View className="w-11 h-11 rounded-xl bg-gray-50 border border-gray-100 items-center justify-center">
+        <View className="w-11 h-11 rounded-xl bg-gray-50 dark:bg-slate-800 border border-gray-100 dark:border-slate-700 items-center justify-center">
           <GenderIcon gender={student.gender} size={24} />
         </View>
         <View className="flex-1">
-          <Text className="text-sm font-black text-gray-900">{getAttendanceRowName(student)}</Text>
-          <Text className="text-xs font-bold text-gray-400">Roll {getAttendanceRowRoll(student)}</Text>
+          <Text className="text-sm font-black text-gray-900 dark:text-slate-100">{getAttendanceRowName(student)}</Text>
+          <Text className="text-xs font-bold text-gray-400 dark:text-slate-500">Roll {getAttendanceRowRoll(student)}</Text>
         </View>
         <View
           className={`px-2.5 py-1 rounded-lg border ${
@@ -60,14 +60,14 @@ export function StudentMarkRow({
             opt === "Present"
               ? active
                 ? "bg-emerald-600 border-emerald-600"
-                : "bg-white border-gray-200"
+                : "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-600"
               : opt === "Absent"
                 ? active
                   ? "bg-rose-600 border-rose-600"
-                  : "bg-white border-gray-200"
+                  : "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-600"
                 : active
                   ? "bg-amber-500 border-amber-500"
-                  : "bg-white border-gray-200";
+                  : "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-600";
           return (
             <TouchableOpacity
               key={`${studentId}-${opt}`}
@@ -75,7 +75,7 @@ export function StudentMarkRow({
               className={`flex-1 py-2.5 rounded-xl border items-center ${bg}`}
               activeOpacity={0.85}
             >
-              <Text className={`text-xs font-black uppercase ${active ? "text-white" : "text-gray-400"}`}>
+              <Text className={`text-xs font-black uppercase ${active ? "text-white" : "text-gray-400 dark:text-slate-500"}`}>
                 {opt === "Present" ? "P" : opt === "Absent" ? "A" : "L"}
               </Text>
             </TouchableOpacity>
@@ -88,7 +88,7 @@ export function StudentMarkRow({
           value={remark}
           onChangeText={onRemarkChange}
           placeholder="Remark (optional)"
-          className="mt-2 h-10 border border-gray-200 rounded-xl px-3 text-sm bg-gray-50"
+          className="mt-2 h-10 border border-gray-200 dark:border-slate-600 rounded-xl px-3 text-sm bg-gray-50 dark:bg-slate-800"
         />
       )}
     </View>

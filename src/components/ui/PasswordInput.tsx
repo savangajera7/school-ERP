@@ -51,7 +51,7 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
       <View
         className={`
           rounded-xl border-[1.5px] flex-row items-center px-4
-          ${error ? "border-red-500" : isFocused ? "border-[#0d3666]" : "border-gray-200"}
+          ${error ? "border-red-500" : isFocused ? "border-[#0d3666]" : "border-gray-200 dark:border-slate-600"}
           ${className || ""}
         `}
         style={{

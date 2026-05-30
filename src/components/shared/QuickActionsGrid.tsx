@@ -45,7 +45,7 @@ export function QuickActionsGrid({
             <IconCircle name={action.icon} size={52} iconSize={24} />
           </View>
           <Text
-            className="text-gray-700 font-bold text-[10px] text-center"
+            className="text-gray-700 dark:text-slate-300 font-bold text-[10px] text-center"
             style={{ lineHeight: 13 }}
             numberOfLines={2}
           >

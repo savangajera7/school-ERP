@@ -95,9 +95,9 @@ export default function NoticeFormScreen() {
     >
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>
         <Card className="p-6 mb-6">
-          <View className="flex-row items-center gap-3 mb-5 border-b border-gray-100 pb-4">
+          <View className="flex-row items-center gap-3 mb-5 border-b border-gray-100 dark:border-slate-700 pb-4">
             <AppIcon name="notices" size={22} color={Colors.primary} active />
-            <Text className="text-[16px] font-black text-gray-900 uppercase tracking-wide">Announcement Details</Text>
+            <Text className="text-[16px] font-black text-gray-900 dark:text-slate-100 uppercase tracking-wide">Announcement Details</Text>
           </View>
 
           <View className="gap-4">
@@ -107,7 +107,7 @@ export default function NoticeFormScreen() {
                 value={noticeTitle}
                 onChangeText={setNoticeTitle}
                 placeholder="e.g. Annual Sports Day 2026"
-                className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
+                className="h-[48px] bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl px-4 text-sm font-semibold text-gray-800 dark:text-slate-200"
               />
             </View>
 
@@ -130,7 +130,7 @@ export default function NoticeFormScreen() {
                     onPress={() => setNoticeType(t)}
                     className={`px-4 py-2 rounded-lg border ${noticeType === t ? "bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800" : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700"}`}
                   >
-                    <Text className={`text-xs font-bold ${noticeType === t ? "text-blue-700" : "text-gray-500"}`}>{t}</Text>
+                    <Text className={`text-xs font-bold ${noticeType === t ? "text-blue-700" : "text-gray-500 dark:text-slate-400"}`}>{t}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -143,7 +143,7 @@ export default function NoticeFormScreen() {
                   value={classIDs}
                   onChangeText={setClassIDs}
                   placeholder="e.g. 10, 12"
-                  className="h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
+                  className="h-[48px] bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl px-4 text-sm font-semibold text-gray-800 dark:text-slate-200"
                 />
               </View>
             )}
@@ -156,7 +156,7 @@ export default function NoticeFormScreen() {
                 placeholder="Write the full announcement content here..."
                 multiline
                 numberOfLines={6}
-                className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-semibold text-gray-800"
+                className="bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm font-semibold text-gray-800 dark:text-slate-200"
                 style={{ minHeight: 120, textAlignVertical: "top" }}
               />
             </View>

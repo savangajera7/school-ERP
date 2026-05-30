@@ -65,7 +65,7 @@ function ShimmerBlock({ width, height, borderRadius = 8 }: { width: number | str
 function SkeletonCard({ index }: { index: number }) {
   return (
     <View
-      className="bg-white rounded-2xl border border-gray-100 p-4 mb-3"
+      className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 dark:border-slate-700 p-4 mb-3"
       style={{
         borderLeftWidth: 4,
         borderLeftColor: index % 2 === 0 ? "#E5E7EB" : "#F3F4F6",
@@ -82,7 +82,7 @@ function SkeletonCard({ index }: { index: number }) {
         <ShimmerBlock width={60} height={22} borderRadius={10} />
       </View>
       {/* Field rows */}
-      <View className="bg-gray-50/50 rounded-xl p-3 gap-2.5">
+      <View className="bg-gray-50 dark:bg-slate-800/50 rounded-xl p-3 gap-2.5">
         <View className="flex-row justify-between">
           <ShimmerBlock width={60} height={10} borderRadius={4} />
           <ShimmerBlock width={90} height={10} borderRadius={4} />
@@ -99,8 +99,8 @@ function SkeletonCard({ index }: { index: number }) {
 function SkeletonTableRow({ index }: { index: number }) {
   return (
     <View
-      className={`flex-row items-center px-5 py-4 border-b border-gray-50 ${
-        index % 2 === 0 ? "bg-white" : "bg-gray-50/30"
+      className={`flex-row items-center px-5 py-4 border-b border-gray-50 dark:border-slate-700/50 ${
+        index % 2 === 0 ? "bg-white dark:bg-slate-800" : "bg-gray-50 dark:bg-slate-800/30"
       }`}
     >
       <View className="w-14">
@@ -126,9 +126,9 @@ function SkeletonTableRow({ index }: { index: number }) {
 export function SkeletonLoader({ rows = 4, variant = "card" }: SkeletonLoaderProps) {
   if (variant === "table") {
     return (
-      <View className="bg-white border border-gray-100 rounded-2xl overflow-hidden">
+      <View className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-2xl overflow-hidden">
         {/* Table header skeleton */}
-        <View className="flex-row items-center px-5 py-4 bg-gray-50 border-b border-gray-100">
+        <View className="flex-row items-center px-5 py-4 bg-gray-50 dark:bg-slate-800 border-b border-gray-100 dark:border-slate-700">
           <View className="w-14">
             <ShimmerBlock width={30} height={10} borderRadius={4} />
           </View>

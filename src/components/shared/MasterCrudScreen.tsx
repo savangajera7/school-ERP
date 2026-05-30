@@ -177,7 +177,7 @@ export function MasterCrudScreen({
             value={inputValue}
             onChangeText={setInputValue}
             placeholder={placeholder}
-            className="flex-1 h-[48px] bg-gray-50 border border-gray-200 rounded-xl px-4 text-sm font-semibold text-gray-800"
+            className="flex-1 h-[48px] bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl px-4 text-sm font-semibold text-gray-800 dark:text-slate-200"
           />
           {editingItem ? (
             <View className="flex-row gap-2">
@@ -189,7 +189,7 @@ export function MasterCrudScreen({
               />
               <TouchableOpacity
                 onPress={cancelEdit}
-                className="bg-gray-100 h-[48px] w-[48px] items-center justify-center rounded-xl"
+                className="bg-gray-100 dark:bg-slate-700 h-[48px] w-[48px] items-center justify-center rounded-xl"
               >
                 <AppIcon name="close" size={20} color="#6B7280" />
               </TouchableOpacity>

@@ -29,7 +29,7 @@ export function RecentActivityList({
         <View
           key={i}
           className={`flex-row items-center justify-between py-3 ${
-            i !== items.length - 1 ? "border-b border-gray-50" : ""
+            i !== items.length - 1 ? "border-b border-gray-50 dark:border-slate-700/50" : ""
           }`}
         >
           <View className="flex-row items-center gap-3 flex-1 mr-3">
@@ -37,11 +37,11 @@ export function RecentActivityList({
               className="w-1.5 h-1.5 rounded-full"
               style={{ backgroundColor: dotColor }}
             />
-            <Text className="text-xs font-bold text-gray-700" numberOfLines={2}>
+            <Text className="text-xs font-bold text-gray-700 dark:text-slate-300" numberOfLines={2}>
               {item.text}
             </Text>
           </View>
-          <Text className="text-[9px] font-black text-gray-400 uppercase">
+          <Text className="text-[9px] font-black text-gray-400 dark:text-slate-500 uppercase">
             {item.time}
           </Text>
         </View>

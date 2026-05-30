@@ -38,7 +38,7 @@ const highlightColors = {
   accent: `text-[#F5921E]`,
   success: "text-emerald-600",
   error: "text-red-600",
-  muted: "text-gray-500",
+  muted: "text-gray-500 dark:text-slate-400",
 };
 
 export function MobileDataCard({

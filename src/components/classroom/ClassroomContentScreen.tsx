@@ -89,14 +89,14 @@ export default function ClassroomContentScreen({
     >
       {isAdding && (
         <Card className="p-4 mb-6">
-          <Text className="text-[12px] font-black text-gray-400 mb-2 uppercase">
+          <Text className="text-[12px] font-black text-gray-400 dark:text-slate-500 mb-2 uppercase">
             New {pageTitle}
           </Text>
           <TextInput
             placeholder="Subject / Title"
             value={title}
             onChangeText={setTitle}
-            className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 mb-3 font-bold text-gray-800"
+            className="bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl px-4 py-3 mb-3 font-bold text-gray-800 dark:text-slate-200"
           />
           <TextInput
             placeholder="Instructions / Description"
@@ -104,7 +104,7 @@ export default function ClassroomContentScreen({
             onChangeText={setDescription}
             multiline
             numberOfLines={4}
-            className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 mb-4 font-semibold text-gray-800 min-h-[100px]"
+            className="bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-xl px-4 py-3 mb-4 font-semibold text-gray-800 dark:text-slate-200 min-h-[100px]"
           />
           <TouchableOpacity
             onPress={handleAdd}
@@ -139,16 +139,16 @@ export default function ClassroomContentScreen({
             >
               <View className="flex-row justify-between items-start mb-2">
                 <View className="flex-1 mr-4">
-                  <Text className="text-[16px] font-black text-gray-900">
+                  <Text className="text-[16px] font-black text-gray-900 dark:text-slate-100">
                     {item.title}
                   </Text>
-                  <Text className="text-[10px] text-gray-400 font-bold mt-0.5">
+                  <Text className="text-[10px] text-gray-400 dark:text-slate-500 font-bold mt-0.5">
                     {item.date}
                   </Text>
                 </View>
                 <IconCircle name={iconName} size={32} iconSize={16} />
               </View>
-              <Text className="text-sm text-gray-600 leading-relaxed font-medium">
+              <Text className="text-sm text-gray-600 dark:text-slate-400 leading-relaxed font-medium">
                 {item.body}
               </Text>
             </Card>
