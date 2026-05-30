@@ -60,65 +60,47 @@ export function MobileDataCard({
     <Wrapper
       onPress={onPress}
       activeOpacity={onPress ? 0.7 : 1}
-      className="rounded-2xl mb-3 border"
-      style={[
-        premiumCardShadow,
-        {
-          backgroundColor: isDark ? SchoolTheme.cardDark : "#FFFFFF",
-          borderColor: isDark ? SchoolTheme.borderDark : "#F3F4F6",
-        }
-      ]}
+      className="bg-[#1e293b] rounded-2xl mb-3 overflow-hidden border border-slate-700"
+      style={{
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
+      }}
     >
-      {/* Accent Line (Subtle) */}
-      {!noAccent && (accentColor || Colors.primary) && (
-        <View 
-          style={{ 
-            position: 'absolute', 
-            left: 0, 
-            top: 16, 
-            bottom: 16, 
-            width: 3, 
-            backgroundColor: accentColor || Colors.primary,
-            borderTopRightRadius: 4,
-            borderBottomRightRadius: 4,
-            zIndex: 10
-          }} 
-        />
-      )}
-
       {/* Top Body Area */}
-      <View className="p-4 flex-row gap-3 rounded-t-2xl" style={{ backgroundColor: isDark ? SchoolTheme.cardDark : "#FFFFFF" }}>
+      <View className="p-4 flex-row gap-3">
         {icon && (
-          <View className="w-14 h-14 rounded-2xl border items-center justify-center overflow-hidden" style={{ backgroundColor: isDark ? "#1E293B" : "#F9FAFB", borderColor: isDark ? SchoolTheme.borderDark : "#E5E7EB" }}>
+          <View className="w-12 h-12 rounded-xl bg-slate-700 border border-slate-600 items-center justify-center overflow-hidden">
             {icon}
           </View>
         )}
         <View className="flex-1 justify-center">
-          <View className="flex-row items-center justify-between mb-1.5 gap-2">
-            <Text className="text-sm font-extrabold uppercase flex-1" numberOfLines={1} style={{ color: isDark ? SchoolTheme.textDark : "#111827" }}>
+          <View className="flex-row items-center justify-between mb-1 gap-2">
+            <Text className="text-[14px] font-black text-white uppercase flex-1" numberOfLines={1}>
               {title}
             </Text>
             {badge && <View>{badge}</View>}
           </View>
 
           {subtitle && (
-            <Text className="text-[12px] font-bold mb-1.5" numberOfLines={1} style={{ color: isDark ? SchoolTheme.textSecondaryDark : "#6B7280" }}>
+            <Text className="text-[11px] font-bold text-slate-400 mb-1" numberOfLines={1}>
               {subtitle}
             </Text>
           )}
 
           {/* Data Fields */}
           {fields && fields.length > 0 && (
-            <View className="gap-1 mt-1">
+            <View className="gap-1 mt-0.5">
               {fields.map((field, idx) => (
                 <View key={idx} className="flex-row justify-between items-center">
-                  <Text className="text-[11px] font-bold" style={{ color: isDark ? SchoolTheme.textSecondaryDark : "#9CA3AF" }}>{field.label}:</Text>
+                  <Text className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">{field.label}</Text>
                   {typeof field.value === "string" ? (
                     <Text
-                      className={`text-[11px] font-extrabold ${
-                        field.highlight ? highlightColors[field.highlight] : ""
+                      className={`text-[10px] font-extrabold ${
+                        field.highlight ? highlightColors[field.highlight] : "text-white"
                       }`}
-                      style={!field.highlight ? { color: isDark ? SchoolTheme.textDark : "#374151" } : {}}
                     >
                       {field.value}
                     </Text>
@@ -134,7 +116,7 @@ export function MobileDataCard({
 
       {/* Actions Footer */}
       {actions && (
-        <View className="flex-row justify-end items-center px-4 py-3 border-t gap-2.5 rounded-b-2xl" style={{ backgroundColor: isDark ? "#1E293B" : "#F8FAFC", borderColor: isDark ? SchoolTheme.borderDark : "#F3F4F6" }}>
+        <View className="flex-row justify-end items-center px-4 py-2 bg-slate-800/40 border-t border-slate-700/50 gap-2">
           {actions}
         </View>
       )}

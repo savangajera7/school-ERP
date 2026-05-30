@@ -25,28 +25,30 @@ export function ActionListRow({
     <TouchableOpacity 
       onPress={onPress} 
       activeOpacity={0.7}
-      className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-2xl p-4 flex-row items-center"
-      style={premiumCardShadow}
+      className="bg-[#1e293b] border border-slate-700 rounded-3xl p-5 flex-row items-center mb-1"
+      style={{
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 8,
+        elevation: 5,
+      }}
     >
-      <IconCircle
-        name={icon}
-        size={48}
-        iconSize={24}
-        color={accentColor}
-        backgroundColor={iconBackground ?? `${accentColor}15`}
-      />
+      <View className="w-14 h-14 rounded-2xl bg-slate-700 border border-slate-600 items-center justify-center overflow-hidden">
+        <AppIcon name={icon} size={28} color={accentColor} />
+      </View>
       <View className="flex-1 ml-4 mr-2">
-        <Text className="text-[16px] font-bold text-gray-800 dark:text-slate-200">
+        <Text className="text-[17px] font-black text-white uppercase tracking-tight">
           {label}
         </Text>
         {description && (
-          <Text className="text-[12px] font-medium text-gray-500 dark:text-slate-400 mt-1">
+          <Text className="text-[12px] font-bold text-slate-400 mt-1 uppercase tracking-tighter">
             {description}
           </Text>
         )}
       </View>
-      <View className="w-8 items-center justify-center">
-        <AppIcon name="chevronRight" size={20} color="#9CA3AF" />
+      <View className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 items-center justify-center">
+        <AppIcon name="chevronRight" size={18} color="#94a3b8" />
       </View>
     </TouchableOpacity>
   );

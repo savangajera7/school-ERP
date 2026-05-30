@@ -106,31 +106,34 @@ export function ResponsiveDataList<T>({
   const isDark = colorScheme === "dark";
 
   const searchBar = onSearchChange !== undefined ? (
-    <View className="border rounded-2xl flex-row items-center h-[52px] px-4 mb-4" style={{
-      backgroundColor: isDark ? SchoolTheme.cardDark : "#FFFFFF",
-      borderColor: isDark ? SchoolTheme.borderDark : "#F3F4F6",
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.04,
-      shadowRadius: 6,
-      elevation: 3,
-    }}>
-      <AppIcon name="search" size={20} color="#9CA3AF" />
+    <View 
+      className="border rounded-2xl flex-row items-center h-[48px] px-4 mb-4" 
+      style={{
+        backgroundColor: isDark ? "#1e293b" : "#FFFFFF",
+        borderColor: isDark ? "#334155" : "#F3F4F6",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: isDark ? 0.2 : 0.05,
+        shadowRadius: 3,
+        elevation: 2,
+      }}
+    >
+      <AppIcon name="search" size={18} color={isDark ? "#94a3b8" : "#9CA3AF"} />
       <TextInput
         value={searchQuery}
         onChangeText={onSearchChange}
         placeholder={searchPlaceholder || t.searchPlaceholder || "Search..."}
-        className="flex-1 ml-3 text-[15px] font-semibold h-full"
-        style={{ outlineWidth: 0, color: isDark ? SchoolTheme.textDark : "#1F2937" } as any}
+        placeholderTextColor={isDark ? "#64748b" : "#9CA3AF"}
+        className="flex-1 ml-3 text-[14px] font-bold h-full"
+        style={{ outlineWidth: 0, color: isDark ? "#f1f5f9" : "#1F2937" } as any}
       />
       {Boolean(searchQuery) && (
         <TouchableOpacity 
           onPress={() => onSearchChange && onSearchChange("")} 
           activeOpacity={0.7} 
-          className="p-1.5 rounded-full"
-          style={{ backgroundColor: isDark ? "#334155" : "#F3F4F6" }}
+          className="w-7 h-7 rounded-lg items-center justify-center bg-slate-700/50"
         >
-          <AppIcon name="close" size={16} color={isDark ? "#94A3B8" : "#6B7280"} />
+          <AppIcon name="close" size={14} color="#94a3b8" />
         </TouchableOpacity>
       )}
     </View>

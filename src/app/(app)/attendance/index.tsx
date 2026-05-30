@@ -10,7 +10,7 @@ import {
   Image,
 } from "react-native";
 import { useDialog } from "@/components/ui/AppDialog";
-import { Redirect, router, useLocalSearchParams } from "expo-router";
+import { Redirect, router, useLocalSearchParams, useFocusEffect } from "expo-router";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import {
   useGetApiAttendanceGet,
@@ -99,12 +99,22 @@ export default function UnifiedAttendanceScreen() {
   const [selectedBatchID, setSelectedBatchID] = useState<number | null>(null);
   const [classID, setClassID] = useState<number>(0);
 
-  const { data: mediumsData } = useGetApiMediumGet();
-  const { data: batchesData } = useGetApiBatchGet();
+  const { data: mediumsData, refetch: refetchMediums } = useGetApiMediumGet();
+  const { data: batchesData, refetch: refetchBatches } = useGetApiBatchGet();
 
   const mediums = useMemo(() => parseApiList<any>(mediumsData?.data), [mediumsData]);
 
   const batches = useMemo(() => parseApiList<any>(batchesData?.data), [batchesData]);
+
+
+  // ── Master Data Refresh ───────────────────────────────────────────────────
+  useFocusEffect(
+    React.useCallback(() => {
+      refetchMediums();
+      refetchBatches();
+    }, [refetchMediums, refetchBatches])
+  );
+
 
   // Auto-select first medium & batch
   useEffect(() => {
@@ -132,7 +142,7 @@ export default function UnifiedAttendanceScreen() {
     () => buildAttendanceViewParams("classes", { schoolID: userData?.schoolID, attendanceDate: date }),
     [userData?.schoolID, date]
   );
-  const { data: attendanceData } = useGetApiAttendanceGet(attendanceParams);
+  const { data: attendanceData, refetch: refetchAttendanceClasses } = useGetApiAttendanceGet(attendanceParams);
   const { classes } = useMemo(() => parseClassesView(attendanceData?.data), [attendanceData]);
 
   // Classes for the selected medium + batch (Medium → Shift → Class flow)
@@ -182,14 +192,15 @@ export default function UnifiedAttendanceScreen() {
       : base.filter((c: any) => access.canMarkClass(c.classID));
   }, [shiftClasses, classes, markedMap, access]);
 
-  // Reset class selection when medium / batch changes
+  // Auto-select valid class
   useEffect(() => {
-    setClassID(0);
-  }, [selectedMediumID, selectedBatchID]);
-
-  useEffect(() => {
-    if (classID === 0 && visibleClasses.length > 0) {
-      setClassID(visibleClasses[0].classID);
+    if (visibleClasses.length > 0) {
+      const currentStillValid = visibleClasses.some(c => c.classID === classID);
+      if (!currentStillValid) {
+        setClassID(visibleClasses[0].classID);
+      }
+    } else {
+      setClassID(0);
     }
   }, [visibleClasses, classID]);
 
@@ -202,9 +213,17 @@ export default function UnifiedAttendanceScreen() {
     [classID, date, userData?.schoolID]
   );
 
-  const { data, isLoading, refetch } = useGetApiAttendanceGet(queryParams, {
+  const { data, isLoading, refetch: refetchStudents } = useGetApiAttendanceGet(queryParams, {
     query: { enabled: !!classID },
   });
+
+  // Force refetch on focus to ensure latest data
+  useFocusEffect(
+    React.useCallback(() => {
+      refetchAttendanceClasses();
+      if (classID) refetchStudents();
+    }, [refetchAttendanceClasses, refetchStudents, classID])
+  );
 
   const markMutation = usePostApiAttendanceMark();
   const updateMutation = usePutApiAttendanceUpdate();
@@ -589,7 +608,7 @@ export default function UnifiedAttendanceScreen() {
           showsVerticalScrollIndicator={false}
           keyExtractor={(item) => String(item.studentID)}
           contentContainerStyle={{ paddingBottom: 120 }}
-          onRefresh={refetch}
+          onRefresh={refetchStudents}
           refreshing={false}
           ListEmptyComponent={
             <View className="items-center py-12">
