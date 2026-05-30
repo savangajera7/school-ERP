@@ -77,7 +77,6 @@ export default function CreateRoleScreen() {
     <PremiumScreenLayout
       title={isEditing ? "Edit Role" : "Create Role"}
       subtitle="Define system access levels"
-      onBack={() => router.back()}
       flatHeader
     >
       <ScrollView showsVerticalScrollIndicator={false}>

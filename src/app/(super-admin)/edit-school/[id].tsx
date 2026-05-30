@@ -95,7 +95,6 @@ export default function EditSchoolScreen() {
     <PremiumScreenLayout
       title="Edit School"
       subtitle="Manage school information"
-      onBack={() => router.back()}
     >
       {isLoading ? (
         <SkeletonLoader rows={5} />

@@ -45,7 +45,6 @@ export default function AdminAttendanceReportsScreen() {
     <PremiumScreenLayout
       title="Attendance reports"
       subtitle="Admin dashboard"
-      onBack={() => router.back()}
     >
       <PremiumDatePicker label="Report date" value={date} onChange={setDate} />
 

@@ -63,7 +63,6 @@ export default function RoleRightsScreen() {
     <PremiumScreenLayout
       title="Role Permissions"
       subtitle={`Configuring access for ${roleName || "Role"}`}
-      onBack={() => router.back()}
       scrollable={false}
       flatHeader
     >

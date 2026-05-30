@@ -71,7 +71,6 @@ export default function ChangePasswordScreen() {
     <PremiumScreenLayout
       title="Change password"
       subtitle="Update your account password"
-      onBack={() => router.back()}
       flatHeader
       keyboard
     >

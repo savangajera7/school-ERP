@@ -71,7 +71,6 @@ export default function AttendanceHistoryScreen() {
     <PremiumScreenLayout
       title="Attendance History"
       subtitle={formatDisplayDate(date)}
-      onBack={() => router.back()}
       scrollable={false}
       fullWidth
     >

@@ -69,7 +69,6 @@ export default function LeaveScreen() {
             ? "Apply for leave for your ward"
             : "Review and track leave applications"
       }
-      onBack={() => router.back()}
       scrollable={false}
       bodyStyle={{ flex: 1, paddingHorizontal: 0, marginTop: -16 }}
     >

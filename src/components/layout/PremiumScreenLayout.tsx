@@ -58,8 +58,18 @@ export function PremiumScreenLayout({
   const { isMobile } = useResponsive();
 
   const handleBack = () => {
-    if (onBack) onBack();
-    else router.back();
+    if (onBack) {
+      onBack();
+      return;
+    }
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      const { useAuthStore } = require("@/store/authStore");
+      const { getHomeRoute } = require("@/utils/roleRouting");
+      const role = useAuthStore.getState().role;
+      router.replace(getHomeRoute(role));
+    }
   };
 
   const body = (

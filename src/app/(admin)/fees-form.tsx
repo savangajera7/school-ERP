@@ -91,7 +91,6 @@ export default function FeesFormScreen() {
     <PremiumScreenLayout
       title={isEditing ? "Edit Fee Record" : "Fee Collection"}
       subtitle={isEditing ? "Modify existing payment data" : "Record a new student fee payment"}
-      onBack={() => router.back()}
       flatHeader
       keyboard
     >

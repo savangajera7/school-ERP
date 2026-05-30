@@ -66,7 +66,6 @@ export default function MoneyScreen() {
     <PremiumScreenLayout
       title="Accounts"
       subtitle="Money / petty cash"
-      onBack={() => router.back()}
       scrollable={false}
       bodyStyle={{ flex: 1, paddingHorizontal: 0, marginTop: -16 }}
     >

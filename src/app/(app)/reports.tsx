@@ -46,7 +46,6 @@ export default function ReportsScreen() {
     <PremiumScreenLayout
       title="Reports"
       subtitle="Overview & drill-down"
-      onBack={() => router.back()}
     >
         <PremiumStatPills
           items={[

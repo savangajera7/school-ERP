@@ -136,7 +136,6 @@ export default function StudentProfileScreen() {
     <PremiumScreenLayout
       title="Student Profile"
       subtitle={`GR No: ${student.studentGRNo || "N/A"}`}
-      onBack={() => router.back()}
     >
       <PremiumCard noAccent style={{ padding: 20, marginBottom: 14 }}>
         <View className="flex-row items-center gap-6">

@@ -37,7 +37,6 @@ export function ParentMenuScreen() {
       subtitle=""
       showTopBar
       hideBack={false}
-      onBack={() => router.back()}
     >
       <View className="pb-20">
         <ScrollView showsVerticalScrollIndicator={false}>

@@ -838,7 +838,6 @@ export default function AdmissionFormScreen() {
     <PremiumScreenLayout
       title={isEditing ? "Edit Admission" : "Admission Form"}
       subtitle={isEditing ? "Modify existing student records" : "Register a new student into the school ledger"}
-      onBack={() => router.back()}
       keyboard
       fullWidth
       hideBack

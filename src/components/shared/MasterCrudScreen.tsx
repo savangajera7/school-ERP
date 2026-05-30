@@ -166,7 +166,6 @@ export function MasterCrudScreen({
     <PremiumScreenLayout
       title={title}
       subtitle={subtitle}
-      onBack={() => router.back()}
       scrollable={false}
       fullWidth
       hideBack={Platform.OS === "web"}

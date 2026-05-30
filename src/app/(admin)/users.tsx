@@ -20,7 +20,6 @@ export default function UsersScreen() {
     <PremiumScreenLayout
       title="Users"
       subtitle="System accounts"
-      onBack={() => router.back()}
       scrollable={false}
       bodyStyle={{ flex: 1, paddingHorizontal: 0, marginTop: -16 }}
     >

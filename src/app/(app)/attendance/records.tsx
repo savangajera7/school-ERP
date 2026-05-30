@@ -158,7 +158,6 @@ export default function AttendanceRecordsScreen() {
     <PremiumScreenLayout
       title="Attendance records"
       subtitle="Exception rows saved in the database"
-      onBack={() => router.back()}
       scrollable={false}
       flatHeader
     >

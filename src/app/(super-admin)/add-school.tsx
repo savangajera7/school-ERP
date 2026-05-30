@@ -70,7 +70,6 @@ export default function AddSchoolScreen() {
     <PremiumScreenLayout
       title="Add New School"
       subtitle="Register a new school in the system"
-      onBack={() => router.back()}
     >
       <KeyboardAvoidingView 
         behavior={Platform.OS === "ios" ? "padding" : undefined}

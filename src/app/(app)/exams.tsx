@@ -176,7 +176,6 @@ export default function ExamsManagementScreen() {
     <PremiumScreenLayout
       title="Examinations"
       subtitle="Exams, marks & rankings"
-      onBack={() => router.back()}
       headerSlot={
         <PremiumTabSwitcher
           tabs={[

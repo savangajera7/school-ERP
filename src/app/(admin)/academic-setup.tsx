@@ -80,7 +80,6 @@ export default function AcademicSetupScreen() {
     <PremiumScreenLayout
       title="Academic Setup"
       subtitle="School infrastructure configuration"
-      onBack={() => router.back()}
       headerSlot={
         <PremiumTabSwitcher
           tabs={[

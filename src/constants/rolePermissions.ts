@@ -462,7 +462,7 @@ export const MOBILE_TABS_BY_ROLE: Record<
     { label: "Menu", icon: "menu", route: "/(app)/menu" },
     { label: "Search", icon: "search", route: "/(admin)/students" },
     { label: "Home", icon: "home", route: "/(app)/dashboard" },
-    { label: "Class", icon: "attendance", route: "/(app)/attendance" },
+    { label: "Time Table", icon: "timetable", route: "/(admin)/timetable" },
     { label: "Profile", icon: "profile", route: "/(app)/profile" },
   ],
   teacher: [

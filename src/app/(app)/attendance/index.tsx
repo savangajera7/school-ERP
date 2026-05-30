@@ -373,7 +373,6 @@ export default function UnifiedAttendanceScreen() {
     <PremiumScreenLayout
       title="Attendance"
       subtitle={`${className} · ${date}`}
-      onBack={() => router.back()}
       scrollable={false}
       fullWidth
       rightAction={

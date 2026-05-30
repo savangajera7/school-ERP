@@ -23,7 +23,6 @@ export default function MastersMenuScreen() {
       title="Master Data"
       subtitle="Configure school-wide parameters"
       hideBack={Platform.OS === 'web'}
-      onBack={() => router.back()}
       fullWidth
     >
       <View className="pb-10 gap-3" style={{ marginTop: 32 }}>

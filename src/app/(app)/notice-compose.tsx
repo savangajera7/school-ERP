@@ -42,7 +42,6 @@ export default function NoticeComposeScreen() {
     <PremiumScreenLayout
       title="Publish Notice"
       subtitle="School or class circular"
-      onBack={() => router.back()}
       keyboard
       headerSlot={
         <PremiumTabSwitcher

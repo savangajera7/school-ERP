@@ -66,7 +66,6 @@ export default function TeacherAttendanceScreen() {
     <PremiumScreenLayout
       title="Staff attendance"
       subtitle="Teacher register"
-      onBack={() => router.back()}
       scrollable={false}
       bodyStyle={{ flex: 1, paddingHorizontal: 0, marginTop: -16 }}
     >

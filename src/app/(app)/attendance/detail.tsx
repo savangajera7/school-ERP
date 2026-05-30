@@ -93,7 +93,6 @@ export default function AttendanceDetailScreen() {
     <PremiumScreenLayout
       title={`${className} — Detail`}
       subtitle={formatDisplayDate(detail.attendanceDate || date)}
-      onBack={() => router.back()}
       scrollable={false}
       fullWidth
       rightAction={

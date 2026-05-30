@@ -72,7 +72,6 @@ export default function ClassMonthlyReportScreen() {
     <PremiumScreenLayout
       title={`${className} — Monthly`}
       subtitle="Class attendance summary"
-      onBack={() => router.back()}
     >
       {/* Month navigator */}
       <View

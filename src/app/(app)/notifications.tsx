@@ -36,7 +36,6 @@ export default function NotificationsScreen() {
     <PremiumScreenLayout
       title="Notifications"
       subtitle="In-app alerts & reminders"
-      onBack={() => router.back()}
       scrollable={false}
       bodyStyle={{ flex: 1, paddingHorizontal: 0 }}
       flatHeader

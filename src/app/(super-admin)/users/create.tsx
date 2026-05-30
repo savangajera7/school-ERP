@@ -67,7 +67,6 @@ export default function CreateUserScreen() {
     <PremiumScreenLayout
       title="Create User"
       subtitle="Add a new platform administrator or staff member"
-      onBack={() => router.back()}
       keyboard
       flatHeader
     >

@@ -307,7 +307,6 @@ export default function TeacherFormScreen() {
     <PremiumScreenLayout
       title={isEditing ? "Edit Teacher" : "New Teacher"}
       subtitle={isEditing ? "Modify faculty member details" : "Register a new faculty member"}
-      onBack={() => router.back()}
       keyboard
       fullWidth
       hideBack

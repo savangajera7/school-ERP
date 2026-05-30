@@ -59,7 +59,6 @@ export default function NotificationComposeScreen() {
     <PremiumScreenLayout
       title="Send Notification"
       subtitle="Push + in-app alert"
-      onBack={() => router.back()}
       flatHeader
       keyboard
     >

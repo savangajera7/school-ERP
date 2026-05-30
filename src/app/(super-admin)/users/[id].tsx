@@ -97,7 +97,6 @@ export default function UserDetailScreen() {
     <PremiumScreenLayout
       title="User Details"
       subtitle={user?.fullName || "Manage platform user"}
-      onBack={() => router.back()}
       keyboard
       flatHeader
     >

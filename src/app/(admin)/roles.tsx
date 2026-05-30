@@ -33,7 +33,6 @@ export default function RolesScreen() {
     <PremiumScreenLayout
       title="Roles & Rights"
       subtitle="Access control"
-      onBack={() => router.back()}
       scrollable={false}
       bodyStyle={{ flex: 1, paddingHorizontal: 0, marginTop: -16 }}
     >
