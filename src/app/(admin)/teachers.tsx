@@ -4,7 +4,7 @@ import {
   View, Text, TouchableOpacity, Modal,
   ScrollView, ActivityIndicator, Image, TextInput,
 } from "react-native";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { useColorScheme } from "nativewind";
 import { Colors } from "@/constants/colors";
 import { useDeleteApiTeacherDeleteTeacher } from "@/api/generated/teacher/teacher";
@@ -98,6 +98,13 @@ export default function AdminTeacherManagementScreen() {
 
   // ── Data ──────────────────────────────────────────────────────────────────
   const { data: teachersRaw, isLoading, isError, error, refetch } = useGetApiTeacherGetTeacherList();
+
+  // Force refetch on focus to ensure latest data
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
   const { data: classesRaw } = useGetApiClassGet();
   const allClasses = useMemo(() => parseApiList<any>(classesRaw?.data), [classesRaw]);
 

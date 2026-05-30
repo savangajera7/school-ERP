@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Modal, TextInput, ActivityIndicator, Image } from "react-native";
 import { router, useFocusEffect } from "expo-router";
 import { useDialog } from "@/components/ui/AppDialog";
@@ -37,13 +37,22 @@ export default function AdminStudentManagementScreen() {
   const [selectedMediumId, setSelectedMediumId] = useState<number | null>(null);
   const [showFilters, setShowFilters] = useState(false);
 
-  const { data: classData } = useGetApiClassGet();
-  const classes = useMemo(() => parseApiList<any>(classData?.data), [classData]);
+  const { data: classData, refetch: refetchClasses } = useGetApiClassGet();
+  const classes = useMemo(() => {
+    let list = parseApiList<any>(classData?.data);
+    if (selectedMediumId) {
+      list = list.filter((c: any) => c.mediumID === selectedMediumId);
+    }
+    if (selectedBatchId) {
+      list = list.filter((c: any) => c.batchID === selectedBatchId);
+    }
+    return list;
+  }, [classData, selectedMediumId, selectedBatchId]);
 
-  const { data: batchData } = useGetApiBatchGet();
+  const { data: batchData, refetch: refetchBatches } = useGetApiBatchGet();
   const batches = useMemo(() => parseApiList<any>(batchData?.data), [batchData]);
 
-  const { data: mediumData } = useGetApiMediumGet();
+  const { data: mediumData, refetch: refetchMediums } = useGetApiMediumGet();
   const mediums = useMemo(() => parseApiList<any>(mediumData?.data), [mediumData]);
 
   const { mutateAsync: searchMutate } = usePostApiStudentSearch();
@@ -105,20 +114,27 @@ export default function AdminStudentManagementScreen() {
     }
   }, [searchMutate]);
 
+  const handleRefresh = useCallback(() => {
+    const searchRequest: StudentSearchRequest = {
+      page: 1,
+      pageSize: pageSize,
+      search: debouncedSearchQuery.trim() || undefined,
+      classID: selectedClassId || undefined,
+      batchID: selectedBatchId || undefined,
+      mediumID: selectedMediumId || undefined,
+      sortBy: "Name",
+      sortOrder: "ASC"
+    };
+    searchStudents(searchRequest);
+    refetchClasses();
+    refetchBatches();
+    refetchMediums();
+  }, [debouncedSearchQuery, selectedClassId, selectedBatchId, selectedMediumId, pageSize, searchStudents, refetchClasses, refetchBatches, refetchMediums]);
+
   useFocusEffect(
     React.useCallback(() => {
-      const searchRequest: StudentSearchRequest = {
-        page: currentPage,
-        pageSize: pageSize,
-        search: debouncedSearchQuery.trim() || undefined,
-        classID: selectedClassId || undefined,
-        batchID: selectedBatchId || undefined,
-        mediumID: selectedMediumId || undefined,
-        sortBy: "Name",
-        sortOrder: "ASC"
-      };
-      searchStudents(searchRequest);
-    }, [debouncedSearchQuery, selectedClassId, selectedBatchId, selectedMediumId, currentPage, pageSize, searchStudents])
+      handleRefresh();
+    }, [handleRefresh])
   );
 
   React.useEffect(() => {
@@ -359,20 +375,6 @@ export default function AdminStudentManagementScreen() {
         </View>
       </TouchableOpacity>
     );
-  };
-
-  const handleRefresh = () => {
-    const searchRequest: StudentSearchRequest = {
-      page: currentPage,
-      pageSize: pageSize,
-      search: debouncedSearchQuery.trim() || undefined,
-      classID: selectedClassId || undefined,
-      batchID: selectedBatchId || undefined,
-      mediumID: selectedMediumId || undefined,
-      sortBy: "Name",
-      sortOrder: "ASC"
-    };
-    searchStudents(searchRequest);
   };
 
   

@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { View, Text, FlatList, TextInput, TouchableOpacity, Platform, ActivityIndicator } from "react-native";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { ResponsiveDataList } from "@/components/shared/ResponsiveDataList";
 import { FormLayout } from "@/components/layout/FormLayout";
@@ -68,6 +68,13 @@ export function MasterCrudScreen({
   const addMutation = useAdd();
   const updateMutation = useUpdate();
   const deleteMutation = useDelete();
+
+  // Force refetch on focus to ensure latest data
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
 
   const items = parseApiList(data?.data);
   const filteredItems = React.useMemo(() => {

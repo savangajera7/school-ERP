@@ -115,15 +115,15 @@ export default function TimetableScreen() {
 
   
   // ── Master data ───────────────────────────────────────────────────────────
-  const { data: classesRaw } = useGetApiClassGet();
-  const { data: mediumsRaw } = useGetApiMediumGet();
-  const { data: batchesRaw } = useGetApiBatchGet();
+  const { data: classesRaw, refetch: refetchClasses } = useGetApiClassGet();
+  const { data: mediumsRaw, refetch: refetchMediums } = useGetApiMediumGet();
+  const { data: batchesRaw, refetch: refetchBatches } = useGetApiBatchGet();
   
   const mediums = useMemo(() => parseApiList<any>(mediumsRaw?.data), [mediumsRaw]);
   const batches = useMemo(() => parseApiList<any>(batchesRaw?.data), [batchesRaw]);
 
   
-  const { data: teacherPermissionsData } = useGetApiTeacherPermissionsTeacherId(
+  const { data: teacherPermissionsData, refetch: refetchTeacherPerms } = useGetApiTeacherPermissionsTeacherId(
     Number(userData?.id || 0),
     { query: { enabled: isTeacher } }
   );
@@ -131,6 +131,14 @@ export default function TimetableScreen() {
   
   const classes = useMemo(() => {
     let allCls = parseApiList<any>(classesRaw?.data);
+    
+    // Filter by selected medium AND batch
+    if (selectedMediumID) {
+      allCls = allCls.filter((c: any) => c.mediumID === selectedMediumID);
+    }
+    if (selectedBatchID) {
+      allCls = allCls.filter((c: any) => c.batchID === selectedBatchID);
+    }
 
     if (isSchoolAdmin || isAdmin) return allCls;
     if (isTeacher) {
@@ -141,13 +149,13 @@ export default function TimetableScreen() {
       return allCls.filter((c: any) => allowedClassIds.has(c.classID));
     }
     return [];
-  }, [classesRaw, isSchoolAdmin, isAdmin, isTeacher, teacherPermissionsData, selectedMediumID]);
+  }, [classesRaw, isSchoolAdmin, isAdmin, isTeacher, teacherPermissionsData, selectedMediumID, selectedBatchID]);
 
 
-  const { data: teachersRaw } = useGetApiTeacherGetTeacherList();
+  const { data: teachersRaw, refetch: refetchTeachers } = useGetApiTeacherGetTeacherList();
   const teachers = useMemo(() => parseApiList<any>(teachersRaw?.data), [teachersRaw]);
 
-  const { data: subjectsRaw } = useGetApiSubjectGetSubjectList();
+  const { data: subjectsRaw, refetch: refetchSubjects } = useGetApiSubjectGetSubjectList();
   const subjects = useMemo(() => {
     const list = parseApiList<any>(subjectsRaw?.data);
     return list.filter((s: any) => 
@@ -173,10 +181,15 @@ export default function TimetableScreen() {
 
   // Auto-select first class for admin & teacher
   React.useEffect(() => {
-    if (classes.length > 0 && selectedClassID === null && (isSchoolAdmin || isAdmin || isTeacher)) {
-      setSelectedClassID(classes[0].classID);
+    if (classes.length > 0) {
+      const currentStillValid = classes.some(c => c.classID === selectedClassID);
+      if (!currentStillValid) {
+        setSelectedClassID(classes[0].classID);
+      }
+    } else {
+      setSelectedClassID(null);
     }
-  }, [classes, selectedClassID, isSchoolAdmin, isAdmin, isTeacher]);
+  }, [classes, isSchoolAdmin, isAdmin, isTeacher]);
 
 
   
@@ -192,9 +205,22 @@ export default function TimetableScreen() {
   }, [isViewOnly, selectedClassID, selectedDay, selectedBatchID]);
 
 
-  const { data: timetableRaw, isLoading, isError, error, refetch } = useGetApiTimetableGet(
+  const { data: timetableRaw, isLoading, isError, error, refetch: refetchTimetable } = useGetApiTimetableGet(
     queryParams ?? undefined,
     { query: { enabled: !!queryParams } }
+  );
+
+  // Force refetch on focus to ensure latest data
+  useFocusEffect(
+    useCallback(() => {
+      refetchTimetable();
+      refetchClasses();
+      refetchMediums();
+      refetchBatches();
+      refetchTeachers();
+      refetchSubjects();
+      if (isTeacher) refetchTeacherPerms();
+    }, [refetchTimetable, refetchClasses, refetchMediums, refetchBatches, refetchTeachers, refetchSubjects, refetchTeacherPerms, isTeacher])
   );
 
   const timetableView = useMemo((): TimetableView | null => {
@@ -1046,7 +1072,7 @@ export default function TimetableScreen() {
           isLoading={isLoading}
           isError={isError}
           error={error}
-          onRefresh={refetch}
+          onRefresh={refetchTimetable}
           renderCard={renderPeriodCard}
           tableColumns={tableColumns}
           keyExtractor={(item, index) => item.timetableID ? String(item.timetableID) : String(index)}
