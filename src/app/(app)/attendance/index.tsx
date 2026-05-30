@@ -308,11 +308,6 @@ export function AdminTeacherAttendanceView() {
   };
 
   const handleSave = () => {
-    if (isFutureDate(date)) {
-      dialog.alert("Invalid date", "Cannot mark attendance for a future date.");
-      return;
-    }
-
     const studentIds = students.map((s) => s.studentID!).filter(Boolean);
     const absentRate = studentIds.length
       ? (counts.absent + counts.leave) / studentIds.length
@@ -523,14 +518,12 @@ export function AdminTeacherAttendanceView() {
               const isSelected = date === iso;
               const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
               const dayNum = d.getDate();
-              const isFuture = isFutureDate(iso);
               return (
                 <TouchableOpacity
                   key={iso}
-                  onPress={() => { if (!isFuture) setDate(iso) }}
-                  className={`flex-1 py-2 rounded-xl items-center justify-center border ${isSelected ? "bg-[#1A3C6E] border-[#1A3C6E]" : "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700"} ${isFuture ? "opacity-40" : ""}`}
+                  onPress={() => setDate(iso)}
+                  className={`flex-1 py-2 rounded-xl items-center justify-center border ${isSelected ? "bg-[#1A3C6E] border-[#1A3C6E]" : "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700"}`}
                   activeOpacity={0.8}
-                  disabled={isFuture}
                 >
                   <Text className={`text-[8px] font-black uppercase mb-0.5 ${isSelected ? 'text-white' : 'text-gray-400 dark:text-slate-500'}`}>{dayName}</Text>
                   <Text className={`text-[13px] font-black ${isSelected ? 'text-white' : 'text-gray-800 dark:text-slate-200'}`}>{dayNum}</Text>
