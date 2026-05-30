@@ -22,40 +22,43 @@ export function PremiumSearchField({
   const isDark = colorScheme === "dark";
 
   return (
-    <View style={[styles.wrap, { backgroundColor: isDark ? SchoolTheme.cardDark : "#fff", borderColor: isDark ? SchoolTheme.borderDark : "#E5E7EB" }]}>
-      <AppIcon name="search" size={18} color={isDark ? SchoolTheme.textSecondaryDark : "#9CA3AF"} />
+    <View 
+      className="flex-row items-center rounded-2xl border px-4 h-[48px] mb-4"
+      style={{ 
+        backgroundColor: isDark ? "#1e293b" : "#fff", 
+        borderColor: isDark ? "#334155" : "#F3F4F6",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: isDark ? 0.2 : 0.05,
+        shadowRadius: 3,
+        elevation: 2,
+      }}
+    >
+      <AppIcon name="search" size={18} color={isDark ? "#94a3b8" : "#9CA3AF"} />
       <TextInput
-        style={[styles.input, { color: isDark ? SchoolTheme.textDark : "#111827" }]}
+        className="flex-1 ml-2 text-[14px] font-bold h-full"
+        style={{ color: isDark ? "#f1f5f9" : "#1F2937" } as any}
         placeholder={placeholder}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor={isDark ? "#64748b" : "#9CA3AF"}
         value={value}
         onChangeText={onChangeText}
       />
       {value.length > 0 && onClear ? (
-        <TouchableOpacity onPress={onClear} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-          <AppIcon name="close" size={16} color={isDark ? SchoolTheme.textSecondaryDark : "#9CA3AF"} />
+        <TouchableOpacity 
+          onPress={onClear} 
+          activeOpacity={0.7}
+          className="w-7 h-7 rounded-lg items-center justify-center bg-slate-700/50"
+        >
+          <AppIcon name="close" size={14} color="#94a3b8" />
         </TouchableOpacity>
       ) : null}
     </View>
   );
 }
 
+// Keep styles object but we are using tailwind classes mostly now
 const styles = StyleSheet.create({
-  wrap: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: 16,
-    borderWidth: 1,
-    paddingHorizontal: 14,
-    height: 48,
-    gap: 10,
-    marginBottom: 14,
-    ...premiumCardShadow,
-  },
   input: {
-    flex: 1,
-    fontSize: 14,
-    fontWeight: "600",
     paddingVertical: 0,
   },
 });

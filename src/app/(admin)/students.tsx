@@ -388,16 +388,16 @@ export default function AdminStudentManagementScreen() {
       rightAction={
         <TouchableOpacity
           onPress={() => setShowFilters(prev => !prev)}
-          className={`flex-row items-center gap-1.5 px-3 py-1.5 rounded-xl border ${
+          className={`flex-row items-center gap-2 px-3 py-1.5 rounded-xl border ${
             showFilters
-              ? "bg-[#0d3666]/10 dark:bg-blue-900/20 border-[#0d3666]/20 dark:border-blue-700/30"
-              : "bg-gray-50 dark:bg-slate-800 border-gray-200 dark:border-slate-700"
+              ? "bg-emerald-500/10 border-emerald-500/20"
+              : "bg-slate-800 border-slate-700"
           }`}
           activeOpacity={0.7}
         >
-          <AppIcon name="filter" size={14} color={showFilters ? "#0d3666" : "#4B5563"} />
-          <Text className={`text-[11px] font-extrabold uppercase ${showFilters ? "text-[#0d3666]" : "text-gray-600 dark:text-slate-400"}`}>
-            {showFilters ? "Hide Filters" : "Filters"}
+          <AppIcon name="filter" size={14} color={showFilters ? "#10b981" : "#94a3b8"} />
+          <Text className={`text-[11px] font-black uppercase tracking-tight ${showFilters ? "text-emerald-400" : "text-slate-400"}`}>
+            {showFilters ? "Active" : "Filter"}
           </Text>
         </TouchableOpacity>
       }
@@ -426,73 +426,80 @@ export default function AdminStudentManagementScreen() {
         headerComponent={
           showFilters ? (
             <View 
-              className="bg-white dark:bg-slate-800 px-5 py-4 mb-4 rounded-2xl border border-gray-100 dark:border-slate-700 z-20"
+              className="bg-[#1e293b] px-5 py-4 mb-4 rounded-2xl border border-slate-700/50"
               style={premiumCardShadow}
             >
-              <View className="mb-3">
-                <Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-1.5">Select Medium</Text>
+              <View className="mb-4">
+                <View className="flex-row items-center gap-2 mb-2">
+                  <AppIcon name="subjects" size={14} color="#94a3b8" />
+                  <Text className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Medium</Text>
+                </View>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
                   <TouchableOpacity
                     onPress={() => setSelectedMediumId(null)}
-                    className={`px-4 py-1.5 rounded-xl border ${selectedMediumId === null ? "bg-orange-50 border-orange-200" : "bg-white dark:bg-slate-700 border-gray-200 dark:border-slate-600"}`}
+                    className={`px-4 py-2 rounded-xl border ${selectedMediumId === null ? "bg-emerald-500/10 border-emerald-500/30" : "bg-slate-800 border-slate-700"}`}
                   >
-                    <Text className={`text-[11px] font-bold ${selectedMediumId === null ? "text-orange-700" : "text-gray-600 dark:text-slate-300"}`}>All Mediums</Text>
+                    <Text className={`text-[11px] font-bold ${selectedMediumId === null ? "text-emerald-400" : "text-slate-400"}`}>All Mediums</Text>
                   </TouchableOpacity>
                   {mediums.map((med: any) => (
                     <TouchableOpacity
                       key={med.mediumID}
                       onPress={() => setSelectedMediumId(med.mediumID)}
-                      className={`px-4 py-1.5 rounded-xl border flex-row items-center gap-1 ${selectedMediumId === med.mediumID ? "bg-orange-50 border-orange-200" : "bg-white dark:bg-slate-700 border-gray-200 dark:border-slate-600"}`}
+                      className={`px-4 py-2 rounded-xl border flex-row items-center gap-1.5 ${selectedMediumId === med.mediumID ? "bg-emerald-500/10 border-emerald-500/30" : "bg-slate-800 border-slate-700"}`}
                     >
-                      <Text className={`text-[11px] font-bold ${selectedMediumId === med.mediumID ? "text-orange-700" : "text-gray-600 dark:text-slate-300"}`}>
+                      <Text className={`text-[11px] font-bold ${selectedMediumId === med.mediumID ? "text-emerald-400" : "text-slate-400"}`}>
                         {med.mediumName}
                       </Text>
-                      {selectedMediumId === med.mediumID && <AppIcon name="subjects" size={12} color="#C2410C" />}
                     </TouchableOpacity>
                   ))}
                 </ScrollView>
               </View>
 
-              <View className="mb-3">
-                <Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-1.5">Select Batch</Text>
+              <View className="mb-4">
+                <View className="flex-row items-center gap-2 mb-2">
+                  <AppIcon name="admission" size={14} color="#94a3b8" />
+                  <Text className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Batch</Text>
+                </View>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
                   <TouchableOpacity
                     onPress={() => setSelectedBatchId(null)}
-                    className={`px-4 py-1.5 rounded-xl border ${selectedBatchId === null ? "bg-blue-50 border-blue-200" : "bg-white dark:bg-slate-700 border-gray-200 dark:border-slate-600"}`}
+                    className={`px-4 py-2 rounded-xl border ${selectedBatchId === null ? "bg-emerald-500/10 border-emerald-500/30" : "bg-slate-800 border-slate-700"}`}
                   >
-                    <Text className={`text-[11px] font-bold ${selectedBatchId === null ? "text-blue-700" : "text-gray-600 dark:text-slate-300"}`}>All Batches</Text>
+                    <Text className={`text-[11px] font-bold ${selectedBatchId === null ? "text-emerald-400" : "text-slate-400"}`}>All Batches</Text>
                   </TouchableOpacity>
                   {batches.map((b: any) => (
                     <TouchableOpacity
                       key={b.batchID}
                       onPress={() => setSelectedBatchId(b.batchID)}
-                      className={`px-4 py-1.5 rounded-xl border flex-row items-center gap-1 ${selectedBatchId === b.batchID ? "bg-blue-50 border-blue-200" : "bg-white dark:bg-slate-700 border-gray-200 dark:border-slate-600"}`}
+                      className={`px-4 py-2 rounded-xl border flex-row items-center gap-1.5 ${selectedBatchId === b.batchID ? "bg-emerald-500/10 border-emerald-500/30" : "bg-slate-800 border-slate-700"}`}
                     >
-                      <Text className={`text-[11px] font-bold ${selectedBatchId === b.batchID ? "text-blue-700" : "text-gray-600 dark:text-slate-300"}`}>
+                      <Text className={`text-[11px] font-bold ${selectedBatchId === b.batchID ? "text-emerald-400" : "text-slate-400"}`}>
                         {b.batchName}
                       </Text>
-                      {selectedBatchId === b.batchID && <AppIcon name="admission" size={12} color="#1D4ED8" />}
                     </TouchableOpacity>
                   ))}
                 </ScrollView>
               </View>
 
-              <View className="mb-1">
-                <Text className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-1.5">Select Class</Text>
+              <View>
+                <View className="flex-row items-center gap-2 mb-2">
+                  <AppIcon name="attendance" size={14} color="#94a3b8" />
+                  <Text className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Class</Text>
+                </View>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
                   <TouchableOpacity
                     onPress={() => setSelectedClassId(null)}
-                    className={`px-4 py-2 rounded-xl border ${selectedClassId === null ? "bg-teal-50 border-teal-200" : "bg-white dark:bg-slate-700 border-gray-200 dark:border-slate-600"}`}
+                    className={`px-4 py-2 rounded-xl border ${selectedClassId === null ? "bg-emerald-500/10 border-emerald-500/30" : "bg-slate-800 border-slate-700"}`}
                   >
-                    <Text className={`text-[11px] font-bold ${selectedClassId === null ? "text-teal-700" : "text-gray-600 dark:text-slate-300"}`}>All Classes</Text>
+                    <Text className={`text-[11px] font-bold ${selectedClassId === null ? "text-emerald-400" : "text-slate-400"}`}>All Classes</Text>
                   </TouchableOpacity>
                   {classes.map((cls: any) => (
                     <TouchableOpacity
                       key={cls.classID}
                       onPress={() => setSelectedClassId(cls.classID)}
-                      className={`px-4 py-2 rounded-xl border ${selectedClassId === cls.classID ? "bg-teal-50 border-teal-200" : "bg-white dark:bg-slate-700 border-gray-200 dark:border-slate-600"}`}
+                      className={`px-4 py-2 rounded-xl border ${selectedClassId === cls.classID ? "bg-emerald-500/10 border-emerald-500/30" : "bg-slate-800 border-slate-700"}`}
                     >
-                      <Text className={`text-[11px] font-bold ${selectedClassId === cls.classID ? "text-teal-700" : "text-gray-600 dark:text-slate-300"}`}>
+                      <Text className={`text-[11px] font-bold ${selectedClassId === cls.classID ? "text-emerald-400" : "text-slate-400"}`}>
                         Class {cls.className}
                       </Text>
                     </TouchableOpacity>

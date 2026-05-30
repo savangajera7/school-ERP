@@ -33,6 +33,7 @@ import { useColorScheme } from "nativewind";
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
 import { Platform } from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { getApiTimetableGet } from "@/api/generated/10-timetable/10-timetable";
 import { premiumCardShadow } from "@/constants/premiumStyles";
 import { ResponsiveDataList, EntityActionButtons, type TableColumn } from "@/components/shared";
