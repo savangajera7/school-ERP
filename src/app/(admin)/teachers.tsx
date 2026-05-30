@@ -1,5 +1,5 @@
 import { premiumCardShadow } from "@/constants/premiumStyles";
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import {
   View, Text, TouchableOpacity, Modal,
   ScrollView, ActivityIndicator, Image, TextInput,
@@ -26,6 +26,8 @@ import {
   useGetApiTeacherPermissionsAll,
   usePostApiTeacherPermissionsSet,
   getGetApiTeacherPermissionsAllQueryKey,
+  useGetApiTeacherPermissionsTeacherId,
+  getGetApiTeacherPermissionsTeacherIdQueryKey,
 } from "@/api/generated/6-teacher-permissions-admin-assigns-module-access-per-class/6-teacher-permissions-admin-assigns-module-access-per-class";
 import {
   useGetApiTeacherGetTeacherList,
@@ -172,6 +174,40 @@ export default function AdminTeacherManagementScreen() {
   const [removeClassModal, setRemoveClassModal] = useState<{ classID: number; className: string } | null>(null);
   const [isRemovingClass, setIsRemovingClass] = useState(false);
 
+  // Fetch specific teacher's permissions
+  const { data: permissionsData, refetch: refetchPermissions } = useGetApiTeacherPermissionsTeacherId(
+    selectedTeacher?.teacherID || 0,
+    { query: { enabled: !!selectedTeacher } }
+  );
+
+  // Sync localPerms when permissionsData updates
+  useEffect(() => {
+    if (permissionsData?.data) {
+      const permsList = parseApiList<ClassPermission>(permissionsData.data);
+      const seed: Record<number, ClassPermission> = {};
+      permsList.forEach((cp) => {
+        seed[cp.classID] = {
+          classID: cp.classID,
+          className: cp.className || "",
+          canNotice: !!cp.canNotice,
+          canAttendance: !!cp.canAttendance,
+          canHomework: !!cp.canHomework,
+          canClasswork: !!cp.canClasswork,
+          canTimetable: !!cp.canTimetable,
+          canExam: !!cp.canExam,
+        };
+      });
+      setLocalPerms(seed);
+    }
+  }, [permissionsData]);
+
+  const activePermissions = useMemo(() => {
+    if (!permissionsData?.data) {
+      return selectedTeacher?.classPermissions || [];
+    }
+    return parseApiList<ClassPermission>(permissionsData.data);
+  }, [permissionsData, selectedTeacher]);
+
   const openPanel = useCallback((teacher: TeacherWithDetails) => {
     setSelectedTeacher(teacher);
     const seed: Record<number, ClassPermission> = {};
@@ -209,8 +245,10 @@ export default function AdminTeacherManagementScreen() {
       });
       queryClient.invalidateQueries({ queryKey: getGetApiTeacherPermissionsAllQueryKey() });
       queryClient.invalidateQueries({ queryKey: getGetApiTeacherGetTeacherListQueryKey() });
-    } catch (_e) {
-      // silent — user can retry
+      queryClient.invalidateQueries({ queryKey: getGetApiTeacherPermissionsTeacherIdQueryKey(selectedTeacher.teacherID) });
+      showToast("Permissions updated successfully", "success");
+    } catch (e: any) {
+      dialog.alert("Error", e.message || "Failed to update permissions", "error");
     } finally {
       setSavingClassID(null);
     }
@@ -224,6 +262,7 @@ export default function AdminTeacherManagementScreen() {
       });
       queryClient.invalidateQueries({ queryKey: getGetApiTeacherPermissionsAllQueryKey() });
       queryClient.invalidateQueries({ queryKey: getGetApiTeacherGetTeacherListQueryKey() });
+      queryClient.invalidateQueries({ queryKey: getGetApiTeacherPermissionsTeacherIdQueryKey(selectedTeacher.teacherID) });
       const cls = allClasses.find((c: any) => c.classID === classID);
       const newPerm: ClassPermission = {
         classID, className: cls?.className ?? "",
@@ -234,7 +273,10 @@ export default function AdminTeacherManagementScreen() {
       setSelectedTeacher((prev) => prev ? {
         ...prev, classPermissions: [...prev.classPermissions, newPerm],
       } : prev);
-    } catch (_e) {}
+      showToast("Class assigned successfully", "success");
+    } catch (e: any) {
+      dialog.alert("Error", e.message || "Failed to assign class", "error");
+    }
   };
 
   const confirmRemoveClass = async () => {
@@ -246,13 +288,16 @@ export default function AdminTeacherManagementScreen() {
       });
       queryClient.invalidateQueries({ queryKey: getGetApiTeacherPermissionsAllQueryKey() });
       queryClient.invalidateQueries({ queryKey: getGetApiTeacherGetTeacherListQueryKey() });
+      queryClient.invalidateQueries({ queryKey: getGetApiTeacherPermissionsTeacherIdQueryKey(selectedTeacher.teacherID) });
       setLocalPerms((prev) => { const n = { ...prev }; delete n[removeClassModal.classID]; return n; });
       setSelectedTeacher((prev) => prev ? {
         ...prev,
         classPermissions: prev.classPermissions.filter((c) => c.classID !== removeClassModal.classID),
       } : prev);
       setRemoveClassModal(null);
-    } catch (_e) {
+      showToast("Class assignment removed", "success");
+    } catch (e: any) {
+      dialog.alert("Error", e.message || "Failed to remove class assignment", "error");
     } finally {
       setIsRemovingClass(false);
     }
@@ -260,9 +305,9 @@ export default function AdminTeacherManagementScreen() {
 
   const unassignedClasses = useMemo(() => {
     if (!selectedTeacher) return [];
-    const assigned = new Set(selectedTeacher.classPermissions.map((c) => c.classID));
+    const assigned = new Set(activePermissions.map((c) => c.classID));
     return allClasses.filter((c: any) => !assigned.has(c.classID));
-  }, [selectedTeacher, allClasses]);
+  }, [selectedTeacher, activePermissions, allClasses]);
 
   // ── Mobile card ───────────────────────────────────────────────────────────
   const renderTeacherCard = (item: TeacherWithDetails) => (
@@ -450,14 +495,14 @@ export default function AdminTeacherManagementScreen() {
           </View>
 
           <ScrollView className="flex-1" contentContainerStyle={{ padding: 16, paddingBottom: 40 }}>
-            {selectedTeacher.classPermissions.length === 0 ? (
+            {activePermissions.length === 0 ? (
               <View className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-200 dark:border-slate-700 p-8 items-center mb-4">
                 <IconCircle name="subjects" size={56} iconSize={28} />
                 <Text className="text-gray-700 dark:text-slate-300 font-black text-base mt-4">No classes assigned yet</Text>
                 <Text className="text-gray-400 dark:text-slate-500 text-xs mt-1 text-center">Add a class below to configure module access.</Text>
               </View>
             ) : (
-              selectedTeacher.classPermissions.map((cp) => {
+              activePermissions.map((cp) => {
                 const local = localPerms[cp.classID] ?? cp;
                 const isSaving = savingClassID === cp.classID;
                 return (
