@@ -513,9 +513,9 @@ export function AdminTeacherAttendanceView() {
         </View>
 
         {/* Weekly Date Strip */}
-        <View className="mb-4">
-          <Text className="text-[10px] font-black tracking-widest text-gray-400 dark:text-slate-500 mb-2 uppercase ml-1">Select Date</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+        <View className="mb-4 mx-1">
+          <Text className="text-[10px] font-black tracking-widest text-gray-400 dark:text-slate-500 mb-2 uppercase">Select Date</Text>
+          <View className="flex-row justify-between gap-1.5 w-full">
             {Array.from({ length: 7 }).map((_, i) => {
               const d = new Date();
               d.setDate(d.getDate() - 3 + i); // 3 days before today, today, 3 days after today
@@ -523,19 +523,21 @@ export function AdminTeacherAttendanceView() {
               const isSelected = date === iso;
               const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
               const dayNum = d.getDate();
+              const isFuture = isFutureDate(iso);
               return (
                 <TouchableOpacity
                   key={iso}
-                  onPress={() => setDate(iso)}
-                  className={`px-4 py-2 rounded-xl items-center justify-center border ${isSelected ? "bg-[#1A3C6E] border-[#1A3C6E]" : "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700"}`}
+                  onPress={() => { if (!isFuture) setDate(iso) }}
+                  className={`flex-1 py-2 rounded-xl items-center justify-center border ${isSelected ? "bg-[#1A3C6E] border-[#1A3C6E]" : "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700"} ${isFuture ? "opacity-40" : ""}`}
                   activeOpacity={0.8}
+                  disabled={isFuture}
                 >
-                  <Text className={`text-[9px] font-bold uppercase mb-0.5 ${isSelected ? 'text-white' : 'text-gray-400 dark:text-slate-500'}`}>{dayName}</Text>
-                  <Text className={`text-[14px] font-black ${isSelected ? 'text-white' : 'text-gray-800 dark:text-slate-200'}`}>{dayNum}</Text>
+                  <Text className={`text-[8px] font-black uppercase mb-0.5 ${isSelected ? 'text-white' : 'text-gray-400 dark:text-slate-500'}`}>{dayName}</Text>
+                  <Text className={`text-[13px] font-black ${isSelected ? 'text-white' : 'text-gray-800 dark:text-slate-200'}`}>{dayNum}</Text>
                 </TouchableOpacity>
               );
             })}
-          </ScrollView>
+          </View>
         </View>
 
         {/* Class Selector */}
