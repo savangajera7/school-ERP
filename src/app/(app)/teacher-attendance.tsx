@@ -7,16 +7,19 @@ import {
   TextInput,
   FlatList,
   ActivityIndicator,
+  ScrollView,
 } from "react-native";
 import { router } from "expo-router";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { PremiumDatePicker } from "@/components/ui/PremiumDatePicker";
+import { premiumCardShadow } from "@/constants/premiumStyles";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { AttendanceSummaryChips } from "@/components/attendance/AttendanceSummaryChips";
 import {
   useGetApiTeacherAttendanceGet,
   usePostApiTeacherAttendanceMark,
+  usePutApiTeacherAttendanceUpdate,
   getGetApiTeacherAttendanceGetQueryKey,
   buildTeacherAttendanceViewParams,
   parseTeacherRoster,
@@ -43,6 +46,30 @@ function statusShort(s: StaffStatus): string {
   return s === "Present" ? "P" : s === "Absent" ? "A" : s === "Leave" ? "L" : "½";
 }
 
+const STATUS_CONFIG = {
+  Present: {
+    label: "P",
+    active: "bg-emerald-600 border-emerald-600",
+    inactive: "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-600",
+    activeText: "text-white",
+    inactiveText: "text-gray-400 dark:text-slate-500",
+  },
+  Absent: {
+    label: "A",
+    active: "bg-rose-600 border-rose-600",
+    inactive: "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-600",
+    activeText: "text-white",
+    inactiveText: "text-gray-400 dark:text-slate-500",
+  },
+  Leave: {
+    label: "L",
+    active: "bg-amber-500 border-amber-500",
+    inactive: "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-600",
+    activeText: "text-white",
+    inactiveText: "text-gray-400 dark:text-slate-500",
+  },
+} as const;
+
 function TeacherMarkRow({
   teacher,
   status,
@@ -60,65 +87,53 @@ function TeacherMarkRow({
 }) {
   const showRemark = status !== "Present";
   return (
-    <View className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-2xl p-4 mb-3 mx-1" style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.03, shadowRadius: 3, elevation: 1 }}>
-      <View className="flex-row items-center gap-3">
-        <View className="w-11 h-11 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 items-center justify-center">
+    <View className="mx-3 mb-2">
+      <View 
+        className="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 p-2.5 flex-row items-center"
+        style={[premiumCardShadow, isDark && { shadowColor: "#000", shadowOpacity: 0.2 } ]}
+      >
+        <View className="w-10 h-10 rounded-full bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 items-center justify-center mr-2.5">
           <Text className="text-sm font-black text-indigo-600 dark:text-indigo-400">
             {teacher.teacherName?.charAt(0)?.toUpperCase() ?? "T"}
           </Text>
         </View>
-        <View className="flex-1">
-          <Text className="text-sm font-black text-gray-900 dark:text-slate-100">{teacher.teacherName}</Text>
-          <Text className="text-xs font-bold text-gray-400 dark:text-slate-500">
+        <View className="flex-1 mr-2">
+          <Text className="text-[13px] font-bold text-gray-900 dark:text-slate-100" numberOfLines={1}>{teacher.teacherName}</Text>
+          <Text className="text-[10px] text-gray-400 dark:text-slate-500 font-semibold">
             {teacher.teacherCode || teacher.subjectName || `ID ${teacher.teacherID}`}
           </Text>
         </View>
-      </View>
 
-      <View className="flex-row gap-2 mt-3">
-        {STATUS_OPTIONS.map((opt) => {
-          const active = status === opt;
-          const activeStyle =
-            opt === "Present"
-              ? "bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-800"
-              : opt === "Absent"
-                ? "bg-rose-50 dark:bg-rose-900/30 border-rose-200 dark:border-rose-800"
-                : opt === "Leave"
-                  ? "bg-amber-50 dark:bg-amber-900/30 border-amber-200 dark:border-amber-800"
-                  : "bg-sky-50 dark:bg-sky-900/30 border-sky-200 dark:border-sky-800";
-                  
-          const activeText =
-            opt === "Present"
-              ? "text-emerald-700 dark:text-emerald-400"
-              : opt === "Absent"
-                ? "text-rose-700 dark:text-rose-400"
-                : opt === "Leave"
-                  ? "text-amber-700 dark:text-amber-400"
-                  : "text-sky-700 dark:text-sky-400";
-          return (
-            <TouchableOpacity
-              key={`${teacher.teacherID}-${opt}`}
-              onPress={() => onStatusChange(opt)}
-              className={`flex-1 py-2.5 rounded-xl border items-center ${
-                active ? activeStyle : "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700"
-              }`}
-              activeOpacity={0.85}
-            >
-              <Text className={`text-[11px] font-black uppercase ${active ? activeText : "text-gray-400 dark:text-slate-500"}`}>
-                {statusShort(opt)}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
+        <View className="flex-row gap-1.5">
+          {(["Present", "Absent", "Leave"] as const).map((opt) => {
+            const c = STATUS_CONFIG[opt];
+            const active = status === opt;
+            return (
+              <TouchableOpacity
+                key={`${teacher.teacherID}-${opt}`}
+                onPress={() => onStatusChange(opt)}
+                className={`w-9 h-9 rounded-lg border items-center justify-center ${active ? c.active : c.inactive}`}
+                activeOpacity={0.8}
+              >
+                <Text className={`text-[12px] font-black ${active ? c.activeText : c.inactiveText}`}>
+                  {c.label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
       </View>
 
       {showRemark && (
-        <TextInput
-          value={remark}
-          onChangeText={onRemarkChange}
-          placeholder="Remark (optional)"
-          className="mt-2 h-10 border border-gray-200 dark:border-slate-700 rounded-xl px-3 text-sm bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-slate-100" placeholderTextColor={isDark ? "#64748b" : "#9ca3af"}
-        />
+        <View className="mx-1 mt-1 mb-1">
+          <TextInput
+            value={remark}
+            onChangeText={onRemarkChange}
+            placeholder="Remark (optional)"
+            className="h-8 border border-gray-200 dark:border-slate-600 rounded-lg px-3 text-xs bg-gray-50 dark:bg-slate-800 font-semibold text-gray-800 dark:text-slate-200" 
+            placeholderTextColor={isDark ? "#64748b" : "#9ca3af"}
+          />
+        </View>
       )}
     </View>
   );
@@ -161,6 +176,8 @@ export default function TeacherAttendanceScreen() {
   }, [roster]);
 
   const markMutation = usePostApiTeacherAttendanceMark();
+  const updateMutation = usePutApiTeacherAttendanceUpdate();
+  const isSaving = markMutation.isPending || updateMutation.isPending || isLoading;
 
   const counts = useMemo(() => {
     let present = 0;
@@ -198,6 +215,8 @@ export default function TeacherAttendanceScreen() {
       return;
     }
     const teacherIds = roster.map((t) => t.teacherID).filter(Boolean);
+    const alreadyMarked = roster.some((t) => t.isMarked);
+
     const payload = buildTeacherAttendanceMarkRequest({
       attendanceDate: date,
       schoolID: schoolID ?? null,
@@ -205,13 +224,18 @@ export default function TeacherAttendanceScreen() {
       attendanceMap: attendanceMap as Record<number, string>,
       remarks,
     });
+    
     try {
-      const res = await markMutation.mutateAsync({ data: payload });
+      const res = alreadyMarked
+        ? await updateMutation.mutateAsync({ data: payload })
+        : await markMutation.mutateAsync({ data: payload });
+        
       assertAttendanceApiSuccess(res);
       await queryClient.invalidateQueries({
         queryKey: getGetApiTeacherAttendanceGetQueryKey(),
       });
-      showToast(getAttendanceApiMessage(res) ?? "Staff attendance saved.", "success");
+      const msg = getAttendanceApiMessage(res) ?? (alreadyMarked ? "Staff attendance updated." : "Staff attendance saved.");
+      showToast(msg, "success");
     } catch (e) {
       showToast(getApiErrorMessage(e, "Failed to save staff attendance."), "error");
     }
@@ -227,29 +251,47 @@ export default function TeacherAttendanceScreen() {
       rightAction={
         <TouchableOpacity
           onPress={handleSave}
-          disabled={markMutation.isPending || isLoading}
-          className="px-4 py-2.5 rounded-xl"
+          disabled={isSaving}
+          className="flex-row items-center gap-1.5 px-4 py-2.5 rounded-xl"
           style={{ backgroundColor: Colors.accent }}
           activeOpacity={0.85}
         >
-          {markMutation.isPending ? (
+          {isSaving ? (
             <ActivityIndicator color="#fff" size="small" />
           ) : (
-            <Text className="text-white font-black text-xs uppercase">Save</Text>
+            <Text className="text-white font-black text-xs uppercase">{roster.some(t => t.isMarked) ? "Update" : "Save"}</Text>
           )}
         </TouchableOpacity>
       }
     >
-      <View className="px-1 mb-3">
-        <PremiumDatePicker
-          label="Attendance date"
-          value={date}
-          onChange={(d) => {
-            if (!isFutureDate(d)) setDate(d);
-          }}
-        />
+      {/* Weekly Date Strip */}
+      <View className="mb-4">
+        <Text className="text-[10px] font-black tracking-widest text-gray-400 dark:text-slate-500 mb-2 uppercase ml-1">Select Date</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+          {Array.from({ length: 7 }).map((_, i) => {
+            const d = new Date();
+            d.setDate(d.getDate() - 3 + i);
+            const iso = d.toISOString().split("T")[0];
+            const isSelected = date === iso;
+            const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
+            const dayNum = d.getDate();
+            const isFuture = isFutureDate(iso);
+            return (
+              <TouchableOpacity
+                key={iso}
+                onPress={() => { if (!isFuture) setDate(iso) }}
+                className={`px-4 py-2 rounded-xl items-center justify-center border ${isSelected ? "bg-[#1A3C6E] border-[#1A3C6E]" : "bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700"} ${isFuture ? "opacity-50" : ""}`}
+                activeOpacity={0.8}
+                disabled={isFuture}
+              >
+                <Text className={`text-[9px] font-bold uppercase mb-0.5 ${isSelected ? 'text-white' : 'text-gray-400 dark:text-slate-500'}`}>{dayName}</Text>
+                <Text className={`text-[14px] font-black ${isSelected ? 'text-white' : 'text-gray-800 dark:text-slate-200'}`}>{dayNum}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
         {isFutureDate(date) && (
-          <Text className="text-rose-600 text-xs font-bold mt-1">
+          <Text className="text-rose-600 text-xs font-bold mt-2 ml-1">
             Future dates cannot be marked.
           </Text>
         )}
@@ -263,13 +305,17 @@ export default function TeacherAttendanceScreen() {
         />
       </View>
 
-      <View className="flex-row items-center justify-between px-1 mb-2">
+      <View className="flex-row items-center justify-between px-1 mb-3">
         <Text className="text-xs font-bold text-gray-400 dark:text-slate-500">
           {counts.halfDay > 0 ? `Half day: ${counts.halfDay}` : " "}
         </Text>
-        <TouchableOpacity onPress={markAllPresent}>
-          <Text className="text-emerald-700 dark:text-emerald-400 font-black text-xs uppercase">
-            ✓ Mark all present
+        <TouchableOpacity 
+          onPress={markAllPresent} 
+          className="flex-row items-center gap-1 px-3 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-100 dark:border-emerald-800" 
+          activeOpacity={0.7}
+        >
+          <Text className="text-[10px] font-black text-emerald-700 dark:text-emerald-400 uppercase">
+            ✓ All Present
           </Text>
         </TouchableOpacity>
       </View>
