@@ -27,6 +27,12 @@ export interface NotificationUpdateRequest {
   roleID?: number;
   userID?: number;
   /** @nullable */
+  fromUserID?: number | null;
+  /** @nullable */
+  toUserID?: number | null;
+  /** @nullable */
+  schoolID?: number | null;
+  /** @nullable */
   userType?: string | null;
   /** @nullable */
   deviceType?: string | null;

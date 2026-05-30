@@ -18,7 +18,7 @@ import {
   usePostApiTimetableDelete,
   getGetApiTimetableGetQueryKey,
 } from "@/api/generated/10-timetable/10-timetable";
-import { useGetApiClassGet } from "@/api/generated/master-class/master-class";
+import { useGetApiClassGet } from "@/api/generated/master-class-medium-shift-1a-2b/master-class-medium-shift-1a-2b";
 import { useGetApiMediumGet } from "@/api/generated/master-medium/master-medium";
 import { useGetApiBatchGet } from "@/api/generated/2-master-batch/2-master-batch";
 import {

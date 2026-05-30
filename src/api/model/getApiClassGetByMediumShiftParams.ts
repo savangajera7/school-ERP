@@ -18,14 +18,9 @@
  * **Login body:** { "userName": "superadmin", "password": "123" }
  * OpenAPI spec version: v1
  */
-import type { TimetablePeriodInputDto } from './timetablePeriodInputDto';
 
-export interface TimetableBulkAddRequest {
-  classID?: number;
-  /** @nullable */
-  batchID?: number | null;
-  /** @nullable */
-  mediumID?: number | null;
-  /** @nullable */
-  periods?: TimetablePeriodInputDto[] | null;
-}
+export type GetApiClassGetByMediumShiftParams = {
+mediumID?: number;
+batchID?: number;
+schoolID?: number;
+};

@@ -20,6 +20,6 @@
  */
 
 export type GetApiTeacherClassAssignmentGetParams = {
-    teacherId?: number;
-    schoolID?: number;
+teacherId?: number;
+schoolID?: number;
 };

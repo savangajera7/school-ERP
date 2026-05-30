@@ -23,6 +23,8 @@ export interface UserDeviceTokenUpdateRequest {
   userID?: number;
   roleID?: number;
   /** @nullable */
+  deviceID?: string | null;
+  /** @nullable */
   deviceToken?: string | null;
   /** @nullable */
   deviceType?: string | null;

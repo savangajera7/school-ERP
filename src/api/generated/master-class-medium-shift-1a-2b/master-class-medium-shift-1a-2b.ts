@@ -40,7 +40,8 @@ import type {
 import type {
   ClassModel,
   DeleteApiClassDeleteClassParams,
-  DeleteApiClassDeleteIdParams
+  DeleteApiClassDeleteIdParams,
+  GetApiClassGetByMediumShiftParams
 } from '../../model';
 
 import { customInstance } from '../../../services/api/axiosInstance';
@@ -492,6 +493,119 @@ export function useGetApiClassGetByIDId<TData = Awaited<ReturnType<typeof getApi
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
   const queryOptions = getGetApiClassGetByIDIdQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
+export type getApiClassGetByMediumShiftResponse200 = {
+  data: void
+  status: 200
+}
+
+export type getApiClassGetByMediumShiftResponseSuccess = (getApiClassGetByMediumShiftResponse200) & {
+  headers: Headers;
+};
+;
+
+export type getApiClassGetByMediumShiftResponse = (getApiClassGetByMediumShiftResponseSuccess)
+
+export const getGetApiClassGetByMediumShiftUrl = (params?: GetApiClassGetByMediumShiftParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/Class/GetByMediumShift?${stringifiedParams}` : `/api/Class/GetByMediumShift`
+}
+
+export const getApiClassGetByMediumShift = async (params?: GetApiClassGetByMediumShiftParams, options?: RequestInit): Promise<getApiClassGetByMediumShiftResponse> => {
+
+  return customInstance<getApiClassGetByMediumShiftResponse>(getGetApiClassGetByMediumShiftUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetApiClassGetByMediumShiftQueryKey = (params?: GetApiClassGetByMediumShiftParams,) => {
+    return [
+    `/api/Class/GetByMediumShift`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetApiClassGetByMediumShiftQueryOptions = <TData = Awaited<ReturnType<typeof getApiClassGetByMediumShift>>, TError = unknown>(params?: GetApiClassGetByMediumShiftParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClassGetByMediumShift>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiClassGetByMediumShiftQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiClassGetByMediumShift>>> = ({ signal }) => getApiClassGetByMediumShift(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiClassGetByMediumShift>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiClassGetByMediumShiftQueryResult = NonNullable<Awaited<ReturnType<typeof getApiClassGetByMediumShift>>>
+export type GetApiClassGetByMediumShiftQueryError = unknown
+
+
+export function useGetApiClassGetByMediumShift<TData = Awaited<ReturnType<typeof getApiClassGetByMediumShift>>, TError = unknown>(
+ params: undefined |  GetApiClassGetByMediumShiftParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClassGetByMediumShift>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiClassGetByMediumShift>>,
+          TError,
+          Awaited<ReturnType<typeof getApiClassGetByMediumShift>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiClassGetByMediumShift<TData = Awaited<ReturnType<typeof getApiClassGetByMediumShift>>, TError = unknown>(
+ params?: GetApiClassGetByMediumShiftParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClassGetByMediumShift>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiClassGetByMediumShift>>,
+          TError,
+          Awaited<ReturnType<typeof getApiClassGetByMediumShift>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiClassGetByMediumShift<TData = Awaited<ReturnType<typeof getApiClassGetByMediumShift>>, TError = unknown>(
+ params?: GetApiClassGetByMediumShiftParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClassGetByMediumShift>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetApiClassGetByMediumShift<TData = Awaited<ReturnType<typeof getApiClassGetByMediumShift>>, TError = unknown>(
+ params?: GetApiClassGetByMediumShiftParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiClassGetByMediumShift>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiClassGetByMediumShiftQueryOptions(params,options)
 
   const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
 

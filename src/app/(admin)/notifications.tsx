@@ -4,7 +4,7 @@ import { useDialog } from "@/components/ui/AppDialog";
 import { router } from "expo-router";
 import { useResponsive } from "@/hooks/useResponsive";
 import { Colors } from "@/constants/colors";
-import { useGetApiNotificationGetNotificationList, useDeleteApiNotificationDeleteNotification, usePostApiNotificationInsertNotification } from "@/api/generated/notification/notification";
+import { useGetApiNotificationGetNotificationList, useDeleteApiNotificationDeleteNotification, usePostApiNotificationInsertNotification } from "@/api/generated/15-notifications-parent-student-inbox-admin-send/15-notifications-parent-student-inbox-admin-send";
 import { parseApiList } from "@/utils/apiResponse";
 import { SkeletonLoader } from "@/components/ui/SkeletonLoader";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";

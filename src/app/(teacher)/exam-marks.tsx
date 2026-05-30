@@ -7,7 +7,7 @@ import { PremiumCard } from "@/components/ui/premium";
 import { Card } from "@/components/ui/Card";
 import { useGetApiExamGetExamList } from "@/api/generated/exam/exam";
 import { useGetApiSubjectGetSubjectList } from "@/api/generated/subject/subject";
-import { useGetApiClassGetClassList } from "@/api/generated/master-class/master-class";
+import { useGetApiClassGetClassList } from "@/api/generated/master-class-medium-shift-1a-2b/master-class-medium-shift-1a-2b";
 
 import { useGetApiStudentGet } from "@/api/generated/3-student-crud/3-student-crud";
 import { usePostApiResultInsertResult, useGetApiResultGetResultList } from "@/api/generated/result/result";

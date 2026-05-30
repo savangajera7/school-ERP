@@ -19,7 +19,7 @@ import { useGetApiBloodGroupGet } from "@/api/generated/2-master-bloodgroup/2-ma
 import { useGetApiReligionGet } from "@/api/generated/2-master-religion/2-master-religion";
 import { useGetApiCategoryGet } from "@/api/generated/2-master-category/2-master-category";
 import { useGetApiBatchGet } from "@/api/generated/2-master-batch/2-master-batch";
-import { useGetApiClassGet } from "@/api/generated/master-class/master-class";
+import { useGetApiClassGet } from "@/api/generated/master-class-medium-shift-1a-2b/master-class-medium-shift-1a-2b";
 import { useGetApiAcademicYearGet } from "@/api/generated/2-master-academicyear/2-master-academicyear";
 import { useGetApiMediumGet } from "@/api/generated/master-medium/master-medium";
 import { usePermissions } from "@/hooks/usePermissions";

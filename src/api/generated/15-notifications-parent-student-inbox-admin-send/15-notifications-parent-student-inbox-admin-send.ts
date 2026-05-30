@@ -41,6 +41,8 @@ import type {
   NotificationDeleteRequest,
   NotificationInsertRequest,
   NotificationMarkReadRequest,
+  NotificationSendBulkRequest,
+  NotificationSendRequest,
   NotificationUpdateRequest
 } from '../../model';
 
@@ -68,7 +70,7 @@ export const getDeleteApiNotificationDeleteNotificationUrl = () => {
 
 
 
-  return `/api/Notification/DeleteNotification`
+  return `/api/notification/DeleteNotification`
 }
 
 export const deleteApiNotificationDeleteNotification = async (notificationDeleteRequest?: NotificationDeleteRequest, options?: RequestInit): Promise<deleteApiNotificationDeleteNotificationResponse> => {
@@ -143,7 +145,7 @@ export const getGetApiNotificationGetMyNotificationListUrl = () => {
 
 
 
-  return `/api/Notification/GetMyNotificationList`
+  return `/api/notification/GetMyNotificationList`
 }
 
 export const getApiNotificationGetMyNotificationList = async ( options?: RequestInit): Promise<getApiNotificationGetMyNotificationListResponse> => {
@@ -163,7 +165,7 @@ export const getApiNotificationGetMyNotificationList = async ( options?: Request
 
 export const getGetApiNotificationGetMyNotificationListQueryKey = () => {
     return [
-    `/api/Notification/GetMyNotificationList`
+    `/api/notification/GetMyNotificationList`
     ] as const;
     }
 
@@ -249,7 +251,7 @@ export const getGetApiNotificationGetNotificationByIdIdUrl = (id: number,) => {
 
 
 
-  return `/api/Notification/GetNotificationById/${id}`
+  return `/api/notification/GetNotificationById/${id}`
 }
 
 export const getApiNotificationGetNotificationByIdId = async (id: number, options?: RequestInit): Promise<getApiNotificationGetNotificationByIdIdResponse> => {
@@ -269,7 +271,7 @@ export const getApiNotificationGetNotificationByIdId = async (id: number, option
 
 export const getGetApiNotificationGetNotificationByIdIdQueryKey = (id: number,) => {
     return [
-    `/api/Notification/GetNotificationById/${id}`
+    `/api/notification/GetNotificationById/${id}`
     ] as const;
     }
 
@@ -355,7 +357,7 @@ export const getGetApiNotificationGetNotificationListUrl = () => {
 
 
 
-  return `/api/Notification/GetNotificationList`
+  return `/api/notification/GetNotificationList`
 }
 
 export const getApiNotificationGetNotificationList = async ( options?: RequestInit): Promise<getApiNotificationGetNotificationListResponse> => {
@@ -375,7 +377,7 @@ export const getApiNotificationGetNotificationList = async ( options?: RequestIn
 
 export const getGetApiNotificationGetNotificationListQueryKey = () => {
     return [
-    `/api/Notification/GetNotificationList`
+    `/api/notification/GetNotificationList`
     ] as const;
     }
 
@@ -461,7 +463,7 @@ export const getGetApiNotificationGetUnreadCountUrl = () => {
 
 
 
-  return `/api/Notification/GetUnreadCount`
+  return `/api/notification/GetUnreadCount`
 }
 
 export const getApiNotificationGetUnreadCount = async ( options?: RequestInit): Promise<getApiNotificationGetUnreadCountResponse> => {
@@ -481,7 +483,7 @@ export const getApiNotificationGetUnreadCount = async ( options?: RequestInit): 
 
 export const getGetApiNotificationGetUnreadCountQueryKey = () => {
     return [
-    `/api/Notification/GetUnreadCount`
+    `/api/notification/GetUnreadCount`
     ] as const;
     }
 
@@ -567,7 +569,7 @@ export const getPostApiNotificationInsertNotificationUrl = () => {
 
 
 
-  return `/api/Notification/InsertNotification`
+  return `/api/notification/InsertNotification`
 }
 
 export const postApiNotificationInsertNotification = async (notificationInsertRequest?: NotificationInsertRequest, options?: RequestInit): Promise<postApiNotificationInsertNotificationResponse> => {
@@ -625,6 +627,187 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       > => {
       return useMutation(getPostApiNotificationInsertNotificationMutationOptions(options), queryClient);
     }
+    export type getApiNotificationListUserIdResponse200 = {
+  data: void
+  status: 200
+}
+
+export type getApiNotificationListUserIdResponseSuccess = (getApiNotificationListUserIdResponse200) & {
+  headers: Headers;
+};
+;
+
+export type getApiNotificationListUserIdResponse = (getApiNotificationListUserIdResponseSuccess)
+
+export const getGetApiNotificationListUserIdUrl = (userId: number,) => {
+
+
+
+
+  return `/api/notification/list/${userId}`
+}
+
+export const getApiNotificationListUserId = async (userId: number, options?: RequestInit): Promise<getApiNotificationListUserIdResponse> => {
+
+  return customInstance<getApiNotificationListUserIdResponse>(getGetApiNotificationListUserIdUrl(userId),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetApiNotificationListUserIdQueryKey = (userId: number,) => {
+    return [
+    `/api/notification/list/${userId}`
+    ] as const;
+    }
+
+
+export const getGetApiNotificationListUserIdQueryOptions = <TData = Awaited<ReturnType<typeof getApiNotificationListUserId>>, TError = unknown>(userId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiNotificationListUserId>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetApiNotificationListUserIdQueryKey(userId);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getApiNotificationListUserId>>> = ({ signal }) => getApiNotificationListUserId(userId, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: userId !== null && userId !== undefined, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getApiNotificationListUserId>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetApiNotificationListUserIdQueryResult = NonNullable<Awaited<ReturnType<typeof getApiNotificationListUserId>>>
+export type GetApiNotificationListUserIdQueryError = unknown
+
+
+export function useGetApiNotificationListUserId<TData = Awaited<ReturnType<typeof getApiNotificationListUserId>>, TError = unknown>(
+ userId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiNotificationListUserId>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiNotificationListUserId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiNotificationListUserId>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiNotificationListUserId<TData = Awaited<ReturnType<typeof getApiNotificationListUserId>>, TError = unknown>(
+ userId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiNotificationListUserId>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getApiNotificationListUserId>>,
+          TError,
+          Awaited<ReturnType<typeof getApiNotificationListUserId>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetApiNotificationListUserId<TData = Awaited<ReturnType<typeof getApiNotificationListUserId>>, TError = unknown>(
+ userId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiNotificationListUserId>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetApiNotificationListUserId<TData = Awaited<ReturnType<typeof getApiNotificationListUserId>>, TError = unknown>(
+ userId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getApiNotificationListUserId>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetApiNotificationListUserIdQueryOptions(userId,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
+export type postApiNotificationMarkAsReadResponse200 = {
+  data: void
+  status: 200
+}
+
+export type postApiNotificationMarkAsReadResponseSuccess = (postApiNotificationMarkAsReadResponse200) & {
+  headers: Headers;
+};
+;
+
+export type postApiNotificationMarkAsReadResponse = (postApiNotificationMarkAsReadResponseSuccess)
+
+export const getPostApiNotificationMarkAsReadUrl = () => {
+
+
+
+
+  return `/api/notification/mark-as-read`
+}
+
+export const postApiNotificationMarkAsRead = async (notificationMarkReadRequest?: NotificationMarkReadRequest, options?: RequestInit): Promise<postApiNotificationMarkAsReadResponse> => {
+
+  return customInstance<postApiNotificationMarkAsReadResponse>(getPostApiNotificationMarkAsReadUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(notificationMarkReadRequest)
+  }
+);}
+
+
+
+
+export const getPostApiNotificationMarkAsReadMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiNotificationMarkAsRead>>, TError,{data?: NotificationMarkReadRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof postApiNotificationMarkAsRead>>, TError,{data?: NotificationMarkReadRequest}, TContext> => {
+
+const mutationKey = ['postApiNotificationMarkAsRead'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiNotificationMarkAsRead>>, {data?: NotificationMarkReadRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  postApiNotificationMarkAsRead(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiNotificationMarkAsReadMutationResult = NonNullable<Awaited<ReturnType<typeof postApiNotificationMarkAsRead>>>
+    export type PostApiNotificationMarkAsReadMutationBody = NotificationMarkReadRequest | undefined
+    export type PostApiNotificationMarkAsReadMutationError = unknown
+
+    export const usePostApiNotificationMarkAsRead = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiNotificationMarkAsRead>>, TError,{data?: NotificationMarkReadRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postApiNotificationMarkAsRead>>,
+        TError,
+        {data?: NotificationMarkReadRequest},
+        TContext
+      > => {
+      return useMutation(getPostApiNotificationMarkAsReadMutationOptions(options), queryClient);
+    }
     export type postApiNotificationMarkNotificationReadResponse200 = {
   data: void
   status: 200
@@ -642,7 +825,7 @@ export const getPostApiNotificationMarkNotificationReadUrl = () => {
 
 
 
-  return `/api/Notification/MarkNotificationRead`
+  return `/api/notification/MarkNotificationRead`
 }
 
 export const postApiNotificationMarkNotificationRead = async (notificationMarkReadRequest?: NotificationMarkReadRequest, options?: RequestInit): Promise<postApiNotificationMarkNotificationReadResponse> => {
@@ -700,6 +883,156 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       > => {
       return useMutation(getPostApiNotificationMarkNotificationReadMutationOptions(options), queryClient);
     }
+    export type postApiNotificationSendResponse200 = {
+  data: void
+  status: 200
+}
+
+export type postApiNotificationSendResponseSuccess = (postApiNotificationSendResponse200) & {
+  headers: Headers;
+};
+;
+
+export type postApiNotificationSendResponse = (postApiNotificationSendResponseSuccess)
+
+export const getPostApiNotificationSendUrl = () => {
+
+
+
+
+  return `/api/notification/send`
+}
+
+export const postApiNotificationSend = async (notificationSendRequest?: NotificationSendRequest, options?: RequestInit): Promise<postApiNotificationSendResponse> => {
+
+  return customInstance<postApiNotificationSendResponse>(getPostApiNotificationSendUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(notificationSendRequest)
+  }
+);}
+
+
+
+
+export const getPostApiNotificationSendMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiNotificationSend>>, TError,{data?: NotificationSendRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof postApiNotificationSend>>, TError,{data?: NotificationSendRequest}, TContext> => {
+
+const mutationKey = ['postApiNotificationSend'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiNotificationSend>>, {data?: NotificationSendRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  postApiNotificationSend(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiNotificationSendMutationResult = NonNullable<Awaited<ReturnType<typeof postApiNotificationSend>>>
+    export type PostApiNotificationSendMutationBody = NotificationSendRequest | undefined
+    export type PostApiNotificationSendMutationError = unknown
+
+    export const usePostApiNotificationSend = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiNotificationSend>>, TError,{data?: NotificationSendRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postApiNotificationSend>>,
+        TError,
+        {data?: NotificationSendRequest},
+        TContext
+      > => {
+      return useMutation(getPostApiNotificationSendMutationOptions(options), queryClient);
+    }
+    export type postApiNotificationSendBulkResponse200 = {
+  data: void
+  status: 200
+}
+
+export type postApiNotificationSendBulkResponseSuccess = (postApiNotificationSendBulkResponse200) & {
+  headers: Headers;
+};
+;
+
+export type postApiNotificationSendBulkResponse = (postApiNotificationSendBulkResponseSuccess)
+
+export const getPostApiNotificationSendBulkUrl = () => {
+
+
+
+
+  return `/api/notification/send-bulk`
+}
+
+export const postApiNotificationSendBulk = async (notificationSendBulkRequest?: NotificationSendBulkRequest, options?: RequestInit): Promise<postApiNotificationSendBulkResponse> => {
+
+  return customInstance<postApiNotificationSendBulkResponse>(getPostApiNotificationSendBulkUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(notificationSendBulkRequest)
+  }
+);}
+
+
+
+
+export const getPostApiNotificationSendBulkMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiNotificationSendBulk>>, TError,{data?: NotificationSendBulkRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof postApiNotificationSendBulk>>, TError,{data?: NotificationSendBulkRequest}, TContext> => {
+
+const mutationKey = ['postApiNotificationSendBulk'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof postApiNotificationSendBulk>>, {data?: NotificationSendBulkRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  postApiNotificationSendBulk(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PostApiNotificationSendBulkMutationResult = NonNullable<Awaited<ReturnType<typeof postApiNotificationSendBulk>>>
+    export type PostApiNotificationSendBulkMutationBody = NotificationSendBulkRequest | undefined
+    export type PostApiNotificationSendBulkMutationError = unknown
+
+    export const usePostApiNotificationSendBulk = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof postApiNotificationSendBulk>>, TError,{data?: NotificationSendBulkRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof postApiNotificationSendBulk>>,
+        TError,
+        {data?: NotificationSendBulkRequest},
+        TContext
+      > => {
+      return useMutation(getPostApiNotificationSendBulkMutationOptions(options), queryClient);
+    }
     export type putApiNotificationUpdateNotificationResponse200 = {
   data: void
   status: 200
@@ -717,7 +1050,7 @@ export const getPutApiNotificationUpdateNotificationUrl = () => {
 
 
 
-  return `/api/Notification/UpdateNotification`
+  return `/api/notification/UpdateNotification`
 }
 
 export const putApiNotificationUpdateNotification = async (notificationUpdateRequest?: NotificationUpdateRequest, options?: RequestInit): Promise<putApiNotificationUpdateNotificationResponse> => {

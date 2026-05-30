@@ -4,7 +4,7 @@ import { router } from "expo-router";
 import { useResponsive } from "@/hooks/useResponsive";
 import { useTranslation } from "@/hooks/useTranslation";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
-import { useGetApiClassGetClassList } from "@/api/generated/master-class/master-class";
+import { useGetApiClassGetClassList } from "@/api/generated/master-class-medium-shift-1a-2b/master-class-medium-shift-1a-2b";
 import { parseApiList } from "@/utils/apiResponse";
 import {
   StatCard,

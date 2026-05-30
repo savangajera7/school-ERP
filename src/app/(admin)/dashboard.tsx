@@ -5,7 +5,7 @@ import { useAuthStore } from "@/store/authStore";
 import { useResponsive } from "@/hooks/useResponsive";
 import { usePostApiStudentSearch } from "@/api/generated/3-student-crud/3-student-crud";
 import { useGetApiTeacherGetTeacherList } from "@/api/generated/teacher/teacher";
-import { useGetApiClassGetClassList } from "@/api/generated/master-class/master-class";
+import { useGetApiClassGetClassList } from "@/api/generated/master-class-medium-shift-1a-2b/master-class-medium-shift-1a-2b";
 import { useGetApiAttendanceGet, buildAttendanceListParams, parseAttendanceList } from "@/api/attendance";
 import { parseApiList } from "@/utils/apiResponse";
 import { usePermissions } from "@/hooks/usePermissions";

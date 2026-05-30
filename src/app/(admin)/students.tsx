@@ -7,7 +7,7 @@ import type { StudentModel } from "@/api/model/studentModel";
 import type { StudentSearchRequest } from "@/api/model/studentSearchRequest";
 import type { StudentSearchResponse } from "@/api/model/studentSearchResponse";
 import { usePostApiStudentSearch, useDeleteApiStudentDeleteId } from "@/api/generated/3-student-crud/3-student-crud";
-import { useGetApiClassGet } from "@/api/generated/master-class/master-class";
+import { useGetApiClassGet } from "@/api/generated/master-class-medium-shift-1a-2b/master-class-medium-shift-1a-2b";
 import { useGetApiBatchGet } from "@/api/generated/2-master-batch/2-master-batch";
 import { useGetApiMediumGet } from "@/api/generated/master-medium/master-medium";
 import { parseApiList, toCamelCaseRow } from "@/utils/apiResponse";

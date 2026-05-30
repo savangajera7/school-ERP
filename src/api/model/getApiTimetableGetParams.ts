@@ -24,6 +24,7 @@ SchoolID?: number;
 View?: string;
 ClassID?: number;
 BatchID?: number;
+MediumID?: number;
 TeacherID?: number;
 StudentID?: number;
 TimetableID?: number;

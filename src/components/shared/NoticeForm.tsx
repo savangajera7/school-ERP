@@ -5,7 +5,7 @@ import { AppIcon } from "@/components/icons/AppIcon";
 import { Colors } from "@/constants/colors";
 import { useAuthStore } from "@/store/authStore";
 import { usePostApiNoticeAdd } from "@/api/generated/8-notice/8-notice";
-import { usePostApiNotificationInsertNotification } from "@/api/generated/notification/notification";
+import { usePostApiNotificationInsertNotification } from "@/api/generated/15-notifications-parent-student-inbox-admin-send/15-notifications-parent-student-inbox-admin-send";
 import { useDialog } from "@/components/ui/AppDialog";
 
 export interface NoticeFormProps {

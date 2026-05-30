@@ -16,7 +16,7 @@ import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { PremiumTabSwitcher } from "@/components/ui/premium";
 import { MobileDataCard } from "@/components/ui/MobileDataCard";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { useGetApiClassGetClassList } from "@/api/generated/master-class/master-class";
+import { useGetApiClassGetClassList } from "@/api/generated/master-class-medium-shift-1a-2b/master-class-medium-shift-1a-2b";
 import {
   useGetApiExamGetExamList,
   usePostApiExamInsertExam,

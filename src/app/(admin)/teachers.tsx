@@ -14,7 +14,7 @@ import { HeaderActionButton } from "@/components/ui/HeaderActionButton";
 import { AppIcon, IconCircle } from "@/components/icons/AppIcon";
 import { usePermissions } from "@/hooks/usePermissions";
 import { ResponsiveDataList, EntityActionButtons, type TableColumn } from "@/components/shared";
-import { useGetApiClassGet } from "@/api/generated/master-class/master-class";
+import { useGetApiClassGet } from "@/api/generated/master-class-medium-shift-1a-2b/master-class-medium-shift-1a-2b";
 import { useDebounce } from "@/hooks/useDebounce";
 import { IconButton } from "@/components/ui/IconButton";
 import {

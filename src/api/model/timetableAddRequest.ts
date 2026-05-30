@@ -24,6 +24,8 @@ export interface TimetableAddRequest {
   /** @nullable */
   batchID?: number | null;
   /** @nullable */
+  mediumID?: number | null;
+  /** @nullable */
   day?: string | null;
   subjectID?: number;
   teacherID?: number;

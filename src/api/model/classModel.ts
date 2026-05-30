@@ -23,6 +23,14 @@ export interface ClassModel {
   classID?: number;
   /** @nullable */
   className?: string | null;
+  /** @nullable */
+  mediumID?: number | null;
+  /** @nullable */
+  mediumName?: string | null;
+  /** @nullable */
+  batchID?: number | null;
+  /** @nullable */
+  shiftName?: string | null;
   isActive?: boolean;
   /** @nullable */
   createdBy?: number | null;

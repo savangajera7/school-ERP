@@ -223,7 +223,7 @@ export function PremiumDatePicker({
                 {/* Header */}
                 <View style={styles.calHeader}>
                   <TouchableOpacity onPress={prevMonth} style={[styles.navBtn, isDark ? { backgroundColor: "#334155" } : { backgroundColor: "#F3F4F6" }]}>
-                    <Text style={styles.navArrow}>‹</Text>
+                    <Text style={[styles.navArrow, isDark && { color: SchoolTheme.primaryLight }]}>‹</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
@@ -236,7 +236,7 @@ export function PremiumDatePicker({
                   </TouchableOpacity>
 
                   <TouchableOpacity onPress={nextMonth} style={[styles.navBtn, isDark ? { backgroundColor: "#334155" } : { backgroundColor: "#F3F4F6" }]}>
-                    <Text style={styles.navArrow}>›</Text>
+                    <Text style={[styles.navArrow, isDark && { color: SchoolTheme.primaryLight }]}>›</Text>
                   </TouchableOpacity>
                 </View>
 
@@ -319,7 +319,7 @@ export function PremiumDatePicker({
                     onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setMode("calendar"); }}
                     style={[styles.navBtn, isDark ? { backgroundColor: "#334155" } : { backgroundColor: "#F3F4F6" }]}
                   >
-                    <Text style={styles.navArrow}>✕</Text>
+                    <Text style={[styles.navArrow, isDark && { color: SchoolTheme.primaryLight }]}>✕</Text>
                   </TouchableOpacity>
                 </View>
                 <View style={styles.monthGrid}>
@@ -358,7 +358,7 @@ export function PremiumDatePicker({
                     onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setMode("calendar"); }}
                     style={[styles.navBtn, isDark ? { backgroundColor: "#334155" } : { backgroundColor: "#F3F4F6" }]}
                   >
-                    <Text style={styles.navArrow}>✕</Text>
+                    <Text style={[styles.navArrow, isDark && { color: SchoolTheme.primaryLight }]}>✕</Text>
                   </TouchableOpacity>
                 </View>
                 <ScrollView style={{ maxHeight: 260 }} contentContainerStyle={styles.yearGrid} showsVerticalScrollIndicator={false}>

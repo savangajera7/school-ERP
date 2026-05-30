@@ -18,14 +18,12 @@
  * **Login body:** { "userName": "superadmin", "password": "123" }
  * OpenAPI spec version: v1
  */
-import type { TimetablePeriodInputDto } from './timetablePeriodInputDto';
 
-export interface TimetableBulkAddRequest {
-  classID?: number;
+export interface RegisterDeviceTokenRequest {
   /** @nullable */
-  batchID?: number | null;
+  deviceID?: string | null;
   /** @nullable */
-  mediumID?: number | null;
+  fcmToken?: string | null;
   /** @nullable */
-  periods?: TimetablePeriodInputDto[] | null;
+  deviceType?: string | null;
 }

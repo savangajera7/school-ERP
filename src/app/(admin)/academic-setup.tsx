@@ -7,7 +7,7 @@ import { Colors } from "@/constants/colors";
 import { PremiumScreenLayout } from "@/components/layout/PremiumScreenLayout";
 import { PremiumTabSwitcher } from "@/components/ui/premium";
 import { PremiumLoader } from "@/components/ui/PremiumLoader";
-import { useGetApiClassGetClassList } from "@/api/generated/master-class/master-class";
+import { useGetApiClassGetClassList } from "@/api/generated/master-class-medium-shift-1a-2b/master-class-medium-shift-1a-2b";
 import { useGetApiAcademicYearGet } from "@/api/generated/2-master-academicyear/2-master-academicyear";
 import { useGetApiBatchGet } from "@/api/generated/2-master-batch/2-master-batch";
 import { parseApiList } from "@/utils/apiResponse";

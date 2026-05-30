@@ -9,7 +9,7 @@ import { useGetApiStudentGetByIDId } from "@/api/generated/3-student-crud/3-stud
 import { StudentModel } from "@/api/model/studentModel";
 import { parseApiData, toCamelCaseRow } from "@/utils/apiResponse";
 import { getStudentDisplayName } from "@/utils/studentUtils";
-import { useGetApiClassGet } from "@/api/generated/master-class/master-class";
+import { useGetApiClassGet } from "@/api/generated/master-class-medium-shift-1a-2b/master-class-medium-shift-1a-2b";
 import { parseApiList } from "@/utils/apiResponse";
 import { Colors } from "@/constants/colors";
 import { IconCircle, AppIcon } from "@/components/icons/AppIcon";
