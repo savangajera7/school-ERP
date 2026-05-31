@@ -565,92 +565,92 @@ export default function TimetableScreen() {
   };
 
   const sortedPeriods = useMemo(() => {
-    // 3. NO BLANK CARDS: Every card must have valid data before rendering
-    const raw = (timetableView?.periods ?? []).filter(p => 
-      p && p.subjectName && p.subjectName.trim() !== ""
-    );
+    const raw = timetableView?.periods ?? [];
     const isToday = selectedDay === defaultDay;
+    const now = new Date();
 
-    // 1. SORTING ORDER (array order): Past > Live > Upcoming
-    const withStatus = raw.map(p => {
-      const isLive = isToday && p.startTime <= currentTimeStr && currentTimeStr < p.endTime;
-      const isPast = isToday && p.endTime <= currentTimeStr;
-      const isUpcoming = isToday && p.startTime > currentTimeStr && !isLive;
-      return { ...p, isLive, isPast, isUpcoming };
-    });
+    const withDates = raw.map(p => ({
+      ...p,
+      parsedStart: parseTimeString(p.startTime),
+      parsedEnd: parseTimeString(p.endTime)
+    }));
 
-    const past = withStatus.filter(p => p.isPast).sort((a, b) => a.startTime.localeCompare(b.startTime));
-    const live = withStatus.filter(p => p.isLive);
-    const upcoming = withStatus.filter(p => p.isUpcoming).sort((a, b) => a.startTime.localeCompare(b.startTime));
+    if (!isToday) {
+      return withDates
+        .sort((a, b) => a.parsedStart.getTime() - b.parsedStart.getTime())
+        .map(p => ({ ...p, isLive: false, isPast: false, isUpcoming: false, hasOverlap: false }));
+    }
+
+    const past = withDates
+      .filter(p => now > p.parsedEnd)
+      .sort((a, b) => a.parsedStart.getTime() - b.parsedStart.getTime());
+      
+    const live = withDates
+      .filter(p => now >= p.parsedStart && now <= p.parsedEnd);
+      
+    const upcoming = withDates
+      .filter(p => now < p.parsedStart)
+      .sort((a, b) => a.parsedStart.getTime() - b.parsedStart.getTime());
 
     const sorted = [...past, ...live, ...upcoming];
 
-    // 4. Overlap check
-    const chrono = [...raw].sort((a, b) => a.startTime.localeCompare(b.startTime));
+    const chrono = [...withDates].sort((a, b) => a.parsedStart.getTime() - b.parsedStart.getTime());
     const overlapIds = new Set();
     chrono.forEach((p, i) => {
-      if (i > 0 && p.startTime < chrono[i-1].endTime) {
+      if (i > 0 && p.parsedStart < chrono[i-1].parsedEnd) {
         overlapIds.add(p.timetableID || `${p.startTime}-${p.subjectID}`);
       }
     });
 
-    return sorted.map(p => ({
-      ...p,
-      hasOverlap: overlapIds.has(p.timetableID || `${p.startTime}-${p.subjectID}`)
-    }));
+    return sorted.map(p => {
+      const isLive = now >= p.parsedStart && now <= p.parsedEnd;
+      const isPast = now > p.parsedEnd;
+      const isUpcoming = now < p.parsedStart;
+      return {
+        ...p,
+        isLive,
+        isPast,
+        isUpcoming,
+        hasOverlap: overlapIds.has(p.timetableID || `${p.startTime}-${p.subjectID}`)
+      };
+    });
   }, [timetableView?.periods, selectedDay, defaultDay, currentTimeStr]);
   const periods = sortedPeriods;
 
-  // ── 2. AUTO-SCROLL ON LOAD ────────────────────────────────────────────────
   const listRef = React.useRef<FlatList<any>>(null);
-  // Adjusted for precision: Admin card(152) + gap(12) = 164 | Student card(100) + gap(12) = 112
   const CARD_HEIGHT = canEdit ? 164 : 112;
 
-  const scrollToActive = useCallback(() => {
-    if (!periods.length || !listRef.current || !isMounted || listMode === 'table') return;
-
-    // Find liveIndex or scroll to first upcoming
-    const liveIndex = periods.findIndex((p: any) => p.isLive);
-    const upcomingIndex = periods.findIndex((p: any) => p.isUpcoming);
-    
-    // Priority: Live > First Upcoming > First item (if all over/none found)
-    let scrollIndex = liveIndex !== -1 ? liveIndex : upcomingIndex;
-
-    // If day is over (no live, no upcoming), scroll to 0 to show all as requested previously
-    if (scrollIndex === -1) scrollIndex = 0;
-
-    if (scrollIndex >= 0) {
-      setTimeout(() => {
-        try {
-          listRef.current?.scrollToIndex({
-            index: scrollIndex,
-            animated: false,
-            viewPosition: 0, 
-          });
-        } catch (err) {
-          // silent fail
-        }
-      }, 400); // Slightly faster response
-    }
-  }, [periods, isMounted, listMode, canEdit]);
-
-  // 4. REAL-TIME UPDATE every 60 seconds
+  // Real-time update every 60 seconds (forces re-sort)
   useEffect(() => {
     const interval = setInterval(() => {
       const now = getNowStr();
-      if (now !== currentTimeStr) {
-        setCurrentTimeStr(now);
-      }
+      setCurrentTimeStr(now); // This triggers sortedPeriods to recalculate
     }, 60000);
     return () => clearInterval(interval);
-  }, [currentTimeStr]);
+  }, []);
 
-  // Initial and update scroll
+  // Screen must open showing LIVE card first
   useEffect(() => {
-    if (periods.length > 0 && isMounted) {
-      scrollToActive();
-    }
-  }, [periods.length, isMounted, scrollToActive]);
+    if (!listRef.current || sortedPeriods.length === 0 || listMode === 'table') return;
+    
+    // find past length
+    const pastLength = sortedPeriods.filter((p: any) => p.isPast).length;
+    const scrollIndex = pastLength; // live or first upcoming starts right after past cards
+    
+    setTimeout(() => {
+      try {
+        listRef.current?.scrollToIndex({
+          index: scrollIndex,
+          animated: false,
+          viewPosition: 0 // puts it at very top of screen
+        });
+      } catch (err) {
+        // silently handled by onScrollToIndexFailed
+      }
+    }, 300); // small delay to let list render first
+  }, [sortedPeriods, listMode]);
+
+  // Scroll effect is handled above
 
   const tableColumns: TableColumn<any>[] = [
     {
@@ -728,101 +728,101 @@ export default function TimetableScreen() {
   ];
 
   const renderPeriodCard = (period: any, index: number) => {
-    if (!period || !period.subjectName) return null;
-
     const isB = period.subjectName?.toLowerCase().includes("break") || period.subjectName?.toLowerCase().includes("lunch");
-    const color = isB ? "#EA580C" : subjectColor(period.subjectName);
+    const color = isB ? "#EA580C" : subjectColor(period.subjectName || "A");
 
     // Using pre-calculated flags from sortedPeriods
     const { isLive, isPast } = period;
 
     return (
-      <TouchableOpacity 
-        activeOpacity={0.9}
-        onPress={() => {
-          if (canEdit) openEdit(period);
-        }}
-        className={`rounded-2xl mb-3 overflow-hidden border ${
-          isLive 
-            ? "bg-[#1e293b] border-emerald-500 shadow-lg shadow-emerald-500/20" 
-            : "bg-[#1e293b] border-slate-700"
-        }`}
-        style={[premiumCardShadow, { opacity: isPast ? 0.4 : 1 }]}
-      >
-        <View className="p-4 flex-row gap-3">
-          {/* Left Icon/Index */}
-          <View className="relative">
-            <View className={`w-14 h-14 rounded-xl items-center justify-center overflow-hidden border ${
-              isLive ? "bg-emerald-500/10 border-emerald-500/30" : "bg-slate-700 border-slate-600"
+      <View style={{ opacity: isPast ? 0.4 : 1, marginBottom: 12 }}>
+        <TouchableOpacity 
+          activeOpacity={0.9}
+          onPress={() => {
+            if (canEdit) openEdit(period);
+          }}
+          className={`rounded-2xl overflow-hidden border ${
+            isLive 
+              ? "bg-[#1e293b] border-emerald-500 shadow-lg shadow-emerald-500/20" 
+              : "bg-[#1e293b] border-slate-700"
+          }`}
+          style={premiumCardShadow}
+        >
+          <View className="p-4 flex-row gap-3">
+            {/* Left Icon/Index */}
+            <View className="relative">
+              <View className={`w-14 h-14 rounded-xl items-center justify-center overflow-hidden border ${
+                isLive ? "bg-emerald-500/10 border-emerald-500/30" : "bg-slate-700 border-slate-600"
+              }`}>
+                <AppIcon name={isB ? "coffee" : "timetable"} size={26} color={isLive ? "#10b981" : color} />
+              </View>
+              <View className="absolute -top-1.5 -right-1.5 bg-slate-800 border-2 border-[#1e293b] min-w-[20px] h-5 px-1 rounded-full items-center justify-center shadow-md">
+                <Text className={`text-[10px] font-black ${isLive ? "text-emerald-400" : "text-white"}`} style={!isLive ? { color } : {}}>{index + 1}</Text>
+              </View>
+            </View>
+
+            {/* Center Content */}
+            <View className="flex-1">
+              <View className="flex-row items-start justify-between mb-1">
+                <Text className={`text-[15px] font-black uppercase flex-1 mr-2 leading-tight ${isLive ? "text-emerald-400" : "text-white"}`} numberOfLines={1}>
+                  {period.subjectName || "—"}
+                </Text>
+                {isLive ? (
+                  <View className="px-2 py-0.5 bg-emerald-500 rounded-lg shadow-sm">
+                    <Text className="text-[9px] font-black text-white uppercase tracking-tighter">LIVE NOW</Text>
+                  </View>
+                ) : isPast ? (
+                  <View className="px-2 py-0.5 bg-slate-700 rounded-lg border border-slate-600">
+                    <Text className="text-[9px] font-black text-slate-400 uppercase tracking-tighter">ENDED</Text>
+                  </View>
+                ) : period.hasOverlap ? (
+                  <View className="px-2 py-0.5 bg-rose-500/20 rounded-lg border border-rose-500/30">
+                    <Text className="text-[9px] font-black text-rose-400 uppercase tracking-tighter">Overlap</Text>
+                  </View>
+                ) : null}
+              </View>
+
+              <View className="flex-row items-center gap-1.5 mb-1">
+                <AppIcon name="clock" size={13} color={isLive ? "#10b981" : "#94a3b8"} />
+                <Text className={`text-[12px] font-bold flex-1 ${isLive ? "text-emerald-400" : "text-slate-400"}`} numberOfLines={1}>
+                  {formatTo12Hour(period.startTime)} – {formatTo12Hour(period.endTime)}
+                </Text>
+              </View>
+
+              <View className="flex-row items-center gap-1.5">
+                <AppIcon name="teachers" size={13} color={isLive ? "#10b981" : "#94a3b8"} />
+                <Text className={`text-[12px] font-bold flex-1 ${isLive ? "text-emerald-400" : "text-slate-400"}`} numberOfLines={1}>
+                  {period.teacherName || period.className || "—"}
+                  {period.roomNumber ? ` · Rm ${period.roomNumber}` : ""}
+                </Text>
+              </View>
+            </View>
+          </View>
+
+          {/* Bottom Actions are strictly within the same TouchableOpacity/View structure so they are never orphaned */}
+          {canEdit && (
+            <View className={`flex-row justify-end items-center px-4 py-2 border-t gap-2 ${
+              isLive ? "bg-emerald-500/5 border-emerald-500/20" : "bg-slate-800/40 border-slate-700/50"
             }`}>
-              <AppIcon name={isB ? "coffee" : "timetable"} size={26} color={isLive ? "#10b981" : color} />
+              <TouchableOpacity 
+                onPress={() => openEdit(period)}
+                className={`w-9 h-9 rounded-xl items-center justify-center border ${
+                  isLive ? "bg-emerald-500/10 border-emerald-500/20" : "bg-indigo-500/10 border-indigo-500/20"
+                }`}
+              >
+                <AppIcon name="edit" size={16} color={isLive ? "#10b981" : "#818cf8"} />
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                onPress={() => setDeleteTarget(period)}
+                className="w-9 h-9 rounded-xl bg-rose-500/10 border border-rose-500/20 items-center justify-center"
+              >
+                <AppIcon name="delete" size={16} color="#fb7185" />
+              </TouchableOpacity>
             </View>
-            <View className="absolute -top-1.5 -right-1.5 bg-slate-800 border-2 border-[#1e293b] min-w-[20px] h-5 px-1 rounded-full items-center justify-center shadow-md">
-              <Text className={`text-[10px] font-black ${isLive ? "text-emerald-400" : "text-white"}`} style={!isLive ? { color } : {}}>{index + 1}</Text>
-            </View>
-          </View>
-
-          {/* Center Content */}
-          <View className="flex-1">
-            <View className="flex-row items-start justify-between mb-1">
-              <Text className={`text-[15px] font-black uppercase flex-1 mr-2 leading-tight ${isLive ? "text-emerald-400" : "text-white"}`} numberOfLines={1}>
-                {period.subjectName}
-              </Text>
-              {isLive ? (
-                <View className="px-2 py-0.5 bg-emerald-500 rounded-lg shadow-sm">
-                  <Text className="text-[9px] font-black text-white uppercase tracking-tighter">LIVE NOW</Text>
-                </View>
-              ) : isPast ? (
-                <View className="px-2 py-0.5 bg-slate-700 rounded-lg border border-slate-600">
-                  <Text className="text-[9px] font-black text-slate-400 uppercase tracking-tighter">ENDED</Text>
-                </View>
-              ) : period.hasOverlap ? (
-                <View className="px-2 py-0.5 bg-rose-500/20 rounded-lg border border-rose-500/30">
-                  <Text className="text-[9px] font-black text-rose-400 uppercase tracking-tighter">Overlap</Text>
-                </View>
-              ) : null}
-            </View>
-
-            <View className="flex-row items-center gap-1.5 mb-1">
-              <AppIcon name="clock" size={13} color={isLive ? "#10b981" : "#94a3b8"} />
-              <Text className={`text-[12px] font-bold flex-1 ${isLive ? "text-emerald-400" : "text-slate-400"}`} numberOfLines={1}>
-                {formatTo12Hour(period.startTime)} – {formatTo12Hour(period.endTime)}
-              </Text>
-            </View>
-
-            <View className="flex-row items-center gap-1.5">
-              <AppIcon name="teachers" size={13} color={isLive ? "#10b981" : "#94a3b8"} />
-              <Text className={`text-[12px] font-bold flex-1 ${isLive ? "text-emerald-400" : "text-slate-400"}`} numberOfLines={1}>
-                {period.teacherName || period.className || "—"}
-                {period.roomNumber ? ` · Rm ${period.roomNumber}` : ""}
-              </Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Bottom Actions */}
-        {canEdit && (
-          <View className={`flex-row justify-end items-center px-4 py-2 border-t gap-2 ${
-            isLive ? "bg-emerald-500/5 border-emerald-500/20" : "bg-slate-800/40 border-slate-700/50"
-          }`}>
-            <TouchableOpacity 
-              onPress={() => openEdit(period)}
-              className={`w-9 h-9 rounded-xl items-center justify-center border ${
-                isLive ? "bg-emerald-500/10 border-emerald-500/20" : "bg-indigo-500/10 border-indigo-500/20"
-              }`}
-            >
-              <AppIcon name="edit" size={16} color={isLive ? "#10b981" : "#818cf8"} />
-            </TouchableOpacity>
-            
-            <TouchableOpacity 
-              onPress={() => setDeleteTarget(period)}
-              className="w-9 h-9 rounded-xl bg-rose-500/10 border border-rose-500/20 items-center justify-center"
-            >
-              <AppIcon name="delete" size={16} color="#fb7185" />
-            </TouchableOpacity>
-          </View>
-        )}
-      </TouchableOpacity>
+          )}
+        </TouchableOpacity>
+      </View>
     );
   };
   // ── Render ────────────────────────────────────────────────────────────────
@@ -1326,9 +1326,9 @@ return (
               };
             },
             onScrollToIndexFailed: (info) => {
-              const wait = new Promise(resolve => setTimeout(resolve, 500));
-              wait.then(() => {
-                listRef.current?.scrollToIndex({ index: info.index, animated: true, viewPosition: 0 });
+              listRef.current?.scrollToOffset({
+                offset: info.averageItemLength * info.index,
+                animated: false
               });
             }
           }}
